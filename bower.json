@@ -1,0 +1,24 @@
+{
+    "name": "chevronjs",
+    "version": "v0.1.0",
+    "description": "",
+    "main": "dist/chevronjs.js",
+    "authors": [
+        "Felix Rilling"
+    ],
+    "license": "MIT",
+    "keywords": [
+        "esRouter",
+        "router",
+        "es6"
+    ],
+    "homepage": "https://github.com/FelixRilling/chevronjs",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests",
+        ".tmp"
+    ]
+}
