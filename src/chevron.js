@@ -33,14 +33,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         modules: {},
 
         module: function (name, dependencies, fn) {
-            chevron.modules[name] = new(class {
+            return chevron.modules[name] = new(class {
                 constructor(name, dependencies, fn) {
 
                     this.name = name;
                     this.dependencies = chevron.async.loadDependencies(dependencies);
 
                     if (chevron.isDefined(fn)) {
-                        fn.apply(this.dependencies,this.dependencies);
+                        fn.call(this, this.dependencies);
                     }
                 }
             })(name, dependencies, fn);
@@ -53,12 +53,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         async: {
             loadDependencies: function (list) {
-                let result = [];
+                let result = {};
                 chevron.each(list, item => {
                     chevron.async.requireDependency(item).then(dependency => {
                         if (!chevron.isDefined(result[item])) {
                             chevron.async.addDependency(item, dependency);
-                            result.push(dependency);
+                            result[item] = dependency;
                         }
                     });
                 });
@@ -79,6 +79,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                     if (chevron.isDefined(chevron.dependencies[key])) {
                         result = chevron.dependencies[key];
+                    } else if (chevron.modules[key]) {
+                        result = chevron.modules[key];
                     } else if (chevron.isDefined(window[key])) {
                         result = window[key];
                     } else {

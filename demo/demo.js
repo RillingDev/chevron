@@ -1,13 +1,14 @@
 "use strict";
 
 (function (chevron) {
-    chevron.module("Window", ["window"]);
-    chevron.module("Demo", ["Math", "toMarkdown", "Window"], myCallBack);
+    chevron.module("myCustomModule", ["window", "document"]);
+    chevron.module("Demo", ["Math", "toMarkdown", "myCustomModule"], myCallBack);
 
-    function myCallBack(Math, markdown, window) {
-        console.log(this, markdown);
+    function myCallBack(dep) {
+        console.log(this);
     }
 
-    //console.log(chevron);
+    console.log("###############");
+    console.log(chevron);
 
 })(chevron);
