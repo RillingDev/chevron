@@ -25,67 +25,110 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 "use strict";
 
-(function(window) {
+(function (window) {
 
-    window.chevron = class {
-        constructor(name, dependencies) {
-            let _this = this;
+    let chevron = {
+        v: "0.1.0",
+        dependencies: {},
+        modules: {},
 
-            _this.name = name;
+        module: function (name, dependencies, fn) {
+            chevron.modules[name] = new(class {
+                constructor(name, dependencies, fn) {
 
+                    this.name = name;
+                    this.dependencies = chevron.async.loadDependencies(dependencies);
 
-            _this.util = {
-                each: function(arr, fn) {
-                    for (let i = 0, l = arr.length; i < l; i++) {
-                        fn(arr[i], i);
+                    if (chevron.isDefined(fn)) {
+                        console.log(this,this.dependencies);
+                        fn.apply(this,this.dependencies);
                     }
-                },
-                eachObject: function(object, fn) {
-                    let keys = Object.keys(object);
-                    for (let i = 0, l = keys.length; i < l; i++) {
-                        fn(object[keys[i]], i);
-                    }
-                },
-
-                isDefined: function(val) {
-                    return typeof val !== "undefined";
                 }
-            };
+            })(name, dependencies, fn);
+        },
 
-            _this.async = {
-                loadDependencies: function(list) {
-                    let result = {};
+        /*--------------------------------------------------------------------------*/
+        /**
+         * Async
+         */
 
-                    _this.util.each(list, item => {
-                        _this.async.requireDependency(item).then(dependency => {
-                            if (!_this.util.isDefined(result[item])) {
-                                result[item] = dependency;
-                            }
-                        });
-                    });
-
-                    return result;
-                },
-                requireDependency: function(key) {
-                    return new Promise((resolve, reject) => {
-                        if (_this.util.isDefined(window[key])) {
-                            resolve(window[key]);
-                        } else {
-                            reject(_this.error(`dependency ${key} not found`));
+        async: {
+            loadDependencies: function (list) {
+                let result = [];
+                chevron.each(list, item => {
+                    chevron.async.requireDependency(item).then(dependency => {
+                        if (!chevron.isDefined(result[item])) {
+                            chevron.async.addDependency(item, dependency);
+                            result.push(dependency);
                         }
                     });
+                });
+                return result;
+            },
+            requireDependency: function (key) {
+                return new Promise((resolve, reject) => {
+                    let result;
+                    if (result = searchDependency(key)) {
+                        resolve(result);
+                    } else {
+                        reject(chevron.log(this.name, "error", `dependency ${key} not found`));
+                    }
+                });
+
+                function searchDependency(key) {
+                    let result;
+
+                    if (chevron.isDefined(chevron.dependencies[key])) {
+                        result = chevron.dependencies[key];
+                    } else if (chevron.isDefined(window[key])) {
+                        result = window[key];
+                    } else {
+                        result = false;
+                    }
+
+                    return result;
                 }
-            };
+            },
+            addDependency: function (name, dependency) {
+                if (chevron.isDefined(chevron.dependencies[name])) {
+                    return false;
+                } else {
+                    chevron.dependencies[name] = dependency;
+                    return true;
+                }
+            }
+        },
 
-            _this.dependencies = _this.async.loadDependencies(dependencies);
+        /*--------------------------------------------------------------------------*/
+        /**
+         * Utility
+         */
+        each: function (arr, fn) {
+            for (let i = 0, l = arr.length; i < l; i++) {
+                fn(arr[i], i);
+            }
+        },
+        eachObject: function (object, fn) {
+            let keys = Object.keys(object);
+            for (let i = 0, l = keys.length; i < l; i++) {
+                fn(object[keys[i]], i);
+            }
+        },
 
-        }
-        error(msg) {
-            throw `Chevron: error in module ${this.name}: ${msg}`;
+        isDefined: function (val) {
+            return typeof val !== "undefined";
+        },
+        log(name, type, msg) {
+            let str = `Chevron: ${type} in module ${name}: ${msg}`;
+            if (type === "error") {
+                throw str;
+            } else {
+                console.log(str);
+            }
         }
 
     };
 
-
+    window.chevron = chevron;
 
 })(window);
