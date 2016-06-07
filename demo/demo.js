@@ -1,9 +1,13 @@
 "use strict";
 
-chevron.module("Window", ["window"]);
+(function (chevron) {
+    chevron.module("Window", ["window"]);
+    chevron.module("Demo", ["Math", "toMarkdown", "Window"], myCallBack);
 
-chevron.module("Demo", ["Math", "toMarkdown", "Window"], (Math, markdown, window) => {
-    console.log(markdown);
-});
+    function myCallBack(Math, markdown, window) {
+        console.log(this, markdown);
+    }
 
-//console.log(chevron);
+    //console.log(chevron);
+
+})(chevron);

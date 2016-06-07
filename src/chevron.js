@@ -40,8 +40,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     this.dependencies = chevron.async.loadDependencies(dependencies);
 
                     if (chevron.isDefined(fn)) {
-                        console.log(this,this.dependencies);
-                        fn.apply(this,this.dependencies);
+                        fn.apply(this.dependencies,this.dependencies);
                     }
                 }
             })(name, dependencies, fn);
