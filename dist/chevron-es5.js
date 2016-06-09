@@ -1,5 +1,5 @@
 /*
-chevronjs v0.1.0
+chevronjs v0.3.0
 
 Copyright (c) 2016 Felix Rilling
 
@@ -38,23 +38,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             var _this = this;
             _this.container = {};
-            _this.dependency = {
-                load: function load(dependencies, finish, fail) {
+
+            //All chevron related methods
+            _this.cv = {
+                //Returns if Array of dependencies exists
+                load: function load(dependencies, done, error) {
                     var result = true;
 
                     _this.util.each(dependencies, function (dependency) {
-                        if (!_this.dependency.exists(dependency)) {
-                            fail(dependency);
+                        if (!_this.cv.exists(dependency)) {
+                            error(dependency);
                             result = false;
                         }
                     });
                     if (result) {
-                        finish();
+                        done();
                     }
 
                     return result;
                 },
-                compile: function compile(dependencies) {
+                //Bundle dependencies from Array to object
+                bundle: function bundle(dependencies) {
                     var result = {};
 
                     _this.util.each(dependencies, function (dependency) {
@@ -63,29 +67,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                     return result;
                 },
+
+                //returns if dependency exists
                 exists: function exists(dependency) {
                     return _this.util.isDefined(_this.container[dependency]);
                 },
 
-                add: function add(name, dependencies, content) {
-                    return _this.container[name] = {
-                        dependencies: dependencies,
-                        type: typeof content === "undefined" ? "undefined" : _typeof(content),
-                        content: content
-                    };
+                //returns Array of dependencies
+                list: function list() {
+                    return _this.container;
                 }
-
             };
+            //All generic methods
             _this.util = {
                 each: function each(arr, fn) {
                     for (var i = 0, l = arr.length; i < l; i++) {
                         fn(arr[i], i);
-                    }
-                },
-                eachObject: function eachObject(object, fn) {
-                    var keys = Object.keys(object);
-                    for (var i = 0, l = keys.length; i < l; i++) {
-                        fn(object[keys[i]], i);
                     }
                 },
                 isDefined: function isDefined(val) {
@@ -101,25 +98,53 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
             };
         }
-        //Add a new service
+        //Core Provider method
 
 
         _createClass(Chevron, [{
-            key: "service",
-            value: function service(name) {
-                var dependencies = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
-                var content = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-
+            key: "provider",
+            value: function provider(name, dependencies, content, finish) {
                 var _this = this;
 
-                _this.dependency.load(dependencies, function () {
-                    if (!_this.dependency.exists(name)) {
-                        _this.dependency.add(name, dependencies, content);
+                _this.cv.load(dependencies, function () {
+                    if (!_this.cv.exists(name)) {
+                        finish(name);
                     } else {
                         _this.util.log(name, "error", "service '" + name + "' already declared");
                     }
                 }, function (missing) {
                     _this.util.log(name, "error", "dependency '" + missing + "' not found");
+                });
+            }
+            //accepts all data
+
+        }, {
+            key: "service",
+            value: function service(name, dependencies, content) {
+                var _this = this;
+
+                return _this.provider(name, dependencies, content, function () {
+                    _this.container[name] = {
+                        dependencies: dependencies,
+                        type: typeof content === "undefined" ? "undefined" : _typeof(content),
+                        content: content
+                    };
+                });
+            }
+            //accepts constructor function
+
+        }, {
+            key: "factory",
+            value: function factory(name, dependencies, Class, args) {
+                var _this = this;
+                args.unshift(null);
+
+                return _this.provider(name, dependencies, Class, function () {
+                    _this.container[name] = {
+                        dependencies: dependencies,
+                        type: "object",
+                        content: new (Function.prototype.bind.apply(Class, args))()
+                    };
                 });
             }
             //Lets you access services with their dependencies injected
@@ -128,11 +153,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             key: "access",
             value: function access(name) {
                 var _this = this,
-                    service = _this.container[name],
-                    result = void 0;
+                    result = void 0,
+                    service = _this.container[name];
 
                 if (service.type === "function") {
-                    result = service.content.bind(_this.dependency.compile(service.dependencies));
+                    result = service.content.bind(_this.cv.bundle(service.dependencies));
                 } else {
                     result = service.content;
                 }

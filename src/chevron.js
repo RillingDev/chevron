@@ -25,31 +25,33 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 "use strict";
 
-(function (window) {
+(function(window) {
 
     class Chevron {
         constructor() {
                 let _this = this;
-
                 _this.container = {};
 
-                _this.dependency = {
-                    load: function (dependencies, finish, fail) {
+                //All chevron related methods
+                _this.cv = {
+                    //Returns if Array of dependencies exists
+                    load: function(dependencies, done, error) {
                         let result = true;
 
                         _this.util.each(dependencies, dependency => {
-                            if (!_this.dependency.exists(dependency)) {
-                                fail(dependency);
+                            if (!_this.cv.exists(dependency)) {
+                                error(dependency);
                                 result = false;
                             }
                         });
                         if (result) {
-                            finish();
+                            done();
                         }
 
                         return result;
                     },
-                    compile(dependencies) {
+                    //Bundle dependencies from Array to object
+                    bundle(dependencies) {
                         let result = {};
 
                         _this.util.each(dependencies, dependency => {
@@ -58,21 +60,24 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                         return result;
                     },
+                    //returns if dependency exists
                     exists(dependency) {
                         return _this.util.isDefined(_this.container[dependency]);
                     },
+                    //returns Array of dependencies
                     list() {
                         return _this.container;
                     }
 
                 };
+                //All generic methods
                 _this.util = {
-                    each: function (arr, fn) {
+                    each: function(arr, fn) {
                         for (let i = 0, l = arr.length; i < l; i++) {
                             fn(arr[i], i);
                         }
                     },
-                    isDefined: function (val) {
+                    isDefined: function(val) {
                         return typeof val !== "undefined";
                     },
                     log(name, type, msg) {
@@ -90,8 +95,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         provider(name, dependencies, content, finish) {
                 let _this = this;
 
-                _this.dependency.load(dependencies, () => {
-                    if (!_this.dependency.exists(name)) {
+                _this.cv.load(dependencies, () => {
+                    if (!_this.cv.exists(name)) {
                         finish(name);
                     } else {
                         _this.util.log(name, "error", `service '${name}' already declared`);
@@ -124,19 +129,18 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             dependencies,
                             type: "object",
                             content: new(Function.prototype.bind.apply(Class, args))
-
                         };
                     });
             }
             //Lets you access services with their dependencies injected
         access(name) {
             let _this = this,
-                service = _this.container[name],
-                result;
+                result,
+                service = _this.container[name];
 
             if (service.type === "function") {
                 result = service.content.bind(
-                    _this.dependency.compile(service.dependencies)
+                    _this.cv.bundle(service.dependencies)
                 );
             } else {
                 result = service.content;
