@@ -30,6 +30,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     class Chevron {
         constructor() {
                 let _this = this;
+
                 _this.container = {};
                 _this.dependency = {
                     load: function (dependencies, finish, fail) {
@@ -58,14 +59,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     },
                     exists(dependency) {
                         return _this.util.isDefined(_this.container[dependency]);
-                    },
-                    add: function (name, dependencies, content) {
-                        return _this.container[name] = {
-                            dependencies,
-                            type: typeof content,
-                            content
-                        };
-                    },
+                    }
 
                 };
                 _this.util = {
@@ -83,6 +77,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     isDefined: function (val) {
                         return typeof val !== "undefined";
                     },
+                    newCall: function (Cls) {
+                        return new(Function.prototype.bind.apply(Cls, arguments));
+                    },
                     log(name, type, msg) {
                         let str = `Chevron ${type} in service ${name}: ${msg}`;
                         if (type === "error") {
@@ -92,20 +89,48 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         }
                     }
                 };
+
             }
-            //Add a new service
-        service(name, dependencies = [], content = {}) {
+            //Core Provider method
+        provider(name, dependencies, content, finish) {
                 let _this = this;
 
                 _this.dependency.load(dependencies, () => {
                     if (!_this.dependency.exists(name)) {
-                        _this.dependency.add(name, dependencies, content);
+                        finish(name);
                     } else {
                         _this.util.log(name, "error", `service '${name}' already declared`);
                     }
                 }, missing => {
                     _this.util.log(name, "error", `dependency '${missing}' not found`);
                 });
+            }
+            //accepts all data
+        service(name, dependencies, content) {
+                let _this = this;
+
+                return _this.provider(name, dependencies, content,
+                    () => {
+                        _this.container[name] = {
+                            dependencies,
+                            type: typeof content,
+                            content
+                        };
+                    });
+            }
+            //accepts constructor function
+        factory(name, dependencies, Class, args) {
+                let _this = this;
+                console.log(Class, args);
+                return _this.provider(name, dependencies, Class,
+                    () => {
+                        _this.container[name] = {
+                            dependencies,
+                            type: "object",
+                            content: new(Function.prototype.bind.apply(Class, args))
+
+                        };
+                    });
             }
             //Lets you access services with their dependencies injected
         access(name) {

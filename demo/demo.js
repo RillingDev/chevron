@@ -4,6 +4,7 @@ let cv = new Chevron();
 
 cv.service("myService1", [], function () {
     console.log("myService1 initialized");
+    return 12
 });
 
 cv.service("myService2", ["myService1"], function (foo) {
@@ -14,10 +15,17 @@ cv.service("myService2", ["myService1"], function (foo) {
 });
 
 cv.service("myService3", ["myService1", "myService2"], function (foo, bar) {
-    cv.access("myService2")("lorem ipsum");
+    cv.access("myService2")(foo);
     console.log("myService3 initialized");
-    console.log(foo);
-    console.log(bar);
+    console.log(foo * bar);
+    return foo * bar
 });
+
+cv.factory("myFactory1", ["myService1"], function (foo, bar) {
+    this.fac3 = cv.access("myService1")(bar);
+    this.val = foo;
+    this.val2 = bar;
+    console.log(arguments);
+}, ["foo", "bar"]);
 
 console.log(cv);
