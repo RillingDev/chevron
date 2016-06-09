@@ -31,12 +31,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         constructor() {
             let _this = this;
             _this.container = {};
-            _this.register = {
+            _this.dependency = {
                 load: function (dependencies, finish, fail) {
                     let result = true;
 
                     _this.util.each(dependencies, dependency => {
-                        if (!_this.register.exists(dependency)) {
+                        if (!_this.dependency.exists(dependency)) {
                             fail(dependency);
                             result = false;
                         }
@@ -47,11 +47,24 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                     return result;
                 },
+                compile(dependencies) {
+                    let result = {};
+
+                    _this.util.each(dependencies, dependency => {
+                        result[dependency] = _this.container[dependency].content;
+                    });
+
+                    return result;
+                },
                 exists(dependency) {
                     return _this.util.isDefined(_this.container[dependency]);
                 },
-                add: function (name, content) {
-                    return _this.container[name] = content;
+                add: function (name, dependencies, content) {
+                    return _this.container[name] = {
+                        dependencies,
+                        type: typeof content,
+                        content
+                    };
                 },
 
             };
@@ -83,15 +96,30 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         service(name, dependencies = [], content = {}) {
             let _this = this;
 
-            _this.register.load(dependencies, () => {
-                if (!_this.register.exists(name)) {
-                    _this.register.add(name, content);
+            _this.dependency.load(dependencies, () => {
+                if (!_this.dependency.exists(name)) {
+                    _this.dependency.add(name, dependencies, content);
                 } else {
                     _this.util.log(name, "error", `service '${name}' already declared`);
                 }
             }, missing => {
                 _this.util.log(name, "error", `dependency '${missing}' not found`);
             });
+        }
+        access(name) {
+            let _this = this,
+                service = _this.container[name],
+                result;
+
+            if (service.type === "function") {
+                result = service.content.bind(
+                    _this.dependency.compile(service.dependencies)
+                );
+            } else {
+                result = service.content;
+            }
+
+            return result;
         }
     }
 

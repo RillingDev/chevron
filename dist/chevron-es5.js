@@ -25,6 +25,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 "use strict";
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -36,12 +38,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             var _this = this;
             _this.container = {};
-            _this.register = {
+            _this.dependency = {
                 load: function load(dependencies, finish, fail) {
                     var result = true;
 
                     _this.util.each(dependencies, function (dependency) {
-                        if (!_this.register.exists(dependency)) {
+                        if (!_this.dependency.exists(dependency)) {
                             fail(dependency);
                             result = false;
                         }
@@ -52,12 +54,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                     return result;
                 },
+                compile: function compile(dependencies) {
+                    var result = {};
+
+                    _this.util.each(dependencies, function (dependency) {
+                        result[dependency] = _this.container[dependency].content;
+                    });
+
+                    return result;
+                },
                 exists: function exists(dependency) {
                     return _this.util.isDefined(_this.container[dependency]);
                 },
 
-                add: function add(name, content) {
-                    return _this.container[name] = content;
+                add: function add(name, dependencies, content) {
+                    return _this.container[name] = {
+                        dependencies: dependencies,
+                        type: typeof content === "undefined" ? "undefined" : _typeof(content),
+                        content: content
+                    };
                 }
 
             };
@@ -95,15 +110,30 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 var _this = this;
 
-                _this.register.load(dependencies, function () {
-                    if (!_this.register.exists(name)) {
-                        _this.register.add(name, content);
+                _this.dependency.load(dependencies, function () {
+                    if (!_this.dependency.exists(name)) {
+                        _this.dependency.add(name, dependencies, content);
                     } else {
                         _this.util.log(name, "error", "service '" + name + "' already declared");
                     }
                 }, function (missing) {
                     _this.util.log(name, "error", "dependency '" + missing + "' not found");
                 });
+            }
+        }, {
+            key: "access",
+            value: function access(name) {
+                var _this = this,
+                    service = _this.container[name],
+                    result = void 0;
+
+                if (service.type === "function") {
+                    result = service.content.bind(_this.dependency.compile(service.dependencies));
+                } else {
+                    result = service.content;
+                }
+
+                return result;
             }
         }]);
 
