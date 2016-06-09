@@ -29,10 +29,69 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
     class Chevron {
         constructor() {
-            this.container = {};
+            let _this = this;
+            _this.container = {};
+            _this.register = {
+                load: function (dependencies, finish, fail) {
+                    let result = true;
+
+                    _this.util.each(dependencies, dependency => {
+                        if (!_this.register.exists(dependency)) {
+                            fail(dependency);
+                            result = false;
+                        }
+                    });
+                    if (result) {
+                        finish();
+                    }
+
+                    return result;
+                },
+                exists(dependency) {
+                    return _this.util.isDefined(_this.container[dependency]);
+                },
+                add: function (name, content) {
+                    return _this.container[name] = content;
+                },
+
+            };
+            _this.util = {
+                each: function (arr, fn) {
+                    for (let i = 0, l = arr.length; i < l; i++) {
+                        fn(arr[i], i);
+                    }
+                },
+                eachObject: function (object, fn) {
+                    let keys = Object.keys(object);
+                    for (let i = 0, l = keys.length; i < l; i++) {
+                        fn(object[keys[i]], i);
+                    }
+                },
+                isDefined: function (val) {
+                    return typeof val !== "undefined";
+                },
+                log(name, type, msg) {
+                    let str = `Chevron ${type} in service ${name}: ${msg}`;
+                    if (type === "error") {
+                        throw str;
+                    } else {
+                        console.log(str);
+                    }
+                }
+            };
         }
-        service(name, dependencies = [], sv = {}) {
-            console.log(dependencies);
+        service(name, dependencies = [], content = {}) {
+            let _this = this;
+
+            _this.register.load(dependencies, () => {
+                if (!_this.register.exists(name)) {
+                    _this.register.add(name, content);
+                } else {
+                    _this.util.log(name, "error", `service '${name}' already declared`);
+                }
+            }, missing => {
+                _this.util.log(name, "error", `dependency '${missing}' not found`);
+            });
         }
     }
 

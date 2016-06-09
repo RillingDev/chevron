@@ -32,12 +32,28 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             let _this = this;
             _this.container = {};
             _this.register = {
-                load: function (dependencies) {
+                load: function (dependencies, finish, fail) {
+                    let result = true;
 
+                    _this.util.each(dependencies, dependency => {
+                        if (!_this.register.exists(dependency)) {
+                            fail(dependency);
+                            result = false;
+                        }
+                    });
+                    if (result) {
+                        finish();
+                    }
+
+                    return result;
+                },
+                exists(dependency) {
+                    return _this.util.isDefined(_this.container[dependency]);
                 },
                 add: function (name, content) {
+                    return _this.container[name] = content;
+                },
 
-                }
             };
             _this.util = {
                 each: function (arr, fn) {
@@ -55,21 +71,27 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     return typeof val !== "undefined";
                 },
                 log(name, type, msg) {
-                    let str = `Chevron: ${type} in service ${name}: ${msg}`;
+                    let str = `Chevron ${type} in service ${name}: ${msg}`;
                     if (type === "error") {
                         throw str;
                     } else {
                         console.log(str);
                     }
                 }
-            }
+            };
         }
         service(name, dependencies = [], content = {}) {
             let _this = this;
-            console.log(dependencies);
+
             _this.register.load(dependencies, () => {
-                _this.register.add(name, content);
-            })
+                if (!_this.register.exists(name)) {
+                    _this.register.add(name, content);
+                } else {
+                    _this.util.log(name, "error", `service '${name}' already declared`);
+                }
+            }, missing => {
+                _this.util.log(name, "error", `dependency '${missing}' not found`);
+            });
         }
     }
 

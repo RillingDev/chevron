@@ -34,16 +34,76 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         function Chevron() {
             _classCallCheck(this, Chevron);
 
-            this.container = {};
+            var _this = this;
+            _this.container = {};
+            _this.register = {
+                load: function load(dependencies, finish, fail) {
+                    var result = true;
+
+                    _this.util.each(dependencies, function (dependency) {
+                        if (!_this.register.exists(dependency)) {
+                            fail(dependency);
+                            result = false;
+                        }
+                    });
+                    if (result) {
+                        finish();
+                    }
+
+                    return result;
+                },
+                exists: function exists(dependency) {
+                    return _this.util.isDefined(_this.container[dependency]);
+                },
+
+                add: function add(name, content) {
+                    return _this.container[name] = content;
+                }
+
+            };
+            _this.util = {
+                each: function each(arr, fn) {
+                    for (var i = 0, l = arr.length; i < l; i++) {
+                        fn(arr[i], i);
+                    }
+                },
+                eachObject: function eachObject(object, fn) {
+                    var keys = Object.keys(object);
+                    for (var i = 0, l = keys.length; i < l; i++) {
+                        fn(object[keys[i]], i);
+                    }
+                },
+                isDefined: function isDefined(val) {
+                    return typeof val !== "undefined";
+                },
+                log: function log(name, type, msg) {
+                    var str = "Chevron " + type + " in service " + name + ": " + msg;
+                    if (type === "error") {
+                        throw str;
+                    } else {
+                        console.log(str);
+                    }
+                }
+            };
         }
 
         _createClass(Chevron, [{
             key: "service",
             value: function service(name) {
                 var dependencies = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
-                var sv = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+                var content = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
-                console.log(dependencies);
+                var _this = this;
+
+                _this.register.load(dependencies, function () {
+                    if (!_this.register.exists(name)) {
+                        _this.register.add(name, content);
+                    } else {
+                        _this.util.log(name, "error", "service '" + name + "' already declared");
+                    }
+                }, function (missing) {
+                    _this.util.log(name, "error", "dependency '" + missing + "' not found");
+                });
             }
         }]);
 

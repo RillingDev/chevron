@@ -12,5 +12,7 @@
         console.log(myService1);
     });
 
+    cv.service("myService3", ["myService1","myService2"], "lorem ipsum");
+
     console.log(cv);
 })(Chevron);
