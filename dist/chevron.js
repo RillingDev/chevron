@@ -1,5 +1,5 @@
 /*
-chevronjs v0.3.0
+chevronjs v0.3.1
 
 Copyright (c) 2016 Felix Rilling
 
@@ -28,18 +28,20 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 (function(window) {
 
     class Chevron {
-        constructor() {
+        constructor(name = "Chevron") {
                 let _this = this;
+                _this.name = name;
+                _this.version = "0.3.1";
                 _this.container = {};
 
                 //All chevron related methods
-                _this.cv = {
+                _this.chevron = {
                     //Returns if Array of dependencies exists
                     load: function(dependencies, done, error) {
                         let result = true;
 
-                        _this.util.each(dependencies, dependency => {
-                            if (!_this.cv.exists(dependency)) {
+                        _this.chevron.util.each(dependencies, dependency => {
+                            if (!_this.chevron.exists(dependency)) {
                                 error(dependency);
                                 result = false;
                             }
@@ -54,7 +56,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     bundle(dependencies) {
                         let result = {};
 
-                        _this.util.each(dependencies, dependency => {
+                        _this.chevron.util.each(dependencies, dependency => {
                             result[dependency] = _this.container[dependency].content;
                         });
 
@@ -62,54 +64,61 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     },
                     //returns if dependency exists
                     exists(dependency) {
-                        return _this.util.isDefined(_this.container[dependency]);
+                        return _this.chevron.util.isDefined(_this.container[dependency]);
                     },
                     //returns Array of dependencies
                     list() {
                         return _this.container;
+                    },
+                    //All generic methods
+                    util: {
+                        //Iterate Array
+                        each: function(arr, fn) {
+                            for (let i = 0, l = arr.length; i < l; i++) {
+                                fn(arr[i], i);
+                            }
+                        },
+                        //return if val is defined
+                        isDefined: function(val) {
+                            return typeof val !== "undefined";
+                        },
+                        //logs/throws error
+                        log(app, name, type, element, msg) {
+                            let str = `${app} ${type} in ${element} '${name}': ${msg}`;
+                            if (type === "error") {
+                                throw str;
+                            } else {
+                                console.log(str);
+                            }
+                        }
                     }
 
-                };
-                //All generic methods
-                _this.util = {
-                    each: function(arr, fn) {
-                        for (let i = 0, l = arr.length; i < l; i++) {
-                            fn(arr[i], i);
-                        }
-                    },
-                    isDefined: function(val) {
-                        return typeof val !== "undefined";
-                    },
-                    log(name, type, msg) {
-                        let str = `Chevron ${type} in service ${name}: ${msg}`;
-                        if (type === "error") {
-                            throw str;
-                        } else {
-                            console.log(str);
-                        }
-                    }
                 };
 
             }
             //Core Provider method
-        provider(name, dependencies, content, finish) {
+        provider(name, dependencies, content, type, finish) {
                 let _this = this;
 
-                _this.cv.load(dependencies, () => {
-                    if (!_this.cv.exists(name)) {
+                _this.chevron.load(dependencies, () => {
+                    if (!_this.chevron.exists(name)) {
                         finish(name);
                     } else {
-                        _this.util.log(name, "error", `service '${name}' already declared`);
+                        _this.chevron.util.log(_this.name, name, "error", type, `service '${name}' already declared`);
                     }
                 }, missing => {
-                    _this.util.log(name, "error", `dependency '${missing}' not found`);
+                    _this.chevron.util.log(_this.name, name, "error", type, `dependency '${missing}' not found`);
                 });
             }
             //accepts all data
         service(name, dependencies, content) {
                 let _this = this;
 
-                return _this.provider(name, dependencies, content,
+                return _this.provider(
+                    name,
+                    dependencies,
+                    content,
+                    "service",
                     () => {
                         _this.container[name] = {
                             dependencies,
@@ -123,7 +132,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 let _this = this;
                 args.unshift(null);
 
-                return _this.provider(name, dependencies, Class,
+                return _this.provider(
+                    name,
+                    dependencies,
+                    Class,
+                    "factory",
                     () => {
                         _this.container[name] = {
                             dependencies,
@@ -140,7 +153,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
             if (service.type === "function") {
                 result = service.content.bind(
-                    _this.cv.bundle(service.dependencies)
+                    _this.chevron.bundle(service.dependencies)
                 );
             } else {
                 result = service.content;
@@ -149,6 +162,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             return result;
         }
     }
+
+
 
     window.Chevron = Chevron;
 })(window);

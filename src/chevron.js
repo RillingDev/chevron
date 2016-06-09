@@ -1,5 +1,5 @@
 /*
-chevronjs v0.3.0
+chevronjs v0.3.1
 
 Copyright (c) 2016 Felix Rilling
 
@@ -28,10 +28,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 (function(window) {
 
     class Chevron {
-        constructor(name) {
+        constructor(name = "Chevron") {
                 let _this = this;
-                _this.name = name || "Chevron";
-                _this.version = "0.3.0";
+                _this.name = name;
+                _this.version = "0.3.1";
                 _this.container = {};
 
                 //All chevron related methods

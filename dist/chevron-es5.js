@@ -1,5 +1,5 @@
 /*
-chevronjs v0.3.0
+chevronjs v0.3.1
 
 Copyright (c) 2016 Felix Rilling
 
@@ -34,19 +34,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 (function (window) {
     var Chevron = function () {
         function Chevron() {
+            var name = arguments.length <= 0 || arguments[0] === undefined ? "Chevron" : arguments[0];
+
             _classCallCheck(this, Chevron);
 
             var _this = this;
+            _this.name = name;
+            _this.version = "0.3.1";
             _this.container = {};
 
             //All chevron related methods
-            _this.cv = {
+            _this.chevron = {
                 //Returns if Array of dependencies exists
                 load: function load(dependencies, done, error) {
                     var result = true;
 
-                    _this.util.each(dependencies, function (dependency) {
-                        if (!_this.cv.exists(dependency)) {
+                    _this.chevron.util.each(dependencies, function (dependency) {
+                        if (!_this.chevron.exists(dependency)) {
                             error(dependency);
                             result = false;
                         }
@@ -61,7 +65,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 bundle: function bundle(dependencies) {
                     var result = {};
 
-                    _this.util.each(dependencies, function (dependency) {
+                    _this.chevron.util.each(dependencies, function (dependency) {
                         result[dependency] = _this.container[dependency].content;
                     });
 
@@ -70,32 +74,37 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 //returns if dependency exists
                 exists: function exists(dependency) {
-                    return _this.util.isDefined(_this.container[dependency]);
+                    return _this.chevron.util.isDefined(_this.container[dependency]);
                 },
 
                 //returns Array of dependencies
                 list: function list() {
                     return _this.container;
-                }
-            };
-            //All generic methods
-            _this.util = {
-                each: function each(arr, fn) {
-                    for (var i = 0, l = arr.length; i < l; i++) {
-                        fn(arr[i], i);
-                    }
                 },
-                isDefined: function isDefined(val) {
-                    return typeof val !== "undefined";
-                },
-                log: function log(name, type, msg) {
-                    var str = "Chevron " + type + " in service " + name + ": " + msg;
-                    if (type === "error") {
-                        throw str;
-                    } else {
-                        console.log(str);
+
+                //All generic methods
+                util: {
+                    //Iterate Array
+                    each: function each(arr, fn) {
+                        for (var i = 0, l = arr.length; i < l; i++) {
+                            fn(arr[i], i);
+                        }
+                    },
+                    //return if val is defined
+                    isDefined: function isDefined(val) {
+                        return typeof val !== "undefined";
+                    },
+                    //logs/throws error
+                    log: function log(app, name, type, element, msg) {
+                        var str = app + " " + type + " in " + element + " '" + name + "': " + msg;
+                        if (type === "error") {
+                            throw str;
+                        } else {
+                            console.log(str);
+                        }
                     }
                 }
+
             };
         }
         //Core Provider method
@@ -103,17 +112,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         _createClass(Chevron, [{
             key: "provider",
-            value: function provider(name, dependencies, content, finish) {
+            value: function provider(name, dependencies, content, type, finish) {
                 var _this = this;
 
-                _this.cv.load(dependencies, function () {
-                    if (!_this.cv.exists(name)) {
+                _this.chevron.load(dependencies, function () {
+                    if (!_this.chevron.exists(name)) {
                         finish(name);
                     } else {
-                        _this.util.log(name, "error", "service '" + name + "' already declared");
+                        _this.chevron.util.log(_this.name, name, "error", type, "service '" + name + "' already declared");
                     }
                 }, function (missing) {
-                    _this.util.log(name, "error", "dependency '" + missing + "' not found");
+                    _this.chevron.util.log(_this.name, name, "error", type, "dependency '" + missing + "' not found");
                 });
             }
             //accepts all data
@@ -123,7 +132,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             value: function service(name, dependencies, content) {
                 var _this = this;
 
-                return _this.provider(name, dependencies, content, function () {
+                return _this.provider(name, dependencies, content, "service", function () {
                     _this.container[name] = {
                         dependencies: dependencies,
                         type: typeof content === "undefined" ? "undefined" : _typeof(content),
@@ -139,7 +148,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 var _this = this;
                 args.unshift(null);
 
-                return _this.provider(name, dependencies, Class, function () {
+                return _this.provider(name, dependencies, Class, "factory", function () {
                     _this.container[name] = {
                         dependencies: dependencies,
                         type: "object",
@@ -157,7 +166,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     service = _this.container[name];
 
                 if (service.type === "function") {
-                    result = service.content.bind(_this.cv.bundle(service.dependencies));
+                    result = service.content.bind(_this.chevron.bundle(service.dependencies));
                 } else {
                     result = service.content;
                 }
