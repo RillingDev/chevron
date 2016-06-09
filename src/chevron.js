@@ -29,10 +29,47 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
     class Chevron {
         constructor() {
-            this.container = {};
+            let _this = this;
+            _this.container = {};
+            _this.register = {
+                load: function (dependencies) {
+
+                },
+                add: function (name, content) {
+
+                }
+            };
+            _this.util = {
+                each: function (arr, fn) {
+                    for (let i = 0, l = arr.length; i < l; i++) {
+                        fn(arr[i], i);
+                    }
+                },
+                eachObject: function (object, fn) {
+                    let keys = Object.keys(object);
+                    for (let i = 0, l = keys.length; i < l; i++) {
+                        fn(object[keys[i]], i);
+                    }
+                },
+                isDefined: function (val) {
+                    return typeof val !== "undefined";
+                },
+                log(name, type, msg) {
+                    let str = `Chevron: ${type} in service ${name}: ${msg}`;
+                    if (type === "error") {
+                        throw str;
+                    } else {
+                        console.log(str);
+                    }
+                }
+            }
         }
-        service(name, dependencies = [], sv = {}) {
+        service(name, dependencies = [], content = {}) {
+            let _this = this;
             console.log(dependencies);
+            _this.register.load(dependencies, () => {
+                _this.register.add(name, content);
+            })
         }
     }
 

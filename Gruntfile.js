@@ -4,7 +4,6 @@ module.exports = function (grunt) {
     require("time-grunt")(grunt);
     require("jit-grunt")(grunt, {});
 
-
     grunt.initConfig({
         watch: {
             js: {
@@ -44,7 +43,7 @@ module.exports = function (grunt) {
         uglify: {
             main: {
                 files: {
-                    ("dist/"+grunt.custom.name+"-es5.min.js": ".tmp/chevron-es5.js")
+                    "dist/chevron-es5.min.js": ".tmp/chevron-es5.js"
                 },
                 options: {
                     compress: {
