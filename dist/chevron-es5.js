@@ -101,6 +101,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
             };
         }
+        //Add a new service
+
 
         _createClass(Chevron, [{
             key: "service",
@@ -120,6 +122,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _this.util.log(name, "error", "dependency '" + missing + "' not found");
                 });
             }
+            //Lets you access services with their dependencies injected
+
         }, {
             key: "access",
             value: function access(name) {
