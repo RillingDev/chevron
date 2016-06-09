@@ -1,14 +1,11 @@
 "use strict";
 
-(function (chevron) {
-    chevron.module("myCustomModule", ["window", "document"]);
-    chevron.module("Demo", ["Math", "toMarkdown", "myCustomModule"], myCallBack);
+(function (Chevron) {
+    let cv = new Chevron();
 
-    function myCallBack(dep) {
+    cv.service("myService", [], function () {
         console.log(this);
-    }
+    })
 
-    console.log("###############");
-    console.log(chevron);
-
-})(chevron);
+    console.log(cv);
+})(Chevron);

@@ -1,8 +1,9 @@
 "use strict";
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     require("time-grunt")(grunt);
     require("jit-grunt")(grunt, {});
+
 
     grunt.initConfig({
         watch: {
@@ -43,7 +44,7 @@ module.exports = function(grunt) {
         uglify: {
             main: {
                 files: {
-                    "dist/esQuery-es5.min.js": ".tmp/esQuery-es5.js"
+                    ("dist/"+grunt.custom.name+"-es5.min.js": ".tmp/chevron-es5.js")
                 },
                 options: {
                     compress: {
@@ -57,13 +58,13 @@ module.exports = function(grunt) {
         copy: {
             build: {
                 files: {
-                    ".tmp/esQuery.js": "src/esQuery.js",
+                    ".tmp/chevron.js": "src/chevron.js",
                 }
             },
             dist: {
                 files: {
-                    "dist/esQuery.js": ".tmp/esQuery.js",
-                    "dist/esQuery-es5.js": ".tmp/esQuery-es5.js"
+                    "dist/chevron.js": ".tmp/chevron.js",
+                    "dist/chevron-es5.js": ".tmp/chevron-es5.js"
                 }
             }
         },
@@ -75,7 +76,7 @@ module.exports = function(grunt) {
             },
             dist: {
                 files: {
-                    ".tmp/esQuery-es5.js": ".tmp/esQuery.js"
+                    ".tmp/chevron-es5.js": ".tmp/chevron.js"
                 }
             }
         },
