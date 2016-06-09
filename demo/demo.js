@@ -25,6 +25,7 @@ cv.factory("myFactory1", ["myService1"], function (foo, bar) {
     this.fac3 = cv.access("myService1")(bar);
     this.val = foo;
     this.val2 = bar;
+        console.log(this);
     console.log(arguments);
 }, ["foo", "bar"]);
 

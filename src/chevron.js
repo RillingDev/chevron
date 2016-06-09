@@ -32,6 +32,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 let _this = this;
 
                 _this.container = {};
+
                 _this.dependency = {
                     load: function (dependencies, finish, fail) {
                         let result = true;
@@ -59,6 +60,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     },
                     exists(dependency) {
                         return _this.util.isDefined(_this.container[dependency]);
+                    },
+                    list() {
+                        return _this.container;
                     }
 
                 };
@@ -68,17 +72,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             fn(arr[i], i);
                         }
                     },
-                    eachObject: function (object, fn) {
-                        let keys = Object.keys(object);
-                        for (let i = 0, l = keys.length; i < l; i++) {
-                            fn(object[keys[i]], i);
-                        }
-                    },
                     isDefined: function (val) {
                         return typeof val !== "undefined";
-                    },
-                    newCall: function (Cls) {
-                        return new(Function.prototype.bind.apply(Cls, arguments));
                     },
                     log(name, type, msg) {
                         let str = `Chevron ${type} in service ${name}: ${msg}`;
@@ -121,7 +116,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             //accepts constructor function
         factory(name, dependencies, Class, args) {
                 let _this = this;
-                console.log(Class, args);
+                args.unshift(null);
+
                 return _this.provider(name, dependencies, Class,
                     () => {
                         _this.container[name] = {
