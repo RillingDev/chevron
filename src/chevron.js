@@ -1,5 +1,5 @@
 /*
-chevronjs v0.2.0
+chevronjs v0.3.0
 
 Copyright (c) 2016 Felix Rilling
 

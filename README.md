@@ -34,3 +34,12 @@ or
 ```javascript
 cv.access("foo"); //returns the service with dependencies bound into 'this'.
 ```
+
+### Factories
+
+```javascript
+/Chevron.prototype.factory(name,[dependencies],Constructor,[arguments]);
+cv.factory("foo",[],function(a){
+    this.foo=a;
+},["bar"]);
+```
