@@ -1,3 +1,4 @@
+![ChevronJS](/chevron-logo.jpg)
 # chevron.js
 
 > An extremely small JavaScript service library
