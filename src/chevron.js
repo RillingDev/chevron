@@ -30,6 +30,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     class Chevron {
         constructor(name = "Chevron", lazy = true) {
                 let _this = this;
+
                 _this.options = {
                     name,
                     lazy
@@ -39,7 +40,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 //All chevron related methods
                 _this.chevron = {
                     //Returns if Array of dependencies exists
-                    load: function (dependencies, done, error) {
+                    load(dependencies, done, error) {
                         let result = true;
 
                         _this.chevron.util.each(dependencies, dependency => {
@@ -73,6 +74,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                         return result;
                     },
+                    //Inject decortator/middleware into service
+                    inject(service, fn) {
+                        _this.container[service].inject = fn;
+                    },
+                    //return if service has type
+                    hasType(service, type) {
+                        return _this.container[service].type === type;
+                    },
                     //returns if dependency exists
                     exists(dependency) {
                         return _this.chevron.util.isDefined(_this.container[dependency]);
@@ -84,13 +93,19 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     //All generic methods
                     util: {
                         //Iterate Array
-                        each: function (arr, fn) {
+                        each(arr, fn) {
                             for (let i = 0, l = arr.length; i < l; i++) {
                                 fn(arr[i], i);
                             }
                         },
+                        eachObject(object, fn) {
+                            let keys = Object.keys(object);
+                            for (let i = 0, l = keys.length; i < l; i++) {
+                                fn(object[keys[i]], i);
+                            }
+                        },
                         //return if val is defined
-                        isDefined: function (val) {
+                        isDefined(val) {
                             return typeof val !== "undefined";
                         },
                         //logs/throws error
@@ -103,7 +118,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             }
                         }
                     }
-
                 };
 
             }
@@ -133,7 +147,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     );
                 });
             }
-            //accepts all data
+            //accepts function
         service(name, dependencies, content) {
                 let _this = this;
 
@@ -145,7 +159,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     () => {
                         _this.container[name] = {
                             dependencies,
-                            type: typeof content,
+                            type: "service",
                             content
                         };
                     });
@@ -163,10 +177,33 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     () => {
                         _this.container[name] = {
                             dependencies,
-                            type: "object",
+                            type: "factory",
                             content: new(Function.prototype.bind.apply(Class, args))
                         };
                     });
+            }
+            //Injects a decorator to the container/service
+            /*decorator(fn, service) {
+
+            }*/
+            //Injects a middleware to the container/service
+        middleware(fn, applies) {
+                let _this = this,
+                    keys = Object.keys(_this.container);
+
+                _this.chevron.util.eachObject(_this.container, (service, index) => {
+                    let name = keys[index];
+                    //Inject for some services only if argument is present
+                    if (_this.chevron.util.isDefined(applies)) {
+                        if (applies.includes(name)) {
+                            _this.chevron.inject(name, fn);
+                        }
+                    } else {
+                        _this.chevron.inject(name, fn);
+                    }
+                });
+
+                return fn;
             }
             //Lets you access services with their dependencies injected
         access(name) {
@@ -174,7 +211,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 result,
                 service = _this.container[name];
 
-            if (service.type === "function") {
+            //only bind services
+            if (service.type === "service") {
+                //collect dependencies in bundle
                 let bundle = _this.chevron.bundle(service.dependencies, missing => {
                     _this.chevron.util.log(
                         _this.options.name,
@@ -185,9 +224,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     );
                 });
 
-                result = service.content.bind(
-                    _this.chevron.bundle(service.dependencies)
-                );
+                //Fire inject
+                if (_this.chevron.util.isDefined(service.inject)) {
+                    service.inject(bundle);
+                }
+                //bind dependency-bundled function
+                result = service.content.bind(bundle);
             } else {
                 result = service.content;
             }

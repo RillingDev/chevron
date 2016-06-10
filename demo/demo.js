@@ -22,6 +22,7 @@ cv.service("myService3", ["myService1", "myService2", "myFactory1"], function (f
 
 cv.factory("myFactory1", ["myService1"], function (foo, bar) {
     this.sv1 = cv.access("myService1")(bar);
+    this.sv2 = cv.access("myService2");
     this.val1 = foo;
     this.val2 = bar;
 }, [12, 24]);
