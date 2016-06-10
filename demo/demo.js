@@ -27,4 +27,8 @@ cv.factory("myFactory1", ["myService1"], function (foo, bar) {
     this.val2 = bar;
 }, [12, 24]);
 
+cv.middleware((sv, name) => {
+    console.log("fired " + name);
+});
+
 let result = cv.access("myService3")(5, 4);

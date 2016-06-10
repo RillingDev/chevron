@@ -25,8 +25,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 "use strict";
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -40,6 +38,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             _classCallCheck(this, Chevron);
 
             var _this = this;
+
             _this.options = {
                 name: name,
                 lazy: lazy
@@ -49,6 +48,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             //All chevron related methods
             _this.chevron = {
                 //Returns if Array of dependencies exists
+
                 load: function load(dependencies, done, error) {
                     var result = true;
 
@@ -67,6 +67,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                     return result;
                 },
+
                 //Bundle dependencies from Array to object
                 bundle: function bundle(dependencies, error) {
                     var result = {};
@@ -84,28 +85,42 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     return result;
                 },
 
+                //Inject decortator/middleware into service
+                inject: function inject(service, fn) {
+                    _this.container[service].inject.push(fn);
+                },
+
+                //return if service has type
+                hasType: function hasType(service, type) {
+                    return _this.container[service].type === type;
+                },
+
                 //returns if dependency exists
                 exists: function exists(dependency) {
                     return _this.chevron.util.isDefined(_this.container[dependency]);
                 },
 
-                //returns Array of dependencies
-                list: function list() {
-                    return _this.container;
-                },
-
                 //All generic methods
                 util: {
                     //Iterate Array
+
                     each: function each(arr, fn) {
                         for (var i = 0, l = arr.length; i < l; i++) {
                             fn(arr[i], i);
                         }
                     },
+                    eachObject: function eachObject(object, fn) {
+                        var keys = Object.keys(object);
+                        for (var i = 0, l = keys.length; i < l; i++) {
+                            fn(object[keys[i]], i);
+                        }
+                    },
+
                     //return if val is defined
                     isDefined: function isDefined(val) {
                         return typeof val !== "undefined";
                     },
+
                     //logs/throws error
                     log: function log(app, name, type, element, msg) {
                         var str = app + " " + type + " in " + element + " '" + name + "': " + msg;
@@ -116,7 +131,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         }
                     }
                 }
-
             };
         }
         //Core Provider method
@@ -137,7 +151,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _this.chevron.util.log(_this.options.name, name, "error", type, "dependency '" + missing + "' not found");
                 });
             }
-            //accepts all data
+            //accepts function
 
         }, {
             key: "service",
@@ -147,8 +161,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 return _this.provider(name, dependencies, content, "service", function () {
                     _this.container[name] = {
                         dependencies: dependencies,
-                        type: typeof content === "undefined" ? "undefined" : _typeof(content),
-                        content: content
+                        type: "service",
+                        content: content,
+                        inject: []
                     };
                 });
             }
@@ -163,10 +178,36 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 return _this.provider(name, dependencies, Class, "factory", function () {
                     _this.container[name] = {
                         dependencies: dependencies,
-                        type: "object",
-                        content: new (Function.prototype.bind.apply(Class, args))()
+                        type: "factory",
+                        content: new (Function.prototype.bind.apply(Class, args))(),
+                        inject: []
                     };
                 });
+            }
+            //Injects a decorator to the container/service
+            /*decorator(fn, service) {
+             }*/
+            //Injects a middleware to the container/service
+
+        }, {
+            key: "middleware",
+            value: function middleware(fn, applies) {
+                var _this = this,
+                    keys = Object.keys(_this.container);
+
+                _this.chevron.util.eachObject(_this.container, function (service, index) {
+                    var name = keys[index];
+                    //Inject for some services only if argument is present
+                    if (_this.chevron.util.isDefined(applies)) {
+                        if (applies.includes(name)) {
+                            _this.chevron.inject(name, fn);
+                        }
+                    } else {
+                        _this.chevron.inject(name, fn);
+                    }
+                });
+
+                return fn;
             }
             //Lets you access services with their dependencies injected
 
@@ -177,17 +218,35 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     result = void 0,
                     service = _this.container[name];
 
-                if (service.type === "function") {
-                    var bundle = _this.chevron.bundle(service.dependencies, function (missing) {
-                        _this.chevron.util.log(_this.options.name, name, "error", "service", "dependency '" + missing + "' not found");
-                    });
+                //only bind services
+                if (service.type === "service") {
+                    (function () {
+                        //collect dependencies in bundle
+                        var bundle = _this.chevron.bundle(service.dependencies, function (missing) {
+                            _this.chevron.util.log(_this.options.name, name, "error", "service", "dependency '" + missing + "' not found");
+                        });
 
-                    result = service.content.bind(_this.chevron.bundle(service.dependencies));
+                        //Fire inject
+                        if (_this.chevron.util.isDefined(service.inject)) {
+                            _this.chevron.util.each(service.inject, function (fn) {
+                                fn.call(bundle, service, name);
+                            });
+                        }
+                        //bind dependency-bundled function
+                        result = service.content.bind(bundle);
+                    })();
                 } else {
                     result = service.content;
                 }
 
                 return result;
+            }
+            //returns Array of dependencies
+
+        }, {
+            key: "list",
+            value: function list() {
+                return this.container;
             }
         }]);
 

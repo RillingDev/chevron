@@ -1,39 +1,39 @@
 {
-  "name": "chevronjs",
-  "version": "0.4.0",
-  "description": "chevronjs is a extremely small JavaScript service library for easy dependency managment.",
-  "main": "dist/chevron.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/FelixRilling/chevronjs.git"
-  },
-  "keywords": [
-    "dependencies",
-    "services"
-  ],
-  "author": "Felix Rilling",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/FelixRilling/chevronjs/issues"
-  },
-  "homepage": "https://github.com/FelixRilling/chevronjs#readme",
-  "devDependencies": {
-    "babel-preset-es2015": "^6.3.13",
-    "babel-preset-stage-0": "^6.5.0",
-    "babel-preset-stage-1": "^6.5.0",
-    "babel-preset-stage-2": "^6.5.0",
-    "babel-preset-stage-3": "^6.5.0",
-    "grunt": "^0.4.5",
-    "grunt-babel": "^6.0.0",
-    "grunt-contrib-clean": "^0.6.0",
-    "grunt-contrib-copy": "^0.8.2",
-    "grunt-contrib-jshint": "^0.11.3",
-    "grunt-contrib-uglify": "^0.11.0",
-    "grunt-contrib-watch": "^1.0.0",
-    "jit-grunt": "^0.9.1",
-    "jshint-stylish": "^1.0.0",
-    "time-grunt": "^1.0.0",
-    "uglify-js": "^2.6.1"
-  },
-  "dependencies": {}
+    "name": "chevronjs",
+    "version": "0.4.1",
+    "description": "chevronjs is a extremely small JavaScript service library for easy dependency managment.",
+    "main": "dist/chevron.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/FelixRilling/chevronjs.git"
+    },
+    "keywords": [
+        "dependencies",
+        "services"
+    ],
+    "author": "Felix Rilling",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/FelixRilling/chevronjs/issues"
+    },
+    "homepage": "https://github.com/FelixRilling/chevronjs#readme",
+    "devDependencies": {
+        "babel-preset-es2015": "^6.3.13",
+        "babel-preset-stage-0": "^6.5.0",
+        "babel-preset-stage-1": "^6.5.0",
+        "babel-preset-stage-2": "^6.5.0",
+        "babel-preset-stage-3": "^6.5.0",
+        "grunt": "^0.4.5",
+        "grunt-babel": "^6.0.0",
+        "grunt-contrib-clean": "^0.6.0",
+        "grunt-contrib-copy": "^0.8.2",
+        "grunt-contrib-jshint": "^0.11.3",
+        "grunt-contrib-uglify": "^0.11.0",
+        "grunt-contrib-watch": "^1.0.0",
+        "jit-grunt": "^0.9.1",
+        "jshint-stylish": "^1.0.0",
+        "time-grunt": "^1.0.0",
+        "uglify-js": "^2.6.1"
+    },
+    "dependencies": {}
 }

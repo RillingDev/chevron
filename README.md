@@ -1,6 +1,10 @@
 # chevron.js
 
-chevronjs is a extremely small JavaScript service library for easy dependency managment.
+> An extremely small JavaScript service library
+
+## Introduction
+
+chevronjs is a extremely small JavaScript service library for easy dependency managment inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
 
 ## Syntax
 
@@ -31,16 +35,16 @@ cv.service("bar",["foo"],
 Services can be accessed in two ways:
 
 ```javascript
-cv.container.foo; //returns the service as variable.
-```
-
-or, if you want to access the dependencies too:
-
-```javascript
 cv.access("foo"); //returns the service with dependencies bound into 'this'.
 ```
 
-### Factories
+or, if you just want the service without dependencies:
+
+```javascript
+cv.container.foo; //returns the service as variable.
+```
+
+## Factories
 
 Factories are like Services but are treated as Constructors instead of classic functions and is constructed with arguments.
 
@@ -55,11 +59,32 @@ cv.factory("foo",[],
 );
 ```
 
+## Middleware
+
+Middleware can be used to inject a function into a service, causing the service to call the middleware everytime the service is called
+
+```javascript
+//Chevron.prototype.middleware(fn,[services]);
+cv.middleware(
+    function(service,name){
+        console.log("myCustom Service is being run!")
+    },
+    ["myCustom"]
+);
+
+//Or inject into all services
+cv.middleware(
+    function(service, name){
+        console.log(name + " was called")
+    }
+);
+```
+
 ## Options
 
 The Chevron Constructor can be called with several options
 
 ```javascript
 //Chevron.prototype.service(name = "Chevron", lazy = true);
-var namedCv= new Chevron("myCustomContainer", true);
+var namedCv = new Chevron("myCustomContainer", true);
 ```

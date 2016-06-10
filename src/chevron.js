@@ -1,5 +1,5 @@
 /*
-chevronjs v0.4.0
+chevronjs v0.4.1
 
 Copyright (c) 2016 Felix Rilling
 
@@ -76,7 +76,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     },
                     //Inject decortator/middleware into service
                     inject(service, fn) {
-                        _this.container[service].inject = fn;
+                        _this.container[service].inject.push(fn);
                     },
                     //return if service has type
                     hasType(service, type) {
@@ -85,10 +85,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     //returns if dependency exists
                     exists(dependency) {
                         return _this.chevron.util.isDefined(_this.container[dependency]);
-                    },
-                    //returns Array of dependencies
-                    list() {
-                        return _this.container;
                     },
                     //All generic methods
                     util: {
@@ -160,7 +156,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         _this.container[name] = {
                             dependencies,
                             type: "service",
-                            content
+                            content,
+                            inject: []
                         };
                     });
             }
@@ -178,7 +175,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         _this.container[name] = {
                             dependencies,
                             type: "factory",
-                            content: new(Function.prototype.bind.apply(Class, args))
+                            content: new(Function.prototype.bind.apply(Class, args)),
+                            inject: []
                         };
                     });
             }
@@ -207,34 +205,40 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
             //Lets you access services with their dependencies injected
         access(name) {
-            let _this = this,
-                result,
-                service = _this.container[name];
+                let _this = this,
+                    result,
+                    service = _this.container[name];
 
-            //only bind services
-            if (service.type === "service") {
-                //collect dependencies in bundle
-                let bundle = _this.chevron.bundle(service.dependencies, missing => {
-                    _this.chevron.util.log(
-                        _this.options.name,
-                        name,
-                        "error",
-                        "service",
-                        `dependency '${missing}' not found`
-                    );
-                });
+                //only bind services
+                if (service.type === "service") {
+                    //collect dependencies in bundle
+                    let bundle = _this.chevron.bundle(service.dependencies, missing => {
+                        _this.chevron.util.log(
+                            _this.options.name,
+                            name,
+                            "error",
+                            "service",
+                            `dependency '${missing}' not found`
+                        );
+                    });
 
-                //Fire inject
-                if (_this.chevron.util.isDefined(service.inject)) {
-                    service.inject(bundle);
+                    //Fire inject
+                    if (_this.chevron.util.isDefined(service.inject)) {
+                        _this.chevron.util.each(service.inject, fn => {
+                            fn.call(bundle, service, name);
+                        });
+                    }
+                    //bind dependency-bundled function
+                    result = service.content.bind(bundle);
+                } else {
+                    result = service.content;
                 }
-                //bind dependency-bundled function
-                result = service.content.bind(bundle);
-            } else {
-                result = service.content;
-            }
 
-            return result;
+                return result;
+            }
+            //returns Array of dependencies
+        list() {
+            return this.container;
         }
     }
 
