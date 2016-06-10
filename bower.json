@@ -1,7 +1,7 @@
 {
     "name": "chevronjs",
     "version": "v0.4.1",
-    "description": "chevronjs is a extremely small JavaScript service library for easy dependency managment.",
+    "description": "chevronjs is a extremely small JavaScript service library for easy dependency managment inspired by BottleJS and the AngularJS Module API.",
     "main": "dist/chevron.js",
     "authors": [
         "Felix Rilling"
