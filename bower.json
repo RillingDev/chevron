@@ -1,6 +1,6 @@
 {
     "name": "chevronjs",
-    "version": "v0.3.1",
+    "version": "v0.4.0",
     "description": "chevronjs is a extremely small JavaScript service library for easy dependency managment.",
     "main": "dist/chevron.js",
     "authors": [

@@ -1,5 +1,5 @@
 /*
-chevronjs v0.3.0
+chevronjs v0.4.0
 
 Copyright (c) 2016 Felix Rilling
 
@@ -28,75 +28,120 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 (function (window) {
 
     class Chevron {
-        constructor() {
+        constructor(name = "Chevron", lazy = true) {
                 let _this = this;
-
+                _this.options = {
+                    name,
+                    lazy
+                };
                 _this.container = {};
 
-            }
-            //Core Provider method
-        provider(name, dependencies, content, finish) {
-                let _this = this;
-
-                _this.dependency = {
-                    load: function (dependencies, finish, fail) {
+                //All chevron related methods
+                _this.chevron = {
+                    //Returns if Array of dependencies exists
+                    load: function (dependencies, done, error) {
                         let result = true;
 
-                        _this.util.each(dependencies, dependency => {
-                            if (!_this.dependency.exists(dependency)) {
-                                fail(dependency);
-                                result = false;
+                        _this.chevron.util.each(dependencies, dependency => {
+                            if (!_this.chevron.exists(dependency)) {
+                                //only error if lazyloading is disabled
+                                if (!_this.options.lazy) {
+                                    error(dependency);
+                                    result = false;
+                                }
                             }
                         });
                         if (result) {
-                            finish();
+                            done();
                         }
 
                         return result;
                     },
-                    exists(dependency) {
-                        return _this.util.isDefined(_this.container[dependency]);
+                    //Bundle dependencies from Array to object
+                    bundle(dependencies, error) {
+                        let result = {};
+
+                        _this.chevron.util.each(dependencies, dependency => {
+                            let content;
+
+                            if (content = _this.container[dependency].content) {
+                                result[dependency] = content;
+                            } else {
+                                error(dependency);
+                            }
+                        });
+
+                        return result;
                     },
+                    //returns if dependency exists
+                    exists(dependency) {
+                        return _this.chevron.util.isDefined(_this.container[dependency]);
+                    },
+                    //returns Array of dependencies
                     list() {
                         return _this.container;
+                    },
+                    //All generic methods
+                    util: {
+                        //Iterate Array
+                        each: function (arr, fn) {
+                            for (let i = 0, l = arr.length; i < l; i++) {
+                                fn(arr[i], i);
+                            }
+                        },
+                        //return if val is defined
+                        isDefined: function (val) {
+                            return typeof val !== "undefined";
+                        },
+                        //logs/throws error
+                        log(app, name, type, element, msg) {
+                            let str = `${app} ${type} in ${element} '${name}': ${msg}`;
+                            if (type === "error") {
+                                throw str;
+                            } else {
+                                console.log(str);
+                            }
+                        }
                     }
 
                 };
-                _this.util = {
-                    each: function (arr, fn) {
-                        for (let i = 0, l = arr.length; i < l; i++) {
-                            fn(arr[i], i);
-                        }
-                    },
-                    isDefined: function (val) {
-                        return typeof val !== "undefined";
-                    },
-                    log(name, type, msg) {
-                        let str = `Chevron ${type} in service ${name}: ${msg}`;
-                        if (type === "error") {
-                            throw str;
-                        } else {
-                            console.log(str);
-                        }
-                    }
-                };
 
+            }
+            //Core Provider method
+        provider(name, dependencies, content, type, finish) {
+                let _this = this;
 
-                _this.dependency.load(dependencies, () => {
-                    if (!_this.dependency.exists(name)) {
+                _this.chevron.load(dependencies, () => {
+                    if (!_this.chevron.exists(name)) {
                         finish(name);
                     } else {
-                        _this.util.log(name, "error", `service '${name}' already declared`);
+                        _this.chevron.util.log(
+                            _this.options.name,
+                            name,
+                            "error",
+                            type,
+                            `service '${name}' already declared`
+                        );
                     }
                 }, missing => {
-                    _this.util.log(name, "error", `dependency '${missing}' not found`);
+                    _this.chevron.util.log(
+                        _this.options.name,
+                        name,
+                        "error",
+                        type,
+                        `dependency '${missing}' not found`
+                    );
                 });
             }
             //accepts all data
         service(name, dependencies, content) {
                 let _this = this;
 
-                return _this.provider(name, dependencies, content,
+                return _this.provider(
+                    name,
+                    dependencies,
+                    content,
+                    "service",
                     () => {
                         _this.container[name] = {
                             dependencies,
@@ -110,7 +155,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 let _this = this;
                 args.unshift(null);
 
-                return _this.provider(name, dependencies, Class,
+                return _this.provider(
+                    name,
+                    dependencies,
+                    Class,
+                    "factory",
                     () => {
                         _this.container[name] = {
                             dependencies,
@@ -122,28 +171,28 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             //Lets you access services with their dependencies injected
         access(name) {
             let _this = this,
-                service = _this.container[name],
-                result;
+                result,
+                service = _this.container[name];
 
             if (service.type === "function") {
+                let bundle = _this.chevron.bundle(service.dependencies, missing => {
+                    _this.chevron.util.log(
+                        _this.options.name,
+                        name,
+                        "error",
+                        "service",
+                        `dependency '${missing}' not found`
+                    );
+                });
+
                 result = service.content.bind(
-                    compile(service.dependencies)
+                    _this.chevron.bundle(service.dependencies)
                 );
             } else {
                 result = service.content;
             }
 
             return result;
-
-            function compile(dependencies) {
-                let result = {};
-
-                _this.util.each(dependencies, dependency => {
-                    result[dependency] = _this.container[dependency].content;
-                });
-
-                return result;
-            }
         }
     }
 

@@ -1,5 +1,5 @@
 /*
-chevronjs v0.3.0
+chevronjs v0.4.0
 
 Copyright (c) 2016 Felix Rilling
 
@@ -34,70 +34,107 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 (function (window) {
     var Chevron = function () {
         function Chevron() {
+            var name = arguments.length <= 0 || arguments[0] === undefined ? "Chevron" : arguments[0];
+            var lazy = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
+
             _classCallCheck(this, Chevron);
 
             var _this = this;
-
+            _this.options = {
+                name: name,
+                lazy: lazy
+            };
             _this.container = {};
-        }
-        //Core Provider method
 
+            //All chevron related methods
+            _this.chevron = {
+                //Returns if Array of dependencies exists
+                load: function load(dependencies, done, error) {
+                    var result = true;
 
-        _createClass(Chevron, [{
-            key: "provider",
-            value: function provider(name, dependencies, content, finish) {
-                var _this = this;
-
-                _this.dependency = {
-                    load: function load(dependencies, finish, fail) {
-                        var result = true;
-
-                        _this.util.each(dependencies, function (dependency) {
-                            if (!_this.dependency.exists(dependency)) {
-                                fail(dependency);
+                    _this.chevron.util.each(dependencies, function (dependency) {
+                        if (!_this.chevron.exists(dependency)) {
+                            //only error if lazyloading is disabled
+                            if (!_this.options.lazy) {
+                                error(dependency);
                                 result = false;
                             }
-                        });
-                        if (result) {
-                            finish();
                         }
-
-                        return result;
-                    },
-                    exists: function exists(dependency) {
-                        return _this.util.isDefined(_this.container[dependency]);
-                    },
-                    list: function list() {
-                        return _this.container;
+                    });
+                    if (result) {
+                        done();
                     }
-                };
-                _this.util = {
+
+                    return result;
+                },
+                //Bundle dependencies from Array to object
+                bundle: function bundle(dependencies, error) {
+                    var result = {};
+
+                    _this.chevron.util.each(dependencies, function (dependency) {
+                        var content = void 0;
+
+                        if (content = _this.container[dependency].content) {
+                            result[dependency] = content;
+                        } else {
+                            error(dependency);
+                        }
+                    });
+
+                    return result;
+                },
+
+                //returns if dependency exists
+                exists: function exists(dependency) {
+                    return _this.chevron.util.isDefined(_this.container[dependency]);
+                },
+
+                //returns Array of dependencies
+                list: function list() {
+                    return _this.container;
+                },
+
+                //All generic methods
+                util: {
+                    //Iterate Array
                     each: function each(arr, fn) {
                         for (var i = 0, l = arr.length; i < l; i++) {
                             fn(arr[i], i);
                         }
                     },
+                    //return if val is defined
                     isDefined: function isDefined(val) {
                         return typeof val !== "undefined";
                     },
-                    log: function log(name, type, msg) {
-                        var str = "Chevron " + type + " in service " + name + ": " + msg;
+                    //logs/throws error
+                    log: function log(app, name, type, element, msg) {
+                        var str = app + " " + type + " in " + element + " '" + name + "': " + msg;
                         if (type === "error") {
                             throw str;
                         } else {
                             console.log(str);
                         }
                     }
-                };
+                }
 
-                _this.dependency.load(dependencies, function () {
-                    if (!_this.dependency.exists(name)) {
+            };
+        }
+        //Core Provider method
+
+
+        _createClass(Chevron, [{
+            key: "provider",
+            value: function provider(name, dependencies, content, type, finish) {
+                var _this = this;
+
+                _this.chevron.load(dependencies, function () {
+                    if (!_this.chevron.exists(name)) {
                         finish(name);
                     } else {
-                        _this.util.log(name, "error", "service '" + name + "' already declared");
+                        _this.chevron.util.log(_this.options.name, name, "error", type, "service '" + name + "' already declared");
                     }
                 }, function (missing) {
-                    _this.util.log(name, "error", "dependency '" + missing + "' not found");
+                    _this.chevron.util.log(_this.options.name, name, "error", type, "dependency '" + missing + "' not found");
                 });
             }
             //accepts all data
@@ -107,7 +144,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             value: function service(name, dependencies, content) {
                 var _this = this;
 
-                return _this.provider(name, dependencies, content, function () {
+                return _this.provider(name, dependencies, content, "service", function () {
                     _this.container[name] = {
                         dependencies: dependencies,
                         type: typeof content === "undefined" ? "undefined" : _typeof(content),
@@ -123,7 +160,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 var _this = this;
                 args.unshift(null);
 
-                return _this.provider(name, dependencies, Class, function () {
+                return _this.provider(name, dependencies, Class, "factory", function () {
                     _this.container[name] = {
                         dependencies: dependencies,
                         type: "object",
@@ -137,26 +174,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             key: "access",
             value: function access(name) {
                 var _this = this,
-                    service = _this.container[name],
-                    result = void 0;
+                    result = void 0,
+                    service = _this.container[name];
 
                 if (service.type === "function") {
-                    result = service.content.bind(compile(service.dependencies));
+                    var bundle = _this.chevron.bundle(service.dependencies, function (missing) {
+                        _this.chevron.util.log(_this.options.name, name, "error", "service", "dependency '" + missing + "' not found");
+                    });
+
+                    result = service.content.bind(_this.chevron.bundle(service.dependencies));
                 } else {
                     result = service.content;
                 }
 
                 return result;
-
-                function compile(dependencies) {
-                    var result = {};
-
-                    _this.util.each(dependencies, function (dependency) {
-                        result[dependency] = _this.container[dependency].content;
-                    });
-
-                    return result;
-                }
             }
         }]);
 

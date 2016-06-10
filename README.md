@@ -10,8 +10,6 @@ Services are the bread and butter of Chevron, being the most common way to decla
 
 ```javascript
 var cv = new Chevron();
-//or
-var namedCv= new Chevron("myCustomContainer");
 
 //Chevron.prototype.service(name,[dependencies],content);
 cv.service("foo",[],
@@ -55,4 +53,13 @@ cv.factory("foo",[],
   },
   ["bar"]
 );
+```
+
+## Options
+
+The Chevron Constructor can be called with several options
+
+```javascript
+//Chevron.prototype.service(name = "Chevron", lazy = true);
+var namedCv= new Chevron("myCustomContainer", true);
 ```

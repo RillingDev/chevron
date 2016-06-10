@@ -1,6 +1,6 @@
 "use strict";
 
-let cv = new Chevron();
+let cv = new Chevron("demoChevron");
 
 cv.service("myService1", [], function () {
     console.log("myService1 initialized");
@@ -13,12 +13,6 @@ cv.service("myService2", ["myService1"], function (foo) {
     return foo;
 });
 
-cv.factory("myFactory1", ["myService1"], function (foo, bar) {
-    this.sv1 = cv.access("myService1")(bar);
-    this.val1 = foo;
-    this.val2 = bar;
-}, [12, 24]);
-
 cv.service("myService3", ["myService1", "myService2", "myFactory1"], function (foo, bar) {
     let ac = cv.access("myService2")(foo);
     console.log("myService3 initialized");
@@ -26,5 +20,10 @@ cv.service("myService3", ["myService1", "myService2", "myFactory1"], function (f
     return ac;
 });
 
+cv.factory("myFactory1", ["myService1"], function (foo, bar) {
+    this.sv1 = cv.access("myService1")(bar);
+    this.val1 = foo;
+    this.val2 = bar;
+}, [12, 24]);
 
 let result = cv.access("myService3")(5, 4);

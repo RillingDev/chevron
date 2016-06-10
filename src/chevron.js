@@ -1,5 +1,5 @@
 /*
-chevronjs v0.3.1
+chevronjs v0.4.0
 
 Copyright (c) 2016 Felix Rilling
 
@@ -28,9 +28,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 (function (window) {
 
     class Chevron {
-        constructor(name = "Chevron") {
+        constructor(name = "Chevron", lazy = true) {
                 let _this = this;
-                _this.name = name;
+                _this.options = {
+                    name,
+                    lazy
+                };
                 _this.container = {};
 
                 //All chevron related methods
@@ -41,8 +44,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                         _this.chevron.util.each(dependencies, dependency => {
                             if (!_this.chevron.exists(dependency)) {
-                                error(dependency);
-                                result = false;
+                                //only error if lazyloading is disabled
+                                if (!_this.options.lazy) {
+                                    error(dependency);
+                                    result = false;
+                                }
                             }
                         });
                         if (result) {
@@ -52,11 +58,17 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         return result;
                     },
                     //Bundle dependencies from Array to object
-                    bundle(dependencies) {
+                    bundle(dependencies, error) {
                         let result = {};
 
                         _this.chevron.util.each(dependencies, dependency => {
-                            result[dependency] = _this.container[dependency].content;
+                            let content;
+
+                            if (content = _this.container[dependency].content) {
+                                result[dependency] = content;
+                            } else {
+                                error(dependency);
+                            }
                         });
 
                         return result;
@@ -103,10 +115,22 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     if (!_this.chevron.exists(name)) {
                         finish(name);
                     } else {
-                        _this.chevron.util.log(_this.name, name, "error", type, `service '${name}' already declared`);
+                        _this.chevron.util.log(
+                            _this.options.name,
+                            name,
+                            "error",
+                            type,
+                            `service '${name}' already declared`
+                        );
                     }
                 }, missing => {
-                    _this.chevron.util.log(_this.name, name, "error", type, `dependency '${missing}' not found`);
+                    _this.chevron.util.log(
+                        _this.options.name,
+                        name,
+                        "error",
+                        type,
+                        `dependency '${missing}' not found`
+                    );
                 });
             }
             //accepts all data
@@ -151,6 +175,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 service = _this.container[name];
 
             if (service.type === "function") {
+                let bundle = _this.chevron.bundle(service.dependencies, missing => {
+                    _this.chevron.util.log(
+                        _this.options.name,
+                        name,
+                        "error",
+                        "service",
+                        `dependency '${missing}' not found`
+                    );
+                });
+
                 result = service.content.bind(
                     _this.chevron.bundle(service.dependencies)
                 );
