@@ -36,7 +36,7 @@ Services can be accessed in two ways:
 cv.container.foo; //returns the service as variable.
 ```
 
-or
+or, if you want to access the dependencies too:
 
 ```javascript
 cv.access("foo"); //returns the service with dependencies bound into 'this'.

@@ -1,5 +1,5 @@
 /*
-chevronjs v0.3.1
+chevronjs v0.3.0
 
 Copyright (c) 2016 Felix Rilling
 
@@ -25,100 +25,78 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 "use strict";
 
-(function(window) {
+(function (window) {
 
     class Chevron {
-        constructor(name = "Chevron") {
+        constructor() {
                 let _this = this;
-                _this.name = name;
-                _this.version = "0.3.1";
+
                 _this.container = {};
 
-                //All chevron related methods
-                _this.chevron = {
-                    //Returns if Array of dependencies exists
-                    load: function(dependencies, done, error) {
+            }
+            //Core Provider method
+        provider(name, dependencies, content, finish) {
+                let _this = this;
+
+                _this.dependency = {
+                    load: function (dependencies, finish, fail) {
                         let result = true;
 
-                        _this.chevron.util.each(dependencies, dependency => {
-                            if (!_this.chevron.exists(dependency)) {
-                                error(dependency);
+                        _this.util.each(dependencies, dependency => {
+                            if (!_this.dependency.exists(dependency)) {
+                                fail(dependency);
                                 result = false;
                             }
                         });
                         if (result) {
-                            done();
+                            finish();
                         }
 
                         return result;
                     },
-                    //Bundle dependencies from Array to object
-                    bundle(dependencies) {
-                        let result = {};
-
-                        _this.chevron.util.each(dependencies, dependency => {
-                            result[dependency] = _this.container[dependency].content;
-                        });
-
-                        return result;
-                    },
-                    //returns if dependency exists
                     exists(dependency) {
-                        return _this.chevron.util.isDefined(_this.container[dependency]);
+                        return _this.util.isDefined(_this.container[dependency]);
                     },
-                    //returns Array of dependencies
                     list() {
                         return _this.container;
-                    },
-                    //All generic methods
-                    util: {
-                        //Iterate Array
-                        each: function(arr, fn) {
-                            for (let i = 0, l = arr.length; i < l; i++) {
-                                fn(arr[i], i);
-                            }
-                        },
-                        //return if val is defined
-                        isDefined: function(val) {
-                            return typeof val !== "undefined";
-                        },
-                        //logs/throws error
-                        log(app, name, type, element, msg) {
-                            let str = `${app} ${type} in ${element} '${name}': ${msg}`;
-                            if (type === "error") {
-                                throw str;
-                            } else {
-                                console.log(str);
-                            }
-                        }
                     }
 
                 };
+                _this.util = {
+                    each: function (arr, fn) {
+                        for (let i = 0, l = arr.length; i < l; i++) {
+                            fn(arr[i], i);
+                        }
+                    },
+                    isDefined: function (val) {
+                        return typeof val !== "undefined";
+                    },
+                    log(name, type, msg) {
+                        let str = `Chevron ${type} in service ${name}: ${msg}`;
+                        if (type === "error") {
+                            throw str;
+                        } else {
+                            console.log(str);
+                        }
+                    }
+                };
 
-            }
-            //Core Provider method
-        provider(name, dependencies, content, type, finish) {
-                let _this = this;
 
-                _this.chevron.load(dependencies, () => {
-                    if (!_this.chevron.exists(name)) {
+                _this.dependency.load(dependencies, () => {
+                    if (!_this.dependency.exists(name)) {
                         finish(name);
                     } else {
-                        _this.chevron.util.log(_this.name, name, "error", type, `service '${name}' already declared`);
+                        _this.util.log(name, "error", `service '${name}' already declared`);
                     }
                 }, missing => {
-                    _this.chevron.util.log(_this.name, name, "error", type, `dependency '${missing}' not found`);
+                    _this.util.log(name, "error", `dependency '${missing}' not found`);
                 });
             }
             //accepts all data
         service(name, dependencies, content) {
                 let _this = this;
 
-                return _this.provider(
-                    name,
-                    dependencies,
-                    content,
-                    "service",
+                return _this.provider(name, dependencies, content,
                     () => {
                         _this.container[name] = {
                             dependencies,
@@ -132,11 +110,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 let _this = this;
                 args.unshift(null);
 
-                return _this.provider(
-                    name,
-                    dependencies,
-                    Class,
-                    "factory",
+                return _this.provider(name, dependencies, Class,
                     () => {
                         _this.container[name] = {
                             dependencies,
@@ -148,22 +122,30 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             //Lets you access services with their dependencies injected
         access(name) {
             let _this = this,
-                result,
-                service = _this.container[name];
+                service = _this.container[name],
+                result;
 
             if (service.type === "function") {
                 result = service.content.bind(
-                    _this.chevron.bundle(service.dependencies)
+                    compile(service.dependencies)
                 );
             } else {
                 result = service.content;
             }
 
             return result;
+
+            function compile(dependencies) {
+                let result = {};
+
+                _this.util.each(dependencies, dependency => {
+                    result[dependency] = _this.container[dependency].content;
+                });
+
+                return result;
+            }
         }
     }
-
-
 
     window.Chevron = Chevron;
 })(window);

@@ -25,19 +25,18 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 "use strict";
 
-(function(window) {
+(function (window) {
 
     class Chevron {
         constructor(name = "Chevron") {
                 let _this = this;
                 _this.name = name;
-                _this.version = "0.3.1";
                 _this.container = {};
 
                 //All chevron related methods
                 _this.chevron = {
                     //Returns if Array of dependencies exists
-                    load: function(dependencies, done, error) {
+                    load: function (dependencies, done, error) {
                         let result = true;
 
                         _this.chevron.util.each(dependencies, dependency => {
@@ -73,13 +72,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     //All generic methods
                     util: {
                         //Iterate Array
-                        each: function(arr, fn) {
+                        each: function (arr, fn) {
                             for (let i = 0, l = arr.length; i < l; i++) {
                                 fn(arr[i], i);
                             }
                         },
                         //return if val is defined
-                        isDefined: function(val) {
+                        isDefined: function (val) {
                             return typeof val !== "undefined";
                         },
                         //logs/throws error
@@ -162,8 +161,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             return result;
         }
     }
-
-
 
     window.Chevron = Chevron;
 })(window);
