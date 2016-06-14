@@ -7,26 +7,26 @@ cv.service("myService1", [], function() {
     return 4;
 });
 
-cv.service("myService2", ["myService1"], function(foo) {
-    console.log("myService2 initialized");
-    return foo + cv.access("myService1")();
+cv.service("myService2", ["myService1", "myFactory1"], function(foo) {
+    console.log(this);
+    return foo + this.myService1();
 });
 /*
 cv.service("myService3", ["myService1", "myService2", "myFactory1"], function(foo, bar) {
     console.log("myService3 initialized");
     return this.myFactory1.foobar + " " + this.myService2(foo) + "" + bar;
-});
+});*/
 
 
 
 cv.factory("myFactory1", ["myService1"], function(foo, bar) {
     console.log("myFactory1 initialized");
-    this.foo = foo + " ipsum";
+    this.foo = foo + " + " + this.myService1();
     this.bar = bar + " lorem";
-    this.foobar = foo + bar + cv.access("myService1")();
+    //this.foobar = foo + bar + cv.access("myService1")();
 }, [12, 24]);
 
-
+/*
 cv.middleware((sv, name) => {
     console.log("middleware fired for " + name);
 });
@@ -35,5 +35,8 @@ cv.middleware((sv, name) => {
     console.log("decorator fired for " + name);
 }, ["myService3"]);*/
 
-let accessedFn = cv.access("myService2");
-console.log(accessedFn(10, 12));
+let accessedFac = cv.access("myFactory1");
+console.log(accessedFac);
+console.log("##########");
+/*let accessedFn = cv.access("myService2");
+console.log(accessedFn(21));*/

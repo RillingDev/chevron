@@ -56,7 +56,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                         return result;
                     },
-                    //Bundle dependencies from Array to object
+                    //Bundle dependencies for service
                     bundle(dependencies, error) {
                         let result = {};
 
@@ -72,16 +72,45 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                         return result;
                     },
-                    add(name, dependencies, type, content) {
+                    //Bundle dependencies for factory
+                    collect(dependencies, error) {
+                        let result = {};
+
+                        _this.chevron.util.each(dependencies, dependency => {
+                            let service = _this.container[dependency];
+                            if (_this.chevron.util.isDefined(service)) {
+                                result[dependency] = _this.container[dependency];
+                            } else {
+                                error(dependency);
+                            }
+                        });
+
+                        return result;
+                    },
+                    add(name, dependencies, type, content, args) {
                         _this.container[name] = {
-                            dependencies: [],
-                            type,
-                            content,
+                            dependencies: dependencies || [],
+                            type: type || null,
+                            content: content || null,
+                            args: args || [],
                             inject: {
                                 middleware: [],
-                                decorator: []
-                            }
+                                decorator: null
+                            },
+                            constructed: false
                         };
+                    },
+                    //construct factory
+                    construct(service, bundle) {
+                        let Factory = _this.container[service],
+                            container = Object.create(Factory.prototype || Object.prototype);
+
+                        _this.chevron.util.eachObject(bundle, (dependency, name) => {
+                            container[name] = dependency.content;
+                        })
+
+                        Factory.content = (Factory.content.apply(container, Factory.args) || container);
+                        Factory.constructed = true;
                     },
                     //Inject decortator/middleware into service
                     inject(service, type, fn) {
@@ -106,8 +135,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         eachObject(object, fn) {
                             let keys = Object.keys(object);
                             for (let i = 0, l = keys.length; i < l; i++) {
-                                fn(object[keys[i]], i);
+                                fn(object[keys[i]], keys[i], i);
                             }
+                        },
+                        bindNew(Class, bundle, args) {
+                            return new(Function.prototype.bind.apply(Class, args));
                         },
                         //return if val is defined
                         isDefined(val) {
@@ -127,12 +159,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
             }
             //Core Provider method
-        provider(name, dependencies, content, type, finish) {
+        provider(name, dependencies, content, type, args) {
                 let _this = this;
 
                 _this.chevron.load(dependencies, () => {
                     if (!_this.chevron.exists(name)) {
-                        _this.chevron.add(name, dependencies, type, content);
+                        _this.chevron.add(name, dependencies, type, content, args);
                     } else {
                         _this.chevron.util.log(
                             name,
@@ -158,15 +190,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     name,
                     dependencies,
                     content,
-                    "service",
-                    () => {
-                        _this.container[name] = {
-                            dependencies,
-                            type: "service",
-                            content,
-                            inject: []
-                        };
-                    });
+                    "service");
             }
             //accepts constructor function
         factory(name, dependencies, Class, args) {
@@ -178,14 +202,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     dependencies,
                     Class,
                     "factory",
-                    () => {
-                        _this.container[name] = {
-                            dependencies,
-                            type: "factory",
-                            content: new(Function.prototype.bind.apply(Class, args)),
-                            inject: []
-                        };
-                    });
+                    args
+                );
             }
             //Injects a decorator to the container/service
             /*decorator(fn, service) {
@@ -216,29 +234,42 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     result,
                     service = _this.container[name];
 
-                //only bind services
+
+
+                //Bind dependencies
                 if (service.type === "service") {
                     //collect dependencies in bundle
                     let bundle = _this.chevron.bundle(service.dependencies, missing => {
                         _this.chevron.util.log(
                             name,
                             "error",
-                            "service",
+                            service.type,
                             `dependency '${missing}' not found`
                         );
                     });
-
-                    //Fire inject
-                    if (_this.chevron.util.isDefined(service.inject)) {
-                        _this.chevron.util.each(service.inject, fn => {
-                            fn.call(bundle, service, name);
-                        });
-                    }
-                    //bind dependency-bundled function
                     result = service.content.bind(bundle);
-                } else {
+                } else if (service.type === "factory") {
+                    let bundle = _this.chevron.collect(service.dependencies, missing => {
+                        _this.chevron.util.log(
+                            name,
+                            "error",
+                            service.type,
+                            `dependency '${missing}' not found`
+                        );
+                    });
+                    if (!service.constructed) {
+                        _this.chevron.construct(name, bundle);
+                    }
                     result = service.content;
                 }
+
+                //Call Middleware
+                if (_this.chevron.util.isDefined(service.inject.middleware)) {
+                    _this.chevron.util.each(service.inject.middleware, fn => {
+                        fn.call(bundle, service, name);
+                    });
+                }
+
 
                 return result;
             }
