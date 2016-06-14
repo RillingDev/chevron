@@ -25,15 +25,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 "use strict";
 
-(function (window) {
+(function(window) {
 
     class Chevron {
-        constructor(name = "Chevron", lazy = true) {
+        constructor(name = "Chevron") {
                 let _this = this;
 
                 _this.options = {
-                    name,
-                    lazy
+                    name
                 };
                 _this.container = {};
 
@@ -45,11 +44,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                         _this.chevron.util.each(dependencies, dependency => {
                             if (!_this.chevron.exists(dependency)) {
-                                //only error if lazyloading is disabled
-                                if (!_this.options.lazy) {
-                                    error(dependency);
-                                    result = false;
-                                }
+                                /*
+                                error(dependency);
+                                result = false;
+                                */
                             }
                         });
                         if (result) {
@@ -74,9 +72,20 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                         return result;
                     },
+                    add(name, dependencies, type, content) {
+                        _this.container[name] = {
+                            dependencies: [],
+                            type,
+                            content,
+                            inject: {
+                                middleware: [],
+                                decorator: []
+                            }
+                        };
+                    },
                     //Inject decortator/middleware into service
-                    inject(service, fn) {
-                        _this.container[service].inject.push(fn);
+                    inject(service, type, fn) {
+                        _this.container[service].inject[type].push(fn);
                     },
                     //return if service has type
                     hasType(service, type) {
@@ -105,8 +114,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             return typeof val !== "undefined";
                         },
                         //logs/throws error
-                        log(app, name, type, element, msg) {
-                            let str = `${app} ${type} in ${element} '${name}': ${msg}`;
+                        log(name, type, element, msg) {
+                            let str = `${this.options.name} ${type} in ${element} '${name}': ${msg}`;
                             if (type === "error") {
                                 throw str;
                             } else {
@@ -123,10 +132,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                 _this.chevron.load(dependencies, () => {
                     if (!_this.chevron.exists(name)) {
-                        finish(name);
+                        _this.chevron.add(name, dependencies, type, content);
                     } else {
                         _this.chevron.util.log(
-                            _this.options.name,
                             name,
                             "error",
                             type,
@@ -135,7 +143,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     }
                 }, missing => {
                     _this.chevron.util.log(
-                        _this.options.name,
                         name,
                         "error",
                         type,
@@ -194,10 +201,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     //Inject for some services only if argument is present
                     if (_this.chevron.util.isDefined(applies)) {
                         if (applies.includes(name)) {
-                            _this.chevron.inject(name, fn);
+                            _this.chevron.inject(name, "middleware", fn);
                         }
                     } else {
-                        _this.chevron.inject(name, fn);
+                        _this.chevron.inject(name, "middleware", fn);
                     }
                 });
 
@@ -214,7 +221,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     //collect dependencies in bundle
                     let bundle = _this.chevron.bundle(service.dependencies, missing => {
                         _this.chevron.util.log(
-                            _this.options.name,
                             name,
                             "error",
                             "service",
