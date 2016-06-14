@@ -43,15 +43,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             };
             _this.container = {};
 
-            //All chevron related methods
-            _this.chevron = {
+            //All chevron methods
+            _this.cv = {
                 //Returns if Array of dependencies exists
 
                 load: function load(dependencies, done, error) {
                     var result = true;
 
-                    _this.chevron.util.each(dependencies, function (dependency) {
-                        if (!_this.chevron.exists(dependency)) {
+                    _this.cv.ut.each(dependencies, function (dependency) {
+                        if (!_this.cv.exists(dependency)) {
                             /*
                             error(dependency);
                             result = false;
@@ -69,9 +69,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 collect: function collect(dependencies, map, error) {
                     var result = {};
 
-                    _this.chevron.util.each(dependencies, function (dependency) {
+                    _this.cv.ut.each(dependencies, function (dependency) {
                         var service = _this.container[dependency];
-                        if (_this.chevron.util.isDefined(service)) {
+                        if (_this.cv.ut.isDefined(service)) {
                             result[dependency] = map(service);
                         } else {
                             error(dependency);
@@ -99,7 +99,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     var Factory = _this.container[service],
                         container = Object.create(Factory.prototype || Object.prototype);
 
-                    _this.chevron.util.eachObject(bundle, function (dependency, name) {
+                    _this.cv.ut.eachObject(bundle, function (dependency, name) {
                         container[name] = dependency.content;
                     });
 
@@ -119,11 +119,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 //returns if dependency exists
                 exists: function exists(dependency) {
-                    return _this.chevron.util.isDefined(_this.container[dependency]);
+                    return _this.cv.ut.isDefined(_this.container[dependency]);
                 },
 
-                //All generic methods
-                util: {
+                //All utility methods
+                ut: {
                     //Iterate Array
 
                     each: function each(arr, fn) {
@@ -136,9 +136,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         for (var i = 0, l = keys.length; i < l; i++) {
                             fn(object[keys[i]], keys[i], i);
                         }
-                    },
-                    bindNew: function bindNew(Class, bundle, args) {
-                        return new (Function.prototype.bind.apply(Class, args))();
                     },
 
                     //return if val is defined
@@ -166,14 +163,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             value: function provider(name, dependencies, content, type, args) {
                 var _this = this;
 
-                _this.chevron.load(dependencies, function () {
-                    if (!_this.chevron.exists(name)) {
-                        _this.chevron.add(name, dependencies, type, content, args);
+                _this.cv.load(dependencies, function () {
+                    if (!_this.cv.exists(name)) {
+                        _this.cv.add(name, dependencies, type, content, args);
                     } else {
-                        _this.chevron.util.log(name, "error", type, "service '" + name + "' already declared");
+                        _this.cv.ut.log(name, "error", type, "service '" + name + "' already declared");
                     }
                 }, function (missing) {
-                    _this.chevron.util.log(name, "error", type, "dependency '" + missing + "' not found");
+                    _this.cv.ut.log(name, "error", type, "dependency '" + missing + "' not found");
                 });
             }
             //accepts function
@@ -203,18 +200,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }, {
             key: "middleware",
             value: function middleware(fn, applies) {
-                var _this = this,
-                    keys = Object.keys(_this.container);
+                var _this = this;
 
-                _this.chevron.util.eachObject(_this.container, function (service, index) {
-                    var name = keys[index];
+                _this.cv.ut.eachObject(_this.container, function (service, name) {
                     //Inject for some services only if argument is present
-                    if (_this.chevron.util.isDefined(applies)) {
+                    if (_this.cv.ut.isDefined(applies)) {
                         if (applies.includes(name)) {
-                            _this.chevron.inject(name, "middleware", fn);
+                            _this.cv.inject(name, "middleware", fn);
                         }
                     } else {
-                        _this.chevron.inject(name, "middleware", fn);
+                        _this.cv.inject(name, "middleware", fn);
                     }
                 });
 
@@ -228,30 +223,30 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 var _this = this,
                     result = void 0,
                     service = _this.container[name],
-                    bundle = void 0;
+                    bundle = {};
 
                 if (service.type === "service") {
-                    bundle = _this.chevron.collect(service.dependencies, function (item) {
+                    bundle = _this.cv.collect(service.dependencies, function (item) {
                         return item.content;
                     }, function (missing) {
-                        _this.chevron.util.log(name, "error", service.type, "dependency '" + missing + "' not found");
+                        _this.cv.ut.log(name, "error", service.type, "dependency '" + missing + "' not found");
                     });
                     result = service.content.bind(bundle);
                 } else if (service.type === "factory") {
-                    bundle = _this.chevron.collect(service.dependencies, function (item) {
+                    bundle = _this.cv.collect(service.dependencies, function (item) {
                         return item;
                     }, function (missing) {
-                        _this.chevron.util.log(name, "error", service.type, "dependency '" + missing + "' not found");
+                        _this.cv.ut.log(name, "error", service.type, "dependency '" + missing + "' not found");
                     });
                     if (!service.constructed) {
-                        _this.chevron.construct(name, bundle);
+                        _this.cv.construct(name, bundle);
                     }
                     result = service.content;
                 }
 
                 //Call Middleware
-                if (_this.chevron.util.isDefined(service.inject.middleware)) {
-                    _this.chevron.util.each(service.inject.middleware, function (fn) {
+                if (_this.cv.ut.isDefined(service.inject.middleware)) {
+                    _this.cv.ut.each(service.inject.middleware, function (fn) {
                         fn.call(bundle, service, name);
                     });
                 }
