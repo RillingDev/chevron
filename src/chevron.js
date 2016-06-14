@@ -63,6 +63,24 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         _this.cv.ut.each(dependencies, dependency => {
                             let service = _this.container[dependency];
                             if (_this.cv.ut.isDefined(service)) {
+                                //Init factory if not done already
+                                if (service.type === "factory" && !service.constructed) {
+                                    let name = dependency,
+                                        bundle = _this.cv.collect(service.dependencies,
+                                            item => {
+                                                return item;
+                                            },
+                                            missing => {
+                                                _this.cv.ut.log(
+                                                    name,
+                                                    "error",
+                                                    service.type,
+                                                    `dependency '${missing}' not found`
+                                                );
+                                            });
+
+                                    _this.cv.construct(name, bundle);
+                                }
                                 result[dependency] = map(service);
                             } else {
                                 error(dependency);
@@ -72,17 +90,25 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         return result;
                     },
                     add(name, dependencies, type, content, args) {
-                        _this.container[name] = {
+                        let service = _this.container[name] = {
                             dependencies: dependencies || [],
                             type: type || null,
                             content: content || null,
-                            args: args || [],
                             inject: {
                                 middleware: [],
                                 decorator: null
                             },
-                            constructed: false
                         };
+                        //Add type specific props
+                        if (type === "factory") {
+                            service.args = args || [];
+                            service.constructed = false;
+                        } else if (type === "service") {
+                            service.content = function() {
+                                _this.cv.runInjects(name, arguments);
+                                return content.apply(this, arguments);
+                            };
+                        }
                     },
                     //construct factory
                     construct(service, bundle) {
@@ -91,14 +117,37 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                         _this.cv.ut.eachObject(bundle, (dependency, name) => {
                             container[name] = dependency.content;
-                        })
+                        });
 
                         Factory.content = (Factory.content.apply(container, Factory.args) || container);
                         Factory.constructed = true;
                     },
-                    //Inject decortator/middleware into service
+                    //Inject decorator/middleware into service
                     inject(service, type, fn) {
                         _this.container[service].inject[type].push(fn);
+                    },
+                    runInjects(name, args) {
+                        let service = _this.container[name],
+                            bundle = _this.cv.collect(service.dependencies,
+                                item => {
+                                    return item.content;
+                                },
+                                missing => {
+                                    _this.cv.ut.log(
+                                        name,
+                                        "error",
+                                        service.type,
+                                        `dependency '${missing}' not found`
+                                    );
+                                }),
+                            newArgs = Array.from(args || []);
+                        newArgs.unshift(name);
+
+                        if (_this.cv.ut.isDefined(service.inject.middleware)) {
+                            _this.cv.ut.each(service.inject.middleware, fn => {
+                                fn.apply(this, newArgs);
+                            });
+                        }
                     },
                     //return if service has type
                     hasType(service, type) {
@@ -127,6 +176,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             return typeof val !== "undefined";
                         },
                         //logs/throws error
+                        //@TODO check why this doesnt work
                         log(name, type, element, msg) {
                             let str = `${this.options.name} ${type} in ${element} '${name}': ${msg}`;
                             if (type === "error") {
@@ -215,6 +265,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     bundle = {};
 
 
+                if (!_this.cv.ut.isDefined(service)) {
+                    _this.cv.ut.log(
+                        name,
+                        "error",
+                        service.type,
+                        `tried to access a '${service.type}' that doesnt exist`
+                    );
+                }
+
+
                 if (service.type === "service") {
                     bundle = _this.cv.collect(service.dependencies,
                         item => {
@@ -247,14 +307,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     }
                     result = service.content;
                 }
-
-                //Call Middleware
-                if (_this.cv.ut.isDefined(service.inject.middleware)) {
-                    _this.cv.ut.each(service.inject.middleware, fn => {
-                        fn.call(bundle, service, name);
-                    });
-                }
-
 
                 return result;
             }

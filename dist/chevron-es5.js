@@ -72,6 +72,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _this.cv.ut.each(dependencies, function (dependency) {
                         var service = _this.container[dependency];
                         if (_this.cv.ut.isDefined(service)) {
+                            //Init factory if not done already
+                            if (service.type === "factory" && !service.constructed) {
+                                (function () {
+                                    var name = dependency,
+                                        bundle = _this.cv.collect(service.dependencies, function (item) {
+                                        return item;
+                                    }, function (missing) {
+                                        _this.cv.ut.log(name, "error", service.type, "dependency '" + missing + "' not found");
+                                    });
+
+                                    _this.cv.construct(name, bundle);
+                                })();
+                            }
                             result[dependency] = map(service);
                         } else {
                             error(dependency);
@@ -81,17 +94,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     return result;
                 },
                 add: function add(name, dependencies, type, content, args) {
-                    _this.container[name] = {
+                    var service = _this.container[name] = {
                         dependencies: dependencies || [],
                         type: type || null,
                         content: content || null,
-                        args: args || [],
                         inject: {
                             middleware: [],
                             decorator: null
-                        },
-                        constructed: false
+                        }
                     };
+                    //Add type specific props
+                    if (type === "factory") {
+                        service.args = args || [];
+                        service.constructed = false;
+                    } else if (type === "service") {
+                        service.content = function () {
+                            _this.cv.runInjects(name, arguments);
+                            return content.apply(this, arguments);
+                        };
+                    }
                 },
 
                 //construct factory
@@ -107,9 +128,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     Factory.constructed = true;
                 },
 
-                //Inject decortator/middleware into service
+                //Inject decorator/middleware into service
                 inject: function inject(service, type, fn) {
                     _this.container[service].inject[type].push(fn);
+                },
+                runInjects: function runInjects(name, args) {
+                    var _this2 = this;
+
+                    var service = _this.container[name],
+                        bundle = _this.cv.collect(service.dependencies, function (item) {
+                        return item.content;
+                    }, function (missing) {
+                        _this.cv.ut.log(name, "error", service.type, "dependency '" + missing + "' not found");
+                    }),
+                        newArgs = Array.from(args || []);
+                    newArgs.unshift(name);
+
+                    if (_this.cv.ut.isDefined(service.inject.middleware)) {
+                        _this.cv.ut.each(service.inject.middleware, function (fn) {
+                            fn.apply(_this2, newArgs);
+                        });
+                    }
                 },
 
                 //return if service has type
@@ -144,6 +183,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     },
 
                     //logs/throws error
+                    //@TODO check why this doesnt work
                     log: function log(name, type, element, msg) {
                         var str = this.options.name + " " + type + " in " + element + " '" + name + "': " + msg;
                         if (type === "error") {
@@ -225,6 +265,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     service = _this.container[name],
                     bundle = {};
 
+                if (!_this.cv.ut.isDefined(service)) {
+                    _this.cv.ut.log(name, "error", service.type, "tried to access a '" + service.type + "' that doesnt exist");
+                }
+
                 if (service.type === "service") {
                     bundle = _this.cv.collect(service.dependencies, function (item) {
                         return item.content;
@@ -242,13 +286,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         _this.cv.construct(name, bundle);
                     }
                     result = service.content;
-                }
-
-                //Call Middleware
-                if (_this.cv.ut.isDefined(service.inject.middleware)) {
-                    _this.cv.ut.each(service.inject.middleware, function (fn) {
-                        fn.call(bundle, service, name);
-                    });
                 }
 
                 return result;
