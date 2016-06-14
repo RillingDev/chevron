@@ -38,5 +38,5 @@ cv.middleware((sv, name) => {
 let accessedFac = cv.access("myFactory1");
 console.log(accessedFac);
 console.log("##########");
-/*let accessedFn = cv.access("myService2");
-console.log(accessedFn(21));*/
+let accessedFn = cv.access("myService2");
+console.log(accessedFn(21));

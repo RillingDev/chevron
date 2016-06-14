@@ -56,30 +56,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                         return result;
                     },
-                    //Bundle dependencies for service
-                    bundle(dependencies, error) {
-                        let result = {};
-
-                        _this.chevron.util.each(dependencies, dependency => {
-                            let content;
-
-                            if (content = _this.container[dependency].content) {
-                                result[dependency] = content;
-                            } else {
-                                error(dependency);
-                            }
-                        });
-
-                        return result;
-                    },
-                    //Bundle dependencies for factory
-                    collect(dependencies, error) {
+                    //Bundle dependencies for service/factory
+                    collect(dependencies, map, error) {
                         let result = {};
 
                         _this.chevron.util.each(dependencies, dependency => {
                             let service = _this.container[dependency];
                             if (_this.chevron.util.isDefined(service)) {
-                                result[dependency] = _this.container[dependency];
+                                result[dependency] = map(service);
                             } else {
                                 error(dependency);
                             }
@@ -232,31 +216,37 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         access(name) {
                 let _this = this,
                     result,
-                    service = _this.container[name];
+                    service = _this.container[name],
+                    bundle;
 
 
-
-                //Bind dependencies
                 if (service.type === "service") {
-                    //collect dependencies in bundle
-                    let bundle = _this.chevron.bundle(service.dependencies, missing => {
-                        _this.chevron.util.log(
-                            name,
-                            "error",
-                            service.type,
-                            `dependency '${missing}' not found`
-                        );
-                    });
+                    bundle = _this.chevron.collect(service.dependencies,
+                        item => {
+                            return item.content;
+                        },
+                        missing => {
+                            _this.chevron.util.log(
+                                name,
+                                "error",
+                                service.type,
+                                `dependency '${missing}' not found`
+                            );
+                        });
                     result = service.content.bind(bundle);
                 } else if (service.type === "factory") {
-                    let bundle = _this.chevron.collect(service.dependencies, missing => {
-                        _this.chevron.util.log(
-                            name,
-                            "error",
-                            service.type,
-                            `dependency '${missing}' not found`
-                        );
-                    });
+                    bundle = _this.chevron.collect(service.dependencies,
+                        item => {
+                            return item;
+                        },
+                        missing => {
+                            _this.chevron.util.log(
+                                name,
+                                "error",
+                                service.type,
+                                `dependency '${missing}' not found`
+                            );
+                        });
                     if (!service.constructed) {
                         _this.chevron.construct(name, bundle);
                     }
