@@ -1,4 +1,5 @@
 ![ChevronJS](/chevron-logo.png)
+
 # chevron.js
 
 > An extremely small JavaScript service library
@@ -67,7 +68,7 @@ Middleware can be used to inject a function into a service, causing the service 
 ```javascript
 //Chevron.prototype.middleware(fn,[services]);
 cv.middleware(
-    function(service,name){
+    function(){
         console.log("myCustom Service is being run!")
     },
     ["myCustom"]
@@ -75,7 +76,7 @@ cv.middleware(
 
 //Or inject into all services
 cv.middleware(
-    function(service, name){
+    function(name, foo, bar){
         console.log(name + " was called")
     }
 );
@@ -83,9 +84,9 @@ cv.middleware(
 
 ## Options
 
-The Chevron Constructor can be called with several options
+The Chevron Constructor can be called with options
 
 ```javascript
-//Chevron.prototype.service(name = "Chevron", lazy = true);
-var namedCv = new Chevron("myCustomContainer", true);
+//Chevron.prototype.service(name = "Chevron");
+var namedCv = new Chevron("myCustomContainer");
 ```
