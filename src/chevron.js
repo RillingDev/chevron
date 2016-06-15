@@ -1,5 +1,5 @@
 /*
-chevronjs v0.4.1
+chevronjs v0.5.0
 
 Copyright (c) 2016 Felix Rilling
 
@@ -88,8 +88,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             type: type || null,
                             content: content || null,
                             inject: {
-                                middleware: [],
-                                decorator: null
+                                middleware: []
+                                    //decorator: null
                             },
                         };
                         //Add type specific props

@@ -1,5 +1,5 @@
 /*
-chevronjs v0.4.1
+chevronjs v0.5.0
 
 Copyright (c) 2016 Felix Rilling
 
@@ -47,13 +47,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             _this.cv = {
                 //Returns if Array of dependencies exists
 
-                load: function load(dependencyList, done, error) {
+                load: function load(dependencyList, done) {
                     var result = true;
 
                     _this.cv.ut.each(dependencyList, function (dependency) {
-                        if (!_this.cv.exists(dependency)) {
-                            //error()
-                        }
+                        /*if (!_this.cv.exists(dependency)) {
+                          error();
+                        }*/
                     });
                     if (result) {
                         done();
@@ -97,8 +97,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         type: type || null,
                         content: content || null,
                         inject: {
-                            middleware: [],
-                            decorator: null
+                            middleware: []
+                            //decorator: null
                         }
                     };
                     //Add type specific props
@@ -114,8 +114,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 },
 
                 //construct factory
-                construct: function construct(service, bundle) {
-                    var Factory = _this.container[service],
+                construct: function construct(name, bundle) {
+                    var Factory = _this.container[name],
                         container = Object.create(Factory.prototype || Object.prototype);
 
                     _this.cv.ut.eachObject(bundle, function (dependency, name) {
@@ -124,11 +124,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                     Factory.content = Factory.content.apply(container, Factory.args) || container;
                     Factory.constructed = true;
+                    return Factory.content;
                 },
 
                 //Inject decorator/middleware into service
-                inject: function inject(service, type, fn) {
-                    _this.container[service].inject[type].push(fn);
+                inject: function inject(name, type, fn) {
+                    _this.container[name].inject[type].push(fn);
                 },
                 runInjects: function runInjects(name, args) {
                     var _this2 = this;
@@ -150,16 +151,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 },
 
                 //return if service has type
-                hasType: function hasType(service, type) {
-                    return _this.container[service].type === type;
+                hasType: function hasType(name, type) {
+                    return _this.container[name].type === type;
                 },
 
                 //returns if dependency exists
-                exists: function exists(dependencyString) {
-                    return _this.cv.ut.isDefined(_this.container[dependencyString]);
+                exists: function exists(name) {
+                    return _this.cv.ut.isDefined(_this.container[name]);
                 },
 
-                //logs/throws error
+                //throws errors
                 throwMissingDep: function throwMissingDep(name, type, missing) {
                     _this.cv.ut.log(name, "error", type, "dependency '" + missing + "' not found");
                 },
@@ -190,6 +191,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     isDefined: function isDefined(val) {
                         return typeof val !== "undefined";
                     },
+
+                    //log
                     log: function log(name, type, element, msg) {
                         var str = _this.options.name + " " + type + " in " + element + " '" + name + "': " + msg;
                         if (type === "error") {
@@ -215,18 +218,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     } else {
                         _this.cv.throwDupe(name, type);
                     }
-                }, function (missing) {
-                    _this.cv.throwMissingDep(name, type, missing);
-                });
+                }
+                /*, missing => {
+                                    _this.cv.throwMissingDep(name, type, missing);
+                                }*/
+                );
             }
             //accepts function
 
         }, {
             key: "service",
-            value: function service(name, dependencies, content) {
+            value: function service(name, dependencies, fn) {
                 var _this = this;
 
-                return _this.provider(name, dependencies, content, "service");
+                return _this.provider(name, dependencies, fn, "service");
             }
             //accepts constructor function
 
@@ -288,6 +293,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }, function (missing) {
                         _this.cv.throwMissingDep(name, service.type, missing);
                     });
+                    if (!service.constructed) {
+                        result = _this.cv.construct(name, _bundle);
+                    }
                 }
 
                 return result;
