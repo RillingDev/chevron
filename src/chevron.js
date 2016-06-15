@@ -39,15 +39,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 //All chevron methods
                 _this.cv = {
                     //Returns if Array of dependencies exists
-                    load(dependencies, done, error) {
+                    load(dependencyList, done, error) {
                         let result = true;
 
-                        _this.cv.ut.each(dependencies, dependency => {
+                        _this.cv.ut.each(dependencyList, dependency => {
                             if (!_this.cv.exists(dependency)) {
-                                /*
-                                error(dependency);
-                                result = false;
-                                */
+                                //error()
                             }
                         });
                         if (result) {
@@ -57,10 +54,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         return result;
                     },
                     //Bundle dependencies for service/factory
-                    collect(dependencies, map, error) {
-                        let result = {};
+                    collect(dependencyList, map, error) {
+                        let result = {},
+                            missingDependency
 
-                        _this.cv.ut.each(dependencies, dependency => {
+                        _this.cv.ut.each(dependencyList, dependency => {
                             let service = _this.container[dependency];
                             if (_this.cv.ut.isDefined(service)) {
                                 //Init factory if not done already
@@ -71,12 +69,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                                                 return item;
                                             },
                                             missing => {
-                                                _this.cv.ut.log(
-                                                    name,
-                                                    "error",
-                                                    service.type,
-                                                    `dependency '${missing}' not found`
-                                                );
+                                                _this.cv.throwMissingDep(name, service.type, missing);
                                             });
 
                                     _this.cv.construct(name, bundle);
@@ -89,9 +82,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                         return result;
                     },
-                    add(name, dependencies, type, content, args) {
+                    add(name, dependencyList, type, content, args) {
                         let service = _this.container[name] = {
-                            dependencies: dependencies || [],
+                            dependencies: dependencyList || [],
                             type: type || null,
                             content: content || null,
                             inject: {
@@ -133,12 +126,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                                     return item.content;
                                 },
                                 missing => {
-                                    _this.cv.ut.log(
-                                        name,
-                                        "error",
-                                        service.type,
-                                        `dependency '${missing}' not found`
-                                    );
+                                    _this.cv.throwMissingDep(name, service.type, missing);
                                 }),
                             newArgs = Array.from(args || []);
                         newArgs.unshift(name);
@@ -154,8 +142,33 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         return _this.container[service].type === type;
                     },
                     //returns if dependency exists
-                    exists(dependency) {
-                        return _this.cv.ut.isDefined(_this.container[dependency]);
+                    exists(dependencyString) {
+                        return _this.cv.ut.isDefined(_this.container[dependencyString]);
+                    },
+                    //logs/throws error
+                    throwMissingDep(name, type, missing) {
+                        _this.cv.ut.log(
+                            name,
+                            "error",
+                            type,
+                            `dependency '${missing}' not found`
+                        );
+                    },
+                    throwNotFound(name) {
+                        _this.cv.ut.log(
+                            name,
+                            "error",
+                            "type",
+                            `service '${name}' not found`
+                        );
+                    },
+                    throwDupe(name, type) {
+                        _this.cv.ut.log(
+                            name,
+                            "error",
+                            type,
+                            `service '${name}' is already defined`
+                        );
                     },
                     //All utility methods
                     ut: {
@@ -175,10 +188,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         isDefined(val) {
                             return typeof val !== "undefined";
                         },
-                        //logs/throws error
-                        //@TODO check why this doesnt work
                         log(name, type, element, msg) {
-                            let str = `${this.options.name} ${type} in ${element} '${name}': ${msg}`;
+                            let str = `${_this.options.name} ${type} in ${element} '${name}': ${msg}`;
                             if (type === "error") {
                                 throw str;
                             } else {
@@ -190,27 +201,17 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
             }
             //Core Provider method
-        provider(name, dependencies, content, type, args) {
+        provider(name, dependencyList, content, type, args) {
                 let _this = this;
 
-                _this.cv.load(dependencies, () => {
+                _this.cv.load(dependencyList, () => {
                     if (!_this.cv.exists(name)) {
-                        _this.cv.add(name, dependencies, type, content, args);
+                        _this.cv.add(name, dependencyList, type, content, args);
                     } else {
-                        _this.cv.ut.log(
-                            name,
-                            "error",
-                            type,
-                            `service '${name}' already declared`
-                        );
+                        _this.cv.throwDupe(name, type);
                     }
                 }, missing => {
-                    _this.cv.ut.log(
-                        name,
-                        "error",
-                        type,
-                        `dependency '${missing}' not found`
-                    );
+                    _this.cv.throwMissingDep(name, type, missing);
                 });
             }
             //accepts function
@@ -261,51 +262,32 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         access(name) {
                 let _this = this,
                     result,
-                    service = _this.container[name],
-                    bundle = {};
+                    service = _this.container[name];
 
-
+                //Check if accessed service is registered
                 if (!_this.cv.ut.isDefined(service)) {
-                    _this.cv.ut.log(
-                        name,
-                        "error",
-                        service.type,
-                        `tried to access a '${service.type}' that doesnt exist`
-                    );
+                    _this.cv.throwNotFound(name, service.type);
                 }
 
-
                 if (service.type === "service") {
-                    bundle = _this.cv.collect(service.dependencies,
+                    let bundle = _this.cv.collect(service.dependencies,
                         item => {
                             return item.content;
                         },
                         missing => {
-                            _this.cv.ut.log(
-                                name,
-                                "error",
-                                service.type,
-                                `dependency '${missing}' not found`
-                            );
-                        });
+                            _this.cv.throwMissingDep(name, service.type, missing);
+                        }
+                    );
                     result = service.content.bind(bundle);
                 } else if (service.type === "factory") {
-                    bundle = _this.cv.collect(service.dependencies,
+                    let bundle = _this.cv.collect(service.dependencies,
                         item => {
                             return item;
                         },
                         missing => {
-                            _this.cv.ut.log(
-                                name,
-                                "error",
-                                service.type,
-                                `dependency '${missing}' not found`
-                            );
-                        });
-                    if (!service.constructed) {
-                        _this.cv.construct(name, bundle);
-                    }
-                    result = service.content;
+                            _this.cv.throwMissingDep(name, service.type, missing);
+                        }
+                    );
                 }
 
                 return result;

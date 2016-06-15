@@ -47,15 +47,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             _this.cv = {
                 //Returns if Array of dependencies exists
 
-                load: function load(dependencies, done, error) {
+                load: function load(dependencyList, done, error) {
                     var result = true;
 
-                    _this.cv.ut.each(dependencies, function (dependency) {
+                    _this.cv.ut.each(dependencyList, function (dependency) {
                         if (!_this.cv.exists(dependency)) {
-                            /*
-                            error(dependency);
-                            result = false;
-                            */
+                            //error()
                         }
                     });
                     if (result) {
@@ -66,10 +63,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 },
 
                 //Bundle dependencies for service/factory
-                collect: function collect(dependencies, map, error) {
-                    var result = {};
+                collect: function collect(dependencyList, map, error) {
+                    var result = {},
+                        missingDependency = void 0;
 
-                    _this.cv.ut.each(dependencies, function (dependency) {
+                    _this.cv.ut.each(dependencyList, function (dependency) {
                         var service = _this.container[dependency];
                         if (_this.cv.ut.isDefined(service)) {
                             //Init factory if not done already
@@ -79,7 +77,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                                         bundle = _this.cv.collect(service.dependencies, function (item) {
                                         return item;
                                     }, function (missing) {
-                                        _this.cv.ut.log(name, "error", service.type, "dependency '" + missing + "' not found");
+                                        _this.cv.throwMissingDep(name, service.type, missing);
                                     });
 
                                     _this.cv.construct(name, bundle);
@@ -93,9 +91,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                     return result;
                 },
-                add: function add(name, dependencies, type, content, args) {
+                add: function add(name, dependencyList, type, content, args) {
                     var service = _this.container[name] = {
-                        dependencies: dependencies || [],
+                        dependencies: dependencyList || [],
                         type: type || null,
                         content: content || null,
                         inject: {
@@ -139,7 +137,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         bundle = _this.cv.collect(service.dependencies, function (item) {
                         return item.content;
                     }, function (missing) {
-                        _this.cv.ut.log(name, "error", service.type, "dependency '" + missing + "' not found");
+                        _this.cv.throwMissingDep(name, service.type, missing);
                     }),
                         newArgs = Array.from(args || []);
                     newArgs.unshift(name);
@@ -157,8 +155,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 },
 
                 //returns if dependency exists
-                exists: function exists(dependency) {
-                    return _this.cv.ut.isDefined(_this.container[dependency]);
+                exists: function exists(dependencyString) {
+                    return _this.cv.ut.isDefined(_this.container[dependencyString]);
+                },
+
+                //logs/throws error
+                throwMissingDep: function throwMissingDep(name, type, missing) {
+                    _this.cv.ut.log(name, "error", type, "dependency '" + missing + "' not found");
+                },
+                throwNotFound: function throwNotFound(name) {
+                    _this.cv.ut.log(name, "error", "type", "service '" + name + "' not found");
+                },
+                throwDupe: function throwDupe(name, type) {
+                    _this.cv.ut.log(name, "error", type, "service '" + name + "' is already defined");
                 },
 
                 //All utility methods
@@ -181,11 +190,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     isDefined: function isDefined(val) {
                         return typeof val !== "undefined";
                     },
-
-                    //logs/throws error
-                    //@TODO check why this doesnt work
                     log: function log(name, type, element, msg) {
-                        var str = this.options.name + " " + type + " in " + element + " '" + name + "': " + msg;
+                        var str = _this.options.name + " " + type + " in " + element + " '" + name + "': " + msg;
                         if (type === "error") {
                             throw str;
                         } else {
@@ -200,17 +206,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         _createClass(Chevron, [{
             key: "provider",
-            value: function provider(name, dependencies, content, type, args) {
+            value: function provider(name, dependencyList, content, type, args) {
                 var _this = this;
 
-                _this.cv.load(dependencies, function () {
+                _this.cv.load(dependencyList, function () {
                     if (!_this.cv.exists(name)) {
-                        _this.cv.add(name, dependencies, type, content, args);
+                        _this.cv.add(name, dependencyList, type, content, args);
                     } else {
-                        _this.cv.ut.log(name, "error", type, "service '" + name + "' already declared");
+                        _this.cv.throwDupe(name, type);
                     }
                 }, function (missing) {
-                    _this.cv.ut.log(name, "error", type, "dependency '" + missing + "' not found");
+                    _this.cv.throwMissingDep(name, type, missing);
                 });
             }
             //accepts function
@@ -262,30 +268,26 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             value: function access(name) {
                 var _this = this,
                     result = void 0,
-                    service = _this.container[name],
-                    bundle = {};
+                    service = _this.container[name];
 
+                //Check if accessed service is registered
                 if (!_this.cv.ut.isDefined(service)) {
-                    _this.cv.ut.log(name, "error", service.type, "tried to access a '" + service.type + "' that doesnt exist");
+                    _this.cv.throwNotFound(name, service.type);
                 }
 
                 if (service.type === "service") {
-                    bundle = _this.cv.collect(service.dependencies, function (item) {
+                    var bundle = _this.cv.collect(service.dependencies, function (item) {
                         return item.content;
                     }, function (missing) {
-                        _this.cv.ut.log(name, "error", service.type, "dependency '" + missing + "' not found");
+                        _this.cv.throwMissingDep(name, service.type, missing);
                     });
                     result = service.content.bind(bundle);
                 } else if (service.type === "factory") {
-                    bundle = _this.cv.collect(service.dependencies, function (item) {
+                    var _bundle = _this.cv.collect(service.dependencies, function (item) {
                         return item;
                     }, function (missing) {
-                        _this.cv.ut.log(name, "error", service.type, "dependency '" + missing + "' not found");
+                        _this.cv.throwMissingDep(name, service.type, missing);
                     });
-                    if (!service.constructed) {
-                        _this.cv.construct(name, bundle);
-                    }
-                    result = service.content;
                 }
 
                 return result;
