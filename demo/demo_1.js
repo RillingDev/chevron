@@ -24,9 +24,6 @@ cv.middleware(function(name) {
     console.log("Middleware fired for " + name);
 });
 
-/*cv.decorator((sv, name) => {
-    console.log("decorator fired for " + name);
-}, ["myService3"]);*/
 
 /*let accessedFac = cv.access("myFactory1");
 console.log(accessedFac);*/

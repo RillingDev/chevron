@@ -116,13 +116,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 //construct factory
                 construct: function construct(name, bundle) {
                     var Factory = _this.container[name],
-                        container = Object.create(Factory.prototype || Object.prototype);
+                        container = Object.create(Factory.prototype || Object.prototype),
+                        newArgs = Array.from(Factory.args || []);
+
+                    newArgs.shift();
 
                     _this.cv.ut.eachObject(bundle, function (dependency, name) {
                         container[name] = dependency.content;
                     });
 
-                    Factory.content = Factory.content.apply(container, Factory.args) || container;
+                    Factory.content = Factory.content.apply(container, newArgs) || container;
                     Factory.constructed = true;
                     return Factory.content;
                 },
@@ -145,6 +148,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                     if (_this.cv.ut.isDefined(service.inject.middleware)) {
                         _this.cv.ut.each(service.inject.middleware, function (fn) {
+
                             fn.apply(_this2, newArgs);
                         });
                     }
@@ -223,6 +227,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                                     _this.cv.throwMissingDep(name, type, missing);
                                 }*/
                 );
+                return _this;
             }
             //accepts function
 
@@ -264,7 +269,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
                 });
 
-                return fn;
+                return _this;
             }
             //Lets you access services with their dependencies injected
 
@@ -277,7 +282,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 //Check if accessed service is registered
                 if (!_this.cv.ut.isDefined(service)) {
-                    _this.cv.throwNotFound(name, service.type);
+                    _this.cv.throwNotFound(name);
                 }
 
                 if (service.type === "service") {

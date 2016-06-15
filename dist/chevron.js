@@ -106,13 +106,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     //construct factory
                     construct(name, bundle) {
                         let Factory = _this.container[name],
-                            container = Object.create(Factory.prototype || Object.prototype);
+                            container = Object.create(Factory.prototype || Object.prototype),
+                            newArgs = Array.from(Factory.args || []);
+
+                        newArgs.shift();
 
                         _this.cv.ut.eachObject(bundle, (dependency, name) => {
                             container[name] = dependency.content;
                         });
 
-                        Factory.content = (Factory.content.apply(container, Factory.args) || container);
+                        Factory.content = (Factory.content.apply(container, newArgs) || container);
                         Factory.constructed = true;
                         return Factory.content;
                     },
@@ -134,6 +137,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                         if (_this.cv.ut.isDefined(service.inject.middleware)) {
                             _this.cv.ut.each(service.inject.middleware, fn => {
+
                                 fn.apply(this, newArgs);
                             });
                         }
@@ -217,6 +221,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                                         _this.cv.throwMissingDep(name, type, missing);
                                     }*/
                 );
+                return _this;
             }
             //accepts function
         service(name, dependencies, fn) {
@@ -260,7 +265,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     }
                 });
 
-                return fn;
+                return _this;
             }
             //Lets you access services with their dependencies injected
         access(name) {
@@ -270,7 +275,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                 //Check if accessed service is registered
                 if (!_this.cv.ut.isDefined(service)) {
-                    _this.cv.throwNotFound(name, service.type);
+                    _this.cv.throwNotFound(name);
                 }
 
                 if (service.type === "service") {
