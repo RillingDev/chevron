@@ -36,7 +36,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 };
                 _this.container = {};
 
-                //All chevron methods
+                /*####################/
+                * Internal Chevron
+                /####################*/
                 _this.cv = {
                     //Returns if Array of dependencies exists
                     load(dependencyList, done) {
@@ -55,8 +57,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     },
                     //Bundle dependencies for service/factory
                     collect(dependencyList, map, error) {
-                        let result = {},
-                            missingDependency
+                        let result = {};
 
                         _this.cv.ut.each(dependencyList, dependency => {
                             let service = _this.container[dependency];
@@ -175,7 +176,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             `service '${name}' is already defined`
                         );
                     },
-                    //All utility methods
+                    /*####################/
+                    * Internal Chevron Utility
+                    /####################*/
                     ut: {
                         //Iterate Array
                         each(arr, fn) {
@@ -206,7 +209,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 };
 
             }
-            //Core Provider method
+            /*####################/
+            * Main exposed methods
+            /####################*/
         provider(name, dependencyList, content, type, args) {
                 let _this = this;
 
