@@ -1,5 +1,5 @@
 /*
-chevronjs v0.6.0
+chevronjs v0.6.1
 
 Copyright (c) 2016 Felix Rilling
 
@@ -132,7 +132,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                                 return newContent;
                             };*/
                         }
-
 
                         service.constructed = true;
                         return service;
