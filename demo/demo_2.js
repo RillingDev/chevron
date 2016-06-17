@@ -32,12 +32,12 @@ cv
     //this.foobar = foo + bar + cv.access("myService1")();
 }, [33])
 
-.middleware(function(name) {
-    console.log("Middleware fired for " + name);
+.middleware(function(service) {
+    console.log("Middleware fired for " + service.name);
 })
 
-.middleware(function(name) {
-    console.log("the primary service " + name + " was called!");
+.middleware(function(service) {
+    console.log("the primary service " + service.name + " was called!");
 }, ["myService1"]);
 
 

@@ -59,15 +59,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                     _this.cv.fetchDependencies(service.dependencies, function (dependency, name) {
                         var result = void 0;
-                        //console.log(dependency);
+
                         if (!dependency.constructed) {
                             result = _this.cv.construct(dependency, list);
                         } else {
                             result = dependency;
                         }
+
                         _this.cv.runMiddleware(result, list);
                         list[name] = result.content;
-                        //console.log("PRE", list);
                     }, function (name) {
                         _this.throwMissingDep(name);
                     });
@@ -78,20 +78,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         result = service;
                     }
 
-                    //console.log("PRE finished", list);
                     _this.cv.runMiddleware(result, list);
                     return result;
                 },
 
                 //Iterate dependencies
                 fetchDependencies: function fetchDependencies(dependencyList, fn, error) {
-                    //console.log("FE started", dependencyList);
 
                     _this.cv.ut.each(dependencyList, function (name) {
 
                         if (_this.cv.exists(name)) {
                             var service = _this.cv.get(name);
-                            //console.log("FE dep:", name, service);
 
                             if (_this.cv.hasDependencies(service)) {
                                 //recurse
@@ -121,11 +118,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 //construct
                 construct: function construct(service, bundle) {
-                    //console.log("CN started constructing", service, bundle);
                     service = _this.cv.runDecorator(service, bundle);
 
                     if (_this.cv.hasType(service, "service")) {
-                        //@TODO inject
                         service.content = service.content.bind(bundle);
                     } else if (_this.cv.hasType(service, "factory")) {
                         (function () {
@@ -133,7 +128,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                             _this.cv.ut.eachObject(bundle, function (dependency, name) {
                                 container[name] = dependency;
-                                //console.log(dependency, name, container[name]);
                             });
 
                             service.content = service.content.apply(container, service.args) || container;
@@ -141,7 +135,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
 
                     service.constructed = true;
-                    //console.log("CN finished constructing", service, bundle);
                     return service;
                 },
                 runMiddleware: function runMiddleware(service, bundle) {
@@ -150,13 +143,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     });
                 },
                 runDecorator: function runDecorator(service, bundle) {
-                    var result = void 0;
+                    var result = false;
 
                     _this.cv.runInject("decorator", service, function (inject) {
                         result = inject.fn.call(bundle, service, result);
                     });
 
-                    return result;
+                    return result === false ? service : result;
                 },
                 runInject: function runInject(type, service, fn) {
                     _this.cv.ut.each(_this.injects[type], function (inject) {
@@ -166,7 +159,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     });
                 },
                 injectorApplies: function injectorApplies(name, inject) {
-                    //console.log(inject, name);
                     return inject.applies.length === 0 ? true : inject.applies.includes(name);
                 },
                 exists: function exists(name) {

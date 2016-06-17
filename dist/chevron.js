@@ -53,15 +53,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             service.dependencies,
                             (dependency, name) => {
                                 let result;
-                                //console.log(dependency);
+
                                 if (!dependency.constructed) {
                                     result = _this.cv.construct(dependency, list);
                                 } else {
                                     result = dependency;
                                 }
+
                                 _this.cv.runMiddleware(result, list);
                                 list[name] = result.content;
-                                //console.log("PRE", list);
                             },
                             name => {
                                 _this.throwMissingDep(name);
@@ -74,19 +74,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             result = service;
                         }
 
-                        //console.log("PRE finished", list);
                         _this.cv.runMiddleware(result, list);
                         return result;
                     },
                     //Iterate dependencies
                     fetchDependencies(dependencyList, fn, error) {
-                        //console.log("FE started", dependencyList);
 
                         _this.cv.ut.each(dependencyList, name => {
 
                             if (_this.cv.exists(name)) {
                                 let service = _this.cv.get(name);
-                                //console.log("FE dep:", name, service);
 
                                 if (_this.cv.hasDependencies(service)) {
                                     //recurse
@@ -117,25 +114,21 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                     //construct
                     construct(service, bundle) {
-                        //console.log("CN started constructing", service, bundle);
                         service = _this.cv.runDecorator(service, bundle);
 
                         if (_this.cv.hasType(service, "service")) {
-                            //@TODO inject
                             service.content = service.content.bind(bundle);
                         } else if (_this.cv.hasType(service, "factory")) {
                             let container = Object.create(service.prototype || Object.prototype);
 
                             _this.cv.ut.eachObject(bundle, (dependency, name) => {
                                 container[name] = dependency;
-                                //console.log(dependency, name, container[name]);
                             });
 
                             service.content = (service.content.apply(container, service.args) || container);
                         }
 
                         service.constructed = true;
-                        //console.log("CN finished constructing", service, bundle);
                         return service;
                     },
                     runMiddleware(service, bundle) {
@@ -144,13 +137,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         });
                     },
                     runDecorator(service, bundle) {
-                        let result;
+                        let result = false;
 
                         _this.cv.runInject("decorator", service, inject => {
                             result = inject.fn.call(bundle, service, result);
                         });
 
-                        return result;
+                        return result === false ? service : result;
                     },
                     runInject(type, service, fn) {
                         _this.cv.ut.each(_this.injects[type], inject => {
@@ -160,7 +153,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         });
                     },
                     injectorApplies(name, inject) {
-                        //console.log(inject, name);
                         return inject.applies.length === 0 ? true : inject.applies.includes(name);
                     },
                     exists(name) {
