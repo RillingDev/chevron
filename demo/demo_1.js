@@ -21,16 +21,16 @@ cv.factory("myFactory1", ["myService1"], function(foo, bar) {
 }, [12, 24]);
 
 
-cv.middleware(function(name) {
-    console.log("Middleware fired for " + name);
+cv.middleware(function(service) {
+    console.log("Middleware fired for " + service.name);
 });
 
-cv.decorator(function(service, name) {
-    console.log("Decorator fired for " + name);
+cv.decorator(function(service) {
+    console.log("Decorator fired for " + service.name);
     return service;
 });
 
-cv.decorator(function(service, name) {
+cv.decorator(function(service) {
     console.log("magic magic Service1");
     return service;
 }, ["myService1"]);

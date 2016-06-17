@@ -59,7 +59,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                                 } else {
                                     result = dependency;
                                 }
-                                //  console.log(result);
+                                _this.cv.runMiddleware(result, list);
                                 list[name] = result.content;
                                 //console.log("PRE", list);
                             },
@@ -71,12 +71,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         if (!service.constructed) {
                             result = _this.cv.construct(service, list);
                         } else {
-                            //_this.cv.runMiddleware();
                             result = service;
                         }
 
                         //console.log("PRE finished", list);
-
+                        _this.cv.runMiddleware(result, list);
                         return result;
                     },
                     //Iterate dependencies
@@ -139,30 +138,19 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         //console.log("CN finished constructing", service, bundle);
                         return service;
                     },
-                    runMiddleware(name, args) {
-                        /*  let service = _this.container[name],
-                              bundle = _this.cv.collect(service.dependencies,
-                                  item => {
-                                      return item.content;
-                                  },
-                                  missing => {
-                                      _this.cv.throwMissingDep(name, service.type, missing);
-                                  }),
-                              newArgs = Array.from(args || []);
-                          newArgs.unshift(name);
-
-                          if (_this.cv.ut.isDefined(service.inject.middleware)) {
-                              _this.cv.ut.each(service.inject.middleware, fn => {
-
-                                  fn.apply(this, newArgs);
-                              });
-                          }*/
+                    runMiddleware(service, bundle) {
+                        _this.cv.runInject("middleware", service, inject => {
+                            inject.fn.call(bundle, service);
+                        });
                     },
                     runDecorator(service, bundle) {
+                        let result;
+
                         _this.cv.runInject("decorator", service, inject => {
-                            inject.fn.call(bundle, service, service.name);
+                            result = inject.fn.call(bundle, service, result);
                         });
-                        return service;
+
+                        return result;
                     },
                     runInject(type, service, fn) {
                         _this.cv.ut.each(_this.injects[type], inject => {
@@ -172,7 +160,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         });
                     },
                     injectorApplies(name, inject) {
-                        console.log(inject, name);
+                        //console.log(inject, name);
                         return inject.applies.length === 0 ? true : inject.applies.includes(name);
                     },
                     exists(name) {
