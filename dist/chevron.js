@@ -146,7 +146,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         let result = false;
 
                         _this.cv.runInject("decorator", service, inject => {
-                            result = inject.fn.call(bundle, service, result);
+                            //result = inject.fn;
                         });
 
                         return result === false ? service : result;
@@ -281,7 +281,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         decorator(fn, applies) {
                 return this.injector("decorator", fn, applies);
             }
-            //Injects a middleware to a service/factory
+            //Injects a middleware to a service
         middleware(fn, applies) {
                 return this.injector("middleware", fn, applies);
             }

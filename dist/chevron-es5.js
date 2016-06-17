@@ -156,7 +156,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     var result = false;
 
                     _this.cv.runInject("decorator", service, function (inject) {
-                        result = inject.fn.call(bundle, service, result);
+                        //result = inject.fn;
                     });
 
                     return result === false ? service : result;
@@ -285,7 +285,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             value: function decorator(fn, applies) {
                 return this.injector("decorator", fn, applies);
             }
-            //Injects a middleware to a service/factory
+            //Injects a middleware to a service
 
         }, {
             key: "middleware",

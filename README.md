@@ -73,7 +73,7 @@ cv.middleware(
     function(){
         console.log("myCustom Service is being run!")
     },
-    ["myCustom"]
+    ["myCustomService"]
 );
 
 //Or inject into all services
@@ -86,7 +86,9 @@ cv.middleware(
 
 ### Decorator
 
-Decorators are run before initializing the service, returning a modified version of it.
+_buggy in the latest release_
+
+Decorators are run before initializing the service/factory, returning a modified version of it.
 
 ```javascript
 //Chevron.prototype.decorator(fn,[services]);

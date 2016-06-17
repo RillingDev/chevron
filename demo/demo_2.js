@@ -35,8 +35,14 @@ cv
 }, ["addTwo"])
 
 .middleware(function(service) {
-    console.log("added ...twelve?");
-}, ["addTwelve"]);
+    console.log("modified ...twelve?");
+}, ["miscNumbers"])
+
+.decorator(function(service){
+  console.log("modified miscNumbers!");
+  this.foo = 10;
+  this.bar = 12;
+},["miscNumbers"]);
 
 let accessedFn = cv.access("sumOfMiscNumbemiscNumbersPlusTwelversPlusTwelve");
 console.log(accessedFn());
