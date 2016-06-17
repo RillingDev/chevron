@@ -45,7 +45,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 /####################*/
                 _this.cv = {
                     //Check constructed status/dependencies and issues construct
-                    prepare(service, name) {
+                    prepare(service) {
                         let result,
                             list = {};
 
@@ -79,7 +79,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     },
                     //Iterate dependencies
                     fetchDependencies(dependencyList, fn, error) {
-
                         _this.cv.ut.each(dependencyList, name => {
 
                             if (_this.cv.exists(name)) {
@@ -93,15 +92,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             } else {
                                 error(name);
                             }
-
                         });
                     },
-
+                    //add new service
                     add(name, dependencyList, type, content, args) {
                         let service = _this.container[name] = {
                             dependencies: dependencyList || [],
-                            type: type || null,
-                            content: content || null,
+                            type,
+                            content,
                             constructed: false,
                             name
                         };
@@ -111,8 +109,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             service.args.shift();
                         }
                     },
-
-                    //construct
+                    //construct service/factory
                     construct(service, bundle) {
                         service = _this.cv.runDecorator(service, bundle);
 
@@ -228,6 +225,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             /*####################/
             * Main exposed methods
             /####################*/
+            //Core service/factory method
         provider(name, dependencyList, content, type, args) {
                 let _this = this;
 
@@ -239,7 +237,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                 return _this;
             }
-            //accepts function
+            //create new service
         service(name, dependencyList, fn) {
                 return this.provider(
                     name,
@@ -248,17 +246,18 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     "service"
                 );
             }
-            //accepts constructor function
+            //create new factory
         factory(name, dependencyList, Constructor, args) {
-            args.unshift(null);
-            return this.provider(
-                name,
-                dependencyList,
-                Constructor,
-                "factory",
-                args
-            );
-        }
+                args.unshift(null);
+                return this.provider(
+                    name,
+                    dependencyList,
+                    Constructor,
+                    "factory",
+                    args
+                );
+            }
+            //Core decorator/middleware method
         injector(type, fn, applies) {
                 let _this = this;
 
@@ -269,15 +268,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                 return _this;
             }
-            //Injects a decorator to the container/service
+            //Injects a decorator to a service/factory
         decorator(fn, applies) {
                 return this.injector("decorator", fn, applies);
             }
-            //Injects a middleware to the container/service
+            //Injects a middleware to a service/factory
         middleware(fn, applies) {
                 return this.injector("middleware", fn, applies);
             }
-            //Lets you access services with their dependencies injected
+            //prepare/initialize services/factory with dependencies injected
         access(name) {
                 let _this = this;
 
@@ -285,12 +284,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 if (!_this.cv.exists(name)) {
                     _this.cv.throwNotFound(name);
                 } else {
-                    let service = _this.cv.get(name);
-                    return _this.cv.prepare(service, name).content;
+                    return _this.cv.prepare(_this.cv.get(name)).content;
                 }
 
             }
-            //returns Array of dependencies
+            //returns service container
         list() {
             return this.container;
         }

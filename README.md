@@ -89,7 +89,7 @@ cv.middleware(
 Decorators are run before initializing the service, returning a modified version of it.
 
 ```javascript
-//Chevron.prototype.middleware(fn,[services]);
+//Chevron.prototype.decorator(fn,[services]);
 cv.decorator(
     function(service){
         console.log(service+" is being initialized!");
