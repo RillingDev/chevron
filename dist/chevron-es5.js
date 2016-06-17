@@ -72,8 +72,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         } else {
                             result = dependency;
                         }
-                        console.log(result);
-                        list[name] = result;
+                        //  console.log(result);
+                        list[name] = result.content;
+                        //console.log("PRE", list);
                     }, function (name) {
                         _this.throwMissingDep(name);
                     });
@@ -84,20 +85,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         result = service;
                     }
 
-                    console.log("finished", list);
+                    //console.log("PRE finished", list);
 
                     return result;
                 },
 
                 //Iterate dependencies
                 fetchDependencies: function fetchDependencies(dependencyList, fn, error) {
-                    console.log("started", dependencyList);
+                    //console.log("FE started", dependencyList);
 
                     _this.cv.ut.each(dependencyList, function (name) {
 
                         if (_this.cv.exists(name)) {
                             var service = _this.cv.get(name);
-                            //console.log("dep:", name, service);
+                            //console.log("FE dep:", name, service);
 
                             if (_this.cv.hasDependencies(service)) {
                                 //recurse
@@ -149,28 +150,32 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     //Add type specific props
                     if (type === "factory") {
                         service.args = args || [];
+                        service.args.shift();
                     }
                 },
 
 
-                //construct factory
+                //construct
                 construct: function construct(service, bundle) {
-                    /*let service = _this.container[name];
-                      service.content = function() {
-                        _this.cv.runInjects(name, arguments);
-                        return service.content.apply(this, arguments);
-                    };*/
-                    /*  let Factory = _this.container[name],
-                          container = Object.create(Factory.prototype || Object.prototype),
-                          newArgs = Array.from(Factory.args || []);
-                        newArgs.shift();
-                        _this.cv.ut.eachObject(bundle, (dependency, name) => {
-                          container[name] = dependency.content;
-                      });
-                        Factory.content = (Factory.content.apply(container, newArgs) || container);
-                      Factory.constructed = true;
-                      */
+                    //console.log("CN started constructing", service, bundle);
+                    if (_this.cv.hasType(service, "service")) {
+                        //@TODO inject
+                        service.content = service.content.bind(bundle);
+                    } else if (_this.cv.hasType(service, "factory")) {
+                        (function () {
+                            var container = Object.create(service.prototype || Object.prototype);
+
+                            _this.cv.ut.eachObject(bundle, function (dependency, name) {
+                                container[name] = dependency;
+                                //console.log(dependency, name, container[name]);
+                            });
+
+                            service.content = service.content.apply(container, service.args) || container;
+                        })();
+                    }
+
                     service.constructed = true;
+                    //console.log("CN finished constructing", service, bundle);
                     return service;
                 },
 
@@ -326,7 +331,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _this.cv.throwNotFound(name);
                 }
 
-                return _this.cv.prepare(service);
+                return _this.cv.prepare(service).content;
             }
             //returns Array of dependencies
 
