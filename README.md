@@ -32,21 +32,7 @@ cv.service("bar",["foo"],
 );
 ```
 
-#### Acessing services
-
-Services can be accessed in two ways:
-
-```javascript
-cv.access("foo"); //returns the service with dependencies bound into 'this'.
-```
-
-or, if you just want the service without dependencies:
-
-```javascript
-cv.container.foo; //returns the service as variable.
-```
-
-## Factories
+### Factories
 
 Factories are like Services but are treated as Constructors instead of classic functions and is constructed with arguments.
 
@@ -61,7 +47,23 @@ cv.factory("foo",[],
 );
 ```
 
-## Middleware
+### Accessing services
+
+Services and Factories can be accessed in two ways:
+
+```javascript
+cv.access("foo"); //returns the service with dependencies bound into 'this'.
+```
+
+or, if you just want the service without dependencies:
+
+```javascript
+cv.container.foo; //returns the service as variable.
+```
+
+## Middleware and Decorators
+
+### Middleware
 
 Middleware can be used to inject a function into a service, causing the service to call the middleware everytime the service is called
 
@@ -79,6 +81,21 @@ cv.middleware(
     function(name, foo, bar){
         console.log(name + " was called")
     }
+);
+```
+
+### Decorator
+
+Decorators are run before initializing the service, returning a modified version of it.
+
+```javascript
+//Chevron.prototype.middleware(fn,[services]);
+cv.decorator(
+    function(service){
+        console.log(service+" is being initialized!");
+        return service;
+    },
+    ["myCustom"]
 );
 ```
 
