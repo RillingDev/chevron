@@ -47,7 +47,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     //Check constructed status/dependencies and issues construct
                     prepare(service) {
                         let result,
-                            list = {};
+                            bundle = {};
 
                         _this.cv.fetchDependencies(
                             service.dependencies,
@@ -55,13 +55,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                                 let result;
 
                                 if (!dependency.constructed) {
-                                    result = _this.cv.construct(dependency, list);
+                                    result = _this.cv.construct(dependency, bundle);
                                 } else {
                                     result = dependency;
                                 }
 
-                                _this.cv.runMiddleware(result, list);
-                                list[name] = result.content;
+                                bundle[name] = result.content;
                             },
                             name => {
                                 _this.throwMissingDep(name);
@@ -69,12 +68,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         );
 
                         if (!service.constructed) {
-                            result = _this.cv.construct(service, list);
+                            result = _this.cv.construct(service, bundle);
                         } else {
                             result = service;
                         }
 
-                        _this.cv.runMiddleware(result, list);
                         return result;
                     },
                     //Iterate dependencies
@@ -114,7 +112,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         service = _this.cv.runDecorator(service, bundle);
 
                         if (_this.cv.hasType(service, "service")) {
-                            service.content = service.content.bind(bundle);
+                            let serviceFn = service.content;
+
+                            service.content = function() {
+                                _this.cv.runMiddleware(service, bundle);
+                                return serviceFn.apply(bundle, arguments);
+                            };
                         } else if (_this.cv.hasType(service, "factory")) {
                             let container = Object.create(service.prototype || Object.prototype);
 
@@ -123,7 +126,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             });
 
                             service.content = (service.content.apply(container, service.args) || container);
+
+                            /*service.content = function() {
+                                _this.cv.runMiddleware(service, bundle);
+                                return newContent;
+                            };*/
                         }
+
 
                         service.constructed = true;
                         return service;

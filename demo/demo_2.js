@@ -32,7 +32,11 @@ cv
 
 .middleware(function(service) {
     console.log("added two!");
-}, ["addTwo"]);
+}, ["addTwo"])
+
+.middleware(function(service) {
+    console.log("added ...twelve?");
+}, ["addTwelve"]);
 
 let accessedFn = cv.access("sumOfMiscNumbemiscNumbersPlusTwelversPlusTwelve");
 console.log(accessedFn());
