@@ -53,21 +53,23 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                         return result;*/
                     },
+                    //Check constructed status/dependencies and issues construct
                     prepare(service) {
-                        let result, list = [];
+                        let result,
+                            list = {};
 
                         _this.cv.fetchDependencies(
                             service.dependencies,
-                            dependency => {
+                            (dependency, name) => {
                                 let result;
                                 //console.log(dependency);
                                 if (!dependency.constructed) {
-                                    result = _this.cv.construct(dependency);
+                                    result = _this.cv.construct(dependency, list);
                                 } else {
                                     result = dependency;
                                 }
-
-                                _this.cv.ut.pushIfUnique(list, result.content);
+                                console.log(result);
+                                list[name] = result;
                             },
                             name => {
                                 _this.throwMissingDep(name);
@@ -75,7 +77,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         );
 
                         if (!service.constructed) {
-                            result = _this.cv.construct(service);
+                            result = _this.cv.construct(service, list);
                         } else {
                             result = service;
                         }
@@ -84,6 +86,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                         return result;
                     },
+                    //Iterate dependencies
                     fetchDependencies(dependencyList, fn, error) {
                         console.log("started", dependencyList);
 
@@ -91,12 +94,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                             if (_this.cv.exists(name)) {
                                 let service = _this.cv.get(name);
-                                console.log("dep:", name, service);
-                                fn(service, name);
+                                //console.log("dep:", name, service);
+
                                 if (_this.cv.hasDependencies(service)) {
                                     //recurse
                                     _this.cv.fetchDependencies(service.dependencies, fn, error);
                                 }
+                                fn(service, name);
                             } else {
                                 error(name);
                             }
@@ -105,7 +109,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     },
                     //Bundle dependencies for service/factory
                     collect(dependencyList, map, error) {
-                        let result = {};
+                        /*let result = {};
 
                         _this.cv.ut.each(dependencyList, dependency => {
                             let service = _this.container[dependency];
@@ -129,7 +133,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             }
                         });
 
-                        return result;
+                        return result;*/
                     },
                     add(name, dependencyList, type, content, args) {
                         let service = _this.container[name] = {
@@ -253,9 +257,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         isDefined(val) {
                             return typeof val !== "undefined";
                         },
-                        pushIfUnique(arr, val) {
+                        /*pushIfUnique(arr, val) {
                             return arr.includes(val) ? arr : arr.push(val);
-                        },
+                        },*/
                         //log
                         log(name, type, element, msg) {
                             let str = `${_this.options.name} ${type} in ${element} '${name}': ${msg}`;

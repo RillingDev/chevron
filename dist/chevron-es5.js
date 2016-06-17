@@ -58,26 +58,28 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
                       return result;*/
                 },
+
+                //Check constructed status/dependencies and issues construct
                 prepare: function prepare(service) {
                     var result = void 0,
-                        list = [];
+                        list = {};
 
-                    _this.cv.fetchDependencies(service.dependencies, function (dependency) {
+                    _this.cv.fetchDependencies(service.dependencies, function (dependency, name) {
                         var result = void 0;
                         //console.log(dependency);
                         if (!dependency.constructed) {
-                            result = _this.cv.construct(dependency);
+                            result = _this.cv.construct(dependency, list);
                         } else {
                             result = dependency;
                         }
-
-                        _this.cv.ut.pushIfUnique(list, result.content);
+                        console.log(result);
+                        list[name] = result;
                     }, function (name) {
                         _this.throwMissingDep(name);
                     });
 
                     if (!service.constructed) {
-                        result = _this.cv.construct(service);
+                        result = _this.cv.construct(service, list);
                     } else {
                         result = service;
                     }
@@ -86,6 +88,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                     return result;
                 },
+
+                //Iterate dependencies
                 fetchDependencies: function fetchDependencies(dependencyList, fn, error) {
                     console.log("started", dependencyList);
 
@@ -93,12 +97,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         if (_this.cv.exists(name)) {
                             var service = _this.cv.get(name);
-                            console.log("dep:", name, service);
-                            fn(service, name);
+                            //console.log("dep:", name, service);
+
                             if (_this.cv.hasDependencies(service)) {
                                 //recurse
                                 _this.cv.fetchDependencies(service.dependencies, fn, error);
                             }
+                            fn(service, name);
                         } else {
                             error(name);
                         }
@@ -107,31 +112,28 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 //Bundle dependencies for service/factory
                 collect: function collect(dependencyList, map, error) {
-                    var result = {};
-
-                    _this.cv.ut.each(dependencyList, function (dependency) {
-                        var service = _this.container[dependency];
+                    /*let result = {};
+                      _this.cv.ut.each(dependencyList, dependency => {
+                        let service = _this.container[dependency];
                         if (_this.cv.ut.isDefined(service)) {
                             //Init factory if not done already
                             if (service.type === "factory" && !service.constructed) {
-                                (function () {
-                                    var name = dependency,
-                                        bundle = _this.cv.collect(service.dependencies, function (item) {
-                                        return item;
-                                    }, function (missing) {
-                                        _this.cv.throwMissingDep(name, service.type, missing);
-                                    });
-
-                                    _this.cv.construct(name, bundle);
-                                })();
+                                let name = dependency,
+                                    bundle = _this.cv.collect(service.dependencies,
+                                        item => {
+                                            return item;
+                                        },
+                                        missing => {
+                                            _this.cv.throwMissingDep(name, service.type, missing);
+                                        });
+                                  _this.cv.construct(name, bundle);
                             }
                             result[dependency] = map(service);
                         } else {
                             error(dependency);
                         }
                     });
-
-                    return result;
+                      return result;*/
                 },
                 add: function add(name, dependencyList, type, content, args) {
                     var service = _this.container[name] = {
@@ -239,10 +241,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     isDefined: function isDefined(val) {
                         return typeof val !== "undefined";
                     },
-                    pushIfUnique: function pushIfUnique(arr, val) {
-                        return arr.includes(val) ? arr : arr.push(val);
-                    },
 
+                    /*pushIfUnique(arr, val) {
+                        return arr.includes(val) ? arr : arr.push(val);
+                    },*/
                     //log
                     log: function log(name, type, element, msg) {
                         var str = _this.options.name + " " + type + " in " + element + " '" + name + "': " + msg;
