@@ -3,46 +3,36 @@
 let cv = new Chevron("demoChevron");
 
 cv
-    .service("myService1", [], function() {
-        console.log("myService1 started");
-        return 4;
+    .service("addTwo", [], function(number) {
+        return parseInt(number) + 2;
     })
 
-.service("myService2", ["myService1", "myFactory1"], function(foo) {
-    console.log("myService2 started");
-    return foo + " + " + this.myFactory1.bar + " + " + this.myService1();
+.service("addTen", [], function(number) {
+    return parseInt(number) + 10;
 })
 
-.service("myService3", ["myService1", "myService2", "myFactory1", "myFactory2"], function(foo) {
-    console.log("myService3 started");
-    return this.myService1() + " " + this.myService2(foo) + " " + this.myFactory1.foo + "" + this.myFactory2.value;
+.service("addTwelve", ["addTwo", "addTen"], function(number) {
+    return this.addTen(this.addTwo(number));
 })
 
-.factory("myFactory1", ["myService1"], function(foo, bar) {
-    console.log("myFactory1 started");
-    this.foo = foo + " + " + this.myService1();
-    this.bar = bar + " lorem";
-    //this.foobar = foo + bar + cv.access("myService1")();
-}, [12, 24])
+.factory("miscNumbers", [], function() {
+    this.foo = 23;
+    this.bar = 19;
+}, [])
 
-.factory("myFactory2", ["myService1", "myService2", "myFactory1"], function(bar) {
-    console.log("myFactory2 started");
-    this.lol = arguments;
-    this.value = bar + this.myService2(bar);
-    //this.foobar = foo + bar + cv.access("myService1")();
-}, [33])
+.factory("miscNumbersPlusTwelve", ["addTwelve", "miscNumbers"], function() {
+    this.foo = this.addTwelve(this.miscNumbers.foo);
+    this.bar = this.addTwelve(this.miscNumbers.bar);
+    console.log(this);
+}, [])
 
-.middleware(function(service) {
-    console.log("Middleware fired for " + service.name);
+.service("sumOfMiscNumbemiscNumbersPlusTwelversPlusTwelve", ["miscNumbersPlusTwelve"], function() {
+    return this.miscNumbersPlusTwelve.foo + this.miscNumbersPlusTwelve.bar;
 })
 
 .middleware(function(service) {
-    console.log("the primary service " + service.name + " was called!");
-}, ["myService1"]);
+    console.log("added two!");
+}, ["addTwo"]);
 
-
-/*let accessedFac = cv.access("myFactory2");
-console.log(accessedFac);
-console.log("##########");*/
-let accessedFn = cv.access("myService3");
-console.log(accessedFn(21));
+let accessedFn = cv.access("sumOfMiscNumbemiscNumbersPlusTwelversPlusTwelve");
+console.log(accessedFn());
