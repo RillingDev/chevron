@@ -35,26 +35,17 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     name
                 };
                 _this.container = {};
+                _this.injects = {
+                    middleware: [],
+                    decorator: []
+                };
 
                 /*####################/
                 * Internal Chevron
                 /####################*/
                 _this.cv = {
-                    //Returns if Array of dependencies exists
-                    load(dependencyList, done) {
-                        /*  let result = true;
-
-                        _this.cv.ut.each(dependencyList, dependency => {
-
-                        });
-                        if (result) {
-                            done();
-                        }
-
-                        return result;*/
-                    },
                     //Check constructed status/dependencies and issues construct
-                    prepare(service) {
+                    prepare(service, name) {
                         let result,
                             list = {};
 
@@ -80,6 +71,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         if (!service.constructed) {
                             result = _this.cv.construct(service, list);
                         } else {
+                            //_this.cv.runMiddleware();
                             result = service;
                         }
 
@@ -108,44 +100,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                         });
                     },
-                    //Bundle dependencies for service/factory
-                    collect(dependencyList, map, error) {
-                        /*let result = {};
 
-                        _this.cv.ut.each(dependencyList, dependency => {
-                            let service = _this.container[dependency];
-                            if (_this.cv.ut.isDefined(service)) {
-                                //Init factory if not done already
-                                if (service.type === "factory" && !service.constructed) {
-                                    let name = dependency,
-                                        bundle = _this.cv.collect(service.dependencies,
-                                            item => {
-                                                return item;
-                                            },
-                                            missing => {
-                                                _this.cv.throwMissingDep(name, service.type, missing);
-                                            });
-
-                                    _this.cv.construct(name, bundle);
-                                }
-                                result[dependency] = map(service);
-                            } else {
-                                error(dependency);
-                            }
-                        });
-
-                        return result;*/
-                    },
                     add(name, dependencyList, type, content, args) {
                         let service = _this.container[name] = {
                             dependencies: dependencyList || [],
                             type: type || null,
                             content: content || null,
                             constructed: false,
-                            inject: {
-                                middleware: []
-                                    //decorator: null
-                            },
+                            name
                         };
                         //Add type specific props
                         if (type === "factory") {
@@ -157,6 +119,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     //construct
                     construct(service, bundle) {
                         //console.log("CN started constructing", service, bundle);
+                        service = _this.cv.runDecorator(service, bundle);
+
                         if (_this.cv.hasType(service, "service")) {
                             //@TODO inject
                             service.content = service.content.bind(bundle);
@@ -175,11 +139,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         //console.log("CN finished constructing", service, bundle);
                         return service;
                     },
-                    //Inject decorator/middleware into service
-                    inject(name, type, fn) {
-                        _this.container[name].inject[type].push(fn);
-                    },
-                    runInjects(name, args) {
+                    runMiddleware(name, args) {
                         /*  let service = _this.container[name],
                               bundle = _this.cv.collect(service.dependencies,
                                   item => {
@@ -197,6 +157,23 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                                   fn.apply(this, newArgs);
                               });
                           }*/
+                    },
+                    runDecorator(service, bundle) {
+                        _this.cv.runInject("decorator", service, inject => {
+                            inject.fn.call(bundle, service, service.name);
+                        });
+                        return service;
+                    },
+                    runInject(type, service, fn) {
+                        _this.cv.ut.each(_this.injects[type], inject => {
+                            if (_this.cv.injectorApplies(service.name, inject)) {
+                                fn(inject);
+                            }
+                        });
+                    },
+                    injectorApplies(name, inject) {
+                        console.log(inject, name);
+                        return inject.applies.length === 0 ? true : inject.applies.includes(name);
                     },
                     exists(name) {
                         return _this.cv.ut.isDefined(_this.container[name]);
@@ -239,7 +216,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     * Internal Chevron Utility
                     /####################*/
                     ut: {
-                        //Iterate Array
+                        //Iterate
                         each(arr, fn) {
                             for (let i = 0, l = arr.length; i < l; i++) {
                                 fn(arr[i], i);
@@ -255,9 +232,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         isDefined(val) {
                             return typeof val !== "undefined";
                         },
-                        /*pushIfUnique(arr, val) {
-                            return arr.includes(val) ? arr : arr.push(val);
-                        },*/
                         //log
                         log(name, type, element, msg) {
                             let str = `${_this.options.name} ${type} in ${element} '${name}': ${msg}`;
@@ -296,48 +270,45 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
             //accepts constructor function
         factory(name, dependencyList, Constructor, args) {
-                args.unshift(null);
-                return this.provider(
-                    name,
-                    dependencyList,
-                    Constructor,
-                    "factory",
-                    args
-                );
-            }
-            //Injects a decorator to the container/service
-            /*decorator(fn, service) {
-
-            }*/
-            //Injects a middleware to the container/service
-        middleware(fn, applies) {
+            args.unshift(null);
+            return this.provider(
+                name,
+                dependencyList,
+                Constructor,
+                "factory",
+                args
+            );
+        }
+        injector(type, fn, applies) {
                 let _this = this;
 
-                /*_this.cv.ut.eachObject(_this.container, (service, name) => {
-                    //Inject for some services only if argument is present
-                    if (_this.cv.ut.isDefined(applies)) {
-                        if (applies.includes(name)) {
-                            _this.cv.inject(name, "middleware", fn);
-                        }
-                    } else {
-                        _this.cv.inject(name, "middleware", fn);
-                    }
-                });*/
+                _this.injects[type].push({
+                    fn,
+                    applies: applies || []
+                });
 
                 return _this;
             }
+            //Injects a decorator to the container/service
+        decorator(fn, applies) {
+                return this.injector("decorator", fn, applies);
+            }
+            //Injects a middleware to the container/service
+        middleware(fn, applies) {
+                return this.injector("middleware", fn, applies);
+            }
             //Lets you access services with their dependencies injected
         access(name) {
-                let _this = this,
-                    service = _this.container[name];
+                let _this = this;
 
                 //Check if accessed service is registered
-                if (!_this.cv.ut.isDefined(service)) {
+                if (!_this.cv.exists(name)) {
                     _this.cv.throwNotFound(name);
+                } else {
+                    let service = _this.cv.get(name);
+                    return _this.cv.prepare(service, name).content;
                 }
 
-
-                return _this.cv.prepare(service).content;
             }
             //returns Array of dependencies
         list() {
