@@ -42,11 +42,22 @@ cv
     console.log("added ...twelve?");
 }, ["addTwelve"])
 
+/*.decorator(function(service) {
+    console.log("decorated addTwelve!");
+    service = function(number) {
+        console.log("ran a decorated version of addTwelve");
+        return parseInt(number) + 10;
+    };
+    return service;
+}, ["addTwelve"])*/
+
 .decorator(function(service) {
     console.log("modified miscNumbers!");
-    this.foo = 10;
-    this.bar = 12;
-    return this;
+    service = function() {
+        this.foo = 10;
+        this.bar = 4;
+    };
+    return service;
 }, ["miscNumbers"]);
 
 let accessedFn = cv.access("sumOfMiscNumbemiscNumbersPlusTwelve");

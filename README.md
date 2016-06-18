@@ -71,7 +71,7 @@ Middleware can be used to inject a function into a service, causing the service 
 //Chevron.prototype.middleware(fn,[services]);
 cv.middleware(
     function(){
-        console.log("myCustom Service is being run!")
+        console.log("myCustomService is being run!")
     },
     ["myCustomService"]
 );
@@ -86,7 +86,7 @@ cv.middleware(
 
 ### Decorator
 
-_buggy in the latest release_
+_Decorators are Work in Progress_
 
 Decorators are run before initializing the service/factory, returning a modified version of it.
 
@@ -94,10 +94,13 @@ Decorators are run before initializing the service/factory, returning a modified
 //Chevron.prototype.decorator(fn,[services]);
 cv.decorator(
     function(service){
-        console.log(service+" is being initialized!");
-        return service;
+      service = function() {
+          this.foo = 10;
+          this.bar = 4;
+      };
+      return service;
     },
-    ["myCustom"]
+    ["myCustomService"]
 );
 ```
 

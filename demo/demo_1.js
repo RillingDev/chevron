@@ -25,15 +25,7 @@ cv.middleware(function(service) {
     console.log("Middleware fired for " + service.name);
 });
 
-cv.decorator(function(service) {
-    console.log("Decorator fired for " + service.name);
-    return service;
-});
 
-cv.decorator(function(service) {
-    console.log("magic magic Service1");
-    return service;
-}, ["myService1"]);
 
 let accessedFn = cv.access("myService2");
 console.log(accessedFn(12));

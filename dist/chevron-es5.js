@@ -116,7 +116,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 //construct service/factory
                 construct: function construct(service, bundle) {
+                    //  console.log("IN", service);
                     service = _this.cv.runDecorator(service, bundle);
+                    //console.log("OUT", service);
 
                     if (_this.cv.hasType(service, "service")) {
                         (function () {
@@ -135,12 +137,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                                 container[name] = dependency;
                             });
 
+                            _this.cv.runMiddleware(service, bundle);
                             service.content = service.content.apply(container, service.args) || container;
-
-                            /*service.content = function() {
-                                _this.cv.runMiddleware(service, bundle);
-                                return newContent;
-                            };*/
                         })();
                     }
 
@@ -153,13 +151,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     });
                 },
                 runDecorator: function runDecorator(service, bundle) {
-                    var result = false;
-
                     _this.cv.runInject("decorator", service, function (inject) {
-                        //result = inject.fn;
+                        service.content = inject.fn.bind(bundle, service.content);
                     });
 
-                    return result === false ? service : result;
+                    return service;
                 },
                 runInject: function runInject(type, service, fn) {
                     _this.cv.ut.each(_this.injects[type], function (inject) {

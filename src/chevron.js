@@ -109,7 +109,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     },
                     //construct service/factory
                     construct(service, bundle) {
+                        //  console.log("IN", service);
                         service = _this.cv.runDecorator(service, bundle);
+                        //console.log("OUT", service);
 
                         if (_this.cv.hasType(service, "service")) {
                             let serviceFn = service.content;
@@ -125,12 +127,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                                 container[name] = dependency;
                             });
 
+                            _this.cv.runMiddleware(service, bundle);
                             service.content = (service.content.apply(container, service.args) || container);
-
-                            /*service.content = function() {
-                                _this.cv.runMiddleware(service, bundle);
-                                return newContent;
-                            };*/
                         }
 
                         service.constructed = true;
@@ -142,13 +140,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         });
                     },
                     runDecorator(service, bundle) {
-                        let result = false;
-
                         _this.cv.runInject("decorator", service, inject => {
-                            //result = inject.fn;
+                            service.content = inject.fn.bind(bundle,service.content);
                         });
 
-                        return result === false ? service : result;
+                        return service;
                     },
                     runInject(type, service, fn) {
                         _this.cv.ut.each(_this.injects[type], inject => {
