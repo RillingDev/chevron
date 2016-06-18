@@ -15,6 +15,10 @@ cv
     return this.addTen(this.addTwo(number));
 })
 
+.service("sumOf", [], function(number1, number2) {
+    return number1 + number2;
+})
+
 .factory("miscNumbers", [], function() {
     this.foo = 23;
     this.bar = 19;
@@ -26,8 +30,8 @@ cv
     console.log(this);
 }, [])
 
-.service("sumOfMiscNumbemiscNumbersPlusTwelversPlusTwelve", ["miscNumbersPlusTwelve"], function() {
-    return this.miscNumbersPlusTwelve.foo + this.miscNumbersPlusTwelve.bar;
+.service("sumOfMiscNumbemiscNumbersPlusTwelve", ["miscNumbersPlusTwelve", "sumOf"], function() {
+    return this.sumOf(this.miscNumbersPlusTwelve.foo, this.miscNumbersPlusTwelve.bar);
 })
 
 .middleware(function(service) {
@@ -35,14 +39,15 @@ cv
 }, ["addTwo"])
 
 .middleware(function(service) {
-    console.log("modified ...twelve?");
-}, ["miscNumbers"])
+    console.log("added ...twelve?");
+}, ["addTwelve"])
 
-.decorator(function(service){
-  console.log("modified miscNumbers!");
-  this.foo = 10;
-  this.bar = 12;
-},["miscNumbers"]);
+.decorator(function(service) {
+    console.log("modified miscNumbers!");
+    this.foo = 10;
+    this.bar = 12;
+    return this;
+}, ["miscNumbers"]);
 
-let accessedFn = cv.access("sumOfMiscNumbemiscNumbersPlusTwelversPlusTwelve");
+let accessedFn = cv.access("sumOfMiscNumbemiscNumbersPlusTwelve");
 console.log(accessedFn());
