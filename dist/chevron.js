@@ -69,13 +69,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         _this.cv.fetchDependencies(
                             service.dependencies,
                             dependency => {
-                                list[dependency.name] = _this.cv.bootstrapService(dependency, list).content;
+                                list[dependency.name] = _this.cv.bundle(dependency, list).content;
                             },
                             name => {
                                 _this.cv.throwMissingDep(name);
                             }
                         );
-                        result = _this.cv.bootstrapService(service, list);
+                        result = _this.cv.bundle(service, list);
 
                         return result;
                     },
@@ -95,7 +95,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             }
                         });
                     },
-                    bootstrapService(service, list) {
+                    bundle(service, list) {
                         let result,
                             bundle = _this.cv.ut.filterObject(list, (item, key) => {
                                 return service.dependencies.includes(key);
@@ -147,7 +147,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     },
                     execDecorator(service, bundle) {
                         _this.cv.execInject("decorator", service, inject => {
-                            service.content = inject.fn.bind(bundle, service.content);
+                            service.content = inject.fn.call(bundle, service.content);
                         });
 
                         return service;

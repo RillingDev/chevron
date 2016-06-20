@@ -147,7 +147,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     },
                     execDecorator(service, bundle) {
                         _this.cv.execInject("decorator", service, inject => {
-                            service.content = inject.fn.bind(bundle, service.content);
+                            service.content = inject.fn.call(bundle, service.content);
                         });
 
                         return service;

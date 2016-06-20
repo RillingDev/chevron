@@ -42,23 +42,19 @@ cv
     console.log("added ...twelve?");
 }, ["addTwelve"])
 
-/*.decorator(function(service) {
-    console.log("decorated addTwelve!");
-    service = function(number) {
-        console.log("ran a decorated version of addTwelve");
-        return parseInt(number) + 10;
-    };
+.decorator(function (service) {
+    console.log("decorated addTwelve");
     return service;
-}, ["addTwelve"])*/
+}, ["addTwelve"])
 
-/*.decorator(function (service) {
-    console.log("modified miscNumbers!");
+.decorator(function (service) {
     service = function () {
+        console.log("modified miscNumbers!");
         this.foo = 10;
         this.bar = 4;
     };
     return service;
-}, ["miscNumbers"]);*/
+}, ["miscNumbers"]);
 
 let accessedFn = cv.access("sumOfMiscNumbemiscNumbersPlusTwelve");
 console.log(accessedFn());

@@ -76,11 +76,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         list = {};
 
                     _this.cv.fetchDependencies(service.dependencies, function (dependency) {
-                        list[dependency.name] = _this.cv.bootstrapService(dependency, list).content;
+                        list[dependency.name] = _this.cv.bundle(dependency, list).content;
                     }, function (name) {
                         _this.cv.throwMissingDep(name);
                     });
-                    result = _this.cv.bootstrapService(service, list);
+                    result = _this.cv.bundle(service, list);
 
                     return result;
                 },
@@ -101,7 +101,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         }
                     });
                 },
-                bootstrapService: function bootstrapService(service, list) {
+                bundle: function bundle(service, list) {
                     var result = void 0,
                         bundle = _this.cv.ut.filterObject(list, function (item, key) {
                         return service.dependencies.includes(key);
@@ -159,7 +159,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 },
                 execDecorator: function execDecorator(service, bundle) {
                     _this.cv.execInject("decorator", service, function (inject) {
-                        service.content = inject.fn.bind(bundle, service.content);
+                        service.content = inject.fn.call(bundle, service.content);
                     });
 
                     return service;
