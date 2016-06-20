@@ -65,7 +65,7 @@ cv.container.foo; //returns the service as variable.
 
 ### Middleware
 
-Middleware can be used to inject a function into a service, causing the service to call the middleware everytime the service is called
+_Middleware/Decorators are not availble in the lite version_ Middleware can be used to inject a function into a service, causing the service to call the middleware everytime the service is called
 
 ```javascript
 //Chevron.prototype.middleware(fn,[services]);
@@ -86,7 +86,7 @@ cv.middleware(
 
 ### Decorator
 
-_Decorators are Work in Progress_
+_Middleware/Decorators are not availble in the lite version_
 
 Decorators are run before initializing the service/factory, returning a modified version of it.
 
