@@ -2,7 +2,7 @@
 
 # Chevron.js
 
-> An extremely small JavaScript service library
+> An extremely small JavaScript service/dependency library
 
 ## Introduction
 
