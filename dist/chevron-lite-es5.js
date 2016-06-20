@@ -42,12 +42,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 name: name
             };
             _this.container = {};
-            /* <!-- comments:toggle // --> */
-            _this.injects = {
-                middleware: [],
-                decorator: []
-            };
-            /* <!-- endcomments --> */
+
+            //    _this.injects = {
+            //    middleware: [],
+            //    decorator: []
+            //    };
 
             /*####################/
             * Internal Chevron
@@ -118,20 +117,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 //construct service/factory
                 construct: function construct(service, bundle) {
-                    /* <!-- comments:toggle // --> */
-                    //  console.log("IN", service);
-                    service = _this.cv.runDecorator(service, bundle);
-                    //console.log("OUT", service);
-                    /* <!-- endcomments --> */
+
+                    console.log("IN", service);
+                    //    service = _this.cv.runDecorator(service, bundle);
+                    console.log("OUT", service);
 
                     if (_this.cv.hasType(service, "service")) {
                         (function () {
                             var serviceFn = service.content;
 
                             service.content = function () {
-                                /* <!-- comments:toggle // --> */
-                                _this.cv.runMiddleware(service, bundle);
-                                /* <!-- endcomments --> */
+
+                                //    _this.cv.runMiddleware(service, bundle);
+
                                 return serviceFn.apply(bundle, arguments);
                             };
                         })();
@@ -142,9 +140,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                             _this.cv.ut.eachObject(bundle, function (dependency, name) {
                                 container[name] = dependency;
                             });
-                            /* <!-- comments:toggle // --> */
-                            _this.cv.runMiddleware(service, bundle);
-                            /* <!-- endcomments --> */
+
+                            //    _this.cv.runMiddleware(service, bundle);
+
                             service.content = service.content.apply(container, service.args) || container;
                         })();
                     }
@@ -153,31 +151,30 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     return service;
                 },
 
-                /* <!-- comments:toggle // --> */
-                runMiddleware: function runMiddleware(service, bundle) {
-                    _this.cv.runInject("middleware", service, function (inject) {
-                        inject.fn.call(bundle, service);
-                    });
-                },
-                runDecorator: function runDecorator(service, bundle) {
-                    _this.cv.runInject("decorator", service, function (inject) {
-                        service.content = inject.fn.bind(bundle, service.content);
-                    });
 
-                    return service;
-                },
-                runInject: function runInject(type, service, fn) {
-                    _this.cv.ut.each(_this.injects[type], function (inject) {
-                        if (_this.cv.injectorApplies(service.name, inject)) {
-                            fn(inject);
-                        }
-                    });
-                },
-                injectorApplies: function injectorApplies(name, inject) {
-                    return inject.applies.length === 0 ? true : inject.applies.includes(name);
-                },
+                //    runMiddleware(service, bundle) {
+                //    _this.cv.runInject("middleware", service, inject => {
+                //    inject.fn.call(bundle, service);
+                //    });
+                //    },
+                //    runDecorator(service, bundle) {
+                //    _this.cv.runInject("decorator", service, inject => {
+                //    service.content = inject.fn.bind(bundle, service.content);
+                //    });
+                //   
+                //    return service;
+                //    },
+                //    runInject(type, service, fn) {
+                //    _this.cv.ut.each(_this.injects[type], inject => {
+                //    if (_this.cv.injectorApplies(service.name, inject)) {
+                //    fn(inject);
+                //    }
+                //    });
+                //    },
+                //    injectorApplies(name, inject) {
+                //    return inject.applies.length === 0 ? true : inject.applies.includes(name);
+                //    },
 
-                /* <!-- endcomments --> */
                 exists: function exists(name) {
                     return _this.cv.ut.isDefined(_this.container[name]);
                 },
@@ -271,36 +268,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 args.unshift(null);
                 return this.provider(name, dependencyList, Constructor, "factory", args);
             }
-            /* <!-- comments:toggle // --> */
-            /*Core decorator/middleware method*/
 
-        }, {
-            key: "injector",
-            value: function injector(type, fn, applies) {
-                var _this = this;
+            //    /*Core decorator/middleware method*/
+            //    injector(type, fn, applies) {
+            //    let _this = this;
+            //   
+            //    _this.injects[type].push({
+            //    fn,
+            //    applies: applies || []
+            //    });
+            //   
+            //    return _this;
+            //    }
+            //    /*Injects a decorator to a service/factory*/
+            //    decorator(fn, applies) {
+            //    return this.injector("decorator", fn, applies);
+            //    }
+            //    /*Injects a middleware to a service*/
+            //    middleware(fn, applies) {
+            //    return this.injector("middleware", fn, applies);
+            //    }
 
-                _this.injects[type].push({
-                    fn: fn,
-                    applies: applies || []
-                });
-
-                return _this;
-            }
-            /*Injects a decorator to a service/factory*/
-
-        }, {
-            key: "decorator",
-            value: function decorator(fn, applies) {
-                return this.injector("decorator", fn, applies);
-            }
-            /*Injects a middleware to a service*/
-
-        }, {
-            key: "middleware",
-            value: function middleware(fn, applies) {
-                return this.injector("middleware", fn, applies);
-            }
-            /* <!-- endcomments --> */
             //prepare/initialize services/factory with dependencies injected
 
         }, {
@@ -329,4 +317,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     window.Chevron = Chevron;
 })(window);
-//# sourceMappingURL=chevron-es5.js.map
+//# sourceMappingURL=chevron-lite-es5.js.map

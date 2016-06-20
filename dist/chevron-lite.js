@@ -35,12 +35,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     name
                 };
                 _this.container = {};
-                /* <!-- comments:toggle // --> */
-                _this.injects = {
-                    middleware: [],
-                    decorator: []
-                };
-                /* <!-- endcomments --> */
+
+                //    _this.injects = {
+                    //    middleware: [],
+                    //    decorator: []
+                //    };
+
 
                 /*####################/
                 * Internal Chevron
@@ -111,19 +111,19 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     },
                     //construct service/factory
                     construct(service, bundle) {
-                        /* <!-- comments:toggle // --> */
-                        //  console.log("IN", service);
-                        service = _this.cv.runDecorator(service, bundle);
-                        //console.log("OUT", service);
-                        /* <!-- endcomments --> */
+
+                        console.log("IN", service);
+                        //    service = _this.cv.runDecorator(service, bundle);
+                        console.log("OUT", service);
+
 
                         if (_this.cv.hasType(service, "service")) {
                             let serviceFn = service.content;
 
                             service.content = function () {
-                                /* <!-- comments:toggle // --> */
-                                _this.cv.runMiddleware(service, bundle);
-                                /* <!-- endcomments --> */
+
+                                //    _this.cv.runMiddleware(service, bundle);
+
                                 return serviceFn.apply(bundle, arguments);
                             };
                         } else if (_this.cv.hasType(service, "factory")) {
@@ -132,39 +132,39 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             _this.cv.ut.eachObject(bundle, (dependency, name) => {
                                 container[name] = dependency;
                             });
-                            /* <!-- comments:toggle // --> */
-                            _this.cv.runMiddleware(service, bundle);
-                            /* <!-- endcomments --> */
+
+                            //    _this.cv.runMiddleware(service, bundle);
+
                             service.content = (service.content.apply(container, service.args) || container);
                         }
 
                         service.constructed = true;
                         return service;
                     },
-                    /* <!-- comments:toggle // --> */
-                    runMiddleware(service, bundle) {
-                        _this.cv.runInject("middleware", service, inject => {
-                            inject.fn.call(bundle, service);
-                        });
-                    },
-                    runDecorator(service, bundle) {
-                        _this.cv.runInject("decorator", service, inject => {
-                            service.content = inject.fn.bind(bundle, service.content);
-                        });
 
-                        return service;
-                    },
-                    runInject(type, service, fn) {
-                        _this.cv.ut.each(_this.injects[type], inject => {
-                            if (_this.cv.injectorApplies(service.name, inject)) {
-                                fn(inject);
-                            }
-                        });
-                    },
-                    injectorApplies(name, inject) {
-                        return inject.applies.length === 0 ? true : inject.applies.includes(name);
-                    },
-                    /* <!-- endcomments --> */
+                    //    runMiddleware(service, bundle) {
+                        //    _this.cv.runInject("middleware", service, inject => {
+                            //    inject.fn.call(bundle, service);
+                        //    });
+                    //    },
+                    //    runDecorator(service, bundle) {
+                        //    _this.cv.runInject("decorator", service, inject => {
+                            //    service.content = inject.fn.bind(bundle, service.content);
+                        //    });
+//    
+                        //    return service;
+                    //    },
+                    //    runInject(type, service, fn) {
+                        //    _this.cv.ut.each(_this.injects[type], inject => {
+                            //    if (_this.cv.injectorApplies(service.name, inject)) {
+                                //    fn(inject);
+                            //    }
+                        //    });
+                    //    },
+                    //    injectorApplies(name, inject) {
+                        //    return inject.applies.length === 0 ? true : inject.applies.includes(name);
+                    //    },
+
                     exists(name) {
                         return _this.cv.ut.isDefined(_this.container[name]);
                     },
@@ -270,27 +270,27 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     args
                 );
             }
-            /* <!-- comments:toggle // --> */
-            /*Core decorator/middleware method*/
-        injector(type, fn, applies) {
-                let _this = this;
 
-                _this.injects[type].push({
-                    fn,
-                    applies: applies || []
-                });
+            //    /*Core decorator/middleware method*/
+        //    injector(type, fn, applies) {
+                //    let _this = this;
+//    
+                //    _this.injects[type].push({
+                    //    fn,
+                    //    applies: applies || []
+                //    });
+//    
+                //    return _this;
+            //    }
+            //    /*Injects a decorator to a service/factory*/
+        //    decorator(fn, applies) {
+                //    return this.injector("decorator", fn, applies);
+            //    }
+            //    /*Injects a middleware to a service*/
+        //    middleware(fn, applies) {
+                //    return this.injector("middleware", fn, applies);
+            //    }
 
-                return _this;
-            }
-            /*Injects a decorator to a service/factory*/
-        decorator(fn, applies) {
-                return this.injector("decorator", fn, applies);
-            }
-            /*Injects a middleware to a service*/
-        middleware(fn, applies) {
-                return this.injector("middleware", fn, applies);
-            }
-            /* <!-- endcomments --> */
             //prepare/initialize services/factory with dependencies injected
         access(name) {
                 let _this = this;

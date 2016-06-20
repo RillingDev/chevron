@@ -21,11 +21,5 @@ cv.factory("myFactory1", ["myService1"], function(foo, bar) {
 }, [12, 24]);
 
 
-cv.middleware(function(service) {
-    console.log("Middleware fired for " + service.name);
-});
-
-
-
 let accessedFn = cv.access("myService2");
 console.log(accessedFn(12));
