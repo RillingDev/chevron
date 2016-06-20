@@ -12,10 +12,12 @@ cv
 })
 
 .service("addTwelve", ["addTwo", "addTen"], function (number) {
+    console.log("addTwelve",this);
     return this.addTen(this.addTwo(number));
 })
 
 .service("sumOf", [], function (number1, number2) {
+    console.log("sumOf",this);
     return number1 + number2;
 })
 
@@ -51,14 +53,14 @@ cv
     return service;
 }, ["addTwelve"])*/
 
-.decorator(function (service) {
+/*.decorator(function (service) {
     console.log("modified miscNumbers!");
     service = function () {
         this.foo = 10;
         this.bar = 4;
     };
     return service;
-}, ["miscNumbers"]);
+}, ["miscNumbers"]);*/
 
 let accessedFn = cv.access("sumOfMiscNumbemiscNumbersPlusTwelve");
 console.log(accessedFn());

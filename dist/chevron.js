@@ -46,31 +46,32 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 * Internal Chevron
                 /####################*/
                 _this.cv = {
-                    //Check constructed status/dependencies and issues construct
+                    //Check initialized status/dependencies and issues initialize
                     prepare(service) {
                         let result,
-                            bundle = {};
+                            list = {};
 
                         _this.cv.fetchDependencies(
                             service.dependencies,
-                            (dependency, name) => {
-                                let result;
-
-                                if (!dependency.constructed) {
-                                    result = _this.cv.construct(dependency, bundle);
-                                } else {
-                                    result = dependency;
-                                }
-
-                                bundle[name] = result.content;
+                            dependency => {
+                                list[dependency.name] = _this.cv.bootstrapService(dependency, list).content;
                             },
                             name => {
-                                _this.throwMissingDep(name);
+                                _this.cv.throwMissingDep(name);
                             }
                         );
+                        result = _this.cv.bootstrapService(service, list);
 
-                        if (!service.constructed) {
-                            result = _this.cv.construct(service, bundle);
+                        return result;
+                    },
+                    bootstrapService(service, list) {
+                        let result,
+                            bundle = _this.cv.ut.filterObject(list, (item, key) => {
+                                return service.dependencies.includes(key);
+                            });
+
+                        if (!service.initialized) {
+                            result = _this.cv.initialize(service, bundle);
                         } else {
                             result = service;
                         }
@@ -80,7 +81,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     //Iterate dependencies
                     fetchDependencies(dependencyList, fn, error) {
                         _this.cv.ut.each(dependencyList, name => {
-
                             if (_this.cv.exists(name)) {
                                 let service = _this.cv.get(name);
 
@@ -88,7 +88,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                                     //recurse
                                     _this.cv.fetchDependencies(service.dependencies, fn, error);
                                 }
-                                fn(service, name);
+                                fn(service);
                             } else {
                                 error(name);
                             }
@@ -100,7 +100,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             dependencies: dependencyList || [],
                             type,
                             content,
-                            constructed: false,
+                            initialized: false,
                             name
                         };
                         //Add type specific props
@@ -110,10 +110,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         }
                     },
                     //construct service/factory
-                    construct(service, bundle) {
+                    initialize(service, bundle) {
                         /* <!-- comments:toggle // --> */
                         //  console.log("IN", service);
-                        service = _this.cv.runDecorator(service, bundle);
+                        service = _this.cv.execDecorator(service, bundle);
                         //console.log("OUT", service);
                         /* <!-- endcomments --> */
 
@@ -121,8 +121,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             let serviceFn = service.content;
 
                             service.content = function () {
+                                //CHevron service function wrapper
                                 /* <!-- comments:toggle // --> */
-                                _this.cv.runMiddleware(service, bundle);
+                                _this.cv.execMiddleware(service, bundle);
                                 /* <!-- endcomments --> */
                                 return serviceFn.apply(bundle, arguments);
                             };
@@ -132,29 +133,27 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             _this.cv.ut.eachObject(bundle, (dependency, name) => {
                                 container[name] = dependency;
                             });
-                            /* <!-- comments:toggle // --> */
-                            _this.cv.runMiddleware(service, bundle);
-                            /* <!-- endcomments --> */
+
                             service.content = (service.content.apply(container, service.args) || container);
                         }
 
-                        service.constructed = true;
+                        service.initialized = true;
                         return service;
                     },
                     /* <!-- comments:toggle // --> */
-                    runMiddleware(service, bundle) {
-                        _this.cv.runInject("middleware", service, inject => {
+                    execMiddleware(service, bundle) {
+                        _this.cv.execInject("middleware", service, inject => {
                             inject.fn.call(bundle, service);
                         });
                     },
-                    runDecorator(service, bundle) {
-                        _this.cv.runInject("decorator", service, inject => {
+                    execDecorator(service, bundle) {
+                        _this.cv.execInject("decorator", service, inject => {
                             service.content = inject.fn.bind(bundle, service.content);
                         });
 
                         return service;
                     },
-                    runInject(type, service, fn) {
+                    execInject(type, service, fn) {
                         _this.cv.ut.each(_this.injects[type], inject => {
                             if (_this.cv.injectorApplies(service.name, inject)) {
                                 fn(inject);
@@ -217,6 +216,17 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             for (let i = 0, l = keys.length; i < l; i++) {
                                 fn(object[keys[i]], keys[i], i);
                             }
+                        },
+                        filterObject(obj, fn) {
+                            let result = {};
+
+                            _this.cv.ut.eachObject(obj, (item, key, index) => {
+                                if (fn(item, key, index)) {
+                                    result[key] = item;
+                                }
+                            });
+
+                            return result;
                         },
                         //return if val is defined
                         isDefined(val) {
@@ -296,10 +306,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 let _this = this;
 
                 //Check if accessed service is registered
-                if (!_this.cv.exists(name)) {
-                    _this.cv.throwNotFound(name);
-                } else {
+                if (_this.cv.exists(name)) {
                     return _this.cv.prepare(_this.cv.get(name)).content;
+                } else {
+                    _this.cv.throwNotFound(name);
                 }
 
             }

@@ -53,28 +53,29 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             * Internal Chevron
             /####################*/
             _this.cv = {
-                //Check constructed status/dependencies and issues construct
+                //Check initialized status/dependencies and issues initialize
 
                 prepare: function prepare(service) {
                     var result = void 0,
-                        bundle = {};
+                        list = {};
 
-                    _this.cv.fetchDependencies(service.dependencies, function (dependency, name) {
-                        var result = void 0;
-
-                        if (!dependency.constructed) {
-                            result = _this.cv.construct(dependency, bundle);
-                        } else {
-                            result = dependency;
-                        }
-
-                        bundle[name] = result.content;
+                    _this.cv.fetchDependencies(service.dependencies, function (dependency) {
+                        list[dependency.name] = _this.cv.bootstrapService(dependency, list).content;
                     }, function (name) {
-                        _this.throwMissingDep(name);
+                        _this.cv.throwMissingDep(name);
+                    });
+                    result = _this.cv.bootstrapService(service, list);
+
+                    return result;
+                },
+                bootstrapService: function bootstrapService(service, list) {
+                    var result = void 0,
+                        bundle = _this.cv.ut.filterObject(list, function (item, key) {
+                        return service.dependencies.includes(key);
                     });
 
-                    if (!service.constructed) {
-                        result = _this.cv.construct(service, bundle);
+                    if (!service.initialized) {
+                        result = _this.cv.initialize(service, bundle);
                     } else {
                         result = service;
                     }
@@ -85,7 +86,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 //Iterate dependencies
                 fetchDependencies: function fetchDependencies(dependencyList, fn, error) {
                     _this.cv.ut.each(dependencyList, function (name) {
-
                         if (_this.cv.exists(name)) {
                             var service = _this.cv.get(name);
 
@@ -93,7 +93,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                                 //recurse
                                 _this.cv.fetchDependencies(service.dependencies, fn, error);
                             }
-                            fn(service, name);
+                            fn(service);
                         } else {
                             error(name);
                         }
@@ -106,7 +106,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         dependencies: dependencyList || [],
                         type: type,
                         content: content,
-                        constructed: false,
+                        initialized: false,
                         name: name
                     };
                     //Add type specific props
@@ -117,10 +117,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 },
 
                 //construct service/factory
-                construct: function construct(service, bundle) {
+                initialize: function initialize(service, bundle) {
                     /* <!-- comments:toggle // --> */
                     //  console.log("IN", service);
-                    service = _this.cv.runDecorator(service, bundle);
+                    service = _this.cv.execDecorator(service, bundle);
                     //console.log("OUT", service);
                     /* <!-- endcomments --> */
 
@@ -129,8 +129,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                             var serviceFn = service.content;
 
                             service.content = function () {
+                                //CHevron service function wrapper
                                 /* <!-- comments:toggle // --> */
-                                _this.cv.runMiddleware(service, bundle);
+                                _this.cv.execMiddleware(service, bundle);
                                 /* <!-- endcomments --> */
                                 return serviceFn.apply(bundle, arguments);
                             };
@@ -142,31 +143,29 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                             _this.cv.ut.eachObject(bundle, function (dependency, name) {
                                 container[name] = dependency;
                             });
-                            /* <!-- comments:toggle // --> */
-                            _this.cv.runMiddleware(service, bundle);
-                            /* <!-- endcomments --> */
+
                             service.content = service.content.apply(container, service.args) || container;
                         })();
                     }
 
-                    service.constructed = true;
+                    service.initialized = true;
                     return service;
                 },
 
                 /* <!-- comments:toggle // --> */
-                runMiddleware: function runMiddleware(service, bundle) {
-                    _this.cv.runInject("middleware", service, function (inject) {
+                execMiddleware: function execMiddleware(service, bundle) {
+                    _this.cv.execInject("middleware", service, function (inject) {
                         inject.fn.call(bundle, service);
                     });
                 },
-                runDecorator: function runDecorator(service, bundle) {
-                    _this.cv.runInject("decorator", service, function (inject) {
+                execDecorator: function execDecorator(service, bundle) {
+                    _this.cv.execInject("decorator", service, function (inject) {
                         service.content = inject.fn.bind(bundle, service.content);
                     });
 
                     return service;
                 },
-                runInject: function runInject(type, service, fn) {
+                execInject: function execInject(type, service, fn) {
                     _this.cv.ut.each(_this.injects[type], function (inject) {
                         if (_this.cv.injectorApplies(service.name, inject)) {
                             fn(inject);
@@ -218,6 +217,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         for (var i = 0, l = keys.length; i < l; i++) {
                             fn(object[keys[i]], keys[i], i);
                         }
+                    },
+                    filterObject: function filterObject(obj, fn) {
+                        var result = {};
+
+                        _this.cv.ut.eachObject(obj, function (item, key, index) {
+                            if (fn(item, key, index)) {
+                                result[key] = item;
+                            }
+                        });
+
+                        return result;
                     },
 
                     //return if val is defined
@@ -309,10 +319,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 var _this = this;
 
                 //Check if accessed service is registered
-                if (!_this.cv.exists(name)) {
-                    _this.cv.throwNotFound(name);
-                } else {
+                if (_this.cv.exists(name)) {
                     return _this.cv.prepare(_this.cv.get(name)).content;
+                } else {
+                    _this.cv.throwNotFound(name);
                 }
             }
             //returns service container
