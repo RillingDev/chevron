@@ -53,8 +53,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             * Internal Chevron
             /####################*/
             _this.cv = {
-                //Check initialized status/dependencies and issues initialize
+                //add new service
 
+                add: function add(name, dependencyList, type, content, args) {
+                    var service = _this.container[name] = {
+                        dependencies: dependencyList || [],
+                        type: type,
+                        content: content,
+                        initialized: false,
+                        name: name
+                    };
+                    //Add type specific props
+                    if (type === "factory") {
+                        service.args = args || [];
+                        service.args.shift();
+                    }
+                },
+
+                //Check initialized status/dependencies and issues initialize
                 prepare: function prepare(service) {
                     var result = void 0,
                         list = {};
@@ -65,20 +81,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         _this.cv.throwMissingDep(name);
                     });
                     result = _this.cv.bootstrapService(service, list);
-
-                    return result;
-                },
-                bootstrapService: function bootstrapService(service, list) {
-                    var result = void 0,
-                        bundle = _this.cv.ut.filterObject(list, function (item, key) {
-                        return service.dependencies.includes(key);
-                    });
-
-                    if (!service.initialized) {
-                        result = _this.cv.initialize(service, bundle);
-                    } else {
-                        result = service;
-                    }
 
                     return result;
                 },
@@ -99,29 +101,26 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         }
                     });
                 },
+                bootstrapService: function bootstrapService(service, list) {
+                    var result = void 0,
+                        bundle = _this.cv.ut.filterObject(list, function (item, key) {
+                        return service.dependencies.includes(key);
+                    });
 
-                //add new service
-                add: function add(name, dependencyList, type, content, args) {
-                    var service = _this.container[name] = {
-                        dependencies: dependencyList || [],
-                        type: type,
-                        content: content,
-                        initialized: false,
-                        name: name
-                    };
-                    //Add type specific props
-                    if (type === "factory") {
-                        service.args = args || [];
-                        service.args.shift();
+                    if (!service.initialized) {
+                        result = _this.cv.initialize(service, bundle);
+                    } else {
+                        result = service;
                     }
+
+                    return result;
                 },
+
 
                 //construct service/factory
                 initialize: function initialize(service, bundle) {
                     /* <!-- comments:toggle // --> */
-                    //  console.log("IN", service);
                     service = _this.cv.execDecorator(service, bundle);
-                    //console.log("OUT", service);
                     /* <!-- endcomments --> */
 
                     if (_this.cv.hasType(service, "service")) {

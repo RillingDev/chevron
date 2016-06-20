@@ -12,12 +12,10 @@ cv
 })
 
 .service("addTwelve", ["addTwo", "addTen"], function (number) {
-    console.log("addTwelve",this);
     return this.addTen(this.addTwo(number));
 })
 
 .service("sumOf", [], function (number1, number2) {
-    console.log("sumOf",this);
     return number1 + number2;
 })
 

@@ -46,6 +46,21 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 * Internal Chevron
                 /####################*/
                 _this.cv = {
+                    //add new service
+                    add(name, dependencyList, type, content, args) {
+                        let service = _this.container[name] = {
+                            dependencies: dependencyList || [],
+                            type,
+                            content,
+                            initialized: false,
+                            name
+                        };
+                        //Add type specific props
+                        if (type === "factory") {
+                            service.args = args || [];
+                            service.args.shift();
+                        }
+                    },
                     //Check initialized status/dependencies and issues initialize
                     prepare(service) {
                         let result,
@@ -61,20 +76,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             }
                         );
                         result = _this.cv.bootstrapService(service, list);
-
-                        return result;
-                    },
-                    bootstrapService(service, list) {
-                        let result,
-                            bundle = _this.cv.ut.filterObject(list, (item, key) => {
-                                return service.dependencies.includes(key);
-                            });
-
-                        if (!service.initialized) {
-                            result = _this.cv.initialize(service, bundle);
-                        } else {
-                            result = service;
-                        }
 
                         return result;
                     },
@@ -94,27 +95,25 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             }
                         });
                     },
-                    //add new service
-                    add(name, dependencyList, type, content, args) {
-                        let service = _this.container[name] = {
-                            dependencies: dependencyList || [],
-                            type,
-                            content,
-                            initialized: false,
-                            name
-                        };
-                        //Add type specific props
-                        if (type === "factory") {
-                            service.args = args || [];
-                            service.args.shift();
+                    bootstrapService(service, list) {
+                        let result,
+                            bundle = _this.cv.ut.filterObject(list, (item, key) => {
+                                return service.dependencies.includes(key);
+                            });
+
+                        if (!service.initialized) {
+                            result = _this.cv.initialize(service, bundle);
+                        } else {
+                            result = service;
                         }
+
+                        return result;
                     },
+
                     //construct service/factory
                     initialize(service, bundle) {
 
-                        console.log("IN", service);
                         //    service = _this.cv.execDecorator(service, bundle);
-                        console.log("OUT", service);
 
 
                         if (_this.cv.hasType(service, "service")) {

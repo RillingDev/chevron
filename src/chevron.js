@@ -46,6 +46,21 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 * Internal Chevron
                 /####################*/
                 _this.cv = {
+                    //add new service
+                    add(name, dependencyList, type, content, args) {
+                        let service = _this.container[name] = {
+                            dependencies: dependencyList || [],
+                            type,
+                            content,
+                            initialized: false,
+                            name
+                        };
+                        //Add type specific props
+                        if (type === "factory") {
+                            service.args = args || [];
+                            service.args.shift();
+                        }
+                    },
                     //Check initialized status/dependencies and issues initialize
                     prepare(service) {
                         let result,
@@ -54,27 +69,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         _this.cv.fetchDependencies(
                             service.dependencies,
                             dependency => {
-                                list[dependency.name] = _this.cv.bootstrapService(dependency, list).content;
+                                list[dependency.name] = _this.cv.bundle(dependency, list).content;
                             },
                             name => {
                                 _this.cv.throwMissingDep(name);
                             }
                         );
-                        result = _this.cv.bootstrapService(service, list);
-
-                        return result;
-                    },
-                    bootstrapService(service, list) {
-                        let result,
-                            bundle = _this.cv.ut.filterObject(list, (item, key) => {
-                                return service.dependencies.includes(key);
-                            });
-
-                        if (!service.initialized) {
-                            result = _this.cv.initialize(service, bundle);
-                        } else {
-                            result = service;
-                        }
+                        result = _this.cv.bundle(service, list);
 
                         return result;
                     },
@@ -94,27 +95,25 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             }
                         });
                     },
-                    //add new service
-                    add(name, dependencyList, type, content, args) {
-                        let service = _this.container[name] = {
-                            dependencies: dependencyList || [],
-                            type,
-                            content,
-                            initialized: false,
-                            name
-                        };
-                        //Add type specific props
-                        if (type === "factory") {
-                            service.args = args || [];
-                            service.args.shift();
+                    bundle(service, list) {
+                        let result,
+                            bundle = _this.cv.ut.filterObject(list, (item, key) => {
+                                return service.dependencies.includes(key);
+                            });
+
+                        if (!service.initialized) {
+                            result = _this.cv.initialize(service, bundle);
+                        } else {
+                            result = service;
                         }
+
+                        return result;
                     },
+
                     //construct service/factory
                     initialize(service, bundle) {
                         /* <!-- comments:toggle // --> */
-                        //  console.log("IN", service);
                         service = _this.cv.execDecorator(service, bundle);
-                        //console.log("OUT", service);
                         /* <!-- endcomments --> */
 
                         if (_this.cv.hasType(service, "service")) {
