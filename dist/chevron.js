@@ -25,7 +25,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 "use strict";
 
-(function(window) {
+(function (window) {
 
     class Chevron {
         constructor(name = "Chevron") {
@@ -35,70 +35,24 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     name
                 };
                 _this.container = {};
+                /* <!-- comments:toggle // --> */
                 _this.injects = {
                     middleware: [],
                     decorator: []
                 };
+                /* <!-- endcomments --> */
 
                 /*####################/
                 * Internal Chevron
                 /####################*/
                 _this.cv = {
-                    //Check constructed status/dependencies and issues construct
-                    prepare(service) {
-                        let result,
-                            bundle = {};
-
-                        _this.cv.fetchDependencies(
-                            service.dependencies,
-                            (dependency, name) => {
-                                let result;
-
-                                if (!dependency.constructed) {
-                                    result = _this.cv.construct(dependency, bundle);
-                                } else {
-                                    result = dependency;
-                                }
-
-                                bundle[name] = result.content;
-                            },
-                            name => {
-                                _this.throwMissingDep(name);
-                            }
-                        );
-
-                        if (!service.constructed) {
-                            result = _this.cv.construct(service, bundle);
-                        } else {
-                            result = service;
-                        }
-
-                        return result;
-                    },
-                    //Iterate dependencies
-                    fetchDependencies(dependencyList, fn, error) {
-                        _this.cv.ut.each(dependencyList, name => {
-
-                            if (_this.cv.exists(name)) {
-                                let service = _this.cv.get(name);
-
-                                if (_this.cv.hasDependencies(service)) {
-                                    //recurse
-                                    _this.cv.fetchDependencies(service.dependencies, fn, error);
-                                }
-                                fn(service, name);
-                            } else {
-                                error(name);
-                            }
-                        });
-                    },
                     //add new service
                     add(name, dependencyList, type, content, args) {
                         let service = _this.container[name] = {
                             dependencies: dependencyList || [],
                             type,
                             content,
-                            constructed: false,
+                            initialized: false,
                             name
                         };
                         //Add type specific props
@@ -107,17 +61,69 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             service.args.shift();
                         }
                     },
+                    //Check initialized status/dependencies and issues initialize
+                    prepare(service) {
+                        let result,
+                            list = {};
+
+                        _this.cv.fetchDependencies(
+                            service.dependencies,
+                            dependency => {
+                                list[dependency.name] = _this.cv.bootstrapService(dependency, list).content;
+                            },
+                            name => {
+                                _this.cv.throwMissingDep(name);
+                            }
+                        );
+                        result = _this.cv.bootstrapService(service, list);
+
+                        return result;
+                    },
+                    //Iterate dependencies
+                    fetchDependencies(dependencyList, fn, error) {
+                        _this.cv.ut.each(dependencyList, name => {
+                            if (_this.cv.exists(name)) {
+                                let service = _this.cv.get(name);
+
+                                if (_this.cv.hasDependencies(service)) {
+                                    //recurse
+                                    _this.cv.fetchDependencies(service.dependencies, fn, error);
+                                }
+                                fn(service);
+                            } else {
+                                error(name);
+                            }
+                        });
+                    },
+                    bootstrapService(service, list) {
+                        let result,
+                            bundle = _this.cv.ut.filterObject(list, (item, key) => {
+                                return service.dependencies.includes(key);
+                            });
+
+                        if (!service.initialized) {
+                            result = _this.cv.initialize(service, bundle);
+                        } else {
+                            result = service;
+                        }
+
+                        return result;
+                    },
+
                     //construct service/factory
-                    construct(service, bundle) {
-                        //  console.log("IN", service);
-                        service = _this.cv.runDecorator(service, bundle);
-                        //console.log("OUT", service);
+                    initialize(service, bundle) {
+                        /* <!-- comments:toggle // --> */
+                        service = _this.cv.execDecorator(service, bundle);
+                        /* <!-- endcomments --> */
 
                         if (_this.cv.hasType(service, "service")) {
                             let serviceFn = service.content;
 
-                            service.content = function() {
-                                _this.cv.runMiddleware(service, bundle);
+                            service.content = function () {
+                                //CHevron service function wrapper
+                                /* <!-- comments:toggle // --> */
+                                _this.cv.execMiddleware(service, bundle);
+                                /* <!-- endcomments --> */
                                 return serviceFn.apply(bundle, arguments);
                             };
                         } else if (_this.cv.hasType(service, "factory")) {
@@ -127,26 +133,26 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                                 container[name] = dependency;
                             });
 
-                            _this.cv.runMiddleware(service, bundle);
                             service.content = (service.content.apply(container, service.args) || container);
                         }
 
-                        service.constructed = true;
+                        service.initialized = true;
                         return service;
                     },
-                    runMiddleware(service, bundle) {
-                        _this.cv.runInject("middleware", service, inject => {
+                    /* <!-- comments:toggle // --> */
+                    execMiddleware(service, bundle) {
+                        _this.cv.execInject("middleware", service, inject => {
                             inject.fn.call(bundle, service);
                         });
                     },
-                    runDecorator(service, bundle) {
-                        _this.cv.runInject("decorator", service, inject => {
-                            service.content = inject.fn.bind(bundle,service.content);
+                    execDecorator(service, bundle) {
+                        _this.cv.execInject("decorator", service, inject => {
+                            service.content = inject.fn.bind(bundle, service.content);
                         });
 
                         return service;
                     },
-                    runInject(type, service, fn) {
+                    execInject(type, service, fn) {
                         _this.cv.ut.each(_this.injects[type], inject => {
                             if (_this.cv.injectorApplies(service.name, inject)) {
                                 fn(inject);
@@ -156,6 +162,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     injectorApplies(name, inject) {
                         return inject.applies.length === 0 ? true : inject.applies.includes(name);
                     },
+                    /* <!-- endcomments --> */
                     exists(name) {
                         return _this.cv.ut.isDefined(_this.container[name]);
                     },
@@ -209,6 +216,17 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                                 fn(object[keys[i]], keys[i], i);
                             }
                         },
+                        filterObject(obj, fn) {
+                            let result = {};
+
+                            _this.cv.ut.eachObject(obj, (item, key, index) => {
+                                if (fn(item, key, index)) {
+                                    result[key] = item;
+                                }
+                            });
+
+                            return result;
+                        },
                         //return if val is defined
                         isDefined(val) {
                             return typeof val !== "undefined";
@@ -261,7 +279,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     args
                 );
             }
-            //Core decorator/middleware method
+            /* <!-- comments:toggle // --> */
+            /*Core decorator/middleware method*/
         injector(type, fn, applies) {
                 let _this = this;
 
@@ -272,23 +291,24 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                 return _this;
             }
-            //Injects a decorator to a service/factory
+            /*Injects a decorator to a service/factory*/
         decorator(fn, applies) {
                 return this.injector("decorator", fn, applies);
             }
-            //Injects a middleware to a service
+            /*Injects a middleware to a service*/
         middleware(fn, applies) {
                 return this.injector("middleware", fn, applies);
             }
+            /* <!-- endcomments --> */
             //prepare/initialize services/factory with dependencies injected
         access(name) {
                 let _this = this;
 
                 //Check if accessed service is registered
-                if (!_this.cv.exists(name)) {
-                    _this.cv.throwNotFound(name);
-                } else {
+                if (_this.cv.exists(name)) {
                     return _this.cv.prepare(_this.cv.get(name)).content;
+                } else {
+                    _this.cv.throwNotFound(name);
                 }
 
             }

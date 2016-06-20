@@ -6,7 +6,12 @@
 
 ## Introduction
 
-chevronjs is a extremely small JavaScript service library for easy dependency managment inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
+ChevronJS is a extremely small JavaScript service library for easy dependency managment inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
+
+ChevronJS comes in two forms: normal and lite.
+
+- Normal has all features while also having the larger filesize.
+- Lite has the base features, but no decorator/middleware support
 
 ## Syntax
 
@@ -63,6 +68,8 @@ cv.container.foo; //returns the service as variable.
 
 ## Middleware and Decorators
 
+_Middleware/Decorators excluded in the lite version_
+
 ### Middleware
 
 Middleware can be used to inject a function into a service, causing the service to call the middleware everytime the service is called
@@ -86,9 +93,7 @@ cv.middleware(
 
 ### Decorator
 
-_Decorators are Work in Progress_
-
-Decorators are run before initializing the service/factory, returning a modified version of it.
+Decorators are run before initializing the service, returning a modified version of it.
 
 ```javascript
 //Chevron.prototype.decorator(fn,[services]);
