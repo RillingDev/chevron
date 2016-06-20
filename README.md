@@ -1,14 +1,14 @@
 ![ChevronJS](/chevron-logo.png)
 
-# chevron.js
+# Chevron.js
 
 > An extremely small JavaScript service library
 
 ## Introduction
 
-ChevronJS is a extremely small JavaScript service library for easy dependency managment inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
+Chevron is a extremely small JavaScript service library for easy dependency managment inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
 
-ChevronJS comes in two forms: normal and lite.
+Chevron comes in two forms: normal and lite.
 
 - Normal has all features while also having the larger filesize.
 - Lite has the base features, but no decorator/middleware support
