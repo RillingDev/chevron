@@ -49,7 +49,7 @@ cv
 
 .decorator(function (service) {
     service = function () {
-        console.log("modified miscNumbers!");
+        console.log("decorated miscNumbers!");
         this.foo = 10;
         this.bar = 4;
     };

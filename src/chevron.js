@@ -1,5 +1,5 @@
 /*
-chevronjs v1.0.0-rc1
+chevronjs v1.0.0-rc2
 
 Copyright (c) 2016 Felix Rilling
 
@@ -43,9 +43,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 /* <!-- endcomments --> */
 
                 /*####################/
-                * Internal Chevron
+                * Internal Chevron methods
                 /####################*/
-                _this.cv = {
+                _this.$c = {
                     //add new service
                     add(name, dependencyList, type, content, args) {
                         let service = _this.container[name] = {
@@ -66,28 +66,28 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         let result,
                             list = {};
 
-                        _this.cv.fetchDependencies(
+                        _this.$c.fetchDependencies(
                             service.dependencies,
                             dependency => {
-                                list[dependency.name] = _this.cv.bundle(dependency, list).content;
+                                list[dependency.name] = _this.$c.bundle(dependency, list).content;
                             },
                             name => {
-                                _this.cv.throwMissingDep(name);
+                                _this.$c.throwMissingDep(name);
                             }
                         );
-                        result = _this.cv.bundle(service, list);
+                        result = _this.$c.bundle(service, list);
 
                         return result;
                     },
                     //Iterate dependencies
                     fetchDependencies(dependencyList, fn, error) {
-                        _this.cv.ut.each(dependencyList, name => {
-                            if (_this.cv.exists(name)) {
-                                let service = _this.cv.get(name);
+                        _this.$u.each(dependencyList, name => {
+                            if (_this.$c.exists(name)) {
+                                let service = _this.$c.get(name);
 
-                                if (_this.cv.hasDependencies(service)) {
+                                if (_this.$c.hasDependencies(service)) {
                                     //recurse
-                                    _this.cv.fetchDependencies(service.dependencies, fn, error);
+                                    _this.$c.fetchDependencies(service.dependencies, fn, error);
                                 }
                                 fn(service);
                             } else {
@@ -97,12 +97,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     },
                     bundle(service, list) {
                         let result,
-                            bundle = _this.cv.ut.filterObject(list, (item, key) => {
+                            bundle = _this.$u.filterObject(list, (item, key) => {
                                 return service.dependencies.includes(key);
                             });
 
                         if (!service.initialized) {
-                            result = _this.cv.initialize(service, bundle);
+                            result = _this.$c.initialize(service, bundle);
                         } else {
                             result = service;
                         }
@@ -113,23 +113,23 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     //construct service/factory
                     initialize(service, bundle) {
                         /* <!-- comments:toggle // --> */
-                        service = _this.cv.execDecorator(service, bundle);
+                        service = _this.$c.execDecorator(service, bundle);
                         /* <!-- endcomments --> */
 
-                        if (_this.cv.hasType(service, "service")) {
+                        if (_this.$c.hasType(service, "service")) {
                             let serviceFn = service.content;
 
                             service.content = function () {
                                 //CHevron service function wrapper
                                 /* <!-- comments:toggle // --> */
-                                _this.cv.execMiddleware(service, bundle);
+                                _this.$c.execMiddleware(service, bundle);
                                 /* <!-- endcomments --> */
                                 return serviceFn.apply(bundle, arguments);
                             };
-                        } else if (_this.cv.hasType(service, "factory")) {
+                        } else if (_this.$c.hasType(service, "factory")) {
                             let container = Object.create(service.prototype || Object.prototype);
 
-                            _this.cv.ut.eachObject(bundle, (dependency, name) => {
+                            _this.$u.eachObject(bundle, (dependency, name) => {
                                 container[name] = dependency;
                             });
 
@@ -141,20 +141,20 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     },
                     /* <!-- comments:toggle // --> */
                     execMiddleware(service, bundle) {
-                        _this.cv.execInject("middleware", service, inject => {
+                        _this.$c.execInject("middleware", service, inject => {
                             inject.fn.call(bundle, service);
                         });
                     },
                     execDecorator(service, bundle) {
-                        _this.cv.execInject("decorator", service, inject => {
+                        _this.$c.execInject("decorator", service, inject => {
                             service.content = inject.fn.call(bundle, service.content);
                         });
 
                         return service;
                     },
                     execInject(type, service, fn) {
-                        _this.cv.ut.each(_this.injects[type], inject => {
-                            if (_this.cv.injectorApplies(service.name, inject)) {
+                        _this.$u.each(_this.injects[type], inject => {
+                            if (_this.$c.injectorApplies(service.name, inject)) {
                                 fn(inject);
                             }
                         });
@@ -164,7 +164,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     },
                     /* <!-- endcomments --> */
                     exists(name) {
-                        return _this.cv.ut.isDefined(_this.container[name]);
+                        return _this.$u.isDefined(_this.container[name]);
                     },
                     get(name) {
                         return _this.container[name];
@@ -177,7 +177,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     },
                     //throws errors
                     throwMissingDep(name, type, missing) {
-                        _this.cv.ut.log(
+                        _this.$u.log(
                             name,
                             "error",
                             type,
@@ -185,7 +185,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         );
                     },
                     throwNotFound(name) {
-                        _this.cv.ut.log(
+                        _this.$u.log(
                             name,
                             "error",
                             "type",
@@ -193,52 +193,52 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         );
                     },
                     throwDupe(name, type) {
-                        _this.cv.ut.log(
+                        _this.$u.log(
                             name,
                             "error",
                             type,
                             `service '${name}' is already defined`
                         );
                     },
-                    /*####################/
-                    * Internal Chevron Utility
-                    /####################*/
-                    ut: {
-                        //Iterate
-                        each(arr, fn) {
-                            for (let i = 0, l = arr.length; i < l; i++) {
-                                fn(arr[i], i);
-                            }
-                        },
-                        eachObject(object, fn) {
-                            let keys = Object.keys(object);
-                            for (let i = 0, l = keys.length; i < l; i++) {
-                                fn(object[keys[i]], keys[i], i);
-                            }
-                        },
-                        filterObject(obj, fn) {
-                            let result = {};
+                };
+                /*####################/
+                * Internal Utility methods
+                /####################*/
+                _this.$u= {
+                    //Iterate
+                    each(arr, fn) {
+                        for (let i = 0, l = arr.length; i < l; i++) {
+                            fn(arr[i], i);
+                        }
+                    },
+                    eachObject(object, fn) {
+                        let keys = Object.keys(object);
+                        for (let i = 0, l = keys.length; i < l; i++) {
+                            fn(object[keys[i]], keys[i], i);
+                        }
+                    },
+                    filterObject(obj, fn) {
+                        let result = {};
 
-                            _this.cv.ut.eachObject(obj, (item, key, index) => {
-                                if (fn(item, key, index)) {
-                                    result[key] = item;
-                                }
-                            });
-
-                            return result;
-                        },
-                        //return if val is defined
-                        isDefined(val) {
-                            return typeof val !== "undefined";
-                        },
-                        //log
-                        log(name, type, element, msg) {
-                            let str = `${_this.options.name} ${type} in ${element} '${name}': ${msg}`;
-                            if (type === "error") {
-                                throw str;
-                            } else {
-                                console.log(str);
+                        _this.$u.eachObject(obj, (item, key, index) => {
+                            if (fn(item, key, index)) {
+                                result[key] = item;
                             }
+                        });
+
+                        return result;
+                    },
+                    //return if val is defined
+                    isDefined(val) {
+                        return typeof val !== "undefined";
+                    },
+                    //log
+                    log(name, type, element, msg) {
+                        let str = `${_this.options.name} ${type} in ${element} '${name}': ${msg}`;
+                        if (type === "error") {
+                            throw str;
+                        } else {
+                            console.log(str);
                         }
                     }
                 };
@@ -251,10 +251,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         provider(name, dependencyList, content, type, args) {
                 let _this = this;
 
-                if (!_this.cv.exists(name)) {
-                    _this.cv.add(name, dependencyList, type, content, args);
+                if (!_this.$c.exists(name)) {
+                    _this.$c.add(name, dependencyList, type, content, args);
                 } else {
-                    _this.cv.throwDupe(name, type);
+                    _this.$c.throwDupe(name, type);
                 }
 
                 return _this;
@@ -305,10 +305,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 let _this = this;
 
                 //Check if accessed service is registered
-                if (_this.cv.exists(name)) {
-                    return _this.cv.prepare(_this.cv.get(name)).content;
+                if (_this.$c.exists(name)) {
+                    return _this.$c.prepare(_this.$c.get(name)).content;
                 } else {
-                    _this.cv.throwNotFound(name);
+                    _this.$c.throwNotFound(name);
                 }
 
             }
