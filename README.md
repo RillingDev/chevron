@@ -15,12 +15,19 @@ Chevron comes in two forms: normal and lite.
 
 ## Syntax
 
+### Constructor
+
+To do anything with Chevron, you need to create a new Chevron Container:
+
+```javascript
+var cv = new Chevron();
+```
+
 ### Services
 
 Services are the bread and butter of Chevron, being the most common way to declare a new component.
 
 ```javascript
-var cv = new Chevron();
 
 //Chevron.prototype.service(name,[dependencies],content);
 cv.service("foo",[],
@@ -84,7 +91,7 @@ cv.factory("foo",[],
 
 cv.service("bar",["foo"],
   function(int){
-      return int * this.foo;
+      return int * this.foo.foo;
   }
 );
 
