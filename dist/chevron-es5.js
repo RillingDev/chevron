@@ -66,23 +66,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     //Add type specific props
                     if (type === "factory") {
                         service.args = args || [];
-                        service.args.shift();
                     }
                 },
 
                 //Check initialized status/dependencies and issues initialize
                 prepare: function prepare(service) {
-                    var result = void 0,
-                        list = {};
+                    var list = {};
 
                     _this.$c.fetchDependencies(service.dependencies, function (dependency) {
                         list[dependency.name] = _this.$c.bundle(dependency, list).content;
                     }, function (name) {
                         _this.$c.throwMissingDep(name);
                     });
-                    result = _this.$c.bundle(service, list);
 
-                    return result;
+                    return _this.$c.bundle(service, list);
                 },
 
                 //Iterate dependencies
@@ -104,7 +101,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 bundle: function bundle(service, list) {
                     var result = void 0,
                         bundle = _this.$u.filterObject(list, function (item, key) {
-                        return service.dependencies.includes(key);
+                        return service.dependencies.indexOf(key) !== -1;
                     });
 
                     if (!service.initialized) {
@@ -128,7 +125,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                             var serviceFn = service.content;
 
                             service.content = function () {
-                                //CHevron service function wrapper
+                                //Chevron service function wrapper
                                 /* <!-- comments:toggle // --> */
                                 _this.$c.execMiddleware(service, bundle);
                                 /* <!-- endcomments --> */
@@ -137,6 +134,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         })();
                     } else if (_this.$c.hasType(service, "factory")) {
                         (function () {
+                            //Bind bundle into unconstructed object container
                             var container = Object.create(service.prototype || Object.prototype);
 
                             _this.$u.eachObject(bundle, function (dependency, name) {
@@ -172,7 +170,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     });
                 },
                 injectorApplies: function injectorApplies(name, inject) {
-                    return inject.applies.length === 0 ? true : inject.applies.includes(name);
+                    return inject.applies.length === 0 ? true : inject.applies.indexOf(name) !== -1;
                 },
 
                 /* <!-- endcomments --> */
@@ -237,6 +235,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 //log
                 log: function log(name, type, element, msg) {
                     var str = _this.options.name + " " + type + " in " + element + " '" + name + "': " + msg;
+
                     if (type === "error") {
                         throw str;
                     } else {
@@ -276,7 +275,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }, {
             key: "factory",
             value: function factory(name, dependencyList, Constructor, args) {
-                args.unshift(null);
                 return this.provider(name, dependencyList, Constructor, "factory", args);
             }
             /* <!-- comments:toggle // --> */

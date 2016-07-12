@@ -58,13 +58,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         //Add type specific props
                         if (type === "factory") {
                             service.args = args || [];
-                            service.args.shift();
                         }
                     },
                     //Check initialized status/dependencies and issues initialize
                     prepare(service) {
-                        let result,
-                            list = {};
+                        let list = {};
 
                         _this.$c.fetchDependencies(
                             service.dependencies,
@@ -75,9 +73,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                                 _this.$c.throwMissingDep(name);
                             }
                         );
-                        result = _this.$c.bundle(service, list);
 
-                        return result;
+                        return _this.$c.bundle(service, list);
                     },
                     //Iterate dependencies
                     fetchDependencies(dependencyList, fn, error) {
@@ -120,13 +117,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             let serviceFn = service.content;
 
                             service.content = function () {
-                                //CHevron service function wrapper
+                                //Chevron service function wrapper
 
                                 //    _this.$c.execMiddleware(service, bundle);
 
                                 return serviceFn.apply(bundle, arguments);
                             };
                         } else if (_this.$c.hasType(service, "factory")) {
+                            //Bind bundle into unconstructed object container
                             let container = Object.create(service.prototype || Object.prototype);
 
                             _this.$u.eachObject(bundle, (dependency, name) => {
@@ -204,7 +202,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 /*####################/
                 * Internal Utility methods
                 /####################*/
-                _this.$u= {
+                _this.$u = {
                     //Iterate
                     each(arr, fn) {
                         for (let i = 0, l = arr.length; i < l; i++) {
@@ -235,6 +233,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     //log
                     log(name, type, element, msg) {
                         let str = `${_this.options.name} ${type} in ${element} '${name}': ${msg}`;
+
                         if (type === "error") {
                             throw str;
                         } else {
@@ -270,7 +269,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
             //create new factory
         factory(name, dependencyList, Constructor, args) {
-                args.unshift(null);
                 return this.provider(
                     name,
                     dependencyList,
