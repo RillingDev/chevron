@@ -21,5 +21,5 @@ cv.factory("myFactory1", ["myService1"], function(foo, bar) {
 }, [12, 24]);
 
 
-let accessedFn = cv.access("myService2");
-console.log(accessedFn(12));
+let myService2 = cv.access("myService2");
+console.log(myService2(12));

@@ -10,8 +10,8 @@ Chevron is a extremely small JavaScript service library for easy dependency mana
 
 Chevron comes in two forms: normal and lite.
 
-- Normal has all features while also having the larger filesize.
-- Lite has the base features, but no decorator/middleware support
+- Normal has all features.
+- Lite has the base features excluding decorator/middleware support, but is even smaller than normal
 
 ## Syntax
 
@@ -24,32 +24,72 @@ var cv = new Chevron();
 
 //Chevron.prototype.service(name,[dependencies],content);
 cv.service("foo",[],
-  function(a){
-      console.log(a);
+  function(){
+      return 12;
   }
 );
 
-//Service with dependencies.
-cv.service("bar",["foo"],
-  function(b){
-      console.log(b);
+var foo = cv.access("foo");
+foo();//returns 12
+```
+
+or with dependencies
+
+```javascript
+
+cv.service("foo",[],
+  function(){
+      return 12;
   }
 );
+
+cv.service("bar",["foo"],
+  function(int){
+      return int * this.foo();
+  }
+);
+
+var bar = cv.access("bar");
+bar(2);//returns 24
 ```
 
 ### Factories
 
-Factories are like Services but are treated as Constructors instead of classic functions and is constructed with arguments.
+Factories are like Services but are treated as Constructors instead of classic functions.
 
 ```javascript
 //Chevron.prototype.factory(name,[dependencies],Constructor,[arguments]);
 cv.factory("foo",[],
-  function(a){
-      this.foo=a;
-      this.bar=a + "bar"
+  function(int){
+      this.foo = int;
+      this.bar = 17;
   },
-  ["bar"]
+  [7]
 );
+
+var foo = cv.access("foo");
+foo.bar;//returns 17
+```
+
+or combined with a service
+
+```javascript
+cv.factory("foo",[],
+  function(int){
+      this.foo = int;
+      this.bar = 17;
+  },
+  [7]
+);
+
+cv.service("bar",["foo"],
+  function(int){
+      return int * this.foo;
+  }
+);
+
+var bar = cv.access("bar");
+bar(3);//returns 21
 ```
 
 ### Accessing services
@@ -63,16 +103,16 @@ cv.access("foo"); //returns the service with dependencies bound into 'this'.
 or, if you just want the service without dependencies:
 
 ```javascript
-cv.container.foo; //returns the service as variable.
+cv.container.foo; //returns the service as Chevron object.
 ```
 
 ## Middleware and Decorators
 
-_Middleware/Decorators excluded in the lite version_
+_Middleware/Decorators are excluded in the lite version_
 
 ### Middleware
 
-Middleware can be used to inject a function into a service, causing the service to call the middleware everytime the service is called
+Middleware can be used to inject a function into a service, causing the service to call the middleware every time the service is called
 
 ```javascript
 //Chevron.prototype.middleware(fn,[services]);

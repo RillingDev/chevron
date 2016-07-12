@@ -56,5 +56,6 @@ cv
     return service;
 }, ["miscNumbers"]);
 
-let accessedFn = cv.access("sumOfMiscNumbemiscNumbersPlusTwelve");
-console.log(accessedFn());
+
+let sumOfMiscNumbemiscNumbersPlusTwelve = cv.access("sumOfMiscNumbemiscNumbersPlusTwelve");
+console.log(sumOfMiscNumbemiscNumbersPlusTwelve());
