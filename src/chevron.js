@@ -28,12 +28,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 (function (window) {
 
     class Chevron {
-        constructor(name = "Chevron") {
+        constructor(name = "cv") {
                 let _this = this;
 
-                _this.options = {
-                    name
-                };
+                _this.name = name;
+
                 _this.container = {};
                 /* <!-- comments:toggle // --> */
                 _this.injects = {
@@ -49,11 +48,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     //add new service
                     add(name, dependencyList, type, content, args) {
                         let service = _this.container[name] = {
-                            dependencies: dependencyList || [],
+                            name,
                             type,
+                            dependencies: dependencyList || [],
                             content,
-                            initialized: false,
-                            name
+                            initialized: false
                         };
                         //Add type specific props
                         if (type === "factory") {
@@ -70,7 +69,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                                 list[dependency.name] = _this.$c.bundle(dependency, list).content;
                             },
                             name => {
-                                _this.$c.throwMissingDep(name);
+                                throw `${_this.name}: error in ${service.name}: dependency '${name}' is missing`;
                             }
                         );
 
@@ -93,18 +92,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         });
                     },
                     bundle(service, list) {
-                        let result,
-                            bundle = _this.$u.filterObject(list, (item, key) => {
-                                return service.dependencies.includes(key);
-                            });
+                        let bundle = _this.$u.filterObject(list, (item, key) => {
+                            return service.dependencies.includes(key);
+                        });
 
                         if (!service.initialized) {
-                            result = _this.$c.initialize(service, bundle);
+                            return _this.$c.initialize(service, bundle);
                         } else {
-                            result = service;
+                            return service;
                         }
 
-                        return result;
                     },
 
                     //construct service/factory
@@ -113,7 +110,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         service = _this.$c.execDecorator(service, bundle);
                         /* <!-- endcomments --> */
 
-                        if (_this.$c.hasType(service, "service")) {
+                        if (service.type === "service") {
                             let serviceFn = service.content;
 
                             service.content = function () {
@@ -123,7 +120,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                                 /* <!-- endcomments --> */
                                 return serviceFn.apply(bundle, arguments);
                             };
-                        } else if (_this.$c.hasType(service, "factory")) {
+                        } else {
                             //Bind bundle into unconstructed object container
                             let container = Object.create(service.prototype || Object.prototype);
 
@@ -167,37 +164,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     get(name) {
                         return _this.container[name];
                     },
-                    hasType(service, type) {
-                        return service.type === type;
-                    },
                     hasDependencies(service) {
                         return service.dependencies.length > 0;
-                    },
-                    //throws errors
-                    throwMissingDep(name, type, missing) {
-                        _this.$u.log(
-                            name,
-                            "error",
-                            type,
-                            `dependency '${missing}' not found`
-                        );
-                    },
-                    throwNotFound(name) {
-                        _this.$u.log(
-                            name,
-                            "error",
-                            "type",
-                            `service '${name}' not found`
-                        );
-                    },
-                    throwDupe(name, type) {
-                        _this.$u.log(
-                            name,
-                            "error",
-                            type,
-                            `service '${name}' is already defined`
-                        );
-                    },
+                    }
                 };
                 /*####################/
                 * Internal Utility methods
@@ -230,16 +199,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     isDefined(val) {
                         return typeof val !== "undefined";
                     },
-                    //log
-                    log(name, type, element, msg) {
-                        let str = `${_this.options.name} ${type} in ${element} '${name}': ${msg}`;
-
-                        if (type === "error") {
-                            throw str;
-                        } else {
-                            console.log(str);
-                        }
-                    }
                 };
 
             }
@@ -250,13 +209,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         provider(name, dependencyList, content, type, args) {
                 let _this = this;
 
-                if (!_this.$c.exists(name)) {
-                    _this.$c.add(name, dependencyList, type, content, args);
+                if (_this.$c.exists(name)) {
+                    throw `${_this.name}: error in ${type}: service '${name}' is already defined`;
                 } else {
-                    _this.$c.throwDupe(name, type);
-                }
+                    _this.$c.add(name, dependencyList, type, content, args);
 
-                return _this;
+                    return _this;
+                }
             }
             //create new service
         service(name, dependencyList, fn) {
@@ -306,7 +265,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 if (_this.$c.exists(name)) {
                     return _this.$c.prepare(_this.$c.get(name)).content;
                 } else {
-                    _this.$c.throwNotFound(name);
+                    throw `${_this.name}: error accessing ${name}: '${name}' is not defined`;
                 }
 
             }

@@ -32,15 +32,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 (function (window) {
     var Chevron = function () {
         function Chevron() {
-            var name = arguments.length <= 0 || arguments[0] === undefined ? "Chevron" : arguments[0];
+            var name = arguments.length <= 0 || arguments[0] === undefined ? "cv" : arguments[0];
 
             _classCallCheck(this, Chevron);
 
             var _this = this;
 
-            _this.options = {
-                name: name
-            };
+            _this.name = name;
+
             _this.container = {};
             /* <!-- comments:toggle // --> */
             _this.injects = {
@@ -57,11 +56,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 add: function add(name, dependencyList, type, content, args) {
                     var service = _this.container[name] = {
-                        dependencies: dependencyList || [],
+                        name: name,
                         type: type,
+                        dependencies: dependencyList || [],
                         content: content,
-                        initialized: false,
-                        name: name
+                        initialized: false
                     };
                     //Add type specific props
                     if (type === "factory") {
@@ -76,7 +75,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _this.$c.fetchDependencies(service.dependencies, function (dependency) {
                         list[dependency.name] = _this.$c.bundle(dependency, list).content;
                     }, function (name) {
-                        _this.$c.throwMissingDep(name);
+                        throw _this.name + ": error in " + service.name + ": dependency '" + name + "' is missing";
                     });
 
                     return _this.$c.bundle(service, list);
@@ -99,18 +98,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     });
                 },
                 bundle: function bundle(service, list) {
-                    var result = void 0,
-                        bundle = _this.$u.filterObject(list, function (item, key) {
+                    var bundle = _this.$u.filterObject(list, function (item, key) {
                         return service.dependencies.indexOf(key) !== -1;
                     });
 
                     if (!service.initialized) {
-                        result = _this.$c.initialize(service, bundle);
+                        return _this.$c.initialize(service, bundle);
                     } else {
-                        result = service;
+                        return service;
                     }
-
-                    return result;
                 },
 
 
@@ -120,7 +116,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     service = _this.$c.execDecorator(service, bundle);
                     /* <!-- endcomments --> */
 
-                    if (_this.$c.hasType(service, "service")) {
+                    if (service.type === "service") {
                         (function () {
                             var serviceFn = service.content;
 
@@ -132,7 +128,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                                 return serviceFn.apply(bundle, arguments);
                             };
                         })();
-                    } else if (_this.$c.hasType(service, "factory")) {
+                    } else {
                         (function () {
                             //Bind bundle into unconstructed object container
                             var container = Object.create(service.prototype || Object.prototype);
@@ -180,22 +176,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 get: function get(name) {
                     return _this.container[name];
                 },
-                hasType: function hasType(service, type) {
-                    return service.type === type;
-                },
                 hasDependencies: function hasDependencies(service) {
                     return service.dependencies.length > 0;
-                },
-
-                //throws errors
-                throwMissingDep: function throwMissingDep(name, type, missing) {
-                    _this.$u.log(name, "error", type, "dependency '" + missing + "' not found");
-                },
-                throwNotFound: function throwNotFound(name) {
-                    _this.$u.log(name, "error", "type", "service '" + name + "' not found");
-                },
-                throwDupe: function throwDupe(name, type) {
-                    _this.$u.log(name, "error", type, "service '" + name + "' is already defined");
                 }
             };
             /*####################/
@@ -230,17 +212,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 //return if val is defined
                 isDefined: function isDefined(val) {
                     return typeof val !== "undefined";
-                },
-
-                //log
-                log: function log(name, type, element, msg) {
-                    var str = _this.options.name + " " + type + " in " + element + " '" + name + "': " + msg;
-
-                    if (type === "error") {
-                        throw str;
-                    } else {
-                        console.log(str);
-                    }
                 }
             };
         }
@@ -255,13 +226,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             value: function provider(name, dependencyList, content, type, args) {
                 var _this = this;
 
-                if (!_this.$c.exists(name)) {
-                    _this.$c.add(name, dependencyList, type, content, args);
+                if (_this.$c.exists(name)) {
+                    throw _this.name + ": error in " + type + ": service '" + name + "' is already defined";
                 } else {
-                    _this.$c.throwDupe(name, type);
-                }
+                    _this.$c.add(name, dependencyList, type, content, args);
 
-                return _this;
+                    return _this;
+                }
             }
             //create new service
 
@@ -318,7 +289,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 if (_this.$c.exists(name)) {
                     return _this.$c.prepare(_this.$c.get(name)).content;
                 } else {
-                    _this.$c.throwNotFound(name);
+                    throw _this.name + ": error accessing " + name + ": '" + name + "' is not defined";
                 }
             }
             //returns service container
