@@ -1,5 +1,5 @@
 /*
-chevronjs v1.0.0-rc2
+chevronjs v1.2.0
 
 Copyright (c) 2016 Felix Rilling
 
@@ -97,8 +97,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     });
                 },
                 bundle: function bundle(service, list) {
-                    var bundle = _this.$u.filterObject(list, function (item, key) {
-                        return service.dependencies.indexOf(key) !== -1;
+                    var bundle = [];
+
+                    _this.$u.eachObject(list, function (item, key) {
+                        if (service.dependencies.indexOf(key) !== -1) {
+                            bundle.push(item);
+                        }
                     });
 
                     if (!service.initialized) {
@@ -111,6 +115,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 //construct service/factory
                 initialize: function initialize(service, bundle) {
+                    var args = Array.from(bundle);
 
                     //    service = _this.$c.execDecorator(service, bundle);
 
@@ -123,20 +128,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                                 //    _this.$c.execMiddleware(service, bundle);
 
-                                return serviceFn.apply(bundle, arguments);
+                                args = args.concat(Array.from(arguments));
+                                return serviceFn.apply(null, args);
                             };
                         })();
                     } else {
-                        (function () {
-                            //Bind bundle into unconstructed object container
-                            var container = Object.create(service.prototype || Object.prototype);
-
-                            _this.$u.eachObject(bundle, function (dependency, name) {
-                                container[name] = dependency;
-                            });
-
-                            service.content = service.content.apply(container, service.args) || container;
-                        })();
+                        args = args.concat(service.args);
+                        args.unshift(null);
+                        //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
+                        service.content = new (Function.prototype.bind.apply(service.content, args))();
                     }
 
                     service.initialized = true;
@@ -146,12 +146,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 //    execMiddleware(service, bundle) {
                 //    _this.$c.execInject("middleware", service, inject => {
-                //    inject.fn.call(bundle, service);
+                //    inject.fn(service);
                 //    });
                 //    },
                 //    execDecorator(service, bundle) {
                 //    _this.$c.execInject("decorator", service, inject => {
-                //    service.content = inject.fn.call(bundle, service.content);
+                //    service.content = inject.fn(service.content);
                 //    });
                 //   
                 //    return service;
@@ -194,18 +194,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         fn(object[keys[i]], keys[i], i);
                     }
                 },
-                filterObject: function filterObject(obj, fn) {
-                    var result = {};
 
-                    _this.$u.eachObject(obj, function (item, key, index) {
+                /*filterObject(obj, fn) {
+                    let result = {};
+                     _this.$u.eachObject(obj, (item, key, index) => {
                         if (fn(item, key, index)) {
                             result[key] = item;
                         }
                     });
-
-                    return result;
-                },
-
+                     return result;
+                },*/
                 //return if val is defined
                 isDefined: function isDefined(val) {
                     return typeof val !== "undefined";

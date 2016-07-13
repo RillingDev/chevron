@@ -51,8 +51,8 @@ cv.service("foo",[],
 );
 
 cv.service("bar",["foo"],
-  function(int){
-      return int * this.foo();
+  function(foo, int){
+      return int * foo();
   }
 );
 
@@ -90,8 +90,8 @@ cv.factory("foo",[],
 );
 
 cv.service("bar",["foo"],
-  function(int){
-      return int * this.foo.foo;
+  function(foo, int){
+      return int * foo.foo;
   }
 );
 
@@ -104,7 +104,7 @@ bar(3);//returns 21
 Services and Factories can be accessed in two ways:
 
 ```javascript
-cv.access("foo"); //returns the service with dependencies bound into 'this'.
+cv.access("foo"); //returns the service with dependencies injected into arguments
 ```
 
 or, if you just want the service without dependencies:
