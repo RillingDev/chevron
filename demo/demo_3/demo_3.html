@@ -14,9 +14,19 @@
         <!--[if lt IE 8]> <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p> <![endif]-->
 
         <!-- Add your site or application content here -->
-        <p>Demo 2</p>
+        <p>Demo 3</p>
 
-        <script src="../src/chevron.js"></script>
-        <script src="demo_2.js"></script>
+        <script src="../../src/chevron.js"></script>
+        <script src="demo_3.js"></script>
+        <script src="string.service.js"></script>
+        <script src="process.service.js"></script>
+        <script src="strings.factory.js"></script>
+
+        <script>
+            "use strict";
+
+            let strings = cv.access("processedStrings");
+            console.log(strings);
+        </script>
     </body>
 </html>
