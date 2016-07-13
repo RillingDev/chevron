@@ -1,5 +1,5 @@
 /*
-chevronjs v1.2.0
+chevronjs v1.2.1
 
 Copyright (c) 2016 Felix Rilling
 
@@ -119,12 +119,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             let serviceFn = service.content;
 
                             service.content = function () {
+
                                 //Chevron service function wrapper
 
                                 //    _this.$c.execMiddleware(service, bundle);
 
-                                args = args.concat(Array.from(arguments));
-                                return serviceFn.apply(null, args);
+
+                                return serviceFn.apply(null,
+                                    Array.from(args.concat(Array.from(arguments)))
+                                );
                             };
                         } else {
                             args = args.concat(service.args);

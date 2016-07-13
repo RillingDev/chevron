@@ -1,5 +1,5 @@
 /*
-chevronjs v1.2.0
+chevronjs v1.2.1
 
 Copyright (c) 2016 Felix Rilling
 
@@ -126,12 +126,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                             var serviceFn = service.content;
 
                             service.content = function () {
+
                                 //Chevron service function wrapper
                                 /* <!-- comments:toggle // --> */
                                 _this.$c.execMiddleware(service, bundle);
                                 /* <!-- endcomments --> */
-                                args = args.concat(Array.from(arguments));
-                                return serviceFn.apply(null, args);
+
+                                return serviceFn.apply(null, Array.from(args.concat(Array.from(arguments))));
                             };
                         })();
                     } else {
