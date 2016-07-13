@@ -2,17 +2,18 @@
 
 let cv = new Chevron("demoChevron");
 
-cv
-    .service("addTwo", [], function (number) {
-        return parseInt(number) + 2;
-    })
+cv.
+
+service("addTwo", [], function (number) {
+    return parseInt(number) + 2;
+})
 
 .service("addTen", [], function (number) {
     return parseInt(number) + 10;
 })
 
-.service("addTwelve", ["addTwo", "addTen"], function (number) {
-    return this.addTen(this.addTwo(number));
+.service("addTwelve", ["addTwo", "addTen"], function (addTwo, addTen, number) {
+    return addTen(addTwo(number));
 })
 
 .service("sumOf", [], function (number1, number2) {
@@ -24,14 +25,14 @@ cv
     this.bar = 19;
 }, [])
 
-.factory("miscNumbersPlusTwelve", ["addTwelve", "miscNumbers"], function () {
-    this.foo = this.addTwelve(this.miscNumbers.foo);
-    this.bar = this.addTwelve(this.miscNumbers.bar);
+.factory("miscNumbersPlusTwelve", ["addTwelve", "miscNumbers"], function (addTwelve, miscNumbers) {
+    this.foo = addTwelve(miscNumbers.foo);
+    this.bar = addTwelve(miscNumbers.bar);
     console.log(this);
 }, [])
 
-.service("sumOfMiscNumbemiscNumbersPlusTwelve", ["miscNumbersPlusTwelve", "sumOf"], function () {
-    return this.sumOf(this.miscNumbersPlusTwelve.foo, this.miscNumbersPlusTwelve.bar);
+.service("sumOfMiscNumbemiscNumbersPlusTwelve", ["miscNumbersPlusTwelve", "sumOf"], function (miscNumbersPlusTwelve, sumOf) {
+    return sumOf(miscNumbersPlusTwelve.foo, miscNumbersPlusTwelve.bar);
 })
 
 .middleware(function (service) {
@@ -55,7 +56,6 @@ cv
     };
     return service;
 }, ["miscNumbers"]);
-
 
 let sumOfMiscNumbemiscNumbersPlusTwelve = cv.access("sumOfMiscNumbemiscNumbersPlusTwelve");
 console.log(sumOfMiscNumbemiscNumbersPlusTwelve());

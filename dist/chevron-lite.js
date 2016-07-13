@@ -1,5 +1,5 @@
 /*
-chevronjs v1.0.0-rc2
+chevronjs v1.2.0
 
 Copyright (c) 2016 Felix Rilling
 
@@ -92,8 +92,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         });
                     },
                     bundle(service, list) {
-                        let bundle = _this.$u.filterObject(list, (item, key) => {
-                            return service.dependencies.includes(key);
+                        let bundle = [];
+
+                        _this.$u.eachObject(list, (item, key) => {
+                            if (service.dependencies.includes(key)) {
+                                bundle.push(item);
+                            }
                         });
 
                         if (!service.initialized) {
@@ -106,6 +110,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                     //construct service/factory
                     initialize(service, bundle) {
+                        let args = Array.from(bundle);
 
                         //    service = _this.$c.execDecorator(service, bundle);
 
@@ -118,17 +123,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                                 //    _this.$c.execMiddleware(service, bundle);
 
-                                return serviceFn.apply(bundle, arguments);
+                                args = args.concat(Array.from(arguments));
+                                return serviceFn.apply(null, args);
                             };
                         } else {
-                            //Bind bundle into unconstructed object container
-                            let container = Object.create(service.prototype || Object.prototype);
-
-                            _this.$u.eachObject(bundle, (dependency, name) => {
-                                container[name] = dependency;
-                            });
-
-                            service.content = (service.content.apply(container, service.args) || container);
+                            args = args.concat(service.args);
+                            args.unshift(null);
+                            //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
+                            service.content = new(Function.prototype.bind.apply(service.content, args));
                         }
 
                         service.initialized = true;
@@ -137,12 +139,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                     //    execMiddleware(service, bundle) {
                         //    _this.$c.execInject("middleware", service, inject => {
-                            //    inject.fn.call(bundle, service);
+                            //    inject.fn(service);
                         //    });
                     //    },
                     //    execDecorator(service, bundle) {
                         //    _this.$c.execInject("decorator", service, inject => {
-                            //    service.content = inject.fn.call(bundle, service.content);
+                            //    service.content = inject.fn(service.content);
                         //    });
 //    
                         //    return service;
@@ -184,7 +186,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             fn(object[keys[i]], keys[i], i);
                         }
                     },
-                    filterObject(obj, fn) {
+                    /*filterObject(obj, fn) {
                         let result = {};
 
                         _this.$u.eachObject(obj, (item, key, index) => {
@@ -194,7 +196,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         });
 
                         return result;
-                    },
+                    },*/
                     //return if val is defined
                     isDefined(val) {
                         return typeof val !== "undefined";
