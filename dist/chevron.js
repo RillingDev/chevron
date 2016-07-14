@@ -1,5 +1,5 @@
 /*
-chevronjs v1.2.1
+chevronjs v2.0.0
 
 Copyright (c) 2016 Felix Rilling
 
@@ -27,183 +27,124 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (function (window) {
 
-    class Chevron {
-        constructor(name = "cv") {
+    window.Chevron = class {
+        constructor(n) {
                 let _this = this;
 
-                _this.name = name;
+                _this.n = n || "cv";
 
-                _this.container = {};
-                /* <!-- comments:toggle // --> */
-                _this.injects = {
-                    middleware: [],
-                    decorator: []
-                };
-                /* <!-- endcomments --> */
+                _this.ct = {};
 
                 /*####################/
                 * Internal Chevron methods
                 /####################*/
                 _this.$c = {
                     //add new service
-                    add(name, dependencyList, type, content, args) {
-                        let service = _this.container[name] = {
-                            name,
-                            type,
-                            dependencies: dependencyList || [],
-                            content,
-                            initialized: false
+                    add(n, dependencyList, t, fn, args) {
+                        let service = _this.ct[n] = {
+                            n,
+                            t,
+                            d: dependencyList || [],
+                            fn,
+                            i: false
                         };
                         //Add type specific props
-                        if (type === "factory") {
+                        if (t === "factory") {
                             service.args = args || [];
                         }
                     },
-                    //Check initialized status/dependencies and issues initialize
-                    prepare(service) {
+                    //Check i status/d and issues iialize
+                    prep(service) {
                         let list = {};
 
-                        _this.$c.fetchDependencies(
-                            service.dependencies,
+                        _this.$c.d(
+                            service.d,
                             dependency => {
-                                list[dependency.name] = _this.$c.bundle(dependency, list).content;
+                                list[dependency.n] = _this.$c.bndl(dependency, list).fn;
                             },
-                            name => {
-                                throw `${_this.name}: error in ${service.name}: dependency '${name}' is missing`;
+                            n => {
+                                throw `${_this.n}: error in ${service.n}: dependency '${n}' is missing`;
                             }
                         );
 
-                        return _this.$c.bundle(service, list);
+                        return _this.$c.bndl(service, list);
                     },
-                    //Iterate dependencies
-                    fetchDependencies(dependencyList, fn, error) {
-                        _this.$u.each(dependencyList, name => {
-                            if (_this.$c.exists(name)) {
-                                let service = _this.$c.get(name);
+                    //Iterate d
+                    d(dependencyList, fn, error) {
+                        _this.$u.eA(dependencyList, n => {
+                            if (_this.$c.ex(n)) {
+                                let service = _this.$c.get(n);
 
-                                if (_this.$c.hasDependencies(service)) {
+                                if (service.d.length > 0) {
                                     //recurse
-                                    _this.$c.fetchDependencies(service.dependencies, fn, error);
+                                    _this.$c.d(service.d, fn, error);
                                 }
                                 fn(service);
                             } else {
-                                error(name);
+                                error(n);
                             }
                         });
                     },
-                    bundle(service, list) {
+                    bndl(service, list) {
                         let bundle = [];
 
-                        _this.$u.eachObject(list, (item, key) => {
-                            if (service.dependencies.includes(key)) {
+                        _this.$u.eO(list, (item, key) => {
+                            if (service.d.includes(key)) {
                                 bundle.push(item);
                             }
                         });
 
-                        if (!service.initialized) {
-                            return _this.$c.initialize(service, bundle);
+                        if (!service.i) {
+                            return _this.$c.i(service, Array.from(bundle));
                         } else {
                             return service;
                         }
-
                     },
 
                     //construct service/factory
-                    initialize(service, bundle) {
-                        let args = Array.from(bundle);
-                        /* <!-- comments:toggle // --> */
-                        service = _this.$c.execDecorator(service, bundle);
-                        /* <!-- endcomments --> */
+                    i(service, bundle) {
+                        if (service.t === "service") {
+                            let serviceFn = service.fn;
 
-                        if (service.type === "service") {
-                            let serviceFn = service.content;
-
-                            service.content = function () {
-
+                            service.fn = function () {
                                 //Chevron service function wrapper
-                                /* <!-- comments:toggle // --> */
-                                _this.$c.execMiddleware(service, bundle);
-                                /* <!-- endcomments --> */
-
                                 return serviceFn.apply(null,
-                                    Array.from(args.concat(Array.from(arguments)))
+                                    Array.from(bundle.concat(Array.from(arguments)))
                                 );
                             };
                         } else {
-                            args = args.concat(service.args);
-                            args.unshift(null);
+                            bundle = bundle.concat(service.args);
+                            bundle.unshift(null);
                             //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
-                            service.content = new(Function.prototype.bind.apply(service.content, args));
+                            service.fn = new(Function.prototype.bind.apply(service.fn, bundle));
                         }
 
-                        service.initialized = true;
+                        service.i = true;
                         return service;
                     },
-                    /* <!-- comments:toggle // --> */
-                    execMiddleware(service, bundle) {
-                        _this.$c.execInject("middleware", service, inject => {
-                            inject.fn(service);
-                        });
+                    ex(n) {
+                        return typeof _this.ct[n] !== "undefined";
                     },
-                    execDecorator(service, bundle) {
-                        _this.$c.execInject("decorator", service, inject => {
-                            service.content = inject.fn(service.content);
-                        });
-
-                        return service;
+                    get(n) {
+                        return _this.ct[n];
                     },
-                    execInject(type, service, fn) {
-                        _this.$u.each(_this.injects[type], inject => {
-                            if (_this.$c.injectorApplies(service.name, inject)) {
-                                fn(inject);
-                            }
-                        });
-                    },
-                    injectorApplies(name, inject) {
-                        return inject.applies.length === 0 ? true : inject.applies.includes(name);
-                    },
-                    /* <!-- endcomments --> */
-                    exists(name) {
-                        return _this.$u.isDefined(_this.container[name]);
-                    },
-                    get(name) {
-                        return _this.container[name];
-                    },
-                    hasDependencies(service) {
-                        return service.dependencies.length > 0;
-                    }
                 };
                 /*####################/
                 * Internal Utility methods
                 /####################*/
                 _this.$u = {
                     //Iterate
-                    each(arr, fn) {
+                    eA(arr, fn) {
                         for (let i = 0, l = arr.length; i < l; i++) {
                             fn(arr[i], i);
                         }
                     },
-                    eachObject(object, fn) {
+                    eO(object, fn) {
                         let keys = Object.keys(object);
                         for (let i = 0, l = keys.length; i < l; i++) {
                             fn(object[keys[i]], keys[i], i);
                         }
-                    },
-                    /*filterObject(obj, fn) {
-                        let result = {};
-
-                        _this.$u.eachObject(obj, (item, key, index) => {
-                            if (fn(item, key, index)) {
-                                result[key] = item;
-                            }
-                        });
-
-                        return result;
-                    },*/
-                    //return if val is defined
-                    isDefined(val) {
-                        return typeof val !== "undefined";
-                    },
+                    }
                 };
 
             }
@@ -211,74 +152,52 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             * Main exposed methods
             /####################*/
             //Core service/factory method
-        provider(name, dependencyList, content, type, args) {
+        provider(n, dependencyList, fn, t, args) {
                 let _this = this;
 
-                if (_this.$c.exists(name)) {
-                    throw `${_this.name}: error in ${type}: service '${name}' is already defined`;
+                if (_this.$c.ex(n)) {
+                    throw `${_this.n}: error in ${t}: service '${n}' is already defined`;
                 } else {
-                    _this.$c.add(name, dependencyList, type, content, args);
+                    _this.$c.add(n, dependencyList, t, fn, args);
 
                     return _this;
                 }
             }
             //create new service
-        service(name, dependencyList, fn) {
+        service(n, dependencyList, fn) {
                 return this.provider(
-                    name,
+                    n,
                     dependencyList,
                     fn,
                     "service"
                 );
             }
             //create new factory
-        factory(name, dependencyList, Constructor, args) {
+        factory(n, dependencyList, Constructor, args) {
                 return this.provider(
-                    name,
+                    n,
                     dependencyList,
                     Constructor,
                     "factory",
                     args
                 );
             }
-            /* <!-- comments:toggle // --> */
-            /*Core decorator/middleware method*/
-        injector(type, fn, applies) {
-                let _this = this;
-
-                _this.injects[type].push({
-                    fn,
-                    applies: applies || []
-                });
-
-                return _this;
-            }
-            /*Injects a decorator to a service/factory*/
-        decorator(fn, applies) {
-                return this.injector("decorator", fn, applies);
-            }
-            /*Injects a middleware to a service*/
-        middleware(fn, applies) {
-                return this.injector("middleware", fn, applies);
-            }
-            /* <!-- endcomments --> */
-            //prepare/initialize services/factory with dependencies injected
-        access(name) {
+            //prepare/iialize services/factory with d injected
+        access(n) {
                 let _this = this;
 
                 //Check if accessed service is registered
-                if (_this.$c.exists(name)) {
-                    return _this.$c.prepare(_this.$c.get(name)).content;
+                if (_this.$c.ex(n)) {
+                    return _this.$c.prep(_this.$c.get(n)).fn;
                 } else {
-                    throw `${_this.name}: error accessing ${name}: '${name}' is not defined`;
+                    throw `${_this.n}: error accessing ${n}: '${n}' is not defined`;
                 }
 
             }
-            //returns service container
+            //returns service ct
         list() {
-            return this.container;
+            return this.ct;
         }
-    }
+    };
 
-    window.Chevron = Chevron;
 })(window);

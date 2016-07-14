@@ -44,7 +44,7 @@ module.exports = function (grunt) {
             main: {
                 files: {
                     "dist/chevron-es5.min.js": ".tmp/chevron-es5.js",
-                    "dist/chevron-lite-es5.min.js": ".tmp/chevron-lite-es5.js"
+                    //"dist/chevron-lite-es5.min.js": ".tmp/chevron-lite-es5.js"
                 },
                 options: {
                     compress: {
@@ -65,8 +65,8 @@ module.exports = function (grunt) {
                 files: {
                     "dist/chevron.js": ".tmp/chevron.js",
                     "dist/chevron-es5.js": ".tmp/chevron-es5.js",
-                    "dist/chevron-lite.js": ".tmp/chevron-lite.js",
-                    "dist/chevron-lite-es5.js": ".tmp/chevron-lite-es5.js"
+                    //"dist/chevron-lite.js": ".tmp/chevron-lite.js",
+                    //"dist/chevron-lite-es5.js": ".tmp/chevron-lite-es5.js"
                 }
             }
         },
@@ -80,7 +80,7 @@ module.exports = function (grunt) {
             dist: {
                 files: {
                     ".tmp/chevron-es5.js": ".tmp/chevron.js",
-                    ".tmp/chevron-lite-es5.js": ".tmp/chevron-lite.js"
+                    //".tmp/chevron-lite-es5.js": ".tmp/chevron-lite.js"
                 }
             }
         },
@@ -103,7 +103,6 @@ module.exports = function (grunt) {
     grunt.registerTask("build", [
         "clean:dist",
         "copy:build",
-        "toggleComments"
     ]);
 
     grunt.registerTask("test", [

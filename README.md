@@ -6,12 +6,7 @@
 
 ## Introduction
 
-Chevron is a extremely small JavaScript service library for easy dependency managment inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
-
-Chevron comes in two forms: normal and lite.
-
-- Normal has all features.
-- Lite has the base features excluding decorator/middleware support, but is even smaller than normal
+Chevron is a extremely small(2kB) JavaScript service library for easy dependency managment and lazy module loading, inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
 
 ## Syntax
 
@@ -107,58 +102,15 @@ Services and Factories can be accessed in two ways:
 cv.access("foo"); //returns the service with dependencies injected into arguments
 ```
 
-or, if you just want the service without dependencies:
+or, if you just want the service without dependencies from the container:
 
 ```javascript
-cv.container.foo; //returns the service as Chevron object.
-```
-
-## Middleware and Decorators
-
-_Middleware/Decorators are excluded in the lite version_
-
-### Middleware
-
-Middleware can be used to inject a function into a service, causing the service to call the middleware every time the service is called
-
-```javascript
-//Chevron.prototype.middleware(fn,[services]);
-cv.middleware(
-    function(){
-        console.log("myCustomService is being run!")
-    },
-    ["myCustomService"]
-);
-
-//Or inject into all services
-cv.middleware(
-    function(name, foo, bar){
-        console.log(name + " was called")
-    }
-);
-```
-
-### Decorator
-
-Decorators are run before initializing the service, returning a modified version of it.
-
-```javascript
-//Chevron.prototype.decorator(fn,[services]);
-cv.decorator(
-    function(service){
-      service = function() {
-          this.foo = 10;
-          this.bar = 4;
-      };
-      return service;
-    },
-    ["myCustomService"]
-);
+cv.ct.foo; //returns the service as Chevron object.
 ```
 
 ## Options
 
-The Chevron Constructor can be called with options
+The Chevron Constructor can be called with options:
 
 ```javascript
 //Chevron.prototype.service(name = "Chevron");

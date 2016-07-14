@@ -1,5 +1,5 @@
 /*
-chevronjs v1.2.1
+chevronjs v2.0.0
 
 Copyright (c) 2016 Felix Rilling
 
@@ -30,23 +30,16 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 (function (window) {
-    var Chevron = function () {
-        function Chevron() {
-            var name = arguments.length <= 0 || arguments[0] === undefined ? "cv" : arguments[0];
 
-            _classCallCheck(this, Chevron);
+    window.Chevron = function () {
+        function _class(n) {
+            _classCallCheck(this, _class);
 
             var _this = this;
 
-            _this.name = name;
+            _this.n = n || "cv";
 
-            _this.container = {};
-            /* <!-- comments:toggle // --> */
-            _this.injects = {
-                middleware: [],
-                decorator: []
-            };
-            /* <!-- endcomments --> */
+            _this.ct = {};
 
             /*####################/
             * Internal Chevron methods
@@ -54,60 +47,60 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             _this.$c = {
                 //add new service
 
-                add: function add(name, dependencyList, type, content, args) {
-                    var service = _this.container[name] = {
-                        name: name,
-                        type: type,
-                        dependencies: dependencyList || [],
-                        content: content,
-                        initialized: false
+                add: function add(n, dependencyList, t, fn, args) {
+                    var service = _this.ct[n] = {
+                        n: n,
+                        t: t,
+                        d: dependencyList || [],
+                        fn: fn,
+                        i: false
                     };
                     //Add type specific props
-                    if (type === "factory") {
+                    if (t === "factory") {
                         service.args = args || [];
                     }
                 },
 
-                //Check initialized status/dependencies and issues initialize
-                prepare: function prepare(service) {
+                //Check i status/d and issues iialize
+                prep: function prep(service) {
                     var list = {};
 
-                    _this.$c.fetchDependencies(service.dependencies, function (dependency) {
-                        list[dependency.name] = _this.$c.bundle(dependency, list).content;
-                    }, function (name) {
-                        throw _this.name + ": error in " + service.name + ": dependency '" + name + "' is missing";
+                    _this.$c.d(service.d, function (dependency) {
+                        list[dependency.n] = _this.$c.bndl(dependency, list).fn;
+                    }, function (n) {
+                        throw _this.n + ": error in " + service.n + ": dependency '" + n + "' is missing";
                     });
 
-                    return _this.$c.bundle(service, list);
+                    return _this.$c.bndl(service, list);
                 },
 
-                //Iterate dependencies
-                fetchDependencies: function fetchDependencies(dependencyList, fn, error) {
-                    _this.$u.each(dependencyList, function (name) {
-                        if (_this.$c.exists(name)) {
-                            var service = _this.$c.get(name);
+                //Iterate d
+                d: function d(dependencyList, fn, error) {
+                    _this.$u.eA(dependencyList, function (n) {
+                        if (_this.$c.ex(n)) {
+                            var service = _this.$c.get(n);
 
-                            if (_this.$c.hasDependencies(service)) {
+                            if (service.d.length > 0) {
                                 //recurse
-                                _this.$c.fetchDependencies(service.dependencies, fn, error);
+                                _this.$c.d(service.d, fn, error);
                             }
                             fn(service);
                         } else {
-                            error(name);
+                            error(n);
                         }
                     });
                 },
-                bundle: function bundle(service, list) {
+                bndl: function bndl(service, list) {
                     var bundle = [];
 
-                    _this.$u.eachObject(list, function (item, key) {
-                        if (service.dependencies.indexOf(key) !== -1) {
+                    _this.$u.eO(list, function (item, key) {
+                        if (service.d.indexOf(key) !== -1) {
                             bundle.push(item);
                         }
                     });
 
-                    if (!service.initialized) {
-                        return _this.$c.initialize(service, bundle);
+                    if (!service.i) {
+                        return _this.$c.i(service, Array.from(bundle));
                     } else {
                         return service;
                     }
@@ -115,70 +108,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
                 //construct service/factory
-                initialize: function initialize(service, bundle) {
-                    var args = Array.from(bundle);
-                    /* <!-- comments:toggle // --> */
-                    service = _this.$c.execDecorator(service, bundle);
-                    /* <!-- endcomments --> */
-
-                    if (service.type === "service") {
+                i: function i(service, bundle) {
+                    if (service.t === "service") {
                         (function () {
-                            var serviceFn = service.content;
+                            var serviceFn = service.fn;
 
-                            service.content = function () {
-
+                            service.fn = function () {
                                 //Chevron service function wrapper
-                                /* <!-- comments:toggle // --> */
-                                _this.$c.execMiddleware(service, bundle);
-                                /* <!-- endcomments --> */
-
-                                return serviceFn.apply(null, Array.from(args.concat(Array.from(arguments))));
+                                return serviceFn.apply(null, Array.from(bundle.concat(Array.from(arguments))));
                             };
                         })();
                     } else {
-                        args = args.concat(service.args);
-                        args.unshift(null);
+                        bundle = bundle.concat(service.args);
+                        bundle.unshift(null);
                         //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
-                        service.content = new (Function.prototype.bind.apply(service.content, args))();
+                        service.fn = new (Function.prototype.bind.apply(service.fn, bundle))();
                     }
 
-                    service.initialized = true;
+                    service.i = true;
                     return service;
                 },
-
-                /* <!-- comments:toggle // --> */
-                execMiddleware: function execMiddleware(service, bundle) {
-                    _this.$c.execInject("middleware", service, function (inject) {
-                        inject.fn(service);
-                    });
+                ex: function ex(n) {
+                    return typeof _this.ct[n] !== "undefined";
                 },
-                execDecorator: function execDecorator(service, bundle) {
-                    _this.$c.execInject("decorator", service, function (inject) {
-                        service.content = inject.fn(service.content);
-                    });
-
-                    return service;
-                },
-                execInject: function execInject(type, service, fn) {
-                    _this.$u.each(_this.injects[type], function (inject) {
-                        if (_this.$c.injectorApplies(service.name, inject)) {
-                            fn(inject);
-                        }
-                    });
-                },
-                injectorApplies: function injectorApplies(name, inject) {
-                    return inject.applies.length === 0 ? true : inject.applies.indexOf(name) !== -1;
-                },
-
-                /* <!-- endcomments --> */
-                exists: function exists(name) {
-                    return _this.$u.isDefined(_this.container[name]);
-                },
-                get: function get(name) {
-                    return _this.container[name];
-                },
-                hasDependencies: function hasDependencies(service) {
-                    return service.dependencies.length > 0;
+                get: function get(n) {
+                    return _this.ct[n];
                 }
             };
             /*####################/
@@ -187,30 +141,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             _this.$u = {
                 //Iterate
 
-                each: function each(arr, fn) {
+                eA: function eA(arr, fn) {
                     for (var i = 0, l = arr.length; i < l; i++) {
                         fn(arr[i], i);
                     }
                 },
-                eachObject: function eachObject(object, fn) {
+                eO: function eO(object, fn) {
                     var keys = Object.keys(object);
                     for (var i = 0, l = keys.length; i < l; i++) {
                         fn(object[keys[i]], keys[i], i);
                     }
-                },
-
-                /*filterObject(obj, fn) {
-                    let result = {};
-                     _this.$u.eachObject(obj, (item, key, index) => {
-                        if (fn(item, key, index)) {
-                            result[key] = item;
-                        }
-                    });
-                     return result;
-                },*/
-                //return if val is defined
-                isDefined: function isDefined(val) {
-                    return typeof val !== "undefined";
                 }
             };
         }
@@ -220,15 +160,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         //Core service/factory method
 
 
-        _createClass(Chevron, [{
+        _createClass(_class, [{
             key: "provider",
-            value: function provider(name, dependencyList, content, type, args) {
+            value: function provider(n, dependencyList, fn, t, args) {
                 var _this = this;
 
-                if (_this.$c.exists(name)) {
-                    throw _this.name + ": error in " + type + ": service '" + name + "' is already defined";
+                if (_this.$c.ex(n)) {
+                    throw _this.n + ": error in " + t + ": service '" + n + "' is already defined";
                 } else {
-                    _this.$c.add(name, dependencyList, type, content, args);
+                    _this.$c.add(n, dependencyList, t, fn, args);
 
                     return _this;
                 }
@@ -237,72 +177,40 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         }, {
             key: "service",
-            value: function service(name, dependencyList, fn) {
-                return this.provider(name, dependencyList, fn, "service");
+            value: function service(n, dependencyList, fn) {
+                return this.provider(n, dependencyList, fn, "service");
             }
             //create new factory
 
         }, {
             key: "factory",
-            value: function factory(name, dependencyList, Constructor, args) {
-                return this.provider(name, dependencyList, Constructor, "factory", args);
+            value: function factory(n, dependencyList, Constructor, args) {
+                return this.provider(n, dependencyList, Constructor, "factory", args);
             }
-            /* <!-- comments:toggle // --> */
-            /*Core decorator/middleware method*/
-
-        }, {
-            key: "injector",
-            value: function injector(type, fn, applies) {
-                var _this = this;
-
-                _this.injects[type].push({
-                    fn: fn,
-                    applies: applies || []
-                });
-
-                return _this;
-            }
-            /*Injects a decorator to a service/factory*/
-
-        }, {
-            key: "decorator",
-            value: function decorator(fn, applies) {
-                return this.injector("decorator", fn, applies);
-            }
-            /*Injects a middleware to a service*/
-
-        }, {
-            key: "middleware",
-            value: function middleware(fn, applies) {
-                return this.injector("middleware", fn, applies);
-            }
-            /* <!-- endcomments --> */
-            //prepare/initialize services/factory with dependencies injected
+            //prepare/iialize services/factory with d injected
 
         }, {
             key: "access",
-            value: function access(name) {
+            value: function access(n) {
                 var _this = this;
 
                 //Check if accessed service is registered
-                if (_this.$c.exists(name)) {
-                    return _this.$c.prepare(_this.$c.get(name)).content;
+                if (_this.$c.ex(n)) {
+                    return _this.$c.prep(_this.$c.get(n)).fn;
                 } else {
-                    throw _this.name + ": error accessing " + name + ": '" + name + "' is not defined";
+                    throw _this.n + ": error accessing " + n + ": '" + n + "' is not defined";
                 }
             }
-            //returns service container
+            //returns service ct
 
         }, {
             key: "list",
             value: function list() {
-                return this.container;
+                return this.ct;
             }
         }]);
 
-        return Chevron;
+        return _class;
     }();
-
-    window.Chevron = Chevron;
 })(window);
 //# sourceMappingURL=chevron-es5.js.map

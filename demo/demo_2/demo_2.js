@@ -33,29 +33,7 @@ factory("miscNumbersPlusTwelve", ["addTwelve", "miscNumbers"], function (addTwel
 
 .service("sumOfMiscNumbemiscNumbersPlusTwelve", ["miscNumbersPlusTwelve", "sumOf"], function (miscNumbersPlusTwelve, sumOf) {
     return sumOf(miscNumbersPlusTwelve.foo, miscNumbersPlusTwelve.bar);
-})
-
-.middleware(function (service) {
-    console.log("added two!");
-}, ["addTwo"])
-
-.middleware(function (service) {
-    console.log("added ...twelve?");
-}, ["addTwelve"])
-
-.decorator(function (service) {
-    console.log("decorated addTwelve");
-    return service;
-}, ["addTwelve"])
-
-.decorator(function (service) {
-    service = function () {
-        console.log("decorated miscNumbers!");
-        this.foo = 10;
-        this.bar = 4;
-    };
-    return service;
-}, ["miscNumbers"]);
+});
 
 let sumOfMiscNumbemiscNumbersPlusTwelve = cv.access("sumOfMiscNumbemiscNumbersPlusTwelve");
 console.log(sumOfMiscNumbemiscNumbersPlusTwelve());
