@@ -62,27 +62,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 },
 
                 //Check i status/d and issues iialize
-                prep: function prep(service) {
+                pre: function pre(service) {
                     var list = {};
 
-                    _this.$c.d(service.d, function (dependency) {
-                        list[dependency.n] = _this.$c.bndl(dependency, list).fn;
+                    _this.$c.dep(service.d, function (dependency) {
+                        list[dependency.n] = _this.$c.bnd(dependency, list).fn;
                     }, function (n) {
                         throw _this.n + ": error in " + service.n + ": dependency '" + n + "' is missing";
                     });
 
-                    return _this.$c.bndl(service, list);
+                    return _this.$c.bnd(service, list);
                 },
 
                 //Iterate d
-                d: function d(dependencyList, fn, error) {
+                dep: function dep(dependencyList, fn, error) {
                     _this.$u.eA(dependencyList, function (n) {
-                        if (_this.$c.ex(n)) {
+                        if (_this.$c.exi(n)) {
                             var service = _this.$c.get(n);
 
                             if (service.d.length > 0) {
                                 //recurse
-                                _this.$c.d(service.d, fn, error);
+                                _this.$c.dep(service.d, fn, error);
                             }
                             fn(service);
                         } else {
@@ -90,7 +90,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         }
                     });
                 },
-                bndl: function bndl(service, list) {
+                bnd: function bnd(service, list) {
                     var bundle = [];
 
                     _this.$u.eO(list, function (item, key) {
@@ -100,7 +100,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     });
 
                     if (!service.i) {
-                        return _this.$c.i(service, Array.from(bundle));
+                        return _this.$c.in(service, Array.from(bundle));
                     } else {
                         return service;
                     }
@@ -108,7 +108,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
                 //construct service/factory
-                i: function i(service, bundle) {
+                in: function _in(service, bundle) {
                     if (service.t === "service") {
                         (function () {
                             var serviceFn = service.fn;
@@ -128,7 +128,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     service.i = true;
                     return service;
                 },
-                ex: function ex(n) {
+                exi: function exi(n) {
                     return typeof _this.ct[n] !== "undefined";
                 },
                 get: function get(n) {
@@ -165,7 +165,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             value: function provider(n, dependencyList, fn, t, args) {
                 var _this = this;
 
-                if (_this.$c.ex(n)) {
+                if (_this.$c.exi(n)) {
                     throw _this.n + ": error in " + t + ": service '" + n + "' is already defined";
                 } else {
                     _this.$c.add(n, dependencyList, t, fn, args);
@@ -195,18 +195,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 var _this = this;
 
                 //Check if accessed service is registered
-                if (_this.$c.ex(n)) {
-                    return _this.$c.prep(_this.$c.get(n)).fn;
+                if (_this.$c.exi(n)) {
+                    return _this.$c.pre(_this.$c.get(n)).fn;
                 } else {
                     throw _this.n + ": error accessing " + n + ": '" + n + "' is not defined";
                 }
-            }
-            //returns service ct
-
-        }, {
-            key: "list",
-            value: function list() {
-                return this.ct;
             }
         }]);
 

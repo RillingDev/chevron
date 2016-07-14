@@ -54,30 +54,30 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         }
                     },
                     //Check i status/d and issues iialize
-                    prep(service) {
+                    pre(service) {
                         let list = {};
 
-                        _this.$c.d(
+                        _this.$c.dep(
                             service.d,
                             dependency => {
-                                list[dependency.n] = _this.$c.bndl(dependency, list).fn;
+                                list[dependency.n] = _this.$c.bnd(dependency, list).fn;
                             },
                             n => {
                                 throw `${_this.n}: error in ${service.n}: dependency '${n}' is missing`;
                             }
                         );
 
-                        return _this.$c.bndl(service, list);
+                        return _this.$c.bnd(service, list);
                     },
                     //Iterate d
-                    d(dependencyList, fn, error) {
+                    dep(dependencyList, fn, error) {
                         _this.$u.eA(dependencyList, n => {
-                            if (_this.$c.ex(n)) {
+                            if (_this.$c.exi(n)) {
                                 let service = _this.$c.get(n);
 
                                 if (service.d.length > 0) {
                                     //recurse
-                                    _this.$c.d(service.d, fn, error);
+                                    _this.$c.dep(service.d, fn, error);
                                 }
                                 fn(service);
                             } else {
@@ -85,7 +85,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             }
                         });
                     },
-                    bndl(service, list) {
+                    bnd(service, list) {
                         let bundle = [];
 
                         _this.$u.eO(list, (item, key) => {
@@ -95,14 +95,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         });
 
                         if (!service.i) {
-                            return _this.$c.i(service, Array.from(bundle));
+                            return _this.$c.in(service, Array.from(bundle));
                         } else {
                             return service;
                         }
                     },
 
                     //construct service/factory
-                    i(service, bundle) {
+                    in (service, bundle) {
                         if (service.t === "service") {
                             let serviceFn = service.fn;
 
@@ -122,7 +122,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         service.i = true;
                         return service;
                     },
-                    ex(n) {
+                    exi(n) {
                         return typeof _this.ct[n] !== "undefined";
                     },
                     get(n) {
@@ -155,7 +155,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         provider(n, dependencyList, fn, t, args) {
                 let _this = this;
 
-                if (_this.$c.ex(n)) {
+                if (_this.$c.exi(n)) {
                     throw `${_this.n}: error in ${t}: service '${n}' is already defined`;
                 } else {
                     _this.$c.add(n, dependencyList, t, fn, args);
@@ -184,19 +184,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
             //prepare/iialize services/factory with d injected
         access(n) {
-                let _this = this;
+            let _this = this;
 
-                //Check if accessed service is registered
-                if (_this.$c.ex(n)) {
-                    return _this.$c.prep(_this.$c.get(n)).fn;
-                } else {
-                    throw `${_this.n}: error accessing ${n}: '${n}' is not defined`;
-                }
-
+            //Check if accessed service is registered
+            if (_this.$c.exi(n)) {
+                return _this.$c.pre(_this.$c.get(n)).fn;
+            } else {
+                throw `${_this.n}: error accessing ${n}: '${n}' is not defined`;
             }
-            //returns service ct
-        list() {
-            return this.ct;
+
         }
     };
 
