@@ -116,3 +116,8 @@ The Chevron Constructor can be called with options:
 //Chevron.prototype.service(name = "Chevron");
 var namedCv = new Chevron("myCustomContainer");
 ```
+
+# FAQ
+
+- **Q: Why no middleware/decorators?**
+- A: I actually had middleware/decorators in version 1.x, but I removed them because I felt like the lib should focus more on being tiny than on more features
