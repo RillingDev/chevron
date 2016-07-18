@@ -1,3 +1,3 @@
 "use strict";
 
-let cv = new Chevron();
+let cv = new chevron.Container();

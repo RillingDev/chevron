@@ -15,7 +15,7 @@ Chevron is a extremely small(2kB) JavaScript service library for easy dependency
 To do anything with Chevron, you need to create a new Chevron Container:
 
 ```javascript
-var cv = new Chevron();
+var cv = new chevron.Container();
 ```
 
 ### Services
@@ -119,5 +119,5 @@ var namedCv = new Chevron("myCustomContainer");
 
 # FAQ
 
-- **Q: Why no middleware/decorators?**
+- **Q: Why are there no middleware/decorators?**
 - A: I actually had middleware/decorators in version 1.x, but I removed them because I felt like the lib should focus more on being tiny than on more features

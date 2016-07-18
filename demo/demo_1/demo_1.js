@@ -1,6 +1,6 @@
 "use strict";
 
-let cv = new Chevron();
+let cv = new chevron.Container();
 
 cv.service("myService1", [], function () {
     console.log("myService1 started");
