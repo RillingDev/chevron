@@ -1,5 +1,8 @@
-(function (exports) {
-    'use strict';
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (factory((global.Chevron = global.Chevron || {})));
+}(this, function (exports) { 'use strict';
 
     let foo = "bar";
 
@@ -174,4 +177,6 @@
 
     exports.Chevron = Chevron;
 
-}((this.chevron = this.chevron || {})));
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+}));

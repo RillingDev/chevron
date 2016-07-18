@@ -174,4 +174,4 @@
 
     exports.Chevron = Chevron;
 
-}((this.chevron = this.chevron || {})));
+}((this.Chevron = this.Chevron || {})));
