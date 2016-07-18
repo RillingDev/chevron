@@ -1,5 +1,5 @@
 /*
-chevronjs v2.0.1
+chiffonjs v3.0.0
 
 Copyright (c) 2016 Felix Rilling
 
@@ -27,57 +27,57 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (function (window) {
 
-    window.Chevron = class {
-        constructor(n) {
+    window.Chiffon = class {
+        constructor(name) {
                 let _this = this;
 
-                _this.n = n || "cv";
+                _this.name = name || "cf";
 
-                _this.ct = {};
+                _this.container = {};
 
                 /*####################/
                 * Internal Chevron methods
                 /####################*/
                 _this.$c = {
                     //add new service
-                    add(n, dependencyList, t, fn, args) {
-                        let service = _this.ct[n] = {
-                            n,
-                            t,
-                            d: dependencyList || [],
+                    add(name, dependencyList, type, fn, args) {
+                        let service = _this.container[name] = {
+                            name,
+                            type,
+                            dependencies: dependencyList || [],
                             fn,
-                            i: false
+                            initialized: false
                         };
                         //Add type specific props
-                        if (t === "factory") {
+                        if (type === "factory") {
                             service.args = args || [];
                         }
                     },
                     //Check i status/d and issues iialize
-                    pre(service) {
+                    prepare(service) {
                         let list = {};
 
-                        _this.$c.dep(
-                            service.d,
+                        _this.$c.recurseDependencies(
+                            service.dependencies,
                             dependency => {
-                                list[dependency.n] = _this.$c.bnd(dependency, list).fn;
+                                list[dependency.name] = _this.$c.bundle(dependency, list).fn;
                             },
-                            n => {
-                                throw `${_this.n}: error in ${service.n}: dependency '${n}' is missing`;
+                            name => {
+                                throw `${_this.name}: error in ${service.name}: dependency '${name}' is missing`;
                             }
                         );
 
-                        return _this.$c.bnd(service, list);
+                        return _this.$c.bundle(service, list);
                     },
-                    //Iterate d
-                    dep(dependencyList, fn, error) {
-                        _this.$u.eA(dependencyList, n => {
-                            if (_this.$c.exi(n)) {
-                                let service = _this.$c.get(n);
+                    //Iterate deps
+                    recurseDependencies(dependencyList, fn, error) {
+                        _this.$u.each(dependencyList, name => {
+                            if (_this.$c.exists(name)) {
+                                let service = _this.$c.get(name);
 
-                                if (service.d.length > 0) {
+                                if (service.dependencies.length > 0) {
                                     //recurse
-                                    _this.$c.dep(service.d, fn, error);
+                                    _this.$c.recurseDependencies(service.dependencies, fn, error);
                                 }
                                 fn(service);
                             } else {
@@ -85,25 +85,25 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             }
                         });
                     },
-                    bnd(service, list) {
+                    bundle(service, list) {
                         let bundle = [];
 
-                        _this.$u.eO(list, (item, key) => {
-                            if (service.d.includes(key)) {
+                        _this.$u.eachObject(list, (item, key) => {
+                            if (service.dependencies.includes(key)) {
                                 bundle.push(item);
                             }
                         });
 
-                        if (!service.i) {
-                            return _this.$c.in(service, Array.from(bundle));
+                        if (!service.initialized) {
+                            return _this.$c.initialize(service, Array.from(bundle));
                         } else {
                             return service;
                         }
                     },
 
                     //construct service/factory
-                    in (service, bundle) {
-                        if (service.t === "service") {
+                    initialize(service, bundle) {
+                        if (service.type === "service") {
                             let serviceFn = service.fn;
 
                             service.fn = function () {
@@ -119,14 +119,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             service.fn = new(Function.prototype.bind.apply(service.fn, bundle));
                         }
 
-                        service.i = true;
+                        service.initialized = true;
                         return service;
                     },
-                    exi(n) {
-                        return typeof _this.ct[n] !== "undefined";
+                    exists(name) {
+                        return typeof _this.$c.get(name) !== "undefined";
                     },
-                    get(n) {
-                        return _this.ct[n];
+                    get(name) {
+                        return _this.container[name];
                     },
                 };
                 /*####################/
@@ -134,13 +134,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 /####################*/
                 _this.$u = {
                     //Iterate
-                    eA(arr, fn) {
+                    each(arr, fn) {
                         for (let i = 0, l = arr.length; i < l; i++) {
                             fn(arr[i], i);
                         }
                     },
-                    eO(object, fn) {
+                    eachObject(object, fn) {
                         let keys = Object.keys(object);
+
                         for (let i = 0, l = keys.length; i < l; i++) {
                             fn(object[keys[i]], keys[i], i);
                         }
@@ -152,30 +153,30 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             * Main exposed methods
             /####################*/
             //Core service/factory method
-        provider(n, dependencyList, fn, t, args) {
+        provider(name, dependencyList, fn, type, args) {
                 let _this = this;
 
-                if (_this.$c.exi(n)) {
-                    throw `${_this.n}: error in ${t}: service '${n}' is already defined`;
+                if (_this.$c.exists(name)) {
+                    throw `${_this.name}: error in ${type}: service '${name}' is already defined`;
                 } else {
-                    _this.$c.add(n, dependencyList, t, fn, args);
+                    _this.$c.add(name, dependencyList, type, fn, args);
 
                     return _this;
                 }
             }
             //create new service
-        service(n, dependencyList, fn) {
+        service(name, dependencyList, fn) {
                 return this.provider(
-                    n,
+                    name,
                     dependencyList,
                     fn,
                     "service"
                 );
             }
             //create new factory
-        factory(n, dependencyList, Constructor, args) {
+        factory(name, dependencyList, Constructor, args) {
                 return this.provider(
-                    n,
+                    name,
                     dependencyList,
                     Constructor,
                     "factory",
@@ -183,14 +184,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 );
             }
             //prepare/iialize services/factory with d injected
-        access(n) {
+        access(name) {
             let _this = this;
 
             //Check if accessed service is registered
-            if (_this.$c.exi(n)) {
-                return _this.$c.pre(_this.$c.get(n)).fn;
+            if (_this.$c.exists(name)) {
+                return _this.$c.prepare(_this.$c.get(name)).fn;
             } else {
-                throw `${_this.n}: error accessing ${n}: '${n}' is not defined`;
+                throw `${_this.name}: error accessing ${name}: '${name}' is not defined`;
             }
 
         }
