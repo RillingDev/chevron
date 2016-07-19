@@ -1,0 +1,53 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   'package.json',
+1 verbose cli   '-D' ]
+2 info using npm@2.15.0
+3 info using node@v4.4.2
+4 verbose install initial load of /Applications/MAMP/htdocs/chevronjs/package.json
+5 verbose installManyTop reading scoped package data from /Applications/MAMP/htdocs/chevronjs/node_modules/babel-core/package.json
+6 verbose installManyTop reading scoped package data from /Applications/MAMP/htdocs/chevronjs/node_modules/babel-plugin-array-includes/package.json
+7 verbose installManyTop reading scoped package data from /Applications/MAMP/htdocs/chevronjs/node_modules/babel-preset-es2015/package.json
+8 verbose installManyTop reading scoped package data from /Applications/MAMP/htdocs/chevronjs/node_modules/node-libs-browser/package.json
+9 verbose installManyTop reading scoped package data from /Applications/MAMP/htdocs/chevronjs/node_modules/rollup/package.json
+10 verbose installManyTop reading scoped package data from /Applications/MAMP/htdocs/chevronjs/node_modules/rollup-plugin-babel/package.json
+11 verbose installManyTop reading scoped package data from /Applications/MAMP/htdocs/chevronjs/node_modules/rollup-plugin-uglify/package.json
+12 verbose installManyTop reading scoped package data from /Applications/MAMP/htdocs/chevronjs/node_modules/uglify-js/package.json
+13 verbose readDependencies loading dependencies from /Applications/MAMP/htdocs/chevronjs/package.json
+14 silly cache add args [ 'package.json', null ]
+15 verbose cache add spec package.json
+16 silly cache add parsed spec Result {
+16 silly cache add   raw: 'package.json',
+16 silly cache add   scope: null,
+16 silly cache add   name: null,
+16 silly cache add   rawSpec: 'package.json',
+16 silly cache add   spec: '/Applications/MAMP/htdocs/chevronjs/package.json',
+16 silly cache add   type: 'local' }
+17 silly addLocalTarball shasum (computed) 52bdfe679a20362f83be84cb46c1d11dd10ef169
+18 verbose addTmpTarball /Applications/MAMP/htdocs/chevronjs/package.json not in flight; adding
+19 verbose correctMkdir /Users/felixrilling/.npm correctMkdir not in flight; initializing
+20 verbose addTmpTarball validating metadata from /Applications/MAMP/htdocs/chevronjs/package.json
+21 verbose tar unpack /Applications/MAMP/htdocs/chevronjs/package.json
+22 verbose tar unpacking to /tmp/npm-4655-498312fd/unpack-593e0d51c3c3
+23 silly gentlyRm /tmp/npm-4655-498312fd/unpack-593e0d51c3c3 is being purged
+24 verbose gentlyRm don't care about contents; nuking /tmp/npm-4655-498312fd/unpack-593e0d51c3c3
+25 silly gunzTarPerm modes [ '755', '644' ]
+26 error not a package /Applications/MAMP/htdocs/chevronjs/package.json
+27 error addLocal Could not install /Applications/MAMP/htdocs/chevronjs/package.json
+28 verbose stack Error: ENOENT: no such file or directory, open '/tmp/npm-4655-498312fd/unpack-593e0d51c3c3/package.json'
+28 verbose stack     at Error (native)
+29 verbose cwd /Applications/MAMP/htdocs/chevronjs
+30 error Darwin 15.3.0
+31 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "install" "package.json" "-D"
+32 error node v4.4.2
+33 error npm  v2.15.0
+34 error path /tmp/npm-4655-498312fd/unpack-593e0d51c3c3/package.json
+35 error code ENOENT
+36 error errno -2
+37 error syscall open
+38 error enoent ENOENT: no such file or directory, open '/tmp/npm-4655-498312fd/unpack-593e0d51c3c3/package.json'
+38 error enoent This is most likely not a problem with npm itself
+38 error enoent and is related to npm not being able to find a file.
+39 verbose exit [ -2, true ]
