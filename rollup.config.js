@@ -1,7 +1,7 @@
 "use strict";
 
 export default {
-    moduleName: "chevron",
+    moduleName: "Chevron",
     entry: "src/main.js",
     plugins: [],
     targets: [{
@@ -9,7 +9,7 @@ export default {
         format: "cjs"
     }, {
         dest: "dist/chevron.umd.js",
-        format: "umd"
+        format: "amd"
     }, {
         dest: "dist/chevron.es.js",
         format: "es"

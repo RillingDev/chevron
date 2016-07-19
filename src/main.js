@@ -24,86 +24,43 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 "use strict";
+import provider from "./provider/provider";
+import service from "./provider/service";
+import factory from "./provider/factory";
 
-import {
-    $c
-} from "./chevron";
+import access from "./access";
 
-export class Container {
-    constructor(name) {
-            let _this = this;
-            //_this.aaa = foo;
-            _this.name = name || "cv";
+let Container = function (name) {
+    let _this = this;
+    //_this.aaa = foo;
+    _this.name = name || "cv";
+    _this.container = {};
 
-            _this.container = {};
+    /*####################/
+    * Internal Chevron methods
+    /####################*/
+    _this.$c = {
+        exists(name) {
+            return typeof _this.$c.get(name) !== "undefined";
+        },
+        get(name) {
+            return _this.container[name];
+        },
+    };
+};
 
-            /*####################/
-            * Internal Chevron methods
-            /####################*/
-            _this.$c = $c;
-            /*####################/
-            * Internal Utility methods
-            /####################*/
-            _this.$u = {
-                //Iterate
-                each(arr, fn) {
-                    for (let i = 0, l = arr.length; i < l; i++) {
-                        fn(arr[i], i);
-                    }
-                },
-                eachObject(object, fn) {
-                    let keys = Object.keys(object);
+Container.prototype = {
+    /*####################/
+    * Main exposed methods
+    /####################*/
+    //Core service/factory method
+    provider,
+    //create new service
+    service,
+    //create new factory
+    factory,
+    //prepare/iialize services/factory with d injected
+    access
+};
 
-                    for (let i = 0, l = keys.length; i < l; i++) {
-                        fn(object[keys[i]], keys[i], i);
-                    }
-                }
-            };
-        }
-        /*####################/
-        * Main exposed methods
-        /####################*/
-        //Core service/factory method
-    provider(name, dependencyList, fn, type, args) {
-            let _this = this;
-
-            if (_this.$c.exists(name)) {
-                throw `${_this.name}: error in ${type}: service '${name}' is already defined`;
-            } else {
-                _this.$c.add(name, dependencyList, type, fn, args);
-
-                return _this;
-            }
-        }
-        //create new service
-    service(name, dependencyList, fn) {
-            return this.provider(
-                name,
-                dependencyList,
-                fn,
-                "service"
-            );
-        }
-        //create new factory
-    factory(name, dependencyList, Constructor, args) {
-            return this.provider(
-                name,
-                dependencyList,
-                Constructor,
-                "factory",
-                args
-            );
-        }
-        //prepare/iialize services/factory with d injected
-    access(name) {
-        let _this = this;
-
-        //Check if accessed service is registered
-        if (_this.$c.exists(name)) {
-            return _this.$c.prepare(_this.$c.get(name)).fn;
-        } else {
-            throw `${_this.name}: error accessing ${name}: '${name}' is not defined`;
-        }
-
-    }
-}
+export default Container;
