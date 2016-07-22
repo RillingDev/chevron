@@ -6,7 +6,7 @@
 
 ## Introduction
 
-Chevron is a extremely small(2kB) JavaScript service library for easy dependency managment and lazy module loading, inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
+Chevron is a extremely small(1.4kB) JavaScript service library for easy dependency managment and lazy module loading, inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
 
 ## Syntax
 
@@ -102,10 +102,10 @@ Services and Factories can be accessed in two ways:
 cv.access("foo"); //returns the service with dependencies injected into arguments
 ```
 
-or, if you just want the service without dependencies from the container:
+or, if you just want the service without dependencies from the chevron container(called chev):
 
 ```javascript
-cv.ct.foo; //returns the service as Chevron object.
+cv.chev.foo; //returns the service as Chevron object.
 ```
 
 ## Options
