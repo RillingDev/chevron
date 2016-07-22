@@ -117,10 +117,11 @@ var Chevron = function () {
     }
 
     //Main access function; makes sure that every service need is available
-    function prepare(chev, service) {
-        var list = {};
+    function prepare(service) {
+        var _this = this,
+            list = {};
 
-        r(chev, service.deps, function (dependency) {
+        r(_this.chev, service.deps, function (dependency) {
             list[dependency.name] = bundle(dependency, list).fn;
         }, function (name) {
             throw _this.name + ": error in " + service.name + ": dependency '" + name + "' is missing";
@@ -136,7 +137,7 @@ var Chevron = function () {
 
         //Check if accessed service is registered
         if (accessedService) {
-            return prepare(_this.chev, accessedService).fn;
+            return prepare.call(_this, accessedService).fn;
         } else {
             throw _this.name + ": error accessing " + name + ": '" + name + "' is not defined";
         }

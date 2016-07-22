@@ -9,7 +9,7 @@ export default function (name) {
 
     //Check if accessed service is registered
     if (accessedService) {
-        return prepare(_this.chev, accessedService).fn;
+        return prepare.call(_this, accessedService).fn;
     } else {
         throw `${_this.name}: error accessing ${name}: '${name}' is not defined`;
     }

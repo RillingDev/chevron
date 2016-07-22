@@ -3,11 +3,12 @@ import bundle from "./bundle";
 import recurseDependencies from "./dependencies";
 
 //Main access function; makes sure that every service need is available
-export default function (chev,service) {
-    let list = {};
+export default function (service) {
+    let _this = this,
+        list = {};
 
     recurseDependencies(
-        chev,
+        _this.chev,
         service.deps,
         dependency => {
             list[dependency.name] = bundle(dependency, list).fn;

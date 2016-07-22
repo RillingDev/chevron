@@ -1,18 +1,18 @@
 'use strict';
 
 //add new service/fn
-function add(chev,name, dependencyList, type, fn, args) {
-        let service = chev[name] = {
-            name,
-            type,
-            deps: dependencyList || [],
-            fn,
-            init: false
-        };
-        //Add type specific props
-        if (type === "factory") {
-            service.args = args || [];
-        }
+function add (chev, name, dependencyList, type, fn, args) {
+    let service = chev[name] = {
+        name,
+        type,
+        deps: dependencyList || [],
+        fn,
+        init: false
+    };
+    //Add type specific props
+    if (type === "factory") {
+        service.args = args || [];
+    }
 }
 
 //Pushes new service/factory
@@ -125,11 +125,12 @@ function r(container, dependencyList, fn, error) {
 }
 
 //Main access function; makes sure that every service need is available
-function prepare (chev,service) {
-    let list = {};
+function prepare (service) {
+    let _this = this,
+        list = {};
 
     r(
-        chev,
+        _this.chev,
         service.deps,
         dependency => {
             list[dependency.name] = bundle(dependency, list).fn;
@@ -149,7 +150,7 @@ function access (name) {
 
     //Check if accessed service is registered
     if (accessedService) {
-        return prepare(_this.chev, accessedService).fn;
+        return prepare.call(_this, accessedService).fn;
     } else {
         throw `${_this.name}: error accessing ${name}: '${name}' is not defined`;
     }
