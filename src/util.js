@@ -1,7 +1,7 @@
 "use strict";
 
+//Utility functions
 export default {
-    //Iterate
     each: function (arr, fn) {
         for (let i = 0, l = arr.length; i < l; i++) {
             fn(arr[i], i);

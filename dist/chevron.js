@@ -3,43 +3,47 @@
 var Chevron = function () {
     'use strict';
 
+    //add new service/fn
+
+    function add(chev, name, dependencyList, type, fn, args) {
+        var service = chev[name] = {
+            name: name,
+            type: type,
+            deps: dependencyList || [],
+            fn: fn,
+            init: false
+        };
+        //Add type specific props
+        if (type === "factory") {
+            service.args = args || [];
+        }
+    }
+
+    //Pushes new service/factory
     function provider(name, dependencyList, fn, type, args) {
         var _this = this;
 
         if (_this.chev[name]) {
             throw _this.name + ": error in " + type + ": service '" + name + "' is already defined";
         } else {
-            add(name, dependencyList, type, fn, args);
+            add(_this.chev, name, dependencyList, type, fn, args);
 
             return _this;
         }
-
-        //add new service
-        function add(name, dependencyList, type, fn, args) {
-            var service = _this.chev[name] = {
-                name: name,
-                type: type,
-                deps: dependencyList || [],
-                fn: fn,
-                init: false
-            };
-            //Add type specific props
-            if (type === "factory") {
-                service.args = args || [];
-            }
-        }
     }
 
+    //Create new service
     function service(name, dependencyList, fn) {
         return this.provider(name, dependencyList, fn, "service");
     }
 
+    //Create new factory
     function factory(name, dependencyList, Constructor, args) {
         return this.provider(name, dependencyList, Constructor, "factory", args);
     }
 
+    //Utility functions
     var util = {
-        //Iterate
         each: function each(arr, fn) {
             for (var i = 0, l = arr.length; i < l; i++) {
                 fn(arr[i], i);
@@ -54,81 +58,87 @@ var Chevron = function () {
         }
     };
 
+    //Initialized service and sets init to true
+    function initialize(service, bundle) {
+        if (service.type === "service") {
+            (function () {
+                //Construct service
+                var serviceFn = service.fn;
+
+                service.fn = function () {
+                    //Chevron service function wrapper
+                    return serviceFn.apply(null, Array.from(bundle.concat(Array.from(arguments))));
+                };
+            })();
+        } else {
+            //Construct factory
+            bundle = bundle.concat(service.args);
+            bundle.unshift(null);
+            //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
+            service.fn = new (Function.prototype.bind.apply(service.fn, bundle))();
+        }
+
+        service.init = true;
+        return service;
+    }
+
+    //collect dependencies from string, and initialize them if needed
+    function bundle(service, list) {
+        var bundle = [];
+
+        util.eachObject(list, function (item, key) {
+            if (service.deps.indexOf(key) !== -1) {
+                bundle.push(item);
+            }
+        });
+
+        if (!service.init) {
+            return initialize(service, Array.from(bundle));
+        } else {
+            return service;
+        }
+    }
+
+    //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
+    function r(container, dependencyList, fn, error) {
+        util.each(dependencyList, function (name) {
+            var service = container[name];
+            if (service) {
+
+                if (service.deps.length > 0) {
+                    //recurse
+                    r(container, service.deps, fn, error);
+                }
+                fn(service);
+            } else {
+                error(name);
+            }
+        });
+    }
+
+    //Main access function; makes sure that every service need is available
+    function prepare(chev, service) {
+        var list = {};
+
+        r(chev, service.deps, function (dependency) {
+            list[dependency.name] = bundle(dependency, list).fn;
+        }, function (name) {
+            throw _this.name + ": error in " + service.name + ": dependency '" + name + "' is missing";
+        });
+
+        return bundle(service, list);
+    }
+
+    //Returns prepared service
     function access(name) {
         var _this = this,
-            accessedService = this.chev[name];
+            accessedService = _this.chev[name];
 
         //Check if accessed service is registered
         if (accessedService) {
-            return prepare(accessedService).fn;
+            return prepare(_this.chev, accessedService).fn;
         } else {
             throw _this.name + ": error accessing " + name + ": '" + name + "' is not defined";
-        }
-
-        function prepare(service) {
-            var list = {};
-
-            recurseDependencies(service.deps, function (dependency) {
-                list[dependency.name] = bundle(dependency, list).fn;
-            }, function (name) {
-                throw _this.name + ": error in " + service.name + ": dependency '" + name + "' is missing";
-            });
-
-            return bundle(service, list);
-        }
-        //Iterate deps
-        function recurseDependencies(dependencyList, fn, error) {
-            util.each(dependencyList, function (name) {
-                var service = _this.chev[name];
-                if (service) {
-
-                    if (service.deps.length > 0) {
-                        //recurse
-                        recurseDependencies(service.deps, fn, error);
-                    }
-                    fn(service);
-                } else {
-                    error(name);
-                }
-            });
-        }
-
-        function bundle(service, list) {
-            var bundle = [];
-
-            util.eachObject(list, function (item, key) {
-                if (service.deps.indexOf(key) !== -1) {
-                    bundle.push(item);
-                }
-            });
-
-            if (!service.init) {
-                return initialize(service, Array.from(bundle));
-            } else {
-                return service;
-            }
-        }
-
-        //construct service/factory
-        function initialize(service, bundle) {
-            if (service.type === "service") {
-                (function () {
-                    var serviceFn = service.fn;
-
-                    service.fn = function () {
-                        //Chevron service function wrapper
-                        return serviceFn.apply(null, Array.from(bundle.concat(Array.from(arguments))));
-                    };
-                })();
-            } else {
-                bundle = bundle.concat(service.args);
-                bundle.unshift(null);
-                //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
-                service.fn = new (Function.prototype.bind.apply(service.fn, bundle))();
-            }
-
-            service.init = true;
-            return service;
         }
     }
 
@@ -140,16 +150,13 @@ var Chevron = function () {
     };
 
     Container.prototype = {
-        /*####################/
-        * Main exposed methods
-        /####################*/
         //Core service/factory method
         provider: provider,
         //create new service
         service: service,
         //create new factory
         factory: factory,
-        //prepare/iialize services/factory with d injected
+        //prepare/iialize services/factory with deps injected
         access: access
     };
 
