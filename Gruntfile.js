@@ -11,19 +11,7 @@ module.exports = function (grunt) {
                     "src/{,*/}*.js"
                 ],
                 tasks: [
-                    "copy:dist",
-                    "babel"
-                ]
-            },
-        },
-        jshint: {
-            options: {
-                jshintrc: ".jshintrc",
-                reporter: require("jshint-stylish")
-            },
-            files: {
-                src: [
-                    "src/{,*/}.js"
+                    "exec"
                 ]
             },
         },
@@ -43,7 +31,7 @@ module.exports = function (grunt) {
         uglify: {
             main: {
                 files: {
-                    "dist/chevron-es5.min.js": ".tmp/chevron-es5.js",
+                    "dist/chevron.min.js": "dist/chevron.js",
                     //"dist/chevron-lite-es5.min.js": ".tmp/chevron-lite-es5.js"
                 },
                 options: {
@@ -51,22 +39,6 @@ module.exports = function (grunt) {
                         drop_console: true,
                         screw_ie8: true
                     }
-                }
-            }
-        },
-
-        copy: {
-            build: {
-                files: {
-                    ".tmp/chevron.js": "src/chevron.js",
-                }
-            },
-            dist: {
-                files: {
-                    "dist/chevron.js": ".tmp/chevron.js",
-                    "dist/chevron-es5.js": ".tmp/chevron-es5.js",
-                    //"dist/chevron-lite.js": ".tmp/chevron-lite.js",
-                    //"dist/chevron-lite-es5.js": ".tmp/chevron-lite-es5.js"
                 }
             }
         },
@@ -79,46 +51,33 @@ module.exports = function (grunt) {
             },
             dist: {
                 files: {
-                    ".tmp/chevron-es5.js": ".tmp/chevron.js",
+                    "dist/chevron.js": "dist/chevron.js",
                     //".tmp/chevron-lite-es5.js": ".tmp/chevron-lite.js"
                 }
             }
         },
 
-        toggleComments: {
-            customOptions: {
-                options: {
-                    padding: 4,
-                    removeCommands: true
-                },
-                files: {
-                    ".tmp/chevron-lite.js": "src/chevron.js"
-                }
+
+        exec: {
+            rollup: {
+                cmd: "rollup -c"
             }
         }
 
     });
-    grunt.loadNpmTasks("grunt-comment-toggler");
 
     grunt.registerTask("build", [
         "clean:dist",
-        "copy:build",
-    ]);
-
-    grunt.registerTask("test", [
-        "build",
-        "jshint"
+        "exec",
     ]);
 
     grunt.registerTask("dist", [
         "build",
-        "babel:dist",
-        "uglify:main",
-        "copy:dist"
+        "babel",
+        "uglify",
     ]);
 
     grunt.registerTask("default", [
-        "jshint",
         "dist"
     ]);
 

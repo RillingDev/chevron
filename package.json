@@ -1,37 +1,39 @@
 {
-  "name": "chevronjs",
-  "version": "v2.0.1",
-  "description": "Chevron is a extremely small(2kB) JavaScript service library for easy dependency managment and lazy module loading.",
-  "main": "dist/chevron.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/FelixRilling/chevronjs.git"
-  },
-  "keywords": [
-    "dependencies",
-    "services"
-  ],
-  "author": "Felix Rilling",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/FelixRilling/chevronjs/issues"
-  },
-  "homepage": "https://github.com/FelixRilling/chevronjs#readme",
-  "devDependencies": {
-    "babel-plugin-array-includes": "^2.0.3",
-    "babel-preset-es2015": "^6.3.13",
-    "grunt": "^0.4.5",
-    "grunt-babel": "^6.0.0",
-    "grunt-comment-toggler": "^0.2.2",
-    "grunt-contrib-clean": "^0.6.0",
-    "grunt-contrib-copy": "^0.8.2",
-    "grunt-contrib-jshint": "^0.11.3",
-    "grunt-contrib-uglify": "^0.11.0",
-    "grunt-contrib-watch": "^1.0.0",
-    "jit-grunt": "^0.9.1",
-    "jshint-stylish": "^1.0.0",
-    "time-grunt": "^1.0.0",
-    "uglify-js": "^2.6.1"
-  },
-  "dependencies": {}
+    "name": "chevronjs",
+    "version": "v3.0.0",
+    "description": "Chevron is a extremely small(1.4kB) JavaScript service library for easy dependency managment and lazy module loading.",
+    "main": "dist/chevron.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/FelixRilling/chevronjs.git"
+    },
+    "scripts": {
+        "build": "grunt"
+    },
+    "keywords": [
+        "dependencies",
+        "services"
+    ],
+    "author": "Felix Rilling",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/FelixRilling/chevronjs/issues"
+    },
+    "homepage": "https://github.com/FelixRilling/chevronjs#readme",
+    "devDependencies": {
+        "babel-core": "^6.0.20",
+        "babel-plugin-array-includes": "^2.0.3",
+        "babel-preset-es2015": "^6.9.0",
+        "grunt": "^1.0.1",
+        "grunt-babel": "^6.0.0",
+        "grunt-contrib-clean": "^1.0.0",
+        "grunt-contrib-uglify": "^2.0.0",
+        "grunt-contrib-watch": "^1.0.0",
+        "grunt-exec": "^1.0.0",
+        "jit-grunt": "^0.10.0",
+        "rollup": "^0.34.1",
+        "time-grunt": "^1.4.0",
+        "uglify-js": "^2.7.0"
+    },
+    "dependencies": {}
 }
