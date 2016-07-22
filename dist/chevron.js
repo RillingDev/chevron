@@ -1,35 +1,13 @@
-/*
-Chevron v3.0.0
+"use strict";
 
-Copyright (c) 2016 Felix Rilling
+var Chevron = function () {
+    'use strict';
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+    function provider(name, dependencyList, fn, type, args) {
+        var _this = this;
 
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
-define(function () { 'use strict';
-
-    function provider (name, dependencyList, fn, type, args) {
-        let _this = this;
-
-        if (_this.$c.exists(name)) {
-            throw `${_this.name}: error in ${type}: service '${name}' is already defined`;
+        if (_this.chev[name]) {
+            throw _this.name + ": error in " + type + ": service '" + name + "' is already defined";
         } else {
             add(name, dependencyList, type, fn, args);
 
@@ -38,12 +16,12 @@ define(function () { 'use strict';
 
         //add new service
         function add(name, dependencyList, type, fn, args) {
-            let service = _this.container[name] = {
-                name,
-                type,
-                dependencies: dependencyList || [],
-                fn,
-                initialized: false
+            var service = _this.chev[name] = {
+                name: name,
+                type: type,
+                deps: dependencyList || [],
+                fn: fn,
+                init: false
             };
             //Add type specific props
             if (type === "factory") {
@@ -52,75 +30,61 @@ define(function () { 'use strict';
         }
     }
 
-    function service (name, dependencyList, fn) {
-        return this.provider(
-            name,
-            dependencyList,
-            fn,
-            "service"
-        );
+    function service(name, dependencyList, fn) {
+        return this.provider(name, dependencyList, fn, "service");
     }
 
-    function factory (name, dependencyList, Constructor, args) {
-        return this.provider(
-            name,
-            dependencyList,
-            Constructor,
-            "factory",
-            args
-        );
+    function factory(name, dependencyList, Constructor, args) {
+        return this.provider(name, dependencyList, Constructor, "factory", args);
     }
 
     var util = {
         //Iterate
-        each: function (arr, fn) {
-            for (let i = 0, l = arr.length; i < l; i++) {
+        each: function each(arr, fn) {
+            for (var i = 0, l = arr.length; i < l; i++) {
                 fn(arr[i], i);
             }
         },
-        eachObject: function (object, fn) {
-            let keys = Object.keys(object);
+        eachObject: function eachObject(object, fn) {
+            var keys = Object.keys(object);
 
-            for (let i = 0, l = keys.length; i < l; i++) {
+            for (var i = 0, l = keys.length; i < l; i++) {
                 fn(object[keys[i]], keys[i], i);
             }
         }
     };
 
-    function access (name) {
-        let _this = this;
+    function access(name) {
+        var _this = this,
+            accessedService = this.chev[name];
 
         //Check if accessed service is registered
-        if (_this.$c.exists(name)) {
-            return prepare(_this.$c.get(name)).fn;
+        if (accessedService) {
+            return prepare(accessedService).fn;
         } else {
-            throw `${_this.name}: error accessing ${name}: '${name}' is not defined`;
+            throw _this.name + ": error accessing " + name + ": '" + name + "' is not defined";
         }
 
         function prepare(service) {
-            let list = {};
+            var list = {};
 
-            recurseDependencies(
-                service.dependencies,
-                dependency => {
-                    list[dependency.name] = bundle(dependency, list).fn;
-                },
-                name => {
-                    throw `${_this.name}: error in ${service.name}: dependency '${name}' is missing`;
-                }
-            );
+            recurseDependencies(service.deps, function (dependency) {
+                list[dependency.name] = bundle(dependency, list).fn;
+            }, function (name) {
+                throw _this.name + ": error in " + service.name + ": dependency '" + name + "' is missing";
+            });
 
             return bundle(service, list);
         }
         //Iterate deps
         function recurseDependencies(dependencyList, fn, error) {
-            util.each(dependencyList, name => {
-                if (_this.$c.exists(name)) {
-                    let service = _this.$c.get(name);
+            util.each(dependencyList, function (name) {
+                var service = _this.chev[name];
+                if (service) {
 
-                    if (service.dependencies.length > 0) {
+                    if (service.deps.length > 0) {
                         //recurse
-                        recurseDependencies(service.dependencies, fn, error);
+                        recurseDependencies(service.deps, fn, error);
                     }
                     fn(service);
                 } else {
@@ -130,15 +94,15 @@ define(function () { 'use strict';
         }
 
         function bundle(service, list) {
-            let bundle = [];
+            var bundle = [];
 
-            util.eachObject(list, (item, key) => {
-                if (service.dependencies.includes(key)) {
+            util.eachObject(list, function (item, key) {
+                if (service.deps.indexOf(key) !== -1) {
                     bundle.push(item);
                 }
             });
 
-            if (!service.initialized) {
+            if (!service.init) {
                 return initialize(service, Array.from(bundle));
             } else {
                 return service;
@@ -148,43 +112,31 @@ define(function () { 'use strict';
         //construct service/factory
         function initialize(service, bundle) {
             if (service.type === "service") {
-                let serviceFn = service.fn;
+                (function () {
+                    var serviceFn = service.fn;
 
-                service.fn = function () {
-                    //Chevron service function wrapper
-                    return serviceFn.apply(null,
-                        Array.from(bundle.concat(Array.from(arguments)))
-                    );
-                };
+                    service.fn = function () {
+                        //Chevron service function wrapper
+                        return serviceFn.apply(null, Array.from(bundle.concat(Array.from(arguments))));
+                    };
+                })();
             } else {
                 bundle = bundle.concat(service.args);
                 bundle.unshift(null);
                 //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
-                service.fn = new(Function.prototype.bind.apply(service.fn, bundle));
+                service.fn = new (Function.prototype.bind.apply(service.fn, bundle))();
             }
 
-            service.initialized = true;
+            service.init = true;
             return service;
         }
     }
 
-    let Container = function (name) {
-        let _this = this;
+    var Container = function Container(name) {
+        var _this = this;
 
         _this.name = name || "cv";
-        _this.container = {};
-
-        /*####################/
-        * Internal Chevron methods
-        /####################*/
-        _this.$c = {
-            exists(name) {
-                return typeof _this.$c.get(name) !== "undefined";
-            },
-            get(name) {
-                return _this.container[name];
-            },
-        };
+        _this.chev = {};
     };
 
     Container.prototype = {
@@ -192,15 +144,15 @@ define(function () { 'use strict';
         * Main exposed methods
         /####################*/
         //Core service/factory method
-        provider,
+        provider: provider,
         //create new service
-        service,
+        service: service,
         //create new factory
-        factory,
+        factory: factory,
         //prepare/iialize services/factory with d injected
-        access
+        access: access
     };
 
     return Container;
-
-});
+}();
+//# sourceMappingURL=chevron.js.map

@@ -3,7 +3,7 @@
 function provider (name, dependencyList, fn, type, args) {
     let _this = this;
 
-    if (_this.$c.exists(name)) {
+    if (_this.chev[name]) {
         throw `${_this.name}: error in ${type}: service '${name}' is already defined`;
     } else {
         add(name, dependencyList, type, fn, args);
@@ -13,12 +13,12 @@ function provider (name, dependencyList, fn, type, args) {
 
     //add new service
     function add(name, dependencyList, type, fn, args) {
-        let service = _this.container[name] = {
+        let service = _this.chev[name] = {
             name,
             type,
-            dependencies: dependencyList || [],
+            deps: dependencyList || [],
             fn,
-            initialized: false
+            init: false
         };
         //Add type specific props
         if (type === "factory") {
@@ -63,11 +63,12 @@ var util = {
 };
 
 function access (name) {
-    let _this = this;
+    let _this = this,
+        accessedService = this.chev[name];
 
     //Check if accessed service is registered
-    if (_this.$c.exists(name)) {
-        return prepare(_this.$c.get(name)).fn;
+    if (accessedService) {
+        return prepare(accessedService).fn;
     } else {
         throw `${_this.name}: error accessing ${name}: '${name}' is not defined`;
     }
@@ -76,7 +77,7 @@ function access (name) {
         let list = {};
 
         recurseDependencies(
-            service.dependencies,
+            service.deps,
             dependency => {
                 list[dependency.name] = bundle(dependency, list).fn;
             },
@@ -90,12 +91,12 @@ function access (name) {
     //Iterate deps
     function recurseDependencies(dependencyList, fn, error) {
         util.each(dependencyList, name => {
-            if (_this.$c.exists(name)) {
-                let service = _this.$c.get(name);
+            let service = _this.chev[name];
+            if (service) {
 
-                if (service.dependencies.length > 0) {
+                if (service.deps.length > 0) {
                     //recurse
-                    recurseDependencies(service.dependencies, fn, error);
+                    recurseDependencies(service.deps, fn, error);
                 }
                 fn(service);
             } else {
@@ -108,12 +109,12 @@ function access (name) {
         let bundle = [];
 
         util.eachObject(list, (item, key) => {
-            if (service.dependencies.includes(key)) {
+            if (service.deps.includes(key)) {
                 bundle.push(item);
             }
         });
 
-        if (!service.initialized) {
+        if (!service.init) {
             return initialize(service, Array.from(bundle));
         } else {
             return service;
@@ -138,28 +139,18 @@ function access (name) {
             service.fn = new(Function.prototype.bind.apply(service.fn, bundle));
         }
 
-        service.initialized = true;
+        service.init = true;
         return service;
     }
+
 }
 
 let Container = function (name) {
     let _this = this;
 
     _this.name = name || "cv";
-    _this.container = {};
+    _this.chev = {};
 
-    /*####################/
-    * Internal Chevron methods
-    /####################*/
-    _this.$c = {
-        exists(name) {
-            return typeof _this.$c.get(name) !== "undefined";
-        },
-        get(name) {
-            return _this.container[name];
-        },
-    };
 };
 
 Container.prototype = {

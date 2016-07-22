@@ -2,11 +2,12 @@
 import util from "./util";
 
 export default function (name) {
-    let _this = this;
+    let _this = this,
+        accessedService = this.chev[name];
 
     //Check if accessed service is registered
-    if (_this.$c.exists(name)) {
-        return prepare(_this.$c.get(name)).fn;
+    if (accessedService) {
+        return prepare(accessedService).fn;
     } else {
         throw `${_this.name}: error accessing ${name}: '${name}' is not defined`;
     }
@@ -15,7 +16,7 @@ export default function (name) {
         let list = {};
 
         recurseDependencies(
-            service.dependencies,
+            service.deps,
             dependency => {
                 list[dependency.name] = bundle(dependency, list).fn;
             },
@@ -29,12 +30,12 @@ export default function (name) {
     //Iterate deps
     function recurseDependencies(dependencyList, fn, error) {
         util.each(dependencyList, name => {
-            if (_this.$c.exists(name)) {
-                let service = _this.$c.get(name);
+            let service = _this.chev[name];
+            if (service) {
 
-                if (service.dependencies.length > 0) {
+                if (service.deps.length > 0) {
                     //recurse
-                    recurseDependencies(service.dependencies, fn, error);
+                    recurseDependencies(service.deps, fn, error);
                 }
                 fn(service);
             } else {
@@ -47,12 +48,12 @@ export default function (name) {
         let bundle = [];
 
         util.eachObject(list, (item, key) => {
-            if (service.dependencies.includes(key)) {
+            if (service.deps.includes(key)) {
                 bundle.push(item);
             }
         });
 
-        if (!service.initialized) {
+        if (!service.init) {
             return initialize(service, Array.from(bundle));
         } else {
             return service;
@@ -77,7 +78,8 @@ export default function (name) {
             service.fn = new(Function.prototype.bind.apply(service.fn, bundle));
         }
 
-        service.initialized = true;
+        service.init = true;
         return service;
     }
+
 }

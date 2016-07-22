@@ -3,7 +3,7 @@
 export default function (name, dependencyList, fn, type, args) {
     let _this = this;
 
-    if (_this.$c.exists(name)) {
+    if (_this.chev[name]) {
         throw `${_this.name}: error in ${type}: service '${name}' is already defined`;
     } else {
         add(name, dependencyList, type, fn, args);
@@ -13,12 +13,12 @@ export default function (name, dependencyList, fn, type, args) {
 
     //add new service
     function add(name, dependencyList, type, fn, args) {
-        let service = _this.container[name] = {
+        let service = _this.chev[name] = {
             name,
             type,
-            dependencies: dependencyList || [],
+            deps: dependencyList || [],
             fn,
-            initialized: false
+            init: false
         };
         //Add type specific props
         if (type === "factory") {

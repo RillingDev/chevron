@@ -10,19 +10,8 @@ let Container = function (name) {
     let _this = this;
 
     _this.name = name || "cv";
-    _this.container = {};
+    _this.chev = {};
 
-    /*####################/
-    * Internal Chevron methods
-    /####################*/
-    _this.$c = {
-        exists(name) {
-            return typeof _this.$c.get(name) !== "undefined";
-        },
-        get(name) {
-            return _this.container[name];
-        },
-    };
 };
 
 Container.prototype = {
