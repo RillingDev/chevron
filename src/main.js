@@ -4,7 +4,7 @@ import provider from "./provider/provider";
 import service from "./provider/service";
 import factory from "./provider/factory";
 
-import access from "./access";
+import access from "./access/access";
 
 let Container = function (name) {
     let _this = this;
@@ -15,16 +15,13 @@ let Container = function (name) {
 };
 
 Container.prototype = {
-    /*####################/
-    * Main exposed methods
-    /####################*/
     //Core service/factory method
     provider,
     //create new service
     service,
     //create new factory
     factory,
-    //prepare/iialize services/factory with d injected
+    //prepare/iialize services/factory with deps injected
     access
 };
 
