@@ -1,19 +1,8 @@
 'use strict';
 
-function provider (name, dependencyList, fn, type, args) {
-    let _this = this;
-
-    if (_this.chev[name]) {
-        throw `${_this.name}: error in ${type}: service '${name}' is already defined`;
-    } else {
-        add(name, dependencyList, type, fn, args);
-
-        return _this;
-    }
-
-    //add new service
-    function add(name, dependencyList, type, fn, args) {
-        let service = _this.chev[name] = {
+//add new service/fn
+function add(chev,name, dependencyList, type, fn, args) {
+        let service = chev[name] = {
             name,
             type,
             deps: dependencyList || [],
@@ -24,9 +13,22 @@ function provider (name, dependencyList, fn, type, args) {
         if (type === "factory") {
             service.args = args || [];
         }
+}
+
+//Pushes new service/factory
+function provider (name, dependencyList, fn, type, args) {
+    let _this = this;
+
+    if (_this.chev[name]) {
+        throw `${_this.name}: error in ${type}: service '${name}' is already defined`;
+    } else {
+        add(_this.chev, name, dependencyList, type, fn, args);
+
+        return _this;
     }
 }
 
+//Create new service
 function service (name, dependencyList, fn) {
     return this.provider(
         name,
@@ -36,6 +38,7 @@ function service (name, dependencyList, fn) {
     );
 }
 
+//Create new factory
 function factory (name, dependencyList, Constructor, args) {
     return this.provider(
         name,
@@ -46,8 +49,8 @@ function factory (name, dependencyList, Constructor, args) {
     );
 }
 
+//Utility functions
 var util = {
-    //Iterate
     each: function (arr, fn) {
         for (let i = 0, l = arr.length; i < l; i++) {
             fn(arr[i], i);
@@ -62,8 +65,10 @@ var util = {
     }
 };
 
+//Initialized service and sets init to true
 function initialize (service, bundle) {
     if (service.type === "service") {
+        //Construct service
         let serviceFn = service.fn;
 
         service.fn = function () {
@@ -73,6 +78,7 @@ function initialize (service, bundle) {
             );
         };
     } else {
+        //Construct factory
         bundle = bundle.concat(service.args);
         bundle.unshift(null);
         //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
@@ -83,6 +89,7 @@ function initialize (service, bundle) {
     return service;
 }
 
+//collect dependencies from string, and initialize them if needed
 function bundle (service, list) {
     let bundle = [];
 
@@ -97,9 +104,10 @@ function bundle (service, list) {
     } else {
         return service;
     }
+
 }
 
-//Iterate deps
+//Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
 function r(container, dependencyList, fn, error) {
     util.each(dependencyList, name => {
         let service = container[name];
@@ -116,6 +124,7 @@ function r(container, dependencyList, fn, error) {
     });
 }
 
+//Main access function; makes sure that every service need is available
 function prepare (chev,service) {
     let list = {};
 
@@ -133,6 +142,7 @@ function prepare (chev,service) {
     return bundle(service, list);
 }
 
+//Returns prepared service
 function access (name) {
     let _this = this,
         accessedService = _this.chev[name];

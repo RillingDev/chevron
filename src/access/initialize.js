@@ -1,7 +1,9 @@
 "use strict";
 
+//Initialized service and sets init to true
 export default function (service, bundle) {
     if (service.type === "service") {
+        //Construct service
         let serviceFn = service.fn;
 
         service.fn = function () {
@@ -11,6 +13,7 @@ export default function (service, bundle) {
             );
         };
     } else {
+        //Construct factory
         bundle = bundle.concat(service.args);
         bundle.unshift(null);
         //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible

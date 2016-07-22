@@ -2,6 +2,7 @@
 import util from "../util";
 import initialize from "./initialize";
 
+//collect dependencies from string, and initialize them if needed
 export default function (service, list) {
     let bundle = [];
 
@@ -16,4 +17,5 @@ export default function (service, list) {
     } else {
         return service;
     }
+
 }

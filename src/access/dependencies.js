@@ -1,7 +1,7 @@
 "use strict";
 import util from "../util";
 
-//Iterate deps
+//Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
 export default function r(container, dependencyList, fn, error) {
     util.each(dependencyList, name => {
         let service = container[name];

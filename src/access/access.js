@@ -2,6 +2,7 @@
 import util from "../util";
 import prepare from "./prepare";
 
+//Returns prepared service
 export default function (name) {
     let _this = this,
         accessedService = _this.chev[name];

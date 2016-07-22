@@ -2,6 +2,7 @@
 import bundle from "./bundle";
 import recurseDependencies from "./dependencies";
 
+//Main access function; makes sure that every service need is available
 export default function (chev,service) {
     let list = {};
 

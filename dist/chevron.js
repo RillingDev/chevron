@@ -3,43 +3,47 @@
 var Chevron = function () {
     'use strict';
 
+    //add new service/fn
+
+    function add(chev, name, dependencyList, type, fn, args) {
+        var service = chev[name] = {
+            name: name,
+            type: type,
+            deps: dependencyList || [],
+            fn: fn,
+            init: false
+        };
+        //Add type specific props
+        if (type === "factory") {
+            service.args = args || [];
+        }
+    }
+
+    //Pushes new service/factory
     function provider(name, dependencyList, fn, type, args) {
         var _this = this;
 
         if (_this.chev[name]) {
             throw _this.name + ": error in " + type + ": service '" + name + "' is already defined";
         } else {
-            add(name, dependencyList, type, fn, args);
+            add(_this.chev, name, dependencyList, type, fn, args);
 
             return _this;
         }
-
-        //add new service
-        function add(name, dependencyList, type, fn, args) {
-            var service = _this.chev[name] = {
-                name: name,
-                type: type,
-                deps: dependencyList || [],
-                fn: fn,
-                init: false
-            };
-            //Add type specific props
-            if (type === "factory") {
-                service.args = args || [];
-            }
-        }
     }
 
+    //Create new service
     function service(name, dependencyList, fn) {
         return this.provider(name, dependencyList, fn, "service");
     }
 
+    //Create new factory
     function factory(name, dependencyList, Constructor, args) {
         return this.provider(name, dependencyList, Constructor, "factory", args);
     }
 
+    //Utility functions
     var util = {
-        //Iterate
         each: function each(arr, fn) {
             for (var i = 0, l = arr.length; i < l; i++) {
                 fn(arr[i], i);
@@ -54,9 +58,11 @@ var Chevron = function () {
         }
     };
 
+    //Initialized service and sets init to true
     function initialize(service, bundle) {
         if (service.type === "service") {
             (function () {
+                //Construct service
                 var serviceFn = service.fn;
 
                 service.fn = function () {
@@ -65,6 +71,7 @@ var Chevron = function () {
                 };
             })();
         } else {
+            //Construct factory
             bundle = bundle.concat(service.args);
             bundle.unshift(null);
             //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
@@ -75,6 +82,7 @@ var Chevron = function () {
         return service;
     }
 
+    //collect dependencies from string, and initialize them if needed
     function bundle(service, list) {
         var bundle = [];
 
@@ -91,7 +99,7 @@ var Chevron = function () {
         }
     }
 
-    //Iterate deps
+    //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
     function r(container, dependencyList, fn, error) {
         util.each(dependencyList, function (name) {
             var service = container[name];
@@ -108,6 +116,7 @@ var Chevron = function () {
         });
     }
 
+    //Main access function; makes sure that every service need is available
     function prepare(chev, service) {
         var list = {};
 
@@ -120,6 +129,7 @@ var Chevron = function () {
         return bundle(service, list);
     }
 
+    //Returns prepared service
     function access(name) {
         var _this = this,
             accessedService = _this.chev[name];
