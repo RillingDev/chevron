@@ -1,4 +1,8 @@
-define('chevron', function () { 'use strict';
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+    typeof define === 'function' && define.amd ? define('chevron', factory) :
+    (global.Chevron = factory());
+}(this, function () { 'use strict';
 
     //add new service/fn
     function add (chev, name, dependencyList, type, fn, args) {
@@ -178,4 +182,4 @@ define('chevron', function () { 'use strict';
 
     return Container;
 
-});
+}));
