@@ -4,11 +4,11 @@ import {
 } from "../strings";
 
 //Create new service
-export default function (_name, _deps, _fn) {
+export default function (name, deps, fn) {
     return this.provider(
-        _name,
-        _deps,
+        name,
+        deps,
         _service,
-        _fn
+        fn
     );
 }

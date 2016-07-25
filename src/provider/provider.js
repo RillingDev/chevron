@@ -6,11 +6,11 @@ import {
 } from "../strings";
 
 //Pushes new service/factory
-export default function(_name, _deps, _type, _fn, _args) {
+export default function(name, deps, type, fn, args) {
     let _this = this;
 
-    if (_this.chev[_name]) {
-        throw `${_this.id}${_error}${_type}: ${_service} '${_name}' is already defined`;
+    if (_this.chev[name]) {
+        throw `${_this.id}${_error}${type}: ${_service} '${name}' is already defined`;
     } else {
         add.apply(_this, arguments);
 

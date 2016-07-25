@@ -4,12 +4,12 @@ import {
 } from "../strings";
 
 //Create new factory
-export default function (_name, _deps, _Constructor, _args) {
+export default function (name, deps, Constructor, args) {
     return this.provider(
-        _name,
-        _deps,
+        name,
+        deps,
         _factory,
-        _Constructor,
-        _args
+        Constructor,
+        args
     );
 }

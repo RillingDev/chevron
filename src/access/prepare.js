@@ -13,12 +13,12 @@ export default function (service) {
 
     recurseDependencies(
         _this.chev,
-        service._deps,
+        service.deps,
         dependency => {
-            list[dependency._name] = bundle(dependency, list)._fn;
+            list[dependency.name] = bundle(dependency, list).fn;
         },
         name => {
-            throw `${_this.id}${_error}${service._name}: dependency '${name}'${_isUndefined}`;
+            throw `${_this.id}${_error}${service.name}: dependency '${name}'${_isUndefined}`;
         }
     );
 

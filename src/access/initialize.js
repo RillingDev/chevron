@@ -5,11 +5,11 @@ import {
 
 //Initialized service and sets init to true
 export default function (service, bundle) {
-    if (service._type === _service) {
+    if (service.type === _service) {
         //Construct service
-        let serviceFn = service._fn;
+        let serviceFn = service.fn;
 
-        service._fn = function () {
+        service.fn = function () {
             //Chevron service function wrapper
             return serviceFn.apply(null,
                 Array.from(bundle.concat(Array.from(arguments)))
@@ -17,12 +17,12 @@ export default function (service, bundle) {
         };
     } else {
         //Construct factory
-        bundle = bundle.concat(service._args);
+        bundle = bundle.concat(service.args);
         bundle.unshift(null);
         //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
-        service._fn = new(Function.prototype.bind.apply(service._fn, bundle));
+        service.fn = new(Function.prototype.bind.apply(service.fn, bundle));
     }
 
-    service._init = true;
+    service.init = true;
     return service;
 }

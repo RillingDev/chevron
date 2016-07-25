@@ -67,7 +67,7 @@ module.exports = function (grunt) {
                 options: {
                     patterns: [
                         //Container strings
-                        {
+                        /*{
                             match: /_name/g,
                             replacement: "n"
                         }, {
@@ -85,7 +85,7 @@ module.exports = function (grunt) {
                         }, {
                             match: /_args/g,
                             replacement: "a"
-                        },
+                        },*/
                         //Util
                         {
                             match: /_each/g,

@@ -7,9 +7,9 @@ export default function r(container, dependencyList, fn, error) {
         let service = container[name];
         if (service) {
 
-            if (service._deps.length > 0) {
+            if (service.deps.length > 0) {
                 //recurse
-                r(container, service._deps, fn, error);
+                r(container, service.deps, fn, error);
             }
             fn(service);
         } else {

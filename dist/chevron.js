@@ -5,15 +5,14 @@ var Chevron = function () {
 
     //add new service/fn
 
-    function add(_name, _deps, _type, _fn, _args) {
-        //External applications should not try to access container props as the keys change between min/normal version; stick to cv.access()
-        this.chev[_name] = {
-            _name: _name,
-            _type: _type,
-            _deps: _deps,
-            _args: _args || [],
-            _fn: _fn,
-            _init: false
+    function add(name, deps, type, fn, args) {
+        this.chev[name] = {
+            name: name,
+            type: type,
+            deps: deps,
+            args: args || [],
+            fn: fn,
+            init: false
         };
     }
 
@@ -23,11 +22,11 @@ var Chevron = function () {
     var _isUndefined = " is undefined";
 
     //Pushes new service/factory
-    function provider(_name, _deps, _type, _fn, _args) {
+    function provider(name, deps, type, fn, args) {
         var _this = this;
 
-        if (_this.chev[_name]) {
-            throw "" + _this.id + _error + _type + ": " + _service + " '" + _name + "' is already defined";
+        if (_this.chev[name]) {
+            throw "" + _this.id + _error + type + ": " + _service + " '" + name + "' is already defined";
         } else {
             add.apply(_this, arguments);
 
@@ -36,13 +35,13 @@ var Chevron = function () {
     }
 
     //Create new service
-    function service(_name, _deps, _fn) {
-        return this.provider(_name, _deps, _service, _fn);
+    function service(name, deps, fn) {
+        return this.provider(name, deps, _service, fn);
     }
 
     //Create new factory
-    function factory(_name, _deps, _Constructor, _args) {
-        return this.provider(_name, _deps, _factory, _Constructor, _args);
+    function factory(name, deps, Constructor, args) {
+        return this.provider(name, deps, _factory, Constructor, args);
     }
 
     //Utility functions
@@ -63,25 +62,25 @@ var Chevron = function () {
 
     //Initialized service and sets init to true
     function initialize(service, bundle) {
-        if (service._type === _service) {
+        if (service.type === _service) {
             (function () {
                 //Construct service
-                var serviceFn = service._fn;
+                var serviceFn = service.fn;
 
-                service._fn = function () {
+                service.fn = function () {
                     //Chevron service function wrapper
                     return serviceFn.apply(null, Array.from(bundle.concat(Array.from(arguments))));
                 };
             })();
         } else {
             //Construct factory
-            bundle = bundle.concat(service._args);
+            bundle = bundle.concat(service.args);
             bundle.unshift(null);
             //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
-            service._fn = new (Function.prototype.bind.apply(service._fn, bundle))();
+            service.fn = new (Function.prototype.bind.apply(service.fn, bundle))();
         }
 
-        service._init = true;
+        service.init = true;
         return service;
     }
 
@@ -90,12 +89,12 @@ var Chevron = function () {
         var bundle = [];
 
         util._eachObject(list, function (item, key) {
-            if (service._deps.indexOf(key) !== -1) {
+            if (service.deps.indexOf(key) !== -1) {
                 bundle.push(item);
             }
         });
 
-        if (!service._init) {
+        if (!service.init) {
             return initialize(service, Array.from(bundle));
         } else {
             return service;
@@ -108,9 +107,9 @@ var Chevron = function () {
             var service = container[name];
             if (service) {
 
-                if (service._deps.length > 0) {
+                if (service.deps.length > 0) {
                     //recurse
-                    r(container, service._deps, fn, error);
+                    r(container, service.deps, fn, error);
                 }
                 fn(service);
             } else {
@@ -124,10 +123,10 @@ var Chevron = function () {
         var _this = this,
             list = {};
 
-        r(_this.chev, service._deps, function (dependency) {
-            list[dependency._name] = bundle(dependency, list)._fn;
+        r(_this.chev, service.deps, function (dependency) {
+            list[dependency.name] = bundle(dependency, list).fn;
         }, function (name) {
-            throw "" + _this.id + _error + service._name + ": dependency '" + name + "'" + _isUndefined;
+            throw "" + _this.id + _error + service.name + ": dependency '" + name + "'" + _isUndefined;
         });
 
         return bundle(service, list);
@@ -140,7 +139,7 @@ var Chevron = function () {
 
         //Check if accessed service is registered
         if (accessedService) {
-            return prepare.call(_this, accessedService)._fn;
+            return prepare.call(_this, accessedService).fn;
         } else {
             throw "" + _this.id + _error + name + ": '" + name + "'" + _isUndefined;
         }
