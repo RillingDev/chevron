@@ -5,12 +5,13 @@ var Chevron = function () {
 
     //add new service/fn
 
-    function add(chev, _name, dependencyList, _type, _fn, _args) {
+    function add(_name, _deps, _type, _fn, _args) {
+        console.log(this, arguments);
         //External applications should not try to access container props as the keys change between min/normal version; stick to cv.access()
-        var service = chev[_name] = {
+        this.chev[_name] = {
             _name: _name,
             _type: _type,
-            _deps: dependencyList || [],
+            _deps: _deps,
             _args: _args,
             _fn: _fn,
             _init: false
@@ -24,29 +25,29 @@ var Chevron = function () {
     var _service = "service";
 
     //Pushes new service/factory
-    function provider(name, dependencyList, fn, type, args) {
+    function provider(_name, _deps, _type, _fn, _args) {
         var _this = this;
 
-        if (_this.chev[name]) {
-            throw "" + _this.n + _error + type + ": " + _service + " '" + name + "' is already defined";
+        if (_this.chev[_name]) {
+            throw "" + _this.n + _error + _type + ": " + _service + " '" + _name + "' is already defined";
         } else {
-            add(_this.chev, name, dependencyList, type, fn, args);
+            add.apply(_this, arguments);
 
             return _this;
         }
     }
 
     //Create new service
-    function service(name, dependencyList, fn) {
-        return this.provider(name, dependencyList, fn, _service);
+    function service(_name, _deps, _fn) {
+        return this.provider(_name, _deps, _service, _fn);
     }
 
     //strings
     var _factory = "factory";
 
     //Create new factory
-    function factory(name, dependencyList, Constructor, args) {
-        return this.provider(name, dependencyList, Constructor, _factory, args);
+    function factory(_name, _deps, _Constructor, _args) {
+        return this.provider(_name, _deps, _factory, _Constructor, _args);
     }
 
     //Utility functions

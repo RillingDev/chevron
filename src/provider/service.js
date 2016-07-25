@@ -2,11 +2,11 @@
 import _service from "../strings/service";
 
 //Create new service
-export default function (name, dependencyList, fn) {
+export default function (_name, _deps, _fn) {
     return this.provider(
-        name,
-        dependencyList,
-        fn,
-        _service
+        _name,
+        _deps,
+        _service,
+        _fn
     );
 }

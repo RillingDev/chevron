@@ -2,12 +2,12 @@
 import _factory from "../strings/factory";
 
 //Create new factory
-export default function (name, dependencyList, Constructor, args) {
+export default function (_name, _deps, _Constructor, _args) {
     return this.provider(
-        name,
-        dependencyList,
-        Constructor,
+        _name,
+        _deps,
         _factory,
-        args
+        _Constructor,
+        _args
     );
 }
