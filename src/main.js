@@ -24,7 +24,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import provider from "./provider/provider";
 import service from "./provider/service";
 import factory from "./provider/factory";
-
 import access from "./access/access";
 
 let Container = function (name) {
@@ -32,7 +31,6 @@ let Container = function (name) {
 
     _this.n = name || "cv";
     _this.chev = {};
-
 };
 
 Container.prototype = {

@@ -14,5 +14,4 @@ export default function (name) {
     } else {
         throw `${_this.n}${_error}${name}: '${name}' is undefined`;
     }
-
 }

@@ -17,5 +17,4 @@ export default function (service, list) {
     } else {
         return service;
     }
-
 }
