@@ -1,5 +1,5 @@
 /*
-chevronjs v3.1.0
+chevronjs v3.2.0
 Copyright (c) 2016 Felix Rilling
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -30,7 +30,7 @@ import access from "./access/access";
 let Container = function (name) {
     let _this = this;
 
-    _this.name = name || "cv";
+    _this.n = name || "cv";
     _this.chev = {};
 
 };

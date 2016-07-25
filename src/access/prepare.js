@@ -1,6 +1,7 @@
 "use strict";
 import bundle from "./bundle";
 import recurseDependencies from "./dependencies";
+import _strings from "../strings";
 
 //Main access function; makes sure that every service need is available
 export default function (service) {
@@ -9,12 +10,12 @@ export default function (service) {
 
     recurseDependencies(
         _this.chev,
-        service.deps,
+        service._deps,
         dependency => {
-            list[dependency.name] = bundle(dependency, list).fn;
+            list[dependency._name] = bundle(dependency, list)._fn;
         },
         name => {
-            throw `${_this.name}: error in ${service.name}: dependency '${name}' is missing`;
+            throw `${_this.n}${_strings._error}${service._name}: dependency '${name}' missing`;
         }
     );
 
