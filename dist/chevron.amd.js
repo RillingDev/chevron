@@ -58,12 +58,12 @@ define('chevron', function () { 'use strict';
 
     //Utility functions
     var util = {
-        each: function (arr, fn) {
+        e: function (arr, fn) {
             for (let i = 0, l = arr.length; i < l; i++) {
                 fn(arr[i], i);
             }
         },
-        eachObject: function (object, fn) {
+        o: function (object, fn) {
             let keys = Object.keys(object);
 
             for (let i = 0, l = keys.length; i < l; i++) {
@@ -100,7 +100,7 @@ define('chevron', function () { 'use strict';
     function bundle (service, list) {
         let bundle = [];
 
-        util.eachObject(list, (item, key) => {
+        util.o(list, (item, key) => {
             if (service.d.includes(key)) {
                 bundle.push(item);
             }
@@ -116,7 +116,7 @@ define('chevron', function () { 'use strict';
 
     //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
     function r(container, dependencyList, fn, error) {
-        util.each(dependencyList, name => {
+        util.e(dependencyList, name => {
             let service = container[name];
             if (service) {
 

@@ -96,6 +96,14 @@ module.exports = function (grunt) {
                         }, {
                             match: /_args/g,
                             replacement: "a"
+                        },
+                        //Util
+                         {
+                            match: /_each/g,
+                            replacement: "e"
+                        }, {
+                            match: /_eachObject/g,
+                            replacement: "o"
                         }
                     ]
                 },

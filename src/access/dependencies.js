@@ -3,7 +3,7 @@ import util from "../util";
 
 //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
 export default function r(container, dependencyList, fn, error) {
-    util.each(dependencyList, name => {
+    util._each(dependencyList, name => {
         let service = container[name];
         if (service) {
 

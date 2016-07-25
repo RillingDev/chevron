@@ -51,12 +51,12 @@ var Chevron = function () {
 
     //Utility functions
     var util = {
-        each: function each(arr, fn) {
+        e: function e(arr, fn) {
             for (var i = 0, l = arr.length; i < l; i++) {
                 fn(arr[i], i);
             }
         },
-        eachObject: function eachObject(object, fn) {
+        o: function o(object, fn) {
             var keys = Object.keys(object);
 
             for (var i = 0, l = keys.length; i < l; i++) {
@@ -93,7 +93,7 @@ var Chevron = function () {
     function bundle(service, list) {
         var bundle = [];
 
-        util.eachObject(list, function (item, key) {
+        util.o(list, function (item, key) {
             if (service.d.indexOf(key) !== -1) {
                 bundle.push(item);
             }
@@ -108,7 +108,7 @@ var Chevron = function () {
 
     //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
     function r(container, dependencyList, fn, error) {
-        util.each(dependencyList, function (name) {
+        util.e(dependencyList, function (name) {
             var service = container[name];
             if (service) {
 
