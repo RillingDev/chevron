@@ -1,5 +1,5 @@
 "use strict";
-import _strings from "../strings";
+import _factory from "../strings/factory";
 
 //Create new factory
 export default function (name, dependencyList, Constructor, args) {
@@ -7,7 +7,7 @@ export default function (name, dependencyList, Constructor, args) {
         name,
         dependencyList,
         Constructor,
-        _strings._factory,
+        _factory,
         args
     );
 }

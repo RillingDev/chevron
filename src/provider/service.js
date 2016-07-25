@@ -1,5 +1,5 @@
 "use strict";
-import _strings from "../strings";
+import _service from "../strings/service";
 
 //Create new service
 export default function (name, dependencyList, fn) {
@@ -7,6 +7,6 @@ export default function (name, dependencyList, fn) {
         name,
         dependencyList,
         fn,
-        _strings._service
+        _service
     );
 }

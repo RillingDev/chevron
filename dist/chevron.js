@@ -3,36 +3,32 @@
 var Chevron = function () {
     'use strict';
 
-    //strings
-
-    var _strings = {
-        _service: "service",
-        _factory: "factory",
-        _error: ": error in "
-    };
-
     //add new service/fn
-    function add(chev, _name, dependencyList, _type, _fn, args) {
-        //External applications should not try to access container props as the keky change between min/normal version; stick to cv.access()
+
+    function add(chev, _name, dependencyList, _type, _fn, _args) {
+        //External applications should not try to access container props as the keys change between min/normal version; stick to cv.access()
         var service = chev[_name] = {
             _name: _name,
             _type: _type,
             _deps: dependencyList || [],
+            _args: _args,
             _fn: _fn,
             _init: false
         };
-        //Add type specific props
-        if (_type === _strings._factory) {
-            service._args = args || [];
-        }
     }
+
+    //strings
+    var _error = ": error in ";
+
+    //strings
+    var _service = ": error in ";
 
     //Pushes new service/factory
     function provider(name, dependencyList, fn, type, args) {
         var _this = this;
 
         if (_this.chev[name]) {
-            throw "" + _this.n + _strings._error + type + ": " + _strings._service + " '" + name + "' is already defined";
+            throw "" + _this.n + _error + type + ": " + _service + " '" + name + "' is already defined";
         } else {
             add(_this.chev, name, dependencyList, type, fn, args);
 
@@ -42,12 +38,15 @@ var Chevron = function () {
 
     //Create new service
     function service(name, dependencyList, fn) {
-        return this.provider(name, dependencyList, fn, _strings._service);
+        return this.provider(name, dependencyList, fn, _service);
     }
+
+    //strings
+    var _factory = "factory";
 
     //Create new factory
     function factory(name, dependencyList, Constructor, args) {
-        return this.provider(name, dependencyList, Constructor, _strings._factory, args);
+        return this.provider(name, dependencyList, Constructor, _factory, args);
     }
 
     //Utility functions
@@ -68,7 +67,7 @@ var Chevron = function () {
 
     //Initialized service and sets init to true
     function initialize(service, bundle) {
-        if (service._type === _strings._service) {
+        if (service._type === _service) {
             (function () {
                 //Construct service
                 var serviceFn = service._fn;
@@ -132,7 +131,7 @@ var Chevron = function () {
         r(_this.chev, service._deps, function (dependency) {
             list[dependency._name] = bundle(dependency, list)._fn;
         }, function (name) {
-            throw "" + _this.n + _strings._error + service._name + ": dependency '" + name + "' missing";
+            throw "" + _this.n + _error + service._name + ": dependency '" + name + "' missing";
         });
 
         return bundle(service, list);
@@ -147,7 +146,7 @@ var Chevron = function () {
         if (accessedService) {
             return prepare.call(_this, accessedService)._fn;
         } else {
-            throw "" + _this.n + _strings._error + name + ": '" + name + "' is undefined";
+            throw "" + _this.n + _error + name + ": '" + name + "' is undefined";
         }
     }
 

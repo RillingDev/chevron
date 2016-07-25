@@ -1,34 +1,30 @@
 define('chevron', function () { 'use strict';
 
-    //strings
-    var _strings = {
-        _service: "service",
-        _factory: "factory",
-        _error: ": error in "
-    };
-
     //add new service/fn
-    function add (chev, _name, dependencyList, _type, _fn, args) {
-        //External applications should not try to access container props as the keky change between min/normal version; stick to cv.access()
+    function add (chev, _name, dependencyList, _type, _fn, _args) {
+        //External applications should not try to access container props as the keys change between min/normal version; stick to cv.access()
         let service = chev[_name] = {
             _name,
             _type,
             _deps: dependencyList || [],
+            _args,
             _fn,
             _init: false
         };
-        //Add type specific props
-        if (_type === _strings._factory) {
-            service._args = args || [];
-        }
     }
+
+    //strings
+    var _error = ": error in ";
+
+    //strings
+    var _service = ": error in ";
 
     //Pushes new service/factory
     function provider (name, dependencyList, fn, type, args) {
         let _this = this;
 
         if (_this.chev[name]) {
-            throw `${_this.n}${_strings._error}${type}: ${_strings._service} '${name}' is already defined`;
+            throw `${_this.n}${_error}${type}: ${_service} '${name}' is already defined`;
         } else {
             add(_this.chev, name, dependencyList, type, fn, args);
 
@@ -42,9 +38,12 @@ define('chevron', function () { 'use strict';
             name,
             dependencyList,
             fn,
-            _strings._service
+            _service
         );
     }
+
+    //strings
+    var _factory = "factory";
 
     //Create new factory
     function factory (name, dependencyList, Constructor, args) {
@@ -52,7 +51,7 @@ define('chevron', function () { 'use strict';
             name,
             dependencyList,
             Constructor,
-            _strings._factory,
+            _factory,
             args
         );
     }
@@ -75,7 +74,7 @@ define('chevron', function () { 'use strict';
 
     //Initialized service and sets init to true
     function initialize (service, bundle) {
-        if (service._type === _strings._service) {
+        if (service._type === _service) {
             //Construct service
             let serviceFn = service._fn;
 
@@ -144,7 +143,7 @@ define('chevron', function () { 'use strict';
                 list[dependency._name] = bundle(dependency, list)._fn;
             },
             name => {
-                throw `${_this.n}${_strings._error}${service._name}: dependency '${name}' missing`;
+                throw `${_this.n}${_error}${service._name}: dependency '${name}' missing`;
             }
         );
 
@@ -160,7 +159,7 @@ define('chevron', function () { 'use strict';
         if (accessedService) {
             return prepare.call(_this, accessedService)._fn;
         } else {
-            throw `${_this.n}${_strings._error}${name}: '${name}' is undefined`;
+            throw `${_this.n}${_error}${name}: '${name}' is undefined`;
         }
 
     }

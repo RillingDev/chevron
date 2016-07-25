@@ -1,9 +1,9 @@
 "use strict";
-import _strings from "../strings";
+import _service from "../strings/service";
 
 //Initialized service and sets init to true
 export default function (service, bundle) {
-    if (service._type === _strings._service) {
+    if (service._type === _service) {
         //Construct service
         let serviceFn = service._fn;
 
