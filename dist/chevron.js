@@ -11,7 +11,7 @@ var Chevron = function () {
             _name: _name,
             _type: _type,
             _deps: _deps,
-            _args: _args,
+            _args: _args || [],
             _fn: _fn,
             _init: false
         };

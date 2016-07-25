@@ -7,7 +7,7 @@ define('chevron', function () { 'use strict';
             _name,
             _type,
             _deps,
-            _args,
+            _args: _args || [],
             _fn,
             _init: false
         };

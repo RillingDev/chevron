@@ -7,7 +7,7 @@ export default function (_name, _deps, _type, _fn, _args) {
         _name,
         _type,
         _deps,
-        _args,
+        _args: _args || [],
         _fn,
         _init: false
     };
