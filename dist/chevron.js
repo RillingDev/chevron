@@ -3,8 +3,15 @@
 var Chevron = function () {
     'use strict';
 
-    //add new service/fn
+    //strings
 
+    var _strings = {
+        s: "service",
+        f: "factory",
+        e: ": error in "
+    };
+
+    //add new service/fn
     function add(chev, name, dependencyList, type, fn, args) {
         var service = chev[name] = {
             name: name,
@@ -14,7 +21,7 @@ var Chevron = function () {
             init: false
         };
         //Add type specific props
-        if (type === "factory") {
+        if (type === _strings.f) {
             service.args = args || [];
         }
     }
@@ -24,7 +31,7 @@ var Chevron = function () {
         var _this = this;
 
         if (_this.chev[name]) {
-            throw _this.name + ": error in " + type + ": service '" + name + "' is already defined";
+            throw "" + _this.name + _strings.e + type + ": " + _strings.s + " '" + name + "' is already defined";
         } else {
             add(_this.chev, name, dependencyList, type, fn, args);
 
@@ -34,12 +41,12 @@ var Chevron = function () {
 
     //Create new service
     function service(name, dependencyList, fn) {
-        return this.provider(name, dependencyList, fn, "service");
+        return this.provider(name, dependencyList, fn, _strings.s);
     }
 
     //Create new factory
     function factory(name, dependencyList, Constructor, args) {
-        return this.provider(name, dependencyList, Constructor, "factory", args);
+        return this.provider(name, dependencyList, Constructor, _strings.f, args);
     }
 
     //Utility functions
@@ -60,7 +67,7 @@ var Chevron = function () {
 
     //Initialized service and sets init to true
     function initialize(service, bundle) {
-        if (service.type === "service") {
+        if (service.type === _strings.s) {
             (function () {
                 //Construct service
                 var serviceFn = service.fn;
@@ -124,7 +131,7 @@ var Chevron = function () {
         r(_this.chev, service.deps, function (dependency) {
             list[dependency.name] = bundle(dependency, list).fn;
         }, function (name) {
-            throw _this.name + ": error in " + service.name + ": dependency '" + name + "' is missing";
+            throw "" + _this.name + _strings.e + service.name + ": dependency '" + name + "' missing";
         });
 
         return bundle(service, list);
@@ -139,7 +146,7 @@ var Chevron = function () {
         if (accessedService) {
             return prepare.call(_this, accessedService).fn;
         } else {
-            throw _this.name + ": error accessing " + name + ": '" + name + "' is not defined";
+            throw "" + _this.name + _strings.e + name + ": '" + name + "' is undefined";
         }
     }
 

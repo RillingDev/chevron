@@ -57,10 +57,31 @@ module.exports = function (grunt) {
             }
         },
 
-
         exec: {
             rollup: {
                 cmd: "rollup -c"
+            }
+        },
+        replace: {
+            dist: {
+                options: {
+                    patterns: [{
+                        match: /_service/g,
+                        replacement: "s"
+                    }, {
+                        match: /_factory/g,
+                        replacement: "f"
+                    }, {
+                        match: /_error/g,
+                        replacement: "e"
+                    }]
+                },
+                files: [{
+                    expand: true,
+                    flatten: true,
+                    src: ["dist/*.js"],
+                    dest: "dist/"
+                }]
             }
         }
 
@@ -74,6 +95,7 @@ module.exports = function (grunt) {
     grunt.registerTask("dist", [
         "build",
         "babel",
+        "replace",
         "uglify",
     ]);
 

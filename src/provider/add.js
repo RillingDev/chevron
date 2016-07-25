@@ -1,4 +1,5 @@
 "use strict";
+import _strings from "../strings";
 
 //add new service/fn
 export default function (chev, name, dependencyList, type, fn, args) {
@@ -10,7 +11,7 @@ export default function (chev, name, dependencyList, type, fn, args) {
         init: false
     };
     //Add type specific props
-    if (type === "factory") {
+    if (type === _strings._factory) {
         service.args = args || [];
     }
 }

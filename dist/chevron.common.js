@@ -1,5 +1,12 @@
 'use strict';
 
+//strings
+var _strings = {
+    s: "service",
+    f: "factory",
+    e: ": error in "
+};
+
 //add new service/fn
 function add (chev, name, dependencyList, type, fn, args) {
     let service = chev[name] = {
@@ -10,7 +17,7 @@ function add (chev, name, dependencyList, type, fn, args) {
         init: false
     };
     //Add type specific props
-    if (type === "factory") {
+    if (type === _strings.f) {
         service.args = args || [];
     }
 }
@@ -20,7 +27,7 @@ function provider (name, dependencyList, fn, type, args) {
     let _this = this;
 
     if (_this.chev[name]) {
-        throw `${_this.name}: error in ${type}: service '${name}' is already defined`;
+        throw `${_this.name}${_strings.e}${type}: ${_strings.s} '${name}' is already defined`;
     } else {
         add(_this.chev, name, dependencyList, type, fn, args);
 
@@ -34,7 +41,7 @@ function service (name, dependencyList, fn) {
         name,
         dependencyList,
         fn,
-        "service"
+        _strings.s
     );
 }
 
@@ -44,7 +51,7 @@ function factory (name, dependencyList, Constructor, args) {
         name,
         dependencyList,
         Constructor,
-        "factory",
+        _strings.f,
         args
     );
 }
@@ -67,7 +74,7 @@ var util = {
 
 //Initialized service and sets init to true
 function initialize (service, bundle) {
-    if (service.type === "service") {
+    if (service.type === _strings.s) {
         //Construct service
         let serviceFn = service.fn;
 
@@ -136,7 +143,7 @@ function prepare (service) {
             list[dependency.name] = bundle(dependency, list).fn;
         },
         name => {
-            throw `${_this.name}: error in ${service.name}: dependency '${name}' is missing`;
+            throw `${_this.name}${_strings.e}${service.name}: dependency '${name}' missing`;
         }
     );
 
@@ -152,7 +159,7 @@ function access (name) {
     if (accessedService) {
         return prepare.call(_this, accessedService).fn;
     } else {
-        throw `${_this.name}: error accessing ${name}: '${name}' is not defined`;
+        throw `${_this.name}${_strings.e}${name}: '${name}' is undefined`;
     }
 
 }
