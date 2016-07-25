@@ -31,7 +31,7 @@ module.exports = function (grunt) {
         uglify: {
             main: {
                 files: {
-                    "dist/chevron.min.js": "dist/chevron.js",
+                    "dist/chevron.min.js": "dist/chevron.min.js",
                     //"dist/chevron-lite-es5.min.js": ".tmp/chevron-lite-es5.js"
                 },
                 options: {
@@ -98,7 +98,7 @@ module.exports = function (grunt) {
                             replacement: "a"
                         },
                         //Util
-                         {
+                        {
                             match: /_each/g,
                             replacement: "e"
                         }, {
@@ -107,12 +107,10 @@ module.exports = function (grunt) {
                         }
                     ]
                 },
-                files: [{
-                    expand: true,
-                    flatten: true,
-                    src: ["dist/*.js"],
-                    dest: "dist/"
-                }]
+                files: {
+                    "dist/chevron.min.js": "dist/chevron.js"
+                },
+
             }
         }
 

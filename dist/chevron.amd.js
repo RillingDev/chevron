@@ -2,23 +2,24 @@ define('chevron', function () { 'use strict';
 
     //strings
     var _strings = {
-        s: "service",
-        f: "factory",
-        e: ": error in "
+        _service: "service",
+        _factory: "factory",
+        _error: ": error in "
     };
 
     //add new service/fn
-    function add (chev, n, dependencyList, t, f, args) {
-        let service = chev[n] = {
-            n,
-            t,
-            d: dependencyList || [],
-            f,
-            i: false
+    function add (chev, _name, dependencyList, _type, _fn, args) {
+        //External applications should not try to access container props as the keky change between min/normal version; stick to cv.access()
+        let service = chev[_name] = {
+            _name,
+            _type,
+            _deps: dependencyList || [],
+            _fn,
+            _init: false
         };
         //Add type specific props
-        if (t === _strings.f) {
-            service.a = args || [];
+        if (_type === _strings._factory) {
+            service._args = args || [];
         }
     }
 
@@ -27,7 +28,7 @@ define('chevron', function () { 'use strict';
         let _this = this;
 
         if (_this.chev[name]) {
-            throw `${_this.n}${_strings.e}${type}: ${_strings.s} '${name}' is already defined`;
+            throw `${_this.n}${_strings._error}${type}: ${_strings._service} '${name}' is already defined`;
         } else {
             add(_this.chev, name, dependencyList, type, fn, args);
 
@@ -41,7 +42,7 @@ define('chevron', function () { 'use strict';
             name,
             dependencyList,
             fn,
-            _strings.s
+            _strings._service
         );
     }
 
@@ -51,19 +52,19 @@ define('chevron', function () { 'use strict';
             name,
             dependencyList,
             Constructor,
-            _strings.f,
+            _strings._factory,
             args
         );
     }
 
     //Utility functions
     var util = {
-        e: function (arr, fn) {
+        _each: function (arr, fn) {
             for (let i = 0, l = arr.length; i < l; i++) {
                 fn(arr[i], i);
             }
         },
-        o: function (object, fn) {
+        _eachObject: function (object, fn) {
             let keys = Object.keys(object);
 
             for (let i = 0, l = keys.length; i < l; i++) {
@@ -74,11 +75,11 @@ define('chevron', function () { 'use strict';
 
     //Initialized service and sets init to true
     function initialize (service, bundle) {
-        if (service.t === _strings.s) {
+        if (service._type === _strings._service) {
             //Construct service
-            let serviceFn = service.f;
+            let serviceFn = service._fn;
 
-            service.f = function () {
+            service._fn = function () {
                 //Chevron service function wrapper
                 return serviceFn.apply(null,
                     Array.from(bundle.concat(Array.from(arguments)))
@@ -86,13 +87,13 @@ define('chevron', function () { 'use strict';
             };
         } else {
             //Construct factory
-            bundle = bundle.concat(service.a);
+            bundle = bundle.concat(service._args);
             bundle.unshift(null);
             //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
-            service.f = new(Function.prototype.bind.apply(service.f, bundle));
+            service._fn = new(Function.prototype.bind.apply(service._fn, bundle));
         }
 
-        service.i = true;
+        service._init = true;
         return service;
     }
 
@@ -100,13 +101,13 @@ define('chevron', function () { 'use strict';
     function bundle (service, list) {
         let bundle = [];
 
-        util.o(list, (item, key) => {
-            if (service.d.includes(key)) {
+        util._eachObject(list, (item, key) => {
+            if (service._deps.includes(key)) {
                 bundle.push(item);
             }
         });
 
-        if (!service.i) {
+        if (!service._init) {
             return initialize(service, Array.from(bundle));
         } else {
             return service;
@@ -116,13 +117,13 @@ define('chevron', function () { 'use strict';
 
     //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
     function r(container, dependencyList, fn, error) {
-        util.e(dependencyList, name => {
+        util._each(dependencyList, name => {
             let service = container[name];
             if (service) {
 
-                if (service.d.length > 0) {
+                if (service._deps.length > 0) {
                     //recurse
-                    r(container, service.d, fn, error);
+                    r(container, service._deps, fn, error);
                 }
                 fn(service);
             } else {
@@ -138,12 +139,12 @@ define('chevron', function () { 'use strict';
 
         r(
             _this.chev,
-            service.d,
+            service._deps,
             dependency => {
-                list[dependency.n] = bundle(dependency, list).f;
+                list[dependency._name] = bundle(dependency, list)._fn;
             },
             name => {
-                throw `${_this.n}${_strings.e}${service.n}: dependency '${name}' missing`;
+                throw `${_this.n}${_strings._error}${service._name}: dependency '${name}' missing`;
             }
         );
 
@@ -157,9 +158,9 @@ define('chevron', function () { 'use strict';
 
         //Check if accessed service is registered
         if (accessedService) {
-            return prepare.call(_this, accessedService).f;
+            return prepare.call(_this, accessedService)._fn;
         } else {
-            throw `${_this.n}${_strings.e}${name}: '${name}' is undefined`;
+            throw `${_this.n}${_strings._error}${name}: '${name}' is undefined`;
         }
 
     }
