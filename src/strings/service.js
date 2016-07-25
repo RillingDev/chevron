@@ -1,4 +1,4 @@
 "use strict";
 
 //strings
-export default ": error in ";
+export default "service";

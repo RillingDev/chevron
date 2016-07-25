@@ -15,7 +15,7 @@ function add (chev, _name, dependencyList, _type, _fn, _args) {
 var _error = ": error in ";
 
 //strings
-var _service = ": error in ";
+var _service = "service";
 
 //Pushes new service/factory
 function provider (name, dependencyList, fn, type, args) {

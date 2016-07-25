@@ -17,7 +17,7 @@ define('chevron', function () { 'use strict';
     var _error = ": error in ";
 
     //strings
-    var _service = ": error in ";
+    var _service = "service";
 
     //Pushes new service/factory
     function provider (name, dependencyList, fn, type, args) {
