@@ -60,9 +60,9 @@ var Chevron = function () {
         _eachObject: function _eachObject(object, fn) {
             var keys = Object.keys(object);
 
-            for (var i = 0, l = keys.length; i < l; i++) {
-                fn(object[keys[i]], keys[i], i);
-            }
+            this._each(keys, function (key, i) {
+                fn(object[key], key, i);
+            });
         }
     };
 

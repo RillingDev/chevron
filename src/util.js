@@ -10,8 +10,8 @@ export default {
     _eachObject: function (object, fn) {
         let keys = Object.keys(object);
 
-        for (let i = 0, l = keys.length; i < l; i++) {
-            fn(object[keys[i]], keys[i], i);
-        }
+        this._each(keys, (key, i) => {
+            fn(object[key], key, i);
+        });
     }
 };
