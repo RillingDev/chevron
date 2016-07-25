@@ -10,12 +10,12 @@ export default function (service) {
 
     recurseDependencies(
         _this.chev,
-        service.deps,
+        service._deps,
         dependency => {
-            list[dependency.name] = bundle(dependency, list).fn;
+            list[dependency._name] = bundle(dependency, list)._fn;
         },
         name => {
-            throw `${_this.name}${_strings._error}${service.name}: dependency '${name}' missing`;
+            throw `${_this.n}${_strings._error}${service._name}: dependency '${name}' missing`;
         }
     );
 

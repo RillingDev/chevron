@@ -65,16 +65,39 @@ module.exports = function (grunt) {
         replace: {
             dist: {
                 options: {
-                    patterns: [{
-                        match: /_service/g,
-                        replacement: "s"
-                    }, {
-                        match: /_factory/g,
-                        replacement: "f"
-                    }, {
-                        match: /_error/g,
-                        replacement: "e"
-                    }]
+                    patterns: [
+                        //Error strings
+                        {
+                            match: /_service/g,
+                            replacement: "s"
+                        }, {
+                            match: /_factory/g,
+                            replacement: "f"
+                        }, {
+                            match: /_error/g,
+                            replacement: "e"
+                        },
+                        //Container strings
+                        {
+                            match: /_name/g,
+                            replacement: "n"
+                        }, {
+                            match: /_type/g,
+                            replacement: "t"
+                        }, {
+                            match: /_deps/g,
+                            replacement: "d"
+                        }, {
+                            match: /_fn/g,
+                            replacement: "f"
+                        }, {
+                            match: /_init/g,
+                            replacement: "i"
+                        }, {
+                            match: /_args/g,
+                            replacement: "a"
+                        }
+                    ]
                 },
                 files: [{
                     expand: true,

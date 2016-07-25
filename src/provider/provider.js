@@ -7,7 +7,7 @@ export default function (name, dependencyList, fn, type, args) {
     let _this = this;
 
     if (_this.chev[name]) {
-        throw `${_this.name}${_strings._error}${type}: ${_strings._service} '${name}' is already defined`;
+        throw `${_this.n}${_strings._error}${type}: ${_strings._service} '${name}' is already defined`;
     } else {
         add(_this.chev, name, dependencyList, type, fn, args);
 

@@ -10,9 +10,9 @@ export default function (name) {
 
     //Check if accessed service is registered
     if (accessedService) {
-        return prepare.call(_this, accessedService).fn;
+        return prepare.call(_this, accessedService)._fn;
     } else {
-        throw `${_this.name}${_strings._error}${name}: '${name}' is undefined`;
+        throw `${_this.n}${_strings._error}${name}: '${name}' is undefined`;
     }
 
 }

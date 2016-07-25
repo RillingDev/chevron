@@ -30,7 +30,7 @@ import access from "./access/access";
 let Container = function (name) {
     let _this = this;
 
-    _this.name = name || "cv";
+    _this.n = name || "cv";
     _this.chev = {};
 
 };

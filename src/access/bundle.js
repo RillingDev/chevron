@@ -7,12 +7,12 @@ export default function (service, list) {
     let bundle = [];
 
     util.eachObject(list, (item, key) => {
-        if (service.deps.includes(key)) {
+        if (service._deps.includes(key)) {
             bundle.push(item);
         }
     });
 
-    if (!service.init) {
+    if (!service._init) {
         return initialize(service, Array.from(bundle));
     } else {
         return service;

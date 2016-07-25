@@ -6,17 +6,17 @@ var _strings = {
 };
 
 //add new service/fn
-function add (chev, name, dependencyList, type, fn, args) {
-    let service = chev[name] = {
-        name,
-        type,
-        deps: dependencyList || [],
-        fn,
-        init: false
+function add (chev, n, dependencyList, t, f, args) {
+    let service = chev[n] = {
+        n,
+        t,
+        d: dependencyList || [],
+        f,
+        i: false
     };
     //Add type specific props
-    if (type === _strings.f) {
-        service.args = args || [];
+    if (t === _strings.f) {
+        service.a = args || [];
     }
 }
 
@@ -25,7 +25,7 @@ function provider (name, dependencyList, fn, type, args) {
     let _this = this;
 
     if (_this.chev[name]) {
-        throw `${_this.name}${_strings.e}${type}: ${_strings.s} '${name}' is already defined`;
+        throw `${_this.n}${_strings.e}${type}: ${_strings.s} '${name}' is already defined`;
     } else {
         add(_this.chev, name, dependencyList, type, fn, args);
 
@@ -72,11 +72,11 @@ var util = {
 
 //Initialized service and sets init to true
 function initialize (service, bundle) {
-    if (service.type === _strings.s) {
+    if (service.t === _strings.s) {
         //Construct service
-        let serviceFn = service.fn;
+        let serviceFn = service.f;
 
-        service.fn = function () {
+        service.f = function () {
             //Chevron service function wrapper
             return serviceFn.apply(null,
                 Array.from(bundle.concat(Array.from(arguments)))
@@ -84,13 +84,13 @@ function initialize (service, bundle) {
         };
     } else {
         //Construct factory
-        bundle = bundle.concat(service.args);
+        bundle = bundle.concat(service.a);
         bundle.unshift(null);
         //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
-        service.fn = new(Function.prototype.bind.apply(service.fn, bundle));
+        service.f = new(Function.prototype.bind.apply(service.f, bundle));
     }
 
-    service.init = true;
+    service.i = true;
     return service;
 }
 
@@ -99,12 +99,12 @@ function bundle (service, list) {
     let bundle = [];
 
     util.eachObject(list, (item, key) => {
-        if (service.deps.includes(key)) {
+        if (service.d.includes(key)) {
             bundle.push(item);
         }
     });
 
-    if (!service.init) {
+    if (!service.i) {
         return initialize(service, Array.from(bundle));
     } else {
         return service;
@@ -118,9 +118,9 @@ function r(container, dependencyList, fn, error) {
         let service = container[name];
         if (service) {
 
-            if (service.deps.length > 0) {
+            if (service.d.length > 0) {
                 //recurse
-                r(container, service.deps, fn, error);
+                r(container, service.d, fn, error);
             }
             fn(service);
         } else {
@@ -136,12 +136,12 @@ function prepare (service) {
 
     r(
         _this.chev,
-        service.deps,
+        service.d,
         dependency => {
-            list[dependency.name] = bundle(dependency, list).fn;
+            list[dependency.n] = bundle(dependency, list).f;
         },
         name => {
-            throw `${_this.name}${_strings.e}${service.name}: dependency '${name}' missing`;
+            throw `${_this.n}${_strings.e}${service.n}: dependency '${name}' missing`;
         }
     );
 
@@ -155,9 +155,9 @@ function access (name) {
 
     //Check if accessed service is registered
     if (accessedService) {
-        return prepare.call(_this, accessedService).fn;
+        return prepare.call(_this, accessedService).f;
     } else {
-        throw `${_this.name}${_strings.e}${name}: '${name}' is undefined`;
+        throw `${_this.n}${_strings.e}${name}: '${name}' is undefined`;
     }
 
 }
@@ -165,7 +165,7 @@ function access (name) {
 let Container = function (name) {
     let _this = this;
 
-    _this.name = name || "cv";
+    _this.n = name || "cv";
     _this.chev = {};
 
 };
