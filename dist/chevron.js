@@ -17,18 +17,17 @@ var Chevron = function () {
         };
     }
 
-    //strings
     var _error = ": error in ";
-
-    //strings
+    var _factory = "factory";
     var _service = "service";
+    var _isUndefined = " is undefined";
 
     //Pushes new service/factory
     function provider(_name, _deps, _type, _fn, _args) {
         var _this = this;
 
         if (_this.chev[_name]) {
-            throw "" + _this.n + _error + _type + ": " + _service + " '" + _name + "' is already defined";
+            throw "" + _this.id + _error + _type + ": " + _service + " '" + _name + "' is already defined";
         } else {
             add.apply(_this, arguments);
 
@@ -40,9 +39,6 @@ var Chevron = function () {
     function service(_name, _deps, _fn) {
         return this.provider(_name, _deps, _service, _fn);
     }
-
-    //strings
-    var _factory = "factory";
 
     //Create new factory
     function factory(_name, _deps, _Constructor, _args) {
@@ -131,7 +127,7 @@ var Chevron = function () {
         r(_this.chev, service._deps, function (dependency) {
             list[dependency._name] = bundle(dependency, list)._fn;
         }, function (name) {
-            throw "" + _this.n + _error + service._name + ": dependency '" + name + "' missing";
+            throw "" + _this.id + _error + service._name + ": dependency '" + name + "'" + _isUndefined;
         });
 
         return bundle(service, list);
@@ -146,14 +142,14 @@ var Chevron = function () {
         if (accessedService) {
             return prepare.call(_this, accessedService)._fn;
         } else {
-            throw "" + _this.n + _error + name + ": '" + name + "' is undefined";
+            throw "" + _this.id + _error + name + ": '" + name + "'" + _isUndefined;
         }
     }
 
-    var Container = function Container(name) {
+    var Container = function Container(id) {
         var _this = this;
 
-        _this.n = name || "cv";
+        _this.id = id || "cv";
         _this.chev = {};
     };
 

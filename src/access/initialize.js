@@ -1,5 +1,7 @@
 "use strict";
-import _service from "../strings/service";
+import {
+    _service
+} from "../strings";
 
 //Initialized service and sets init to true
 export default function (service, bundle) {

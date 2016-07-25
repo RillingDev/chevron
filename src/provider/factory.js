@@ -1,5 +1,7 @@
 "use strict";
-import _factory from "../strings/factory";
+import {
+    _factory
+} from "../strings";
 
 //Create new factory
 export default function (_name, _deps, _Constructor, _args) {

@@ -13,18 +13,17 @@ define('chevron', function () { 'use strict';
         };
     }
 
-    //strings
-    var _error = ": error in ";
-
-    //strings
-    var _service = "service";
+    const _error = ": error in ";
+    const _factory = "factory";
+    const _service = "service";
+    const _isUndefined=" is undefined";
 
     //Pushes new service/factory
-    function provider (_name, _deps, _type, _fn, _args) {
+    function provider(_name, _deps, _type, _fn, _args) {
         let _this = this;
 
         if (_this.chev[_name]) {
-            throw `${_this.n}${_error}${_type}: ${_service} '${_name}' is already defined`;
+            throw `${_this.id}${_error}${_type}: ${_service} '${_name}' is already defined`;
         } else {
             add.apply(_this, arguments);
 
@@ -41,9 +40,6 @@ define('chevron', function () { 'use strict';
             _fn
         );
     }
-
-    //strings
-    var _factory = "factory";
 
     //Create new factory
     function factory (_name, _deps, _Constructor, _args) {
@@ -111,7 +107,6 @@ define('chevron', function () { 'use strict';
         } else {
             return service;
         }
-
     }
 
     //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
@@ -143,7 +138,7 @@ define('chevron', function () { 'use strict';
                 list[dependency._name] = bundle(dependency, list)._fn;
             },
             name => {
-                throw `${_this.n}${_error}${service._name}: dependency '${name}' missing`;
+                throw `${_this.id}${_error}${service._name}: dependency '${name}'${_isUndefined}`;
             }
         );
 
@@ -151,7 +146,7 @@ define('chevron', function () { 'use strict';
     }
 
     //Returns prepared service
-    function access (name) {
+    function access(name) {
         let _this = this,
             accessedService = _this.chev[name];
 
@@ -159,17 +154,15 @@ define('chevron', function () { 'use strict';
         if (accessedService) {
             return prepare.call(_this, accessedService)._fn;
         } else {
-            throw `${_this.n}${_error}${name}: '${name}' is undefined`;
+            throw `${_this.id}${_error}${name}: '${name}'${_isUndefined}`;
         }
-
     }
 
-    let Container = function (name) {
+    let Container = function (id) {
         let _this = this;
 
-        _this.n = name || "cv";
+        _this.id = id || "cv";
         _this.chev = {};
-
     };
 
     Container.prototype = {

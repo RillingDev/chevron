@@ -66,17 +66,6 @@ module.exports = function (grunt) {
             dist: {
                 options: {
                     patterns: [
-                        //Error strings
-                        {
-                            match: /_service/g,
-                            replacement: "s"
-                        }, {
-                            match: /_factory/g,
-                            replacement: "f"
-                        }, {
-                            match: /_error/g,
-                            replacement: "e"
-                        },
                         //Container strings
                         {
                             match: /_name/g,
@@ -104,7 +93,8 @@ module.exports = function (grunt) {
                         }, {
                             match: /_eachObject/g,
                             replacement: "o"
-                        }
+                        },
+
                     ]
                 },
                 files: {

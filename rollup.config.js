@@ -1,10 +1,25 @@
 "use strict";
+import {
+    rollup
+} from "rollup";
+import commonjs from "rollup-plugin-commonjs";
+import nodeResolve from "rollup-plugin-node-resolve";
+
+let pkg = require("./package.json");
+let external = Object.keys(pkg.dependencies);
 
 export default {
     moduleName: "Chevron",
     moduleId: "chevron",
     entry: "src/main.js",
-    plugins: [],
+    external: external,
+    plugins: [
+        nodeResolve({
+            jsnext: false,
+            main: true
+        }),
+        commonjs({})
+    ],
     targets: [{
         dest: "dist/chevron.amd.js",
         format: "amd"
