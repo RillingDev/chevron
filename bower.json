@@ -1,6 +1,6 @@
 {
     "name": "chevronjs",
-    "version": "v3.3.0",
+    "version": "v3.4.0",
     "description": "Chevron is a extremely small(1.3kB) JavaScript service library for easy dependency managment and lazy module loading.",
     "main": "dist/chevron.js",
     "authors": [
@@ -8,9 +8,8 @@
     ],
     "license": "MIT",
     "keywords": [
-        "esRouter",
-        "router",
-        "es6"
+        "dependencies",
+        "services"
     ],
     "homepage": "https://github.com/FelixRilling/chevronjs",
     "ignore": [
