@@ -5,22 +5,28 @@ import service from "./provider/service";
 import factory from "./provider/factory";
 import access from "./access/access";
 
-let Container = function (id) {
-    let _this = this;
-
-    _this.id = id || "cv";
-    _this.chev = {};
+/**
+ * Basic Chevron Constructor
+ * @constructor
+ */
+let Chevron = function (id) {
+    this.id = id || "cv";
+    this.chev = {};
 };
 
-Container.prototype = {
+
+/**
+ * Expose Chevron methods
+ */
+Chevron.prototype = {
     //Core service/factory method
     provider,
-    //create new service
+    //Create new service
     service,
-    //create new factory
+    //Create new factory
     factory,
-    //prepare/iialize services/factory with deps injected
+    //Prepare/init services/factory with deps injected
     access
 };
 
-export default Container;
+export default Chevron;

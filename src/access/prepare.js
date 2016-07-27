@@ -1,4 +1,5 @@
 "use strict";
+
 import bundle from "./bundle";
 import recurseDependencies from "./dependencies";
 import {
@@ -6,19 +7,27 @@ import {
     _isUndefined
 } from "../strings";
 
-//Main access function; makes sure that every service need is available
+/**
+ * Check if every dependency is available
+ * @private
+ * @param Object service to check
+ * @return bound service
+ */
 export default function (service) {
-    let _this = this,
-        list = {};
+    let list = {};
 
-    recurseDependencies(
-        _this.chev,
+    //Recurse trough service deps
+    recurseDependencies.call(
+        this,
         service.deps,
+        //run this over every dependency to add it to the dependencyList
         dependency => {
+            //make sure if dependency is initialized, then add
             list[dependency.name] = bundle(dependency, list).fn;
         },
+        //error if dependency is missing
         name => {
-            throw `${_this.id}${_error}${service.name}: dependency '${name}'${_isUndefined}`;
+            throw `${this.id}${_error}${service.name}: dependency '${name}'${_isUndefined}`;
         }
     );
 

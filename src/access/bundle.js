@@ -1,19 +1,27 @@
 "use strict";
+
 import util from "../util";
 import initialize from "./initialize";
 
-//collect dependencies from string, and initialize them if needed
+/**
+ * Collects dependencies and initializes service
+ * @private
+ * @param Object service to check
+ * @param Object list of dependencies
+ * @return Object service
+ */
 export default function (service, list) {
     let bundle = [];
 
-    util._eachObject(list, (item, key) => {
-        if (service.deps.includes(key)) {
-            bundle.push(item);
-        }
-    });
-
     if (!service.init) {
-        return initialize(service, Array.from(bundle));
+        //Collect dependencies for this service
+        util._eachObject(list, (item, key) => {
+            if (service.deps.includes(key)) {
+                bundle.push(item);
+            }
+        });
+
+        return initialize(service, bundle);
     } else {
         return service;
     }

@@ -1,6 +1,15 @@
 define('chevron', function () { 'use strict';
 
-    //add new service/fn
+    /**
+     * Add a new service/factory to the container
+     * @private
+     * @param String name to register/id the service
+     * @param Array list of dependencies
+     * @param String type of service (service/factory)
+     * @param Function content of the service
+     * @param Array (optional) factory arguments
+     * @return void
+     */
     function add (name, deps, type, fn, args) {
         this.chev[name] = {
             name,
@@ -15,22 +24,38 @@ define('chevron', function () { 'use strict';
     const _error = ": error in ";
     const _factory = "factory";
     const _service = "service";
-    const _isUndefined=" is undefined";
+    const _isUndefined = " is undefined";
 
-    //Pushes new service/factory
+    /**
+     * Checks if service exist, else add it
+     * @param String name to register/id the service
+     * @param Array list of dependencies
+     * @param String type of service (service/factory)
+     * @param Function content of the service
+     * @return this
+     */
     function provider(name, deps, type, fn, args) {
         let _this = this;
 
         if (_this.chev[name]) {
+            //throw error if a service with this name already exists
             throw `${_this.id}${_error}${type}: ${_service} '${name}' is already defined`;
         } else {
+            //Call the add function with bound context
             add.apply(_this, arguments);
 
             return _this;
         }
     }
 
-    //Create new service
+    /**
+     * Create a new service
+     * @param String name to register/id the service
+     * @param Array list of dependencies
+     * @param String type of service (service/factory)
+     * @param Function content of the service
+     * @return this
+     */
     function service (name, deps, fn) {
         return this.provider(
             name,
@@ -40,7 +65,15 @@ define('chevron', function () { 'use strict';
         );
     }
 
-    //Create new factory
+    /**
+     * Create a new factory
+     * @param String name to register/id the service
+     * @param Array list of dependencies
+     * @param String type of service (service/factory)
+     * @param Function content of the service
+     * @param Array factory arguments
+     * @return this
+     */
     function factory (name, deps, Constructor, args) {
         return this.provider(
             name,
@@ -51,13 +84,29 @@ define('chevron', function () { 'use strict';
         );
     }
 
-    //Utility functions
+    /**
+     * Misc Utility functions
+     */
     var util = {
+        /**
+         * Iterate fn over array (faster than Array.prototype.forEach)
+         * @private
+         * @param Array values
+         * @param Function iterate fn
+         * @return void
+         */
         _each: function (arr, fn) {
             for (let i = 0, l = arr.length; i < l; i++) {
                 fn(arr[i], i);
             }
         },
+        /**
+         * Iterate fn over object
+         * @private
+         * @param Object values
+         * @param Function iterate fn
+         * @return void
+         */
         _eachObject: function (object, fn) {
             let keys = Object.keys(object);
 
@@ -67,7 +116,13 @@ define('chevron', function () { 'use strict';
         }
     };
 
-    //Initialized service and sets init to true
+    /**
+     * Initializes service/function
+     * @private
+     * @param Object service to check
+     * @param Object bundle of dependencies
+     * @return Object service
+     */
     function initialize (service, bundle) {
         if (service.type === _service) {
             //Construct service
@@ -75,13 +130,12 @@ define('chevron', function () { 'use strict';
 
             service.fn = function () {
                 //Chevron service function wrapper
-                return serviceFn.apply(null,
-                    Array.from(bundle.concat(Array.from(arguments)))
-                );
+                return serviceFn.apply(null, bundle.concat(Array.from(arguments)));
             };
         } else {
             //Construct factory
             bundle = bundle.concat(service.args);
+            //first value gets ignored by calling new like this, so we need to fill it
             bundle.unshift(null);
             //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
             service.fn = new(Function.prototype.bind.apply(service.fn, bundle));
@@ -91,90 +145,128 @@ define('chevron', function () { 'use strict';
         return service;
     }
 
-    //collect dependencies from string, and initialize them if needed
+    /**
+     * Collects dependencies and initializes service
+     * @private
+     * @param Object service to check
+     * @param Object list of dependencies
+     * @return Object service
+     */
     function bundle (service, list) {
         let bundle = [];
 
-        util._eachObject(list, (item, key) => {
-            if (service.deps.includes(key)) {
-                bundle.push(item);
-            }
-        });
-
         if (!service.init) {
-            return initialize(service, Array.from(bundle));
+            //Collect dependencies for this service
+            util._eachObject(list, (item, key) => {
+                if (service.deps.includes(key)) {
+                    bundle.push(item);
+                }
+            });
+
+            return initialize(service, bundle);
         } else {
             return service;
         }
     }
 
+    /**
+     * Loops/recurses over list of dependencies
+     * @private
+     * @param Array dependencyList to iterate
+     * @param Function to run over each dependency
+     * @param Function to call on error
+     * @return void
+     */
     //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
-    function r(container, dependencyList, fn, error) {
+    function r(dependencyList, fn, error) {
         util._each(dependencyList, name => {
-            let service = container[name];
-            if (service) {
+            let service = this.chev[name];
 
+            if (service) {
+                //recurse if service has dependencies too
                 if (service.deps.length > 0) {
                     //recurse
-                    r(container, service.deps, fn, error);
+                    r.call(this, service.deps, fn, error);
                 }
+                //run fn
                 fn(service);
             } else {
+                //if not found error with name
                 error(name);
             }
         });
     }
 
-    //Main access function; makes sure that every service need is available
+    /**
+     * Check if every dependency is available
+     * @private
+     * @param Object service to check
+     * @return bound service
+     */
     function prepare (service) {
-        let _this = this,
-            list = {};
+        let list = {};
 
-        r(
-            _this.chev,
+        //Recurse trough service deps
+        r.call(
+            this,
             service.deps,
+            //run this over every dependency to add it to the dependencyList
             dependency => {
+                //make sure if dependency is initialized, then add
                 list[dependency.name] = bundle(dependency, list).fn;
             },
+            //error if dependency is missing
             name => {
-                throw `${_this.id}${_error}${service.name}: dependency '${name}'${_isUndefined}`;
+                throw `${this.id}${_error}${service.name}: dependency '${name}'${_isUndefined}`;
             }
         );
 
         return bundle(service, list);
     }
 
-    //Returns prepared service
-    function access(name) {
+    /**
+     * Access service with dependencies bound
+     * @param String name of the service
+     * @return Function with dependencies bound
+     */
+    function access (name) {
         let _this = this,
             accessedService = _this.chev[name];
 
         //Check if accessed service is registered
         if (accessedService) {
+            //Call prepare with bound context
             return prepare.call(_this, accessedService).fn;
         } else {
+            //throw error if service does not exist
             throw `${_this.id}${_error}${name}: '${name}'${_isUndefined}`;
         }
     }
 
-    let Container = function (id) {
-        let _this = this;
-
-        _this.id = id || "cv";
-        _this.chev = {};
+    /**
+     * Basic Chevron Constructor
+     * @constructor
+     */
+    let Chevron = function (id) {
+        this.id = id || "cv";
+        this.chev = {};
     };
 
-    Container.prototype = {
+
+    /**
+     * Expose Chevron methods
+     */
+    Chevron.prototype = {
         //Core service/factory method
         provider,
-        //create new service
+        //Create new service
         service,
-        //create new factory
+        //Create new factory
         factory,
-        //prepare/iialize services/factory with deps injected
+        //Prepare/init services/factory with deps injected
         access
     };
 
-    return Container;
+    return Chevron;
 
 });
