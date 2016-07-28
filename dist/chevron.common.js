@@ -1,26 +1,5 @@
 'use strict';
 
-/**
- * Add a new service/factory to the container
- * @private
- * @param String name to register/id the service
- * @param Array list of dependencies
- * @param String type of service (service/factory)
- * @param Function content of the service
- * @param Array (optional) factory arguments
- * @return void
- */
-function add (name, deps, type, fn, args) {
-    this.chev[name] = {
-        name,
-        type,
-        deps,
-        args: args || [],
-        fn,
-        init: false
-    };
-}
-
 const _error = ": error in ";
 const _factory = "factory";
 const _service = "service";
@@ -34,15 +13,22 @@ const _isUndefined = " is undefined";
  * @param Function content of the service
  * @return this
  */
-function provider(name, deps, type, fn, args) {
+function provider (name, deps, type, fn, args) {
     let _this = this;
 
     if (_this.chev[name]) {
         //throw error if a service with this name already exists
         throw `${_this.id}${_error}${type}: ${_service} '${name}' is already defined`;
     } else {
-        //Call the add function with bound context
-        add.apply(_this, arguments);
+        //Add the service to container
+        _this.chev[name] = {
+            name,
+            type,
+            deps,
+            args: args || [],
+            fn,
+            init: false
+        };
 
         return _this;
     }
@@ -84,37 +70,18 @@ function factory (name, deps, Constructor, args) {
     );
 }
 
-/**
- * Misc Utility functions
- */
-var util = {
-    /**
-     * Iterate fn over array (faster than Array.prototype.forEach)
-     * @private
-     * @param Array values
-     * @param Function iterate fn
-     * @return void
-     */
-    _each: function (arr, fn) {
+let _each = function (arr, fn) {
         for (let i = 0, l = arr.length; i < l; i++) {
             fn(arr[i], i);
         }
-    },
-    /**
-     * Iterate fn over object
-     * @private
-     * @param Object values
-     * @param Function iterate fn
-     * @return void
-     */
-    _eachObject: function (object, fn) {
+    };
+let _eachObject = function (object, fn) {
         let keys = Object.keys(object);
 
-        this._each(keys, (key, i) => {
+        _each(keys, (key, i) => {
             fn(object[key], key, i);
         });
-    }
-};
+    };
 
 /**
  * Initializes service/function
@@ -157,7 +124,7 @@ function bundle (service, list) {
 
     if (!service.init) {
         //Collect dependencies for this service
-        util._eachObject(list, (item, key) => {
+        _eachObject(list, (item, key) => {
             if (service.deps.includes(key)) {
                 bundle.push(item);
             }
@@ -179,7 +146,7 @@ function bundle (service, list) {
  */
 //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
 function r(dependencyList, fn, error) {
-    util._each(dependencyList, name => {
+    _each(dependencyList, name => {
         let service = this.chev[name];
 
         if (service) {
@@ -246,6 +213,7 @@ function access (name) {
 /**
  * Basic Chevron Constructor
  * @constructor
+ * @param String to id the container
  */
 let Chevron = function (id) {
     this.id = id || "cv";

@@ -3,15 +3,15 @@
 /**
  * Misc Utility functions
  */
-export default {
-    /**
-     * Iterate fn over array (faster than Array.prototype.forEach)
-     * @private
-     * @param Array values
-     * @param Function iterate fn
-     * @return void
-     */
-    _each: function (arr, fn) {
+export
+/**
+ * Iterate fn over array (faster than Array.prototype.forEach)
+ * @private
+ * @param Array values
+ * @param Function iterate fn
+ * @return void
+ */
+let _each = function (arr, fn) {
         for (let i = 0, l = arr.length; i < l; i++) {
             fn(arr[i], i);
         }
@@ -23,11 +23,10 @@ export default {
      * @param Function iterate fn
      * @return void
      */
-    _eachObject: function (object, fn) {
+    _eachObject = function (object, fn) {
         let keys = Object.keys(object);
 
-        this._each(keys, (key, i) => {
+        _each(keys, (key, i) => {
             fn(object[key], key, i);
         });
-    }
-};
+    };

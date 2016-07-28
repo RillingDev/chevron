@@ -1,6 +1,6 @@
 "use strict";
 
-import util from "../util";
+import {_each} from "../util";
 
 /**
  * Loops/recurses over list of dependencies
@@ -12,7 +12,7 @@ import util from "../util";
  */
 //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
 export default function r(dependencyList, fn, error) {
-    util._each(dependencyList, name => {
+    _each(dependencyList, name => {
         let service = this.chev[name];
 
         if (service) {

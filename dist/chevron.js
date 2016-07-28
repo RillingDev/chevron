@@ -3,28 +3,6 @@
 var Chevron = function () {
     'use strict';
 
-    /**
-     * Add a new service/factory to the container
-     * @private
-     * @param String name to register/id the service
-     * @param Array list of dependencies
-     * @param String type of service (service/factory)
-     * @param Function content of the service
-     * @param Array (optional) factory arguments
-     * @return void
-     */
-
-    function add(name, deps, type, fn, args) {
-        this.chev[name] = {
-            name: name,
-            type: type,
-            deps: deps,
-            args: args || [],
-            fn: fn,
-            init: false
-        };
-    }
-
     var _error = ": error in ";
     var _factory = "factory";
     var _service = "service";
@@ -45,8 +23,15 @@ var Chevron = function () {
             //throw error if a service with this name already exists
             throw "" + _this.id + _error + type + ": " + _service + " '" + name + "' is already defined";
         } else {
-            //Call the add function with bound context
-            add.apply(_this, arguments);
+            //Add the service to container
+            _this.chev[name] = {
+                name: name,
+                type: type,
+                deps: deps,
+                args: args || [],
+                fn: fn,
+                init: false
+            };
 
             return _this;
         }
@@ -77,36 +62,17 @@ var Chevron = function () {
         return this.provider(name, deps, _factory, Constructor, args);
     }
 
-    /**
-     * Misc Utility functions
-     */
-    var util = {
-        /**
-         * Iterate fn over array (faster than Array.prototype.forEach)
-         * @private
-         * @param Array values
-         * @param Function iterate fn
-         * @return void
-         */
-        _each: function _each(arr, fn) {
-            for (var i = 0, l = arr.length; i < l; i++) {
-                fn(arr[i], i);
-            }
-        },
-        /**
-         * Iterate fn over object
-         * @private
-         * @param Object values
-         * @param Function iterate fn
-         * @return void
-         */
-        _eachObject: function _eachObject(object, fn) {
-            var keys = Object.keys(object);
-
-            this._each(keys, function (key, i) {
-                fn(object[key], key, i);
-            });
+    var _each = function _each(arr, fn) {
+        for (var i = 0, l = arr.length; i < l; i++) {
+            fn(arr[i], i);
         }
+    };
+    var _eachObject = function _eachObject(object, fn) {
+        var keys = Object.keys(object);
+
+        _each(keys, function (key, i) {
+            fn(object[key], key, i);
+        });
     };
 
     /**
@@ -152,7 +118,7 @@ var Chevron = function () {
 
         if (!service.init) {
             //Collect dependencies for this service
-            util._eachObject(list, function (item, key) {
+            _eachObject(list, function (item, key) {
                 if (service.deps.indexOf(key) !== -1) {
                     bundle.push(item);
                 }
@@ -176,7 +142,7 @@ var Chevron = function () {
     function r(dependencyList, fn, error) {
         var _this2 = this;
 
-        util._each(dependencyList, function (name) {
+        _each(dependencyList, function (name) {
             var service = _this2.chev[name];
 
             if (service) {
@@ -242,6 +208,7 @@ var Chevron = function () {
     /**
      * Basic Chevron Constructor
      * @constructor
+     * @param String to id the container
      */
     var Chevron = function Chevron(id) {
         this.id = id || "cv";

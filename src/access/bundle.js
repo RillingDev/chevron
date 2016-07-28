@@ -1,6 +1,8 @@
 "use strict";
 
-import util from "../util";
+import {
+    _eachObject
+} from "../util";
 import initialize from "./initialize";
 
 /**
@@ -15,7 +17,7 @@ export default function (service, list) {
 
     if (!service.init) {
         //Collect dependencies for this service
-        util._eachObject(list, (item, key) => {
+        _eachObject(list, (item, key) => {
             if (service.deps.includes(key)) {
                 bundle.push(item);
             }

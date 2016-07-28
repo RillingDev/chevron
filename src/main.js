@@ -8,6 +8,7 @@ import access from "./access/access";
 /**
  * Basic Chevron Constructor
  * @constructor
+ * @param String to id the container
  */
 let Chevron = function (id) {
     this.id = id || "cv";

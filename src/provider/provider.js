@@ -1,6 +1,5 @@
 "use strict";
 
-import add from "./add";
 import {
     _service,
     _error
@@ -14,15 +13,22 @@ import {
  * @param Function content of the service
  * @return this
  */
-export default function(name, deps, type, fn, args) {
+export default function (name, deps, type, fn, args) {
     let _this = this;
 
     if (_this.chev[name]) {
         //throw error if a service with this name already exists
         throw `${_this.id}${_error}${type}: ${_service} '${name}' is already defined`;
     } else {
-        //Call the add function with bound context
-        add.apply(_this, arguments);
+        //Add the service to container
+        _this.chev[name] = {
+            name,
+            type,
+            deps,
+            args: args || [],
+            fn,
+            init: false
+        };
 
         return _this;
     }
