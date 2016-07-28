@@ -2,7 +2,7 @@
 
 import {
     _factory
-} from "../strings";
+} from "../constants";
 
 /**
  * Create a new factory

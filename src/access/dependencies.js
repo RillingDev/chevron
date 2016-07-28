@@ -1,6 +1,8 @@
 "use strict";
 
-import {_each} from "../util";
+import {
+    _each
+} from "../util";
 
 /**
  * Loops/recurses over list of dependencies

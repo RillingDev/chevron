@@ -2,9 +2,10 @@
 
 import prepare from "./prepare";
 import {
+    _part1,
     _error,
     _isUndefined
-} from "../strings";
+} from "../constants";
 
 /**
  * Access service with dependencies bound
@@ -21,6 +22,6 @@ export default function (name) {
         return prepare.call(_this, accessedService).fn;
     } else {
         //throw error if service does not exist
-        throw `${_this.id}${_error}${name}: '${name}'${_isUndefined}`;
+        throw `${_this.id}${_error}${name}${_part1}'${name}'${_isUndefined}`;
     }
 }

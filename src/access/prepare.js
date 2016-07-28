@@ -3,9 +3,10 @@
 import bundle from "./bundle";
 import recurseDependencies from "./dependencies";
 import {
+    _part1,
     _error,
     _isUndefined
-} from "../strings";
+} from "../constants";
 
 /**
  * Check if every dependency is available
@@ -27,7 +28,7 @@ export default function (service) {
         },
         //error if dependency is missing
         name => {
-            throw `${this.id}${_error}${service.name}: dependency '${name}'${_isUndefined}`;
+            throw `${this.id}${_error}${service.name}${_part1}dependency '${name}'${_isUndefined}`;
         }
     );
 

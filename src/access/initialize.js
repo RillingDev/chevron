@@ -2,7 +2,7 @@
 
 import {
     _service
-} from "../strings";
+} from "../constants";
 
 /**
  * Initializes service/function

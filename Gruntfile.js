@@ -94,7 +94,11 @@ module.exports = function (grunt) {
                             match: /_eachObject/g,
                             replacement: "o"
                         },
-
+                        /*
+                        {
+                            match: /""\+/g,
+                            replacement: ""
+                         },*/
                     ]
                 },
                 files: {

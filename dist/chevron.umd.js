@@ -4,9 +4,10 @@
     (global.Chevron = factory());
 }(this, function () { 'use strict';
 
-    const _error = ": error in ";
+    const _part1 = ": ";
     const _factory = "factory";
     const _service = "service";
+    const _error = _part1 + "error in ";
     const _isUndefined = " is undefined";
 
     /**
@@ -22,7 +23,7 @@
 
         if (_this.chev[name]) {
             //throw error if a service with this name already exists
-            throw `${_this.id}${_error}${type}: ${_service} '${name}' is already defined`;
+            throw `${_this.id}${_error}${type}${_part1}${_service} '${name}' is already defined`;
         } else {
             //Add the service to container
             _this.chev[name] = {
@@ -188,7 +189,7 @@
             },
             //error if dependency is missing
             name => {
-                throw `${this.id}${_error}${service.name}: dependency '${name}'${_isUndefined}`;
+                throw `${this.id}${_error}${service.name}${_part1}dependency '${name}'${_isUndefined}`;
             }
         );
 
@@ -210,7 +211,7 @@
             return prepare.call(_this, accessedService).fn;
         } else {
             //throw error if service does not exist
-            throw `${_this.id}${_error}${name}: '${name}'${_isUndefined}`;
+            throw `${_this.id}${_error}${name}${_part1}'${name}'${_isUndefined}`;
         }
     }
 

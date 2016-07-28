@@ -1,9 +1,10 @@
 "use strict";
 
 import {
+    _part1,
     _service,
     _error
-} from "../strings";
+} from "../constants";
 
 /**
  * Checks if service exist, else add it
@@ -18,7 +19,7 @@ export default function (name, deps, type, fn, args) {
 
     if (_this.chev[name]) {
         //throw error if a service with this name already exists
-        throw `${_this.id}${_error}${type}: ${_service} '${name}' is already defined`;
+        throw `${_this.id}${_error}${type}${_part1}${_service} '${name}' is already defined`;
     } else {
         //Add the service to container
         _this.chev[name] = {
