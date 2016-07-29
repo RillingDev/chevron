@@ -23,7 +23,7 @@ export default function (service, list) {
         });
 
         //Init service
-        service = this.tf[service.type](service, bundle);
+        service = this.tl[service.type](service, bundle);
         service.init = true;
     }
 

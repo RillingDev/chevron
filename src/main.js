@@ -1,13 +1,11 @@
 "use strict";
 
 import provider from "./provider/provider";
-import service from "./provider/service";
-import factory from "./provider/factory";
-
+import extend from "./provider/extend";
 import access from "./access/access";
 
-import initService from "./init/initService";
-import initFactory from "./init/initFactory";
+import initService from "./provider/service";
+import initFactory from "./provider/factory";
 
 /**
  * Basic Chevron Constructor
@@ -19,10 +17,10 @@ let Chevron = function (id) {
 
     _this.id = id || "cv";
     _this.chev = {};
-    _this.tf = {
-        service: initService,
-        factory: initFactory
-    };
+    _this.tl = {};
+
+    initService(_this);
+    initFactory(_this);
 };
 
 /**
@@ -31,12 +29,12 @@ let Chevron = function (id) {
 Chevron.prototype = {
     //Core service/factory method
     provider,
-    //Create new service
-    service,
-    //Create new factory
-    factory,
     //Prepare/init services/factory with deps injected
-    access
+    access,
+    //Add new service type
+    extend
 };
+
+
 
 export default Chevron;

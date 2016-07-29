@@ -10,14 +10,16 @@ import {
  * @param Array list of dependencies
  * @param String type of service (service/factory)
  * @param Function content of the service
- * @param Array factory arguments
- * @return this
+ * @return Chevron instance
  */
-export default function (name, deps, Constructor) {
-    return this.provider(
-        _factory,
-        name,
-        deps,
-        Constructor
-    );
+export default function (_this) {
+    _this.extend(_factory, function (service, bundle) {
+        //Construct factory
+        //first value gets ignored by calling new like this, so we need to fill it
+        bundle.unshift(null);
+        //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
+        service.fn = new(Function.prototype.bind.apply(service.fn, bundle));
+
+        return service;
+    });
 }

@@ -1,6 +1,6 @@
 "use strict";
 
-import initialize from "../init/initialize";
+import initialize from "./initialize";
 import recurseDependencies from "./dependencies";
 import {
     _part1,

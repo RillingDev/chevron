@@ -4,7 +4,20 @@ let cv = new Chevron();
 
 cv.
 
-factory("miscNumbersPlusTwelve", ["addTwelve", "miscNumbers"], function (addTwelve, miscNumbers) {
+extend("controller", function (service, bundle) {
+    //Construct service
+    let serviceFn = service.fn;
+
+    service.fn = function () {
+        //Chevron service function wrapper
+        return serviceFn.apply(null, bundle.concat(Array.from(arguments)));
+    };
+    service.foo = "bar";
+
+    return service;
+})
+
+.factory("miscNumbersPlusTwelve", ["addTwelve", "miscNumbers"], function (addTwelve, miscNumbers) {
     this.foo = addTwelve(miscNumbers.foo);
     this.bar = addTwelve(miscNumbers.bar);
     console.log(this);
@@ -27,7 +40,8 @@ factory("miscNumbersPlusTwelve", ["addTwelve", "miscNumbers"], function (addTwel
     return addTen(addTwo(number));
 })
 
-.service("sumOf", [], function (number1, number2) {
+//custom service type
+.controller("sumOf", [], function (number1, number2) {
     return number1 + number2;
 })
 

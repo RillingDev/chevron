@@ -15,7 +15,7 @@ var Chevron = function () {
      * @param Array list of dependencies
      * @param String type of service (service/factory)
      * @param Function content of the service
-     * @return this
+     * @return Chevron instance
      */
     function provider(type, name, deps, fn) {
         var _this = this;
@@ -38,28 +38,20 @@ var Chevron = function () {
     }
 
     /**
-     * Create a new service
-     * @param String name to register/id the service
-     * @param Array list of dependencies
-     * @param String type of service (service/factory)
-     * @param Function content of the service
-     * @return this
+     * Adds a new service type
+     * @param String name of the type
+     * @param fn to call when the service is constructed
+     * @return Chevron instance
      */
-    function service(name, deps, fn) {
-        return this.provider(_service, name, deps, fn);
-    }
+    function extend(type, fn) {
+        var _this = this;
 
-    /**
-     * Create a new factory
-     * @param String name to register/id the service
-     * @param Array list of dependencies
-     * @param String type of service (service/factory)
-     * @param Function content of the service
-     * @param Array factory arguments
-     * @return this
-     */
-    function factory(name, deps, Constructor) {
-        return this.provider(_factory, name, deps, Constructor);
+        _this.tl[type] = fn;
+        _this[type] = function (name, deps, fn) {
+            return _this.provider(type, name, deps, fn);
+        };
+
+        return _this;
     }
 
     var _each = function _each(arr, fn) {
@@ -94,7 +86,7 @@ var Chevron = function () {
             });
 
             //Init service
-            service = this.tf[service.type](service, bundle);
+            service = this.tl[service.type](service, bundle);
             service.init = true;
         }
 
@@ -175,25 +167,48 @@ var Chevron = function () {
         }
     }
 
-    function initService(service, bundle) {
-        //Construct service
-        var serviceFn = service.fn;
+    /**
+     * Create a new service
+     * @param String name to register/id the service
+     * @param Array list of dependencies
+     * @param String type of service (service/factory)
+     * @param Function content of the service
+     * @return Chevron instance
+     */
+    function initService(_this) {
+        console.log(_this);
 
-        service.fn = function () {
-            //Chevron service function wrapper
-            return serviceFn.apply(null, bundle.concat(Array.from(arguments)));
-        };
+        _this.extend(_service, function (service, bundle) {
+            //Construct service
+            var serviceFn = service.fn;
 
-        return service;
+            service.fn = function () {
+                //Chevron service function wrapper
+                return serviceFn.apply(null, bundle.concat(Array.from(arguments)));
+            };
+
+            return service;
+        });
     }
 
-    function initFactory(service, bundle) {
-        //first value gets ignored by calling new like this, so we need to fill it
-        bundle.unshift(null);
-        //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
-        service.fn = new (Function.prototype.bind.apply(service.fn, bundle))();
+    /**
+     * Create a new factory
+     * @param String name to register/id the service
+     * @param Array list of dependencies
+     * @param String type of service (service/factory)
+     * @param Function content of the service
+     * @return Chevron instance
+     */
+    function initFactory(_this) {
+        _this.extend(_factory, function (service, bundle) {
+            //Construct factory
+            //first value gets ignored by calling new like this, so we need to fill it
+            bundle.unshift(null);
+            //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
+            service.fn = new (Function.prototype.bind.apply(service.fn, bundle))();
 
-        return service;
+            return service;
+        });
     }
 
     /**
@@ -206,10 +221,10 @@ var Chevron = function () {
 
         _this.id = id || "cv";
         _this.chev = {};
-        _this.tf = {
-            service: initService,
-            factory: initFactory
-        };
+        _this.tl = {};
+
+        initService(_this);
+        initFactory(_this);
     };
 
     /**
@@ -218,12 +233,10 @@ var Chevron = function () {
     Chevron.prototype = {
         //Core service/factory method
         provider: provider,
-        //Create new service
-        service: service,
-        //Create new factory
-        factory: factory,
         //Prepare/init services/factory with deps injected
-        access: access
+        access: access,
+        //Add new service type
+        extend: extend
     };
 
     return Chevron;

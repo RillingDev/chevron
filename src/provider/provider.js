@@ -12,7 +12,7 @@ import {
  * @param Array list of dependencies
  * @param String type of service (service/factory)
  * @param Function content of the service
- * @return this
+ * @return Chevron instance
  */
 export default function (type, name, deps, fn) {
     let _this = this;
