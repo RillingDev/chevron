@@ -1,9 +1,9 @@
 'use strict';
 
-const _part1 = ": ";
+const _more = ": ";
 const _factory = "factory";
 const _service = "service";
-const _error = _part1 + "error in ";
+const _error = _more + "error in ";
 const _isUndefined = " is undefined";
 
 /**
@@ -19,7 +19,7 @@ function provider (type, name, deps, fn) {
 
     if (_this.chev[name]) {
         //throw error if a service with this name already exists
-        throw `${_this.id}${_error}${type}${_part1}${_service} '${name}' is already defined`;
+        throw _this.id + _error + type + _more + _service + " '" + name + "' is already defined";
     } else {
         //Add the service to container
         _this.chev[name] = {
@@ -139,7 +139,7 @@ function prepare (service) {
         },
         //error if dependency is missing
         name => {
-            throw `${_this.id}${_error}${service.name}${_part1}dependency '${name}'${_isUndefined}`;
+            throw _this.id + _error + service.name + _more + "dependency " + name + _isUndefined;
         }
     );
 
@@ -161,7 +161,7 @@ function access (name) {
         return prepare.call(_this, accessedService).fn;
     } else {
         //throw error if service does not exist
-        throw `${_this.id}${_error}${name}${_part1}'${name}'${_isUndefined}`;
+        throw _this.id + _error + name + _more + name + _isUndefined;
     }
 }
 

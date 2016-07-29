@@ -3,7 +3,7 @@
 import initialize from "./initialize";
 import recurseDependencies from "./dependencies";
 import {
-    _part1,
+    _more,
     _error,
     _isUndefined
 } from "../constants";
@@ -29,7 +29,7 @@ export default function (service) {
         },
         //error if dependency is missing
         name => {
-            throw `${_this.id}${_error}${service.name}${_part1}dependency '${name}'${_isUndefined}`;
+            throw _this.id + _error + service.name + _more + "dependency " + name + _isUndefined;
         }
     );
 
