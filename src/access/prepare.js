@@ -11,21 +11,21 @@ import {
 /**
  * Check if every dependency is available
  * @private
+ * @param Object context
  * @param Object service to check
  * @return bound service
  */
-export default function (service) {
-    let _this = this,
-        list = {};
+export default function (_this, service) {
+    let list = {};
 
     //Recurse trough service deps
-    recurseDependencies.call(
+    recurseDependencies(
         _this,
         service.deps,
         //run this over every dependency to add it to the dependencyList
         dependency => {
             //make sure if dependency is initialized, then add
-            list[dependency.name] = initialize.call(_this, dependency, list).fn;
+            list[dependency.name] = initialize(_this, dependency, list).fn;
         },
         //error if dependency is missing
         name => {
@@ -33,5 +33,5 @@ export default function (service) {
         }
     );
 
-    return initialize.call(_this, service, list);
+    return initialize(_this, service, list);
 }

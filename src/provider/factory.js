@@ -5,12 +5,10 @@ import {
 } from "../constants";
 
 /**
- * Create a new factory
- * @param String name to register/id the service
- * @param Array list of dependencies
- * @param String type of service (service/factory)
- * @param Function content of the service
- * @return Chevron instance
+ * Creates typeList entry for factory
+ * @private
+ * @param Object context
+ * @return void
  */
 export default function (_this) {
     _this.extend(_factory, function (service, bundle) {

@@ -2,6 +2,7 @@
 
 import {
     _more,
+    _is,
     _service,
     _error
 } from "../constants";
@@ -19,7 +20,7 @@ export default function (type, name, deps, fn) {
 
     if (_this.chev[name]) {
         //throw error if a service with this name already exists
-        throw _this.id + _error + type + _more + _service + " '" + name + "' is already defined";
+        throw _this.id + _error + type + _more + _service + " '" + name + "' already defined";
     } else {
         //Add the service to container
         _this.chev[name] = {

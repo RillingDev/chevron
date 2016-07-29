@@ -19,7 +19,7 @@ export default function (name) {
     //Check if accessed service is registered
     if (accessedService) {
         //Call prepare with bound context
-        return prepare.call(_this, accessedService).fn;
+        return prepare(_this, accessedService).fn;
     } else {
         //throw error if service does not exist
         throw _this.id + _error + name + _more + name + _isUndefined;

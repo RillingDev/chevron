@@ -1,8 +1,9 @@
 const _more = ": ";
+const _is = " is ";
 const _factory = "factory";
 const _service = "service";
 const _error = _more + "error in ";
-const _isUndefined = " is undefined";
+const _isUndefined = _is + "undefined";
 
 /**
  * Checks if service exist, else add it
@@ -17,7 +18,7 @@ function provider (type, name, deps, fn) {
 
     if (_this.chev[name]) {
         //throw error if a service with this name already exists
-        throw _this.id + _error + type + _more + _service + " '" + name + "' is already defined";
+        throw _this.id + _error + type + _more + _service + " '" + name + "' already defined";
     } else {
         //Add the service to container
         _this.chev[name] = {
@@ -65,11 +66,12 @@ let _eachObject = function (object, fn) {
 /**
  * Collects dependencies and initializes service
  * @private
+ * @param Object context
  * @param Object service to check
  * @param Object list of dependencies
  * @return Object service
  */
-function initialize (service, list) {
+function initialize (_this, service, list) {
     let bundle = [];
 
     if (!service.init) {
@@ -81,7 +83,7 @@ function initialize (service, list) {
         });
 
         //Init service
-        service = this.tl[service.type](service, bundle);
+        service = _this.tl[service.type](service, bundle);
         service.init = true;
     }
 
@@ -91,21 +93,22 @@ function initialize (service, list) {
 /**
  * Loops/recurses over list of dependencies
  * @private
+ * @param Object context
  * @param Array dependencyList to iterate
  * @param Function to run over each dependency
  * @param Function to call on error
  * @return void
  */
 //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
-function r(dependencyList, fn, error) {
+function r(_this, dependencyList, fn, error) {
     _each(dependencyList, name => {
-        let service = this.chev[name];
+        let service = _this.chev[name];
 
         if (service) {
             //recurse if service has dependencies too
             if (service.deps.length > 0) {
                 //recurse
-                r.call(this, service.deps, fn, error);
+                r(_this, service.deps, fn, error);
             }
             //run fn
             fn(service);
@@ -119,21 +122,21 @@ function r(dependencyList, fn, error) {
 /**
  * Check if every dependency is available
  * @private
+ * @param Object context
  * @param Object service to check
  * @return bound service
  */
-function prepare (service) {
-    let _this = this,
-        list = {};
+function prepare (_this, service) {
+    let list = {};
 
     //Recurse trough service deps
-    r.call(
+    r(
         _this,
         service.deps,
         //run this over every dependency to add it to the dependencyList
         dependency => {
             //make sure if dependency is initialized, then add
-            list[dependency.name] = initialize.call(_this, dependency, list).fn;
+            list[dependency.name] = initialize(_this, dependency, list).fn;
         },
         //error if dependency is missing
         name => {
@@ -141,7 +144,7 @@ function prepare (service) {
         }
     );
 
-    return initialize.call(_this, service, list);
+    return initialize(_this, service, list);
 }
 
 /**
@@ -156,7 +159,7 @@ function access (name) {
     //Check if accessed service is registered
     if (accessedService) {
         //Call prepare with bound context
-        return prepare.call(_this, accessedService).fn;
+        return prepare(_this, accessedService).fn;
     } else {
         //throw error if service does not exist
         throw _this.id + _error + name + _more + name + _isUndefined;
@@ -164,15 +167,12 @@ function access (name) {
 }
 
 /**
- * Create a new service
- * @param String name to register/id the service
- * @param Array list of dependencies
- * @param String type of service (service/factory)
- * @param Function content of the service
- * @return Chevron instance
+ * Creates typeList entry for service
+ * @private
+ * @param Object context
+ * @return void
  */
 function initService (_this) {
-    console.log(_this);
 
     _this.extend(_service, function (service, bundle) {
         //Construct service
@@ -188,12 +188,10 @@ function initService (_this) {
 }
 
 /**
- * Create a new factory
- * @param String name to register/id the service
- * @param Array list of dependencies
- * @param String type of service (service/factory)
- * @param Function content of the service
- * @return Chevron instance
+ * Creates typeList entry for factory
+ * @private
+ * @param Object context
+ * @return void
  */
 function initFactory (_this) {
     _this.extend(_factory, function (service, bundle) {

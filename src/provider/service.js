@@ -5,15 +5,12 @@ import {
 } from "../constants";
 
 /**
- * Create a new service
- * @param String name to register/id the service
- * @param Array list of dependencies
- * @param String type of service (service/factory)
- * @param Function content of the service
- * @return Chevron instance
+ * Creates typeList entry for service
+ * @private
+ * @param Object context
+ * @return void
  */
 export default function (_this) {
-    console.log(_this);
 
     _this.extend(_service, function (service, bundle) {
         //Construct service

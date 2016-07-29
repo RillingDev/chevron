@@ -7,11 +7,12 @@ import {
 /**
  * Collects dependencies and initializes service
  * @private
+ * @param Object context
  * @param Object service to check
  * @param Object list of dependencies
  * @return Object service
  */
-export default function (service, list) {
+export default function (_this, service, list) {
     let bundle = [];
 
     if (!service.init) {
@@ -23,7 +24,7 @@ export default function (service, list) {
         });
 
         //Init service
-        service = this.tl[service.type](service, bundle);
+        service = _this.tl[service.type](service, bundle);
         service.init = true;
     }
 
