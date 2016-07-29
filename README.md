@@ -42,7 +42,7 @@ var foo = cv.access("foo");
 foo();//returns 12
 ```
 
-or with dependencies
+or with dependencies:
 
 ```javascript
 
@@ -118,7 +118,7 @@ cv.chev.foo; //returns the service as Chevron object.
 
 # API
 
-You can create your own service type/constructor by using the Chevron API. to declare a new type, simpy add a new entry to the "tf" property of your Chevron instance.
+You can create your own service type/constructor by using the Chevron API. To declare a new type, simpy add a new entry to the "tf"(which stands for "transformers") property of your Chevron instance.
 
 ```javascript
 cv.tf.myType = function(service,bundle){
@@ -127,11 +127,11 @@ cv.tf.myType = function(service,bundle){
 }
 ```
 
-In the example above we created a new servicetype "myType" with the given function as constructor. you'll probably want to start by modifying the default Service or Factory constructor which you can find in the tf property as well.
+In the example above we created a new servicetype, "myType", with the given function as constructor. you'll probably want to start by modifying the default Service or Factory constructor which you can find in the tf property as well.
 
 ```javascript
 //get the default service constructor
-cv.tf.factory.toString();
+cv.tf.service.toString();
 ```
 
 When you want to create a new service with your type, you will need to use the "provider" method of the Chevron object (Fun Fact: the "service" and "factory" methods are just a tiny wrapper around the provider function).
@@ -143,7 +143,7 @@ cv.provider("myType","foo",[],function(){
 })
 ```
 
-after that you can simply call "access" again to access your new service type
+After that you can simply call "access" again to access your new service type.
 
 ```javascript
 cv.access("foo");
