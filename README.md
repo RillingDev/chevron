@@ -128,10 +128,10 @@ cv.extend("myType",function(service,bundle){
 });
 ```
 
-In the example above we created a new servicetype, "myType", with the given function as constructor. You'll probably want to start by modifying the default Service or Factory constructor which you can find in the tf property as well.
+In the example above we created a new servicetype, "myType", with the given function as constructor. You'll probably want to start by using a modified version of the default Service or Factory constructor which you can find in the tl property as well.
 
 ```javascript
-//get the default service constructor
+//get the default service constructor as string
 cv.tf.service.toString();
 ```
 

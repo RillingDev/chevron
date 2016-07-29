@@ -5,14 +5,10 @@ import {
 import commonjs from "rollup-plugin-commonjs";
 import nodeResolve from "rollup-plugin-node-resolve";
 
-let pkg = require("./package.json");
-let external = Object.keys(pkg.dependencies);
-
 export default {
     moduleName: "Chevron",
     moduleId: "chevron",
     entry: "src/main.js",
-    external: external,
     plugins: [
         nodeResolve({
             jsnext: false,
