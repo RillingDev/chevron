@@ -4,11 +4,10 @@ var Chevron = function () {
     'use strict';
 
     var _more = ": ";
-    var _is = " is ";
     var _factory = "factory";
     var _service = "service";
     var _error = _more + "error in ";
-    var _isUndefined = _is + "undefined";
+    var _isUndefined = " is undefined";
 
     /**
      * Checks if service exist, else add it

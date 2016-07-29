@@ -2,7 +2,6 @@
 
 import {
     _more,
-    _is,
     _service,
     _error
 } from "../constants";

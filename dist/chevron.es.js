@@ -1,9 +1,8 @@
 const _more = ": ";
-const _is = " is ";
 const _factory = "factory";
 const _service = "service";
 const _error = _more + "error in ";
-const _isUndefined = _is + "undefined";
+const _isUndefined = " is undefined";
 
 /**
  * Checks if service exist, else add it
