@@ -137,6 +137,7 @@ cv.tf.factory.toString();
 When you want to create a new service with your type, you will need to use the "provider" method of the Chevron object (Fun Fact: the "service" and "factory" methods are just a tiny wrapper around the provider function).
 
 ```javascript
+//Chevron.prototype.provider(type,name,[dependencies],content);
 cv.provider("myType","foo",[],function(){
     return "bar";
 })
