@@ -18,7 +18,7 @@
      * @param Function content of the service
      * @return this
      */
-    function provider (name, deps, type, fn, args) {
+    function provider (name, deps, type, fn) {
         let _this = this;
 
         if (_this.chev[name]) {
@@ -30,7 +30,6 @@
                 name,
                 type,
                 deps,
-                args: args || [],
                 fn,
                 init: false
             };
@@ -65,13 +64,12 @@
      * @param Array factory arguments
      * @return this
      */
-    function factory (name, deps, Constructor, args) {
+    function factory (name, deps, Constructor) {
         return this.provider(
             name,
             deps,
             _factory,
-            Constructor,
-            args
+            Constructor
         );
     }
 
@@ -105,8 +103,6 @@
                 return serviceFn.apply(null, bundle.concat(Array.from(arguments)));
             };
         } else {
-            //Construct factory
-            bundle = bundle.concat(service.args);
             //first value gets ignored by calling new like this, so we need to fill it
             bundle.unshift(null);
             //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible

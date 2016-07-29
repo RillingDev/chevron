@@ -13,12 +13,11 @@ import {
  * @param Array factory arguments
  * @return this
  */
-export default function (name, deps, Constructor, args) {
+export default function (name, deps, Constructor) {
     return this.provider(
         name,
         deps,
         _factory,
-        Constructor,
-        args
+        Constructor
     );
 }

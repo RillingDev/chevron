@@ -8,7 +8,7 @@ factory("miscNumbersPlusTwelve", ["addTwelve", "miscNumbers"], function (addTwel
     this.foo = addTwelve(miscNumbers.foo);
     this.bar = addTwelve(miscNumbers.bar);
     console.log(this);
-}, [])
+})
 
 .service("addTwo", [], function (number) {
     return parseInt(number) + 2;
@@ -21,7 +21,7 @@ factory("miscNumbersPlusTwelve", ["addTwelve", "miscNumbers"], function (addTwel
 .factory("miscNumbers", [], function () {
     this.foo = 23;
     this.bar = 19;
-}, [])
+})
 
 .service("addTwelve", ["addTwo", "addTen"], function (addTwo, addTen, number) {
     return addTen(addTwo(number));

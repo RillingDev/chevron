@@ -17,7 +17,7 @@ var Chevron = function () {
      * @param Function content of the service
      * @return this
      */
-    function provider(name, deps, type, fn, args) {
+    function provider(name, deps, type, fn) {
         var _this = this;
 
         if (_this.chev[name]) {
@@ -29,7 +29,6 @@ var Chevron = function () {
                 name: name,
                 type: type,
                 deps: deps,
-                args: args || [],
                 fn: fn,
                 init: false
             };
@@ -59,8 +58,8 @@ var Chevron = function () {
      * @param Array factory arguments
      * @return this
      */
-    function factory(name, deps, Constructor, args) {
-        return this.provider(name, deps, _factory, Constructor, args);
+    function factory(name, deps, Constructor) {
+        return this.provider(name, deps, _factory, Constructor);
     }
 
     var _each = function _each(arr, fn) {
@@ -95,8 +94,6 @@ var Chevron = function () {
                 };
             })();
         } else {
-            //Construct factory
-            bundle = bundle.concat(service.args);
             //first value gets ignored by calling new like this, so we need to fill it
             bundle.unshift(null);
             //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible

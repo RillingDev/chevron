@@ -14,7 +14,7 @@ import {
  * @param Function content of the service
  * @return this
  */
-export default function (name, deps, type, fn, args) {
+export default function (name, deps, type, fn) {
     let _this = this;
 
     if (_this.chev[name]) {
@@ -26,7 +26,6 @@ export default function (name, deps, type, fn, args) {
             name,
             type,
             deps,
-            args: args || [],
             fn,
             init: false
         };
