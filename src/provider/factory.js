@@ -15,9 +15,9 @@ import {
  */
 export default function (name, deps, Constructor) {
     return this.provider(
+        _factory,
         name,
         deps,
-        _factory,
         Constructor
     );
 }

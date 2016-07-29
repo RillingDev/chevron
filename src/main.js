@@ -3,7 +3,11 @@
 import provider from "./provider/provider";
 import service from "./provider/service";
 import factory from "./provider/factory";
+
 import access from "./access/access";
+
+import initService from "./init/initService";
+import initFactory from "./init/initFactory";
 
 /**
  * Basic Chevron Constructor
@@ -11,10 +15,15 @@ import access from "./access/access";
  * @param String to id the container
  */
 let Chevron = function (id) {
-    this.id = id || "cv";
-    this.chev = {};
-};
+    let _this = this;
 
+    _this.id = id || "cv";
+    _this.chev = {};
+    _this.tf = {
+        service: initService,
+        factory: initFactory
+    };
+};
 
 /**
  * Expose Chevron methods

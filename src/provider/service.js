@@ -14,9 +14,9 @@ import {
  */
 export default function (name, deps, fn) {
     return this.provider(
+        _service,
         name,
         deps,
-        _service,
         fn
     );
 }

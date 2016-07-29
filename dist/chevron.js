@@ -17,7 +17,7 @@ var Chevron = function () {
      * @param Function content of the service
      * @return this
      */
-    function provider(name, deps, type, fn) {
+    function provider(type, name, deps, fn) {
         var _this = this;
 
         if (_this.chev[name]) {
@@ -26,8 +26,8 @@ var Chevron = function () {
         } else {
             //Add the service to container
             _this.chev[name] = {
-                name: name,
                 type: type,
+                name: name,
                 deps: deps,
                 fn: fn,
                 init: false
@@ -46,7 +46,7 @@ var Chevron = function () {
      * @return this
      */
     function service(name, deps, fn) {
-        return this.provider(name, deps, _service, fn);
+        return this.provider(_service, name, deps, fn);
     }
 
     /**
@@ -59,7 +59,7 @@ var Chevron = function () {
      * @return this
      */
     function factory(name, deps, Constructor) {
-        return this.provider(name, deps, _factory, Constructor);
+        return this.provider(_factory, name, deps, Constructor);
     }
 
     var _each = function _each(arr, fn) {
@@ -76,42 +76,13 @@ var Chevron = function () {
     };
 
     /**
-     * Initializes service/function
-     * @private
-     * @param Object service to check
-     * @param Object bundle of dependencies
-     * @return Object service
-     */
-    function initialize(service, bundle) {
-        if (service.type === _service) {
-            (function () {
-                //Construct service
-                var serviceFn = service.fn;
-
-                service.fn = function () {
-                    //Chevron service function wrapper
-                    return serviceFn.apply(null, bundle.concat(Array.from(arguments)));
-                };
-            })();
-        } else {
-            //first value gets ignored by calling new like this, so we need to fill it
-            bundle.unshift(null);
-            //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
-            service.fn = new (Function.prototype.bind.apply(service.fn, bundle))();
-        }
-
-        service.init = true;
-        return service;
-    }
-
-    /**
      * Collects dependencies and initializes service
      * @private
      * @param Object service to check
      * @param Object list of dependencies
      * @return Object service
      */
-    function bundle(service, list) {
+    function initialize(service, list) {
         var bundle = [];
 
         if (!service.init) {
@@ -122,10 +93,12 @@ var Chevron = function () {
                 }
             });
 
-            return initialize(service, bundle);
-        } else {
-            return service;
+            //Init service
+            service = this.tf[service.type](service, bundle);
+            service.init = true;
         }
+
+        return service;
     }
 
     /**
@@ -165,23 +138,22 @@ var Chevron = function () {
      * @return bound service
      */
     function prepare(service) {
-        var _this3 = this;
-
-        var list = {};
+        var _this = this,
+            list = {};
 
         //Recurse trough service deps
-        r.call(this, service.deps,
+        r.call(_this, service.deps,
         //run this over every dependency to add it to the dependencyList
         function (dependency) {
             //make sure if dependency is initialized, then add
-            list[dependency.name] = bundle(dependency, list).fn;
+            list[dependency.name] = initialize.call(_this, dependency, list).fn;
         },
         //error if dependency is missing
         function (name) {
-            throw "" + _this3.id + _error + service.name + _part1 + "dependency '" + name + "'" + _isUndefined;
+            throw "" + _this.id + _error + service.name + _part1 + "dependency '" + name + "'" + _isUndefined;
         });
 
-        return bundle(service, list);
+        return initialize.call(_this, service, list);
     }
 
     /**
@@ -203,14 +175,41 @@ var Chevron = function () {
         }
     }
 
+    function initService(service, bundle) {
+        //Construct service
+        var serviceFn = service.fn;
+
+        service.fn = function () {
+            //Chevron service function wrapper
+            return serviceFn.apply(null, bundle.concat(Array.from(arguments)));
+        };
+
+        return service;
+    }
+
+    function initFactory(service, bundle) {
+        //first value gets ignored by calling new like this, so we need to fill it
+        bundle.unshift(null);
+        //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
+        service.fn = new (Function.prototype.bind.apply(service.fn, bundle))();
+
+        return service;
+    }
+
     /**
      * Basic Chevron Constructor
      * @constructor
      * @param String to id the container
      */
     var Chevron = function Chevron(id) {
-        this.id = id || "cv";
-        this.chev = {};
+        var _this = this;
+
+        _this.id = id || "cv";
+        _this.chev = {};
+        _this.tf = {
+            service: initService,
+            factory: initFactory
+        };
     };
 
     /**

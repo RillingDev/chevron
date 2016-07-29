@@ -3,7 +3,6 @@
 import {
     _eachObject
 } from "../util";
-import initialize from "./initialize";
 
 /**
  * Collects dependencies and initializes service
@@ -23,8 +22,10 @@ export default function (service, list) {
             }
         });
 
-        return initialize(service, bundle);
-    } else {
-        return service;
+        //Init service
+        service = this.tf[service.type](service, bundle);
+        service.init = true;
     }
+
+    return service;
 }

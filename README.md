@@ -60,13 +60,12 @@ bar(2);//returns 24
 Factories are like Services but are treated as Constructors instead of classic functions.
 
 ```javascript
-//Chevron.prototype.factory(name,[dependencies],Constructor,[arguments]);
+//Chevron.prototype.factory(name,[dependencies],Constructor);
 cv.factory("foo",[],
-  function(int){
-      this.foo = int;
+  function(){
+      this.foo = 12;
       this.bar = 17;
-  },
-  [7]
+  }
 );
 
 var foo = cv.access("foo");
@@ -78,10 +77,9 @@ or combined with a service
 ```javascript
 cv.factory("foo",[],
   function(int){
-      this.foo = int;
+      this.foo = 12;
       this.bar = 17;
-  },
-  [7]
+  }
 );
 
 cv.service("bar",["foo"],

@@ -14,7 +14,7 @@ define('chevron', function () { 'use strict';
      * @param Function content of the service
      * @return this
      */
-    function provider (name, deps, type, fn) {
+    function provider (type, name, deps, fn) {
         let _this = this;
 
         if (_this.chev[name]) {
@@ -23,8 +23,8 @@ define('chevron', function () { 'use strict';
         } else {
             //Add the service to container
             _this.chev[name] = {
-                name,
                 type,
+                name,
                 deps,
                 fn,
                 init: false
@@ -44,9 +44,9 @@ define('chevron', function () { 'use strict';
      */
     function service (name, deps, fn) {
         return this.provider(
+            _service,
             name,
             deps,
-            _service,
             fn
         );
     }
@@ -62,9 +62,9 @@ define('chevron', function () { 'use strict';
      */
     function factory (name, deps, Constructor) {
         return this.provider(
+            _factory,
             name,
             deps,
-            _factory,
             Constructor
         );
     }
@@ -83,40 +83,13 @@ define('chevron', function () { 'use strict';
         };
 
     /**
-     * Initializes service/function
-     * @private
-     * @param Object service to check
-     * @param Object bundle of dependencies
-     * @return Object service
-     */
-    function initialize (service, bundle) {
-        if (service.type === _service) {
-            //Construct service
-            let serviceFn = service.fn;
-
-            service.fn = function () {
-                //Chevron service function wrapper
-                return serviceFn.apply(null, bundle.concat(Array.from(arguments)));
-            };
-        } else {
-            //first value gets ignored by calling new like this, so we need to fill it
-            bundle.unshift(null);
-            //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
-            service.fn = new(Function.prototype.bind.apply(service.fn, bundle));
-        }
-
-        service.init = true;
-        return service;
-    }
-
-    /**
      * Collects dependencies and initializes service
      * @private
      * @param Object service to check
      * @param Object list of dependencies
      * @return Object service
      */
-    function bundle (service, list) {
+    function initialize (service, list) {
         let bundle = [];
 
         if (!service.init) {
@@ -127,10 +100,12 @@ define('chevron', function () { 'use strict';
                 }
             });
 
-            return initialize(service, bundle);
-        } else {
-            return service;
+            //Init service
+            service = this.tf[service.type](service, bundle);
+            service.init = true;
         }
+
+        return service;
     }
 
     /**
@@ -168,24 +143,25 @@ define('chevron', function () { 'use strict';
      * @return bound service
      */
     function prepare (service) {
-        let list = {};
+        let _this = this,
+            list = {};
 
         //Recurse trough service deps
         r.call(
-            this,
+            _this,
             service.deps,
             //run this over every dependency to add it to the dependencyList
             dependency => {
                 //make sure if dependency is initialized, then add
-                list[dependency.name] = bundle(dependency, list).fn;
+                list[dependency.name] = initialize.call(_this, dependency, list).fn;
             },
             //error if dependency is missing
             name => {
-                throw `${this.id}${_error}${service.name}${_part1}dependency '${name}'${_isUndefined}`;
+                throw `${_this.id}${_error}${service.name}${_part1}dependency '${name}'${_isUndefined}`;
             }
         );
 
-        return bundle(service, list);
+        return initialize.call(_this, service, list);
     }
 
     /**
@@ -207,16 +183,42 @@ define('chevron', function () { 'use strict';
         }
     }
 
+    function initService (service, bundle) {
+        //Construct service
+        let serviceFn = service.fn;
+
+        service.fn = function () {
+            //Chevron service function wrapper
+            return serviceFn.apply(null, bundle.concat(Array.from(arguments)));
+        };
+
+        return service;
+    }
+
+    function initFactory (service, bundle) {
+        //first value gets ignored by calling new like this, so we need to fill it
+        bundle.unshift(null);
+        //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
+        service.fn = new(Function.prototype.bind.apply(service.fn, bundle));
+
+        return service;
+    }
+
     /**
      * Basic Chevron Constructor
      * @constructor
      * @param String to id the container
      */
     let Chevron = function (id) {
-        this.id = id || "cv";
-        this.chev = {};
-    };
+        let _this = this;
 
+        _this.id = id || "cv";
+        _this.chev = {};
+        _this.tf = {
+            service: initService,
+            factory: initFactory
+        };
+    };
 
     /**
      * Expose Chevron methods

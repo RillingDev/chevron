@@ -1,6 +1,6 @@
 "use strict";
 
-import bundle from "./bundle";
+import initialize from "../init/initialize";
 import recurseDependencies from "./dependencies";
 import {
     _part1,
@@ -15,22 +15,23 @@ import {
  * @return bound service
  */
 export default function (service) {
-    let list = {};
+    let _this = this,
+        list = {};
 
     //Recurse trough service deps
     recurseDependencies.call(
-        this,
+        _this,
         service.deps,
         //run this over every dependency to add it to the dependencyList
         dependency => {
             //make sure if dependency is initialized, then add
-            list[dependency.name] = bundle(dependency, list).fn;
+            list[dependency.name] = initialize.call(_this, dependency, list).fn;
         },
         //error if dependency is missing
         name => {
-            throw `${this.id}${_error}${service.name}${_part1}dependency '${name}'${_isUndefined}`;
+            throw `${_this.id}${_error}${service.name}${_part1}dependency '${name}'${_isUndefined}`;
         }
     );
 
-    return bundle(service, list);
+    return initialize.call(_this, service, list);
 }

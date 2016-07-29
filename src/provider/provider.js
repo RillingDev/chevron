@@ -14,7 +14,7 @@ import {
  * @param Function content of the service
  * @return this
  */
-export default function (name, deps, type, fn) {
+export default function (type, name, deps, fn) {
     let _this = this;
 
     if (_this.chev[name]) {
@@ -23,8 +23,8 @@ export default function (name, deps, type, fn) {
     } else {
         //Add the service to container
         _this.chev[name] = {
-            name,
             type,
+            name,
             deps,
             fn,
             init: false
