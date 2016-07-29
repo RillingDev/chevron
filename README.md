@@ -138,7 +138,7 @@ cv.tf.service.toString();
 After you created the new type, you can use it by calling the type as a method
 
 ```javascript
-//Chevron.prototype.provider(type,name,[dependencies],content);
+//Chevron.prototype.#name#(name,[dependencies],content);
 cv.myType("foo",[],function(){
     return "bar";
 })
