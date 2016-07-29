@@ -1,6 +1,6 @@
 {
     "name": "chevronjs",
-    "version": "v3.5.0",
+    "version": "v3.5.1",
     "description": "Chevron is a extremely small(1.3kB) JavaScript service library for easy dependency managment and lazy module loading.",
     "main": "dist/chevron.js",
     "authors": [

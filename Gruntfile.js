@@ -66,27 +66,6 @@ module.exports = function (grunt) {
             dist: {
                 options: {
                     patterns: [
-                        //Container strings
-                        /*{
-                            match: /_name/g,
-                            replacement: "n"
-                        }, {
-                            match: /_type/g,
-                            replacement: "t"
-                        }, {
-                            match: /_deps/g,
-                            replacement: "d"
-                        }, {
-                            match: /_fn/g,
-                            replacement: "f"
-                        }, {
-                            match: /_init/g,
-                            replacement: "i"
-                        }, {
-                            match: /_args/g,
-                            replacement: "a"
-                        },*/
-                        //Util
                         {
                             match: /_each/g,
                             replacement: "e"
