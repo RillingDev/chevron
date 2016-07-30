@@ -17,7 +17,6 @@ cv.factory("strings", [], function() {
     this.bar = "World";
 });
 
-//@TODO fix dep order
 cv.service("writeln", ["ifCanWrite", "constants"], function(ifCanWrite, constants, str) {
     ifCanWrite(function() {
         constants.doc.writeln(str);
