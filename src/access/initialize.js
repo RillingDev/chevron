@@ -24,12 +24,10 @@ export default function(_this, service, list) {
             }
         });
 
-        bundle = bundle.map(item => {
-            return item.fn;
-        });
-
         //Init service
-        service = _this.tl[service.type](service, bundle);
+        service = _this.tl[service.type](service, bundle.map(item => {
+            return item.fn;
+        }));
         service.init = true;
     }
 
