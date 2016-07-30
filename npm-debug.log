@@ -1,0 +1,129 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\nodejs\\node.exe',
+1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'publish' ]
+2 info using npm@3.10.3
+3 info using node@v6.3.1
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   escapedName: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: 'C:\\xampp\\htdocs\\chevronjs',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory C:\Users\PC\AppData\Roaming\npm-cache\chevronjs\3.6.2\package.tgz not in flight; packing
+9 verbose correctMkdir C:\Users\PC\AppData\Roaming\npm-cache correctMkdir not in flight; initializing
+10 verbose makeDirectory C:\Users\PC\AppData\Roaming\npm-cache creation not in flight; initializing
+11 verbose makeCacheDir UID & GID are irrelevant on win32
+12 info lifecycle chevronjs@3.6.2~prepublish: chevronjs@3.6.2
+13 silly lifecycle chevronjs@3.6.2~prepublish: no script for prepublish, continuing
+14 verbose tar pack [ 'C:\\Users\\PC\\AppData\\Roaming\\npm-cache\\chevronjs\\3.6.2\\package.tgz',
+14 verbose tar pack   'C:\\xampp\\htdocs\\chevronjs' ]
+15 verbose tarball C:\Users\PC\AppData\Roaming\npm-cache\chevronjs\3.6.2\package.tgz
+16 verbose folder C:\xampp\htdocs\chevronjs
+17 verbose addLocalTarball adding from inside cache C:\Users\PC\AppData\Roaming\npm-cache\chevronjs\3.6.2\package.tgz
+18 verbose correctMkdir C:\Users\PC\AppData\Roaming\npm-cache correctMkdir not in flight; initializing
+19 silly cache afterAdd chevronjs@3.6.2
+20 verbose afterAdd C:\Users\PC\AppData\Roaming\npm-cache\chevronjs\3.6.2\package\package.json not in flight; writing
+21 verbose correctMkdir C:\Users\PC\AppData\Roaming\npm-cache correctMkdir not in flight; initializing
+22 verbose afterAdd C:\Users\PC\AppData\Roaming\npm-cache\chevronjs\3.6.2\package\package.json written
+23 silly publish { name: 'chevronjs',
+23 silly publish   version: '3.6.2',
+23 silly publish   description: 'Chevron is a extremely small(1.2kB) JavaScript service library for easy dependency managment and lazy module loading.',
+23 silly publish   main: 'dist/chevron.js',
+23 silly publish   repository:
+23 silly publish    { type: 'git',
+23 silly publish      url: 'git+https://github.com/FelixRilling/chevronjs.git' },
+23 silly publish   scripts: { build: 'grunt' },
+23 silly publish   keywords: [ 'dependencies', 'services' ],
+23 silly publish   author: { name: 'Felix Rilling' },
+23 silly publish   license: 'MIT',
+23 silly publish   bugs: { url: 'https://github.com/FelixRilling/chevronjs/issues' },
+23 silly publish   homepage: 'https://github.com/FelixRilling/chevronjs#readme',
+23 silly publish   devDependencies:
+23 silly publish    { 'babel-core': '^6.0.20',
+23 silly publish      'babel-plugin-array-includes': '^2.0.3',
+23 silly publish      'babel-preset-es2015': '^6.9.0',
+23 silly publish      grunt: '^1.0.1',
+23 silly publish      'grunt-babel': '^6.0.0',
+23 silly publish      'grunt-contrib-clean': '^1.0.0',
+23 silly publish      'grunt-contrib-uglify': '^2.0.0',
+23 silly publish      'grunt-contrib-watch': '^1.0.0',
+23 silly publish      'grunt-exec': '^1.0.0',
+23 silly publish      'grunt-replace': '^1.0.1',
+23 silly publish      'jit-grunt': '^0.10.0',
+23 silly publish      rollup: '^0.34.1',
+23 silly publish      'rollup-plugin-commonjs': '^3.3.1',
+23 silly publish      'rollup-plugin-node-resolve': '^1.7.1',
+23 silly publish      'time-grunt': '^1.4.0',
+23 silly publish      'uglify-js': '^2.7.0' },
+23 silly publish   dependencies: {},
+23 silly publish   readme: '![ChevronJS](/chevron-logo.png)\r\n\r\n# Chevron.js\r\n\r\n> An extremely small JavaScript service/dependency library\r\n\r\n## Introduction\r\n\r\nChevron is a extremely small(1.2kB) JavaScript service library for easy dependency managment and lazy module loading, inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).\r\n\r\n## Syntax\r\n\r\n### Constructor\r\n\r\nTo start with Chevron, you need to create a new Chevron Container:\r\n\r\n```javascript\r\nvar cv = new Chevron();\r\n```\r\n\r\nThe Chevron Constructor can be called with options:\r\n\r\n```javascript\r\n//Chevron(id = "Chevron");\r\nvar namedCv = new Chevron("myCustomContainer");\r\n```\r\n\r\n### Services\r\n\r\nServices are the bread and butter of Chevron, being the most common way to declare a new module function.\r\n\r\n```javascript\r\n\r\n//Chevron.prototype.service(name,[dependencies],content);\r\ncv.service("foo",[],\r\n  function(){\r\n      return 12;\r\n  }\r\n);\r\n\r\nvar foo = cv.access("foo");\r\nfoo();//returns 12\r\n```\r\n\r\nor with dependencies:\r\n\r\n```javascript\r\n\r\ncv.service("foo",[],\r\n  function(){\r\n      return 12;\r\n  }\r\n);\r\n\r\ncv.service("bar",["foo"],\r\n  function(foo, int){\r\n      return int * foo();\r\n  }\r\n);\r\n\r\nvar bar = cv.access("bar");\r\nbar(2);//returns 24\r\n```\r\n\r\n### Factories\r\n\r\nFactories are similar to services but are treated as **Constructors** instead of classic functions.\r\n\r\n_Note: since v3.5.x the arguments parameter falls away; when upgrading from < v3.4.x simply remove the last parameter and you should be fine_\r\n\r\n```javascript\r\n//Chevron.prototype.factory(name,[dependencies],Constructor);\r\ncv.factory("foo",[],\r\n  function(){\r\n      this.foo = 12;\r\n      this.bar = 17;\r\n  }\r\n);\r\n\r\nvar foo = cv.access("foo");\r\nfoo.bar;//returns 17\r\n```\r\n\r\nor combined with a service\r\n\r\n```javascript\r\ncv.factory("foo",[],\r\n  function(){\r\n      this.foo = 7;\r\n      this.bar = 17;\r\n  }\r\n);\r\n\r\ncv.service("bar",["foo"],\r\n  function(foo, int){\r\n      return int * foo.foo;\r\n  }\r\n);\r\n\r\nvar bar = cv.access("bar");\r\nbar(3);//returns 21\r\n```\r\n\r\n### Accessing services\r\n\r\nServices and Factories can be accessed in two ways:\r\n\r\n```javascript\r\n//Chevron.prototype.access(name)\r\ncv.access("foo"); //returns the service or factory with dependencies injected into arguments\r\n```\r\n\r\nor, if you just want the service without dependencies from the chevron container(called chev):\r\n\r\n```javascript\r\ncv.chev.foo; //returns the service as Chevron object.\r\n```\r\n\r\n# API\r\n\r\nYou can create your own service type/constructor by using the Chevron API. To declare a new type, simpy add a new entry to the "tl"(which stands for "typeList") property of your Chevron instance by calling the extend method.\r\n\r\n```javascript\r\n//Chevron.prototype.extend(type,fn);\r\ncv.extend("myType",function(service,bundle){\r\n    //your init code here\r\n    return service;\r\n});\r\n```\r\n\r\nIn the example above we created a new servicetype, "myType", with the given function as constructor. You\'ll probably want to start by using a modified version of the default Service or Factory constructor which you can find in the tl property as well.\r\n\r\n```javascript\r\n//get the default service constructor as string\r\ncv.tf.service.toString();\r\n```\r\n\r\nAfter you created the new type, you can use it by calling the type as a method\r\n\r\n```javascript\r\n//Chevron.prototype.#name#(name,[dependencies],content);\r\ncv.myType("foo",[],function(){\r\n    return "bar";\r\n})\r\n```\r\n\r\nAfter that you can simply call "access" again to access your new service type.\r\n\r\n```javascript\r\ncv.access("foo");\r\n```\r\n\r\n# FAQ\r\n\r\n- **Q: Why are there no middleware/decorators?**\r\n- A: I actually had middleware/decorators in version 1.x, but I removed them because I felt like the lib should focus more on being tiny than on more features\r\n',
+23 silly publish   readmeFilename: 'README.md',
+23 silly publish   gitHead: 'e907d2f69bf908975108f8a973b205dccdb5d11b',
+23 silly publish   _id: 'chevronjs@3.6.2',
+23 silly publish   _shasum: 'b47bda9b50dc35e6914114927331ff13c46d7161',
+23 silly publish   _from: '.' }
+24 verbose getPublishConfig undefined
+25 silly mapToRegistry name chevronjs
+26 silly mapToRegistry using default registry
+27 silly mapToRegistry registry https://registry.npmjs.org/
+28 silly mapToRegistry data Result {
+28 silly mapToRegistry   raw: 'chevronjs',
+28 silly mapToRegistry   scope: null,
+28 silly mapToRegistry   escapedName: 'chevronjs',
+28 silly mapToRegistry   name: 'chevronjs',
+28 silly mapToRegistry   rawSpec: '',
+28 silly mapToRegistry   spec: 'latest',
+28 silly mapToRegistry   type: 'tag' }
+29 silly mapToRegistry uri https://registry.npmjs.org/chevronjs
+30 verbose publish registryBase https://registry.npmjs.org/
+31 silly publish uploading C:\Users\PC\AppData\Roaming\npm-cache\chevronjs\3.6.2\package.tgz
+32 verbose request uri https://registry.npmjs.org/chevronjs
+33 verbose request sending authorization for write operation
+34 info attempt registry request try #1 at 12:18:38 AM
+35 verbose request using bearer token for auth
+36 verbose request id 26b1b0fd4401f9b8
+37 http request PUT https://registry.npmjs.org/chevronjs
+38 http 403 https://registry.npmjs.org/chevronjs
+39 verbose headers { 'content-type': 'application/json',
+39 verbose headers   'cache-control': 'max-age=300',
+39 verbose headers   'content-length': '95',
+39 verbose headers   'accept-ranges': 'bytes',
+39 verbose headers   date: 'Sat, 30 Jul 2016 22:18:38 GMT',
+39 verbose headers   via: '1.1 varnish',
+39 verbose headers   connection: 'keep-alive',
+39 verbose headers   'x-served-by': 'cache-fra1220-FRA',
+39 verbose headers   'x-cache': 'MISS',
+39 verbose headers   'x-cache-hits': '0',
+39 verbose headers   'x-timer': 'S1469917117.202144,VS0,VE1436',
+39 verbose headers   vary: 'Accept-Encoding' }
+40 verbose request invalidating C:\Users\PC\AppData\Roaming\npm-cache\registry.npmjs.org\chevronjs on PUT
+41 error publish Failed PUT 403
+42 verbose stack Error: "You cannot publish over the previously published version 3.6.2." : chevronjs
+42 verbose stack     at makeError (C:\Program Files\nodejs\node_modules\npm\node_modules\npm-registry-client\lib\request.js:264:12)
+42 verbose stack     at CachingRegistryClient.<anonymous> (C:\Program Files\nodejs\node_modules\npm\node_modules\npm-registry-client\lib\request.js:252:14)
+42 verbose stack     at Request._callback (C:\Program Files\nodejs\node_modules\npm\node_modules\npm-registry-client\lib\request.js:172:14)
+42 verbose stack     at Request.self.callback (C:\Program Files\nodejs\node_modules\npm\node_modules\request\request.js:200:22)
+42 verbose stack     at emitTwo (events.js:106:13)
+42 verbose stack     at Request.emit (events.js:191:7)
+42 verbose stack     at Request.<anonymous> (C:\Program Files\nodejs\node_modules\npm\node_modules\request\request.js:1067:10)
+42 verbose stack     at emitOne (events.js:101:20)
+42 verbose stack     at Request.emit (events.js:188:7)
+42 verbose stack     at IncomingMessage.<anonymous> (C:\Program Files\nodejs\node_modules\npm\node_modules\request\request.js:988:12)
+43 verbose statusCode 403
+44 verbose pkgid chevronjs
+45 verbose cwd C:\xampp\htdocs\chevronjs
+46 error Windows_NT 10.0.10586
+47 error argv "C:\\Program Files\\nodejs\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "publish"
+48 error node v6.3.1
+49 error npm  v3.10.3
+50 error code E403
+51 error "You cannot publish over the previously published version 3.6.2." : chevronjs
+52 error If you need help, you may report this error at:
+52 error     <https://github.com/npm/npm/issues>
+53 verbose exit [ 1, true ]
