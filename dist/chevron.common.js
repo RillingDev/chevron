@@ -51,18 +51,28 @@ function extend (type, fn) {
     return _this;
 }
 
-let _each = function (arr, fn) {
-        for (let i = 0, l = arr.length; i < l; i++) {
-            fn(arr[i], i);
-        }
-    };
-let _eachObject = function (object, fn) {
+/**
+ * Misc Utility functions
+ */
+let _each = function(arr, fn) {
+    for (let i = 0, l = arr.length; i < l; i++) {
+        fn(arr[i], i);
+    }
+};
+/**
+ * Iterate fn over object
+ * @private
+ * @param Object values
+ * @param Function iterate fn
+ * @return void
+ */
+/*_eachObject = function (object, fn) {
         let keys = Object.keys(object);
 
         _each(keys, (key, i) => {
             fn(object[key], key, i);
         });
-    };
+};*/
 
 /**
  * Collects dependencies and initializes service
@@ -72,15 +82,20 @@ let _eachObject = function (object, fn) {
  * @param Object list of dependencies
  * @return Object service
  */
-function initialize (_this, service, list) {
+function initialize(_this, service, list) {
     let bundle = [];
 
     if (!service.init) {
-        //Collect dependencies for this service
-        _eachObject(list, (item, key) => {
-            if (service.deps.includes(key)) {
-                bundle.push(item);
+        _each(service.deps, item => {
+            let dep = list[item];
+
+            if (dep) {
+                bundle.push(dep);
             }
+        });
+
+        bundle = bundle.map(item => {
+            return item.fn;
         });
 
         //Init service
@@ -137,7 +152,7 @@ function prepare (_this, service) {
         //run this over every dependency to add it to the dependencyList
         dependency => {
             //make sure if dependency is initialized, then add
-            list[dependency.name] = initialize(_this, dependency, list).fn;
+            list[dependency.name] = initialize(_this, dependency, list);
         },
         //error if dependency is missing
         name => {

@@ -54,18 +54,27 @@ var Chevron = function () {
         return _this;
     }
 
+    /**
+     * Misc Utility functions
+     */
     var _each = function _each(arr, fn) {
         for (var i = 0, l = arr.length; i < l; i++) {
             fn(arr[i], i);
         }
     };
-    var _eachObject = function _eachObject(object, fn) {
-        var keys = Object.keys(object);
-
-        _each(keys, function (key, i) {
-            fn(object[key], key, i);
-        });
-    };
+    /**
+     * Iterate fn over object
+     * @private
+     * @param Object values
+     * @param Function iterate fn
+     * @return void
+     */
+    /*_eachObject = function (object, fn) {
+            let keys = Object.keys(object);
+              _each(keys, (key, i) => {
+                fn(object[key], key, i);
+            });
+    };*/
 
     /**
      * Collects dependencies and initializes service
@@ -79,11 +88,16 @@ var Chevron = function () {
         var bundle = [];
 
         if (!service.init) {
-            //Collect dependencies for this service
-            _eachObject(list, function (item, key) {
-                if (service.deps.indexOf(key) !== -1) {
-                    bundle.push(item);
+            _each(service.deps, function (item) {
+                var dep = list[item];
+
+                if (dep) {
+                    bundle.push(dep);
                 }
+            });
+
+            bundle = bundle.map(function (item) {
+                return item.fn;
             });
 
             //Init service
@@ -138,7 +152,7 @@ var Chevron = function () {
         //run this over every dependency to add it to the dependencyList
         function (dependency) {
             //make sure if dependency is initialized, then add
-            list[dependency.name] = initialize(_this, dependency, list).fn;
+            list[dependency.name] = initialize(_this, dependency, list);
         },
         //error if dependency is missing
         function (name) {

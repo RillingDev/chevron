@@ -1,25 +1,38 @@
 "use strict";
 
-let cv = new Chevron();
+//https://github.com/FelixRilling/chevronjs
+//Create new Chevron Instance
+let cv = new Chevron("demoChevron");
 
-cv.service("myService1", [], function () {
-    console.log("myService1 started");
-    return 4;
+/**
+ * Components can be arranged in any order you like
+ */
+cv.service("writeHelloWorld", ["writeln", "strings"], function(writeLn, strings) {
+    const helloWorld = "<h1>" + strings.foo + " " + strings.bar + "<h1>";
+    writeLn(helloWorld);
 });
 
-cv.service("myService2", ["myService1", "myFactory1"], function (myService1, myFactory1, foo) {
-    console.log("myService2 started");
-    console.log(arguments);
-    return foo + " + " + myFactory1.bar + " + " + myService1();
+cv.factory("strings", [], function() {
+    this.foo = "Hello";
+    this.bar = "World";
 });
 
-cv.factory("myFactory1", ["myService1"], function (myService1) {
-    console.log("myFactory1 started");
-    console.log(arguments);
-    //this.foo = foo + " + " + myService1();
-    this.bar = 24 + " lorem";
-    //this.foobar = foo + bar + myService1();
+//@TODO fix dep order
+cv.service("writeln", ["ifCanWrite", "constants"], function(ifCanWrite, constants, str) {
+    ifCanWrite(function() {
+        constants.doc.writeln(str);
+    });
 });
 
-let myService2 = cv.access("myService2");
-console.log(myService2(21));
+cv.factory("constants", [], function() {
+    this.doc = window.document;
+});
+
+cv.service("ifCanWrite", ["constants"], function(constants, fn) {
+    if (typeof constants.doc.writeln !== "undefined") {
+        fn();
+    }
+});
+
+let writeHelloWorld = cv.access("writeHelloWorld");
+writeHelloWorld();

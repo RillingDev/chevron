@@ -1,7 +1,7 @@
 "use strict";
 
 import {
-    _eachObject
+    _each
 } from "../util";
 
 /**
@@ -12,15 +12,20 @@ import {
  * @param Object list of dependencies
  * @return Object service
  */
-export default function (_this, service, list) {
+export default function(_this, service, list) {
     let bundle = [];
 
     if (!service.init) {
-        //Collect dependencies for this service
-        _eachObject(list, (item, key) => {
-            if (service.deps.includes(key)) {
-                bundle.push(item);
+        _each(service.deps, item => {
+            let dep = list[item];
+
+            if (dep) {
+                bundle.push(dep);
             }
+        });
+
+        bundle = bundle.map(item => {
+            return item.fn;
         });
 
         //Init service

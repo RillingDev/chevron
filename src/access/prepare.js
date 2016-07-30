@@ -25,7 +25,7 @@ export default function (_this, service) {
         //run this over every dependency to add it to the dependencyList
         dependency => {
             //make sure if dependency is initialized, then add
-            list[dependency.name] = initialize(_this, dependency, list).fn;
+            list[dependency.name] = initialize(_this, dependency, list);
         },
         //error if dependency is missing
         name => {
