@@ -79,14 +79,12 @@ var Chevron = function () {
                 var dep = list[item];
 
                 if (dep) {
-                    bundle.push(dep);
+                    bundle.push(dep.fn);
                 }
             });
 
             //Init service
-            service = _this.tl[service.type](service, bundle.map(function (item) {
-                return item.fn;
-            }));
+            service = _this.tl[service.type](service, bundle);
             service.init = true;
         }
 

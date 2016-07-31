@@ -76,14 +76,12 @@ function initialize(_this, service, list) {
             let dep = list[item];
 
             if (dep) {
-                bundle.push(dep);
+                bundle.push(dep.fn);
             }
         });
 
         //Init service
-        service = _this.tl[service.type](service, bundle.map(item => {
-            return item.fn;
-        }));
+        service = _this.tl[service.type](service, bundle);
         service.init = true;
     }
 
