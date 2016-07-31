@@ -1,9 +1,7 @@
 "use strict";
 
 import {
-    _more,
-    _service,
-    _error
+    _more
 } from "../constants";
 
 /**
@@ -14,12 +12,12 @@ import {
  * @param Function content of the service
  * @return Chevron instance
  */
-export default function (type, name, deps, fn) {
+export default function(type, name, deps, fn) {
     let _this = this;
 
     if (_this.chev[name]) {
         //throw error if a service with this name already exists
-        throw _this.id + _error + type + _more + _service + " '" + name + "' already defined";
+        throw _this.id + _more + name + " already exists";
     } else {
         //Add the service to container
         _this.chev[name] = {

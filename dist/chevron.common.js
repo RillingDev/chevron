@@ -14,12 +14,12 @@ const _isUndefined = " is undefined";
  * @param Function content of the service
  * @return Chevron instance
  */
-function provider (type, name, deps, fn) {
+function provider(type, name, deps, fn) {
     let _this = this;
 
     if (_this.chev[name]) {
         //throw error if a service with this name already exists
-        throw _this.id + _error + type + _more + _service + " '" + name + "' already defined";
+        throw _this.id + _more + name + " already exists";
     } else {
         //Add the service to container
         _this.chev[name] = {
@@ -59,20 +59,6 @@ let _each = function(arr, fn) {
         fn(arr[i], i);
     }
 };
-/**
- * Iterate fn over object
- * @private
- * @param Object values
- * @param Function iterate fn
- * @return void
- */
-/*_eachObject = function (object, fn) {
-        let keys = Object.keys(object);
-
-        _each(keys, (key, i) => {
-            fn(object[key], key, i);
-        });
-};*/
 
 /**
  * Collects dependencies and initializes service
@@ -114,21 +100,22 @@ function initialize(_this, service, list) {
  * @return void
  */
 //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
-function r(_this, dependencyList, fn, error) {
-    _each(dependencyList, name => {
-        let service = _this.chev[name];
+function r(_this, service, fn) {
+    //loop trough deps
+    _each(service.deps, name => {
+        let dependency = _this.chev[name];
 
-        if (service) {
+        if (dependency) {
             //recurse if service has dependencies too
-            if (service.deps.length > 0) {
+            if (dependency.deps.length > 0) {
                 //recurse
-                r(_this, service.deps, fn, error);
+                r(_this, dependency, fn);
             }
             //run fn
-            fn(service);
+            fn(dependency);
         } else {
             //if not found error with name
-            error(name);
+            throw _this.id + _error + service.name + _more + "dependency " + name + _isUndefined;
         }
     });
 }
@@ -146,15 +133,11 @@ function prepare (_this, service) {
     //Recurse trough service deps
     r(
         _this,
-        service.deps,
+        service,
         //run this over every dependency to add it to the dependencyList
         dependency => {
             //make sure if dependency is initialized, then add
             list[dependency.name] = initialize(_this, dependency, list);
-        },
-        //error if dependency is missing
-        name => {
-            throw _this.id + _error + service.name + _more + "dependency " + name + _isUndefined;
         }
     );
 

@@ -16,17 +16,3 @@ let _each = function(arr, fn) {
         fn(arr[i], i);
     }
 };
-/**
- * Iterate fn over object
- * @private
- * @param Object values
- * @param Function iterate fn
- * @return void
- */
-/*_eachObject = function (object, fn) {
-        let keys = Object.keys(object);
-
-        _each(keys, (key, i) => {
-            fn(object[key], key, i);
-        });
-};*/
