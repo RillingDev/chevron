@@ -98,7 +98,6 @@
      * @param Object context
      * @param Array dependencyList to iterate
      * @param Function to run over each dependency
-     * @param Function to call on error
      * @return void
      */
     //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
@@ -108,11 +107,8 @@
             let dependency = _this.chev[name];
 
             if (dependency) {
-                //recurse if service has dependencies too
-                if (dependency.deps.length > 0) {
-                    //recurse
-                    r(_this, dependency, fn);
-                }
+                //recurse over deps
+                r(_this, dependency, fn);
                 //run fn
                 fn(dependency);
             } else {
