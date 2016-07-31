@@ -22,7 +22,7 @@ var Chevron = function () {
 
         if (_this.chev[name]) {
             //throw error if a service with this name already exists
-            throw _this.id + _error + type + _more + _service + " '" + name + "' already defined";
+            throw _this.id + _more + name + " already exists";
         } else {
             //Add the service to container
             _this.chev[name] = {
@@ -62,19 +62,6 @@ var Chevron = function () {
             fn(arr[i], i);
         }
     };
-    /**
-     * Iterate fn over object
-     * @private
-     * @param Object values
-     * @param Function iterate fn
-     * @return void
-     */
-    /*_eachObject = function (object, fn) {
-            let keys = Object.keys(object);
-              _each(keys, (key, i) => {
-                fn(object[key], key, i);
-            });
-    };*/
 
     /**
      * Collects dependencies and initializes service
@@ -92,14 +79,12 @@ var Chevron = function () {
                 var dep = list[item];
 
                 if (dep) {
-                    bundle.push(dep);
+                    bundle.push(dep.fn);
                 }
             });
 
             //Init service
-            service = _this.tl[service.type](service, bundle.map(function (item) {
-                return item.fn;
-            }));
+            service = _this.tl[service.type](service, bundle);
             service.init = true;
         }
 
@@ -112,25 +97,22 @@ var Chevron = function () {
      * @param Object context
      * @param Array dependencyList to iterate
      * @param Function to run over each dependency
-     * @param Function to call on error
      * @return void
      */
     //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
-    function r(_this, dependencyList, fn, error) {
-        _each(dependencyList, function (name) {
-            var service = _this.chev[name];
+    function r(_this, service, fn) {
+        //loop trough deps
+        _each(service.deps, function (name) {
+            var dependency = _this.chev[name];
 
-            if (service) {
-                //recurse if service has dependencies too
-                if (service.deps.length > 0) {
-                    //recurse
-                    r(_this, service.deps, fn, error);
-                }
+            if (dependency) {
+                //recurse over deps
+                r(_this, dependency, fn);
                 //run fn
-                fn(service);
+                fn(dependency);
             } else {
                 //if not found error with name
-                error(name);
+                throw _this.id + _error + service.name + _more + "dependency " + name + _isUndefined;
             }
         });
     }
@@ -146,15 +128,11 @@ var Chevron = function () {
         var list = {};
 
         //Recurse trough service deps
-        r(_this, service.deps,
+        r(_this, service,
         //run this over every dependency to add it to the dependencyList
         function (dependency) {
             //make sure if dependency is initialized, then add
             list[dependency.name] = initialize(_this, dependency, list);
-        },
-        //error if dependency is missing
-        function (name) {
-            throw _this.id + _error + service.name + _more + "dependency " + name + _isUndefined;
         });
 
         return initialize(_this, service, list);

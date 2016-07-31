@@ -66,18 +66,10 @@ module.exports = function (grunt) {
             dist: {
                 options: {
                     patterns: [
-                        {
+                        /*{
                             match: /_each/g,
                             replacement: "e"
-                        }, {
-                            match: /_eachObject/g,
-                            replacement: "o"
-                        },
-                        /*
-                        {
-                            match: /""\+/g,
-                            replacement: ""
-                         },*/
+                        }*/
                     ]
                 },
                 files: {
