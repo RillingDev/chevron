@@ -1,9 +1,5 @@
 "use strict";
 
-import {
-    _each
-} from "../util";
-
 /**
  * Collects dependencies and initializes service
  * @private
@@ -12,11 +8,11 @@ import {
  * @param Object list of dependencies
  * @return Object service
  */
-export default function(_this, service, list) {
+export default function (_this, service, list) {
     let bundle = [];
 
     if (!service.init) {
-        _each(service.deps, item => {
+        service.deps.forEach(item => {
             let dep = list[item];
 
             if (dep) {

@@ -52,15 +52,6 @@ define('chevron', function () { 'use strict';
     }
 
     /**
-     * Misc Utility functions
-     */
-    let _each = function(arr, fn) {
-        for (let i = 0, l = arr.length; i < l; i++) {
-            fn(arr[i], i);
-        }
-    };
-
-    /**
      * Collects dependencies and initializes service
      * @private
      * @param Object context
@@ -68,11 +59,11 @@ define('chevron', function () { 'use strict';
      * @param Object list of dependencies
      * @return Object service
      */
-    function initialize(_this, service, list) {
+    function initialize (_this, service, list) {
         let bundle = [];
 
         if (!service.init) {
-            _each(service.deps, item => {
+            service.deps.forEach(item => {
                 let dep = list[item];
 
                 if (dep) {
@@ -99,11 +90,11 @@ define('chevron', function () { 'use strict';
     //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
     function r(_this, service, fn) {
         //loop trough deps
-        _each(service.deps, name => {
+        service.deps.forEach(name => {
             let dependency = _this.chev[name];
 
             if (dependency) {
-                //recurse over deps
+                //recurse over sub-deps
                 r(_this, dependency, fn);
                 //run fn
                 fn(dependency);

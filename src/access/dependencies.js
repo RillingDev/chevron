@@ -1,9 +1,6 @@
 "use strict";
 
 import {
-    _each
-} from "../util";
-import {
     _more,
     _error,
     _isUndefined
@@ -20,7 +17,7 @@ import {
 //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
 export default function r(_this, service, fn) {
     //loop trough deps
-    _each(service.deps, name => {
+    service.deps.forEach(name => {
         let dependency = _this.chev[name];
 
         if (dependency) {
