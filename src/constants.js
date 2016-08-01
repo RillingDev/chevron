@@ -5,9 +5,7 @@
  */
 export const
     _more = ": ",
+    _error = "error in ",
     _factory = "factory",
     _service = "service",
-    _isUndefined = " is undefined",
-    _errorStart = function (_this) {
-        return _this.id + _more + "error in ";
-    };
+    _isUndefined = " is undefined";

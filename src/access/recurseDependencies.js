@@ -1,8 +1,8 @@
 "use strict";
 
 import {
-    _errorStart,
     _more,
+    _error,
     _isUndefined
 } from "../constants";
 
@@ -27,7 +27,7 @@ export default function recurseDependencies(_this, service, fn) {
             fn(dependency);
         } else {
             //if not found error with name
-            throw _errorStart(_this) + service.name + _more + "dependency " + name + _isUndefined;
+            throw _this.id + _more + _error + service.name + _more + "dependency " + name + _isUndefined;
         }
     });
 }

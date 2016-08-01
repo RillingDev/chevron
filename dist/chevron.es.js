@@ -1,10 +1,8 @@
 const _more = ": ";
+const _error = "error in ";
 const _factory = "factory";
 const _service = "service";
 const _isUndefined = " is undefined";
-const _errorStart = function (_this) {
-        return _this.id + _more + "error in ";
-    };
 
 /**
  * Checks if service exist, else add it
@@ -15,12 +13,12 @@ const _errorStart = function (_this) {
  * @param {Function} fn Content of the service
  * @return {Object} `this`
  */
-function provider(type, name, deps, fn) {
+function provider (type, name, deps, fn) {
     const _this = this;
 
     if (_this.chev[name]) {
         //throw error if a service with this name already exists
-        throw _errorStart(_this) + name + " already exists";
+        throw _this.id + _more + _error + name + " already exists";
     } else {
         //Add the service to container
         _this.chev[name] = {
@@ -58,7 +56,7 @@ function extend (type, transformer) {
 
 /**
  * Collects dependencies and initializes service
- * 
+ *
  * @private
  * @param {Object} _this The context
  * @param {Object} service The service to check
@@ -66,9 +64,9 @@ function extend (type, transformer) {
  * @return {Object} `service`
  */
 function initialize (_this, service, list) {
-    let bundle = [];
-
     if (!service.init) {
+        let bundle = [];
+
         service.deps.forEach(item => {
             const dependency = list[item];
 
@@ -106,7 +104,7 @@ function recurseDependencies(_this, service, fn) {
             fn(dependency);
         } else {
             //if not found error with name
-            throw _errorStart(_this) + service.name + _more + "dependency " + name + _isUndefined;
+            throw _this.id + _more + _error + service.name + _more + "dependency " + name + _isUndefined;
         }
     });
 }
@@ -152,7 +150,7 @@ function access (name) {
         return prepare(_this, accessedService).fn;
     } else {
         //throw error if service does not exist
-        throw _errorStart(_this) + name + _more + name + _isUndefined;
+        throw false;
     }
 }
 

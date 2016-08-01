@@ -2,7 +2,7 @@
 
 /**
  * Collects dependencies and initializes service
- * 
+ *
  * @private
  * @param {Object} _this The context
  * @param {Object} service The service to check
@@ -10,9 +10,9 @@
  * @return {Object} `service`
  */
 export default function (_this, service, list) {
-    let bundle = [];
-
     if (!service.init) {
+        let bundle = [];
+
         service.deps.forEach(item => {
             const dependency = list[item];
 

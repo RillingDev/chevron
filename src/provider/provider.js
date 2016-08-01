@@ -1,7 +1,8 @@
 "use strict";
 
 import {
-    _errorStart
+    _more,
+    _error
 } from "../constants";
 
 /**
@@ -13,12 +14,12 @@ import {
  * @param {Function} fn Content of the service
  * @return {Object} `this`
  */
-export default function(type, name, deps, fn) {
+export default function (type, name, deps, fn) {
     const _this = this;
 
     if (_this.chev[name]) {
         //throw error if a service with this name already exists
-        throw _errorStart(_this) + name + " already exists";
+        throw _this.id + _more + _error + name + " already exists";
     } else {
         //Add the service to container
         _this.chev[name] = {

@@ -4,12 +4,10 @@ var Chevron = function () {
     'use strict';
 
     var _more = ": ";
+    var _error = "error in ";
     var _factory = "factory";
     var _service = "service";
     var _isUndefined = " is undefined";
-    var _errorStart = function _errorStart(_this) {
-        return _this.id + _more + "error in ";
-    };
 
     /**
      * Checks if service exist, else add it
@@ -25,7 +23,7 @@ var Chevron = function () {
 
         if (_this.chev[name]) {
             //throw error if a service with this name already exists
-            throw _errorStart(_this) + name + " already exists";
+            throw _this.id + _more + _error + name + " already exists";
         } else {
             //Add the service to container
             _this.chev[name] = {
@@ -63,7 +61,7 @@ var Chevron = function () {
 
     /**
      * Collects dependencies and initializes service
-     * 
+     *
      * @private
      * @param {Object} _this The context
      * @param {Object} service The service to check
@@ -71,20 +69,22 @@ var Chevron = function () {
      * @return {Object} `service`
      */
     function initialize(_this, service, list) {
-        var bundle = [];
-
         if (!service.init) {
-            service.deps.forEach(function (item) {
-                var dependency = list[item];
+            (function () {
+                var bundle = [];
 
-                if (dependency) {
-                    bundle.push(dependency.fn);
-                }
-            });
+                service.deps.forEach(function (item) {
+                    var dependency = list[item];
 
-            //Init service
-            service = _this.tl[service.type](service, bundle);
-            service.init = true;
+                    if (dependency) {
+                        bundle.push(dependency.fn);
+                    }
+                });
+
+                //Init service
+                service = _this.tl[service.type](service, bundle);
+                service.init = true;
+            })();
         }
 
         return service;
@@ -111,7 +111,7 @@ var Chevron = function () {
                 fn(dependency);
             } else {
                 //if not found error with name
-                throw _errorStart(_this) + service.name + _more + "dependency " + name + _isUndefined;
+                throw _this.id + _more + _error + service.name + _more + "dependency " + name + _isUndefined;
             }
         });
     }
@@ -154,7 +154,7 @@ var Chevron = function () {
             return prepare(_this, accessedService).fn;
         } else {
             //throw error if service does not exist
-            throw _errorStart(_this) + name + _more + name + _isUndefined;
+            throw false;
         }
     }
 
