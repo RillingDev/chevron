@@ -3,7 +3,7 @@
 import prepare from "./prepare";
 import {
     _more,
-    _error,
+    _errorStart,
     _isUndefined
 } from "../constants";
 
@@ -13,7 +13,7 @@ import {
  * @return Function with dependencies bound
  */
 export default function (name) {
-    let _this = this,
+    const _this = this,
         accessedService = _this.chev[name];
 
     //Check if accessed service is registered
@@ -22,6 +22,6 @@ export default function (name) {
         return prepare(_this, accessedService).fn;
     } else {
         //throw error if service does not exist
-        throw _this.id + _error + name + _more + name + _isUndefined;
+        throw _errorStart(_this) + name + _more + name + _isUndefined;
     }
 }

@@ -13,12 +13,16 @@ import initFactory from "./provider/factory";
  * @param String to id the container
  */
 let Chevron = function (id) {
-    let _this = this;
+    const _this = this;
 
+    //Instance Id
     _this.id = id || "cv";
-    _this.chev = {};
+    //Instance transformerList
     _this.tl = {};
+    //Instance container
+    _this.chev = {};
 
+    //Init default types
     initService(_this);
     initFactory(_this);
 };
@@ -34,7 +38,5 @@ Chevron.prototype = {
     //Add new service type
     extend
 };
-
-
 
 export default Chevron;

@@ -3,8 +3,10 @@ define('chevron', function () { 'use strict';
     const _more = ": ";
     const _factory = "factory";
     const _service = "service";
-    const _error = _more + "error in ";
     const _isUndefined = " is undefined";
+    const _errorStart = function (_this) {
+            return _this.id + _more + "error in ";
+        };
 
     /**
      * Checks if service exist, else add it
@@ -15,11 +17,11 @@ define('chevron', function () { 'use strict';
      * @return Chevron instance
      */
     function provider(type, name, deps, fn) {
-        let _this = this;
+        const _this = this;
 
         if (_this.chev[name]) {
             //throw error if a service with this name already exists
-            throw _this.id + _more + name + " already exists";
+            throw _errorStart(_this) + name + " already exists";
         } else {
             //Add the service to container
             _this.chev[name] = {
@@ -40,13 +42,13 @@ define('chevron', function () { 'use strict';
      * @param fn to call when the service is constructed
      * @return Chevron instance
      */
-    function extend (type, fn) {
-        let _this = this;
+    function extend (type, transformer) {
+        const _this = this;
 
-        _this.tl[type] = fn;
+        _this.tl[type] = transformer;
         _this[type] = function (name, deps, fn) {
             return _this.provider(type, name, deps, fn);
-        }
+        };
 
         return _this;
     }
@@ -64,10 +66,10 @@ define('chevron', function () { 'use strict';
 
         if (!service.init) {
             service.deps.forEach(item => {
-                let dep = list[item];
+                const dependency = list[item];
 
-                if (dep) {
-                    bundle.push(dep.fn);
+                if (dependency) {
+                    bundle.push(dependency.fn);
                 }
             });
 
@@ -91,7 +93,7 @@ define('chevron', function () { 'use strict';
     function r(_this, service, fn) {
         //loop trough deps
         service.deps.forEach(name => {
-            let dependency = _this.chev[name];
+            const dependency = _this.chev[name];
 
             if (dependency) {
                 //recurse over sub-deps
@@ -100,7 +102,7 @@ define('chevron', function () { 'use strict';
                 fn(dependency);
             } else {
                 //if not found error with name
-                throw _this.id + _error + service.name + _more + "dependency " + name + _isUndefined;
+                throw _errorStart(_this) + service.name + _more + "dependency " + name + _isUndefined;
             }
         });
     }
@@ -113,7 +115,7 @@ define('chevron', function () { 'use strict';
      * @return bound service
      */
     function prepare (_this, service) {
-        let list = {};
+        const list = {};
 
         //Recurse trough service deps
         r(
@@ -135,7 +137,7 @@ define('chevron', function () { 'use strict';
      * @return Function with dependencies bound
      */
     function access (name) {
-        let _this = this,
+        const _this = this,
             accessedService = _this.chev[name];
 
         //Check if accessed service is registered
@@ -144,7 +146,7 @@ define('chevron', function () { 'use strict';
             return prepare(_this, accessedService).fn;
         } else {
             //throw error if service does not exist
-            throw _this.id + _error + name + _more + name + _isUndefined;
+            throw _errorStart(_this) + name + _more + name + _isUndefined;
         }
     }
 
@@ -155,10 +157,9 @@ define('chevron', function () { 'use strict';
      * @return void
      */
     function initService (_this) {
-
         _this.extend(_service, function (service, bundle) {
             //Construct service
-            let serviceFn = service.fn;
+            const serviceFn = service.fn;
 
             service.fn = function () {
                 //Chevron service function wrapper
@@ -193,12 +194,16 @@ define('chevron', function () { 'use strict';
      * @param String to id the container
      */
     let Chevron = function (id) {
-        let _this = this;
+        const _this = this;
 
+        //Instance Id
         _this.id = id || "cv";
-        _this.chev = {};
+        //Instance transformerList
         _this.tl = {};
+        //Instance container
+        _this.chev = {};
 
+        //Init default types
         initService(_this);
         initFactory(_this);
     };

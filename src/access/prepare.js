@@ -12,7 +12,7 @@ import recurseDependencies from "./dependencies";
  * @return bound service
  */
 export default function (_this, service) {
-    let list = {};
+    const list = {};
 
     //Recurse trough service deps
     recurseDependencies(

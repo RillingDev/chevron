@@ -13,10 +13,10 @@ export default function (_this, service, list) {
 
     if (!service.init) {
         service.deps.forEach(item => {
-            let dep = list[item];
+            const dependency = list[item];
 
-            if (dep) {
-                bundle.push(dep.fn);
+            if (dependency) {
+                bundle.push(dependency.fn);
             }
         });
 

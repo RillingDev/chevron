@@ -6,8 +6,10 @@ var Chevron = function () {
     var _more = ": ";
     var _factory = "factory";
     var _service = "service";
-    var _error = _more + "error in ";
     var _isUndefined = " is undefined";
+    var _errorStart = function _errorStart(_this) {
+        return _this.id + _more + "error in ";
+    };
 
     /**
      * Checks if service exist, else add it
@@ -22,7 +24,7 @@ var Chevron = function () {
 
         if (_this.chev[name]) {
             //throw error if a service with this name already exists
-            throw _this.id + _more + name + " already exists";
+            throw _errorStart(_this) + name + " already exists";
         } else {
             //Add the service to container
             _this.chev[name] = {
@@ -43,10 +45,10 @@ var Chevron = function () {
      * @param fn to call when the service is constructed
      * @return Chevron instance
      */
-    function extend(type, fn) {
+    function extend(type, transformer) {
         var _this = this;
 
-        _this.tl[type] = fn;
+        _this.tl[type] = transformer;
         _this[type] = function (name, deps, fn) {
             return _this.provider(type, name, deps, fn);
         };
@@ -67,10 +69,10 @@ var Chevron = function () {
 
         if (!service.init) {
             service.deps.forEach(function (item) {
-                var dep = list[item];
+                var dependency = list[item];
 
-                if (dep) {
-                    bundle.push(dep.fn);
+                if (dependency) {
+                    bundle.push(dependency.fn);
                 }
             });
 
@@ -103,7 +105,7 @@ var Chevron = function () {
                 fn(dependency);
             } else {
                 //if not found error with name
-                throw _this.id + _error + service.name + _more + "dependency " + name + _isUndefined;
+                throw _errorStart(_this) + service.name + _more + "dependency " + name + _isUndefined;
             }
         });
     }
@@ -144,7 +146,7 @@ var Chevron = function () {
             return prepare(_this, accessedService).fn;
         } else {
             //throw error if service does not exist
-            throw _this.id + _error + name + _more + name + _isUndefined;
+            throw _errorStart(_this) + name + _more + name + _isUndefined;
         }
     }
 
@@ -155,7 +157,6 @@ var Chevron = function () {
      * @return void
      */
     function initService(_this) {
-
         _this.extend(_service, function (service, bundle) {
             //Construct service
             var serviceFn = service.fn;
@@ -195,10 +196,14 @@ var Chevron = function () {
     var Chevron = function Chevron(id) {
         var _this = this;
 
+        //Instance Id
         _this.id = id || "cv";
-        _this.chev = {};
+        //Instance transformerList
         _this.tl = {};
+        //Instance container
+        _this.chev = {};
 
+        //Init default types
         initService(_this);
         initFactory(_this);
     };

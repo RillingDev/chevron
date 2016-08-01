@@ -11,10 +11,9 @@ import {
  * @return void
  */
 export default function (_this) {
-
     _this.extend(_service, function (service, bundle) {
         //Construct service
-        let serviceFn = service.fn;
+        const serviceFn = service.fn;
 
         service.fn = function () {
             //Chevron service function wrapper
