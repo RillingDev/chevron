@@ -9,8 +9,9 @@ import {
 
 /**
  * Access service with dependencies bound
- * @param String name of the service
- * @return Function with dependencies bound
+ *
+ * @param {String} name The Name of the service
+ * @return {*} Content of the service
  */
 export default function (name) {
     const _this = this,

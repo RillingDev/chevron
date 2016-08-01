@@ -10,11 +10,12 @@ define('chevron', function () { 'use strict';
 
     /**
      * Checks if service exist, else add it
-     * @param String name to register/id the service
-     * @param Array list of dependencies
-     * @param String type of service (service/factory)
-     * @param Function content of the service
-     * @return Chevron instance
+     *
+     * @param {String} type The type of the service (service/factory)
+     * @param {String} name The name to register/id the service
+     * @param {Array} deps List of dependencies
+     * @param {Function} fn Content of the service
+     * @return {Object} `this`
      */
     function provider(type, name, deps, fn) {
         const _this = this;
@@ -38,14 +39,18 @@ define('chevron', function () { 'use strict';
 
     /**
      * Adds a new service type
-     * @param String name of the type
-     * @param fn to call when the service is constructed
-     * @return Chevron instance
+     *
+     * @param {String} type The name of the type
+     * @param {Function} transformer Call this when the service is constructed
+     * @return {Object} `this`
      */
     function extend (type, transformer) {
         const _this = this;
 
+        //Add transformer to typeList
         _this.tl[type] = transformer;
+
+        //Add customType method to container
         _this[type] = function (name, deps, fn) {
             return _this.provider(type, name, deps, fn);
         };
@@ -55,11 +60,12 @@ define('chevron', function () { 'use strict';
 
     /**
      * Collects dependencies and initializes service
+     * 
      * @private
-     * @param Object context
-     * @param Object service to check
-     * @param Object list of dependencies
-     * @return Object service
+     * @param {Object} _this The context
+     * @param {Object} service The service to check
+     * @param {Object} list The list of dependencies
+     * @return {Object} `service`
      */
     function initialize (_this, service, list) {
         let bundle = [];
@@ -82,22 +88,22 @@ define('chevron', function () { 'use strict';
     }
 
     /**
-     * Loops/recurses over list of dependencies
+     * Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
+     *
      * @private
-     * @param Object context
-     * @param Array dependencyList to iterate
-     * @param Function to run over each dependency
+     * @param {Object} _this The context
+     * @param {Array} service The dependencyList to iterate
+     * @param {Function} fn The function run over each dependency
      * @return void
      */
-    //Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
-    function r(_this, service, fn) {
+    function recurseDependencies(_this, service, fn) {
         //loop trough deps
         service.deps.forEach(name => {
             const dependency = _this.chev[name];
 
             if (dependency) {
                 //recurse over sub-deps
-                r(_this, dependency, fn);
+                recurseDependencies(_this, dependency, fn);
                 //run fn
                 fn(dependency);
             } else {
@@ -109,16 +115,17 @@ define('chevron', function () { 'use strict';
 
     /**
      * Check if every dependency is available
+     *
      * @private
-     * @param Object context
-     * @param Object service to check
-     * @return bound service
+     * @param {Object} _this The context
+     * @param {Object} service The service to prepare
+     * @return {Object} Initialized service
      */
     function prepare (_this, service) {
         const list = {};
 
         //Recurse trough service deps
-        r(
+        recurseDependencies(
             _this,
             service,
             //run this over every dependency to add it to the dependencyList
@@ -133,8 +140,9 @@ define('chevron', function () { 'use strict';
 
     /**
      * Access service with dependencies bound
-     * @param String name of the service
-     * @return Function with dependencies bound
+     *
+     * @param {String} name The Name of the service
+     * @return {*} Content of the service
      */
     function access (name) {
         const _this = this,
@@ -152,8 +160,9 @@ define('chevron', function () { 'use strict';
 
     /**
      * Creates typeList entry for service
+     *
      * @private
-     * @param Object context
+     * @param {Object} _this The context
      * @return void
      */
     function initService (_this) {
@@ -172,15 +181,18 @@ define('chevron', function () { 'use strict';
 
     /**
      * Creates typeList entry for factory
+     *
      * @private
-     * @param Object context
+     * @param {Object} _this The context
      * @return void
      */
     function initFactory (_this) {
         _this.extend(_factory, function (service, bundle) {
             //Construct factory
-            //first value gets ignored by calling new like this, so we need to fill it
+
+            //First value gets ignored by calling new like this, so we need to fill it
             bundle.unshift(null);
+
             //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
             service.fn = new(Function.prototype.bind.apply(service.fn, bundle));
 
@@ -190,8 +202,10 @@ define('chevron', function () { 'use strict';
 
     /**
      * Basic Chevron Constructor
+     *
      * @constructor
-     * @param String to id the container
+     * @param {String} id To identify the instance
+     * @returns {Object} Returns Chevron instance
      */
     let Chevron = function (id) {
         const _this = this;

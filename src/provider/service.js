@@ -6,8 +6,9 @@ import {
 
 /**
  * Creates typeList entry for service
+ *
  * @private
- * @param Object context
+ * @param {Object} _this The context
  * @return void
  */
 export default function (_this) {

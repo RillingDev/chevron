@@ -1,17 +1,17 @@
 "use strict";
 
 import {
-    _errorStart,
-    _more
+    _errorStart
 } from "../constants";
 
 /**
  * Checks if service exist, else add it
- * @param String name to register/id the service
- * @param Array list of dependencies
- * @param String type of service (service/factory)
- * @param Function content of the service
- * @return Chevron instance
+ *
+ * @param {String} type The type of the service (service/factory)
+ * @param {String} name The name to register/id the service
+ * @param {Array} deps List of dependencies
+ * @param {Function} fn Content of the service
+ * @return {Object} `this`
  */
 export default function(type, name, deps, fn) {
     const _this = this;

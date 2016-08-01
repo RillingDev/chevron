@@ -2,11 +2,12 @@
 
 /**
  * Collects dependencies and initializes service
+ * 
  * @private
- * @param Object context
- * @param Object service to check
- * @param Object list of dependencies
- * @return Object service
+ * @param {Object} _this The context
+ * @param {Object} service The service to check
+ * @param {Object} list The list of dependencies
+ * @return {Object} `service`
  */
 export default function (_this, service, list) {
     let bundle = [];

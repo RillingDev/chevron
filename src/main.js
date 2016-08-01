@@ -9,8 +9,10 @@ import initFactory from "./provider/factory";
 
 /**
  * Basic Chevron Constructor
+ *
  * @constructor
- * @param String to id the container
+ * @param {String} id To identify the instance
+ * @returns {Object} Returns Chevron instance
  */
 let Chevron = function (id) {
     const _this = this;

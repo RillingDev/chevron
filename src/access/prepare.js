@@ -1,15 +1,16 @@
 "use strict";
 
 import initialize from "./initialize";
-import recurseDependencies from "./dependencies";
+import recurseDependencies from "./recurseDependencies";
 
 
 /**
  * Check if every dependency is available
+ *
  * @private
- * @param Object context
- * @param Object service to check
- * @return bound service
+ * @param {Object} _this The context
+ * @param {Object} service The service to prepare
+ * @return {Object} Initialized service
  */
 export default function (_this, service) {
     const list = {};
