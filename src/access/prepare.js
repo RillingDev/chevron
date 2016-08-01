@@ -3,7 +3,6 @@
 import initialize from "./initialize";
 import recurseDependencies from "./recurseDependencies";
 
-
 /**
  * Check if every dependency is available
  *

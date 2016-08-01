@@ -1,11 +1,11 @@
 "use strict";
 
-import provider from "./provider/provider";
-import extend from "./provider/extend";
+import provider from "./api/provider";
+import extend from "./api/extend";
 import access from "./access/access";
 
-import initService from "./provider/service";
-import initFactory from "./provider/factory";
+import initService from "./types/service";
+import initFactory from "./types/factory";
 
 /**
  * Basic Chevron Constructor

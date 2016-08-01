@@ -125,17 +125,16 @@ You can create your own service type/constructor by using the Chevron API. To de
 ```javascript
 //Chevron.prototype.extend(type,fn);
 cv.extend("myType",function(service,bundle){
-    //your init code here
+    /**
+     * your init code here
+     */
+
+    //return service
     return service;
 });
 ```
 
-In the example above we created a new servicetype, "myType", with the given function as constructor. You'll probably want to start by using a modified version of the default Service or Factory constructor which you can find in the tl property as well.
-
-```javascript
-//get the default service constructor as string
-cv.tf.service.toString();
-```
+In the example above we created a new servicetype, "myType", with the given function as constructor. You'll probably want to start by using a modified version of the default Service or Factory constructor which you can find in the in ["src/types"](https://github.com/FelixRilling/chevronjs/tree/master/src/types) folder of the repo.
 
 After you created the new type, you can use it by calling the type as a method
 
