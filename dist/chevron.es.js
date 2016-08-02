@@ -13,7 +13,7 @@ const _isUndefined = " is undefined";
  * @param {Function} fn Content of the service
  * @return {Object} `this`
  */
-function provider (type, name, deps, fn) {
+function provider(type, name, deps, fn) {
     const _this = this;
 
     if (_this.chev[name]) {
@@ -40,14 +40,14 @@ function provider (type, name, deps, fn) {
  * @param {Function} transformer Call this when the service is constructed
  * @return {Object} `this`
  */
-function extend (type, transformer) {
+function extend(type, transformer) {
     const _this = this;
 
     //Add transformer to typeList
     _this.tl[type] = transformer;
 
     //Add customType method to container
-    _this[type] = function (name, deps, fn) {
+    _this[type] = function(name, deps, fn) {
         return _this.provider(type, name, deps, fn);
     };
 
@@ -63,7 +63,7 @@ function extend (type, transformer) {
  * @param {Object} list The list of dependencies
  * @return {Object} `service`
  */
-function initialize (_this, service, list) {
+function initialize(_this, service, list) {
     if (!service.init) {
         let bundle = [];
 
@@ -117,7 +117,7 @@ function recurseDependencies(_this, service, fn) {
  * @param {Object} service The service to prepare
  * @return {Object} Initialized service
  */
-function prepare (_this, service) {
+function prepare(_this, service) {
     const list = {};
 
     //Recurse trough service deps
@@ -140,7 +140,7 @@ function prepare (_this, service) {
  * @param {String} name The Name of the service
  * @return {*} Content of the service
  */
-function access (name) {
+function access(name) {
     const _this = this,
         accessedService = _this.chev[name];
 
@@ -161,12 +161,12 @@ function access (name) {
  * @param {Object} _this The context
  * @return void
  */
-function initService (_this) {
-    _this.extend(_service, function (service, bundle) {
+function initService(_this) {
+    _this.extend(_service, function(service, bundle) {
         //Construct service
         const serviceFn = service.fn;
 
-        service.fn = function () {
+        service.fn = function() {
             //Chevron service function wrapper
             return serviceFn.apply(null, bundle.concat(Array.from(arguments)));
         };
@@ -182,8 +182,8 @@ function initService (_this) {
  * @param {Object} _this The context
  * @return void
  */
-function initFactory (_this) {
-    _this.extend(_factory, function (service, bundle) {
+function initFactory(_this) {
+    _this.extend(_factory, function(service, bundle) {
         //Construct factory
 
         //First value gets ignored by calling new like this, so we need to fill it
@@ -203,7 +203,7 @@ function initFactory (_this) {
  * @param {String} id To identify the instance
  * @returns {Object} Returns Chevron instance
  */
-let Chevron = function (id) {
+let Chevron = function(id) {
     const _this = this;
 
     //Instance Id

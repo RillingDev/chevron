@@ -14,7 +14,7 @@ import {
  * @param {Function} fn Content of the service
  * @return {Object} `this`
  */
-export default function (type, name, deps, fn) {
+export default function(type, name, deps, fn) {
     const _this = this;
 
     if (_this.chev[name]) {

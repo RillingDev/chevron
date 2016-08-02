@@ -9,7 +9,7 @@
  * @param {Object} list The list of dependencies
  * @return {Object} `service`
  */
-export default function (_this, service, list) {
+export default function(_this, service, list) {
     if (!service.init) {
         let bundle = [];
 

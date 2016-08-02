@@ -11,7 +11,7 @@ import recurseDependencies from "./recurseDependencies";
  * @param {Object} service The service to prepare
  * @return {Object} Initialized service
  */
-export default function (_this, service) {
+export default function(_this, service) {
     const list = {};
 
     //Recurse trough service deps

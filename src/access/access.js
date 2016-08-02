@@ -8,7 +8,7 @@ import prepare from "./prepare";
  * @param {String} name The Name of the service
  * @return {*} Content of the service
  */
-export default function (name) {
+export default function(name) {
     const _this = this,
         accessedService = _this.chev[name];
 
