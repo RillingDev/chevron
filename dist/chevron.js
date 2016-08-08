@@ -30,11 +30,9 @@ var Chevron = function () {
             _this.chev[name] = {
                 type: type,
                 cf: cf,
-
                 name: name,
                 deps: deps,
                 fn: fn,
-
                 init: false
             };
 
@@ -74,6 +72,7 @@ var Chevron = function () {
             (function () {
                 var bundle = [];
 
+                //Collect an ordered Array of dependencies
                 service.deps.forEach(function (item) {
                     var dependency = list[item];
 
@@ -83,6 +82,7 @@ var Chevron = function () {
                 });
 
                 //Init service
+                //Call Constructor fn with service/deps
                 service = service.cf(service, bundle);
                 service.init = true;
             })();

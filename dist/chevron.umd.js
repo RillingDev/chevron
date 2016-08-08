@@ -31,11 +31,9 @@
             _this.chev[name] = {
                 type,
                 cf,
-
                 name,
                 deps,
                 fn,
-
                 init: false
             };
 
@@ -74,6 +72,7 @@
         if (!service.init) {
             let bundle = [];
 
+            //Collect an ordered Array of dependencies
             service.deps.forEach(item => {
                 const dependency = list[item];
 
@@ -83,6 +82,7 @@
             });
 
             //Init service
+            //Call Constructor fn with service/deps
             service = service.cf(service, bundle);
             service.init = true;
         }

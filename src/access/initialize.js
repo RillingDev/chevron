@@ -13,6 +13,7 @@ export default function (_this, service, list) {
     if (!service.init) {
         let bundle = [];
 
+        //Collect an ordered Array of dependencies
         service.deps.forEach(item => {
             const dependency = list[item];
 
@@ -22,6 +23,7 @@ export default function (_this, service, list) {
         });
 
         //Init service
+        //Call Constructor fn with service/deps
         service = service.cf(service, bundle);
         service.init = true;
     }

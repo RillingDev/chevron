@@ -26,11 +26,9 @@ export default function (type, cf, name, deps, fn) {
         _this.chev[name] = {
             type,
             cf,
-
             name,
             deps,
             fn,
-
             init: false
         };
 
