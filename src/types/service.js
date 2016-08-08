@@ -5,7 +5,7 @@ import {
 } from "../constants";
 
 /**
- * Creates typeList entry for service
+ * Creates method entry for service
  *
  * @private
  * @param {Object} _this The context

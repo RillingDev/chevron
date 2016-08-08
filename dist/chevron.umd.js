@@ -14,12 +14,13 @@
      * Checks if service exist, else add it
      *
      * @param {String} type The type of the service (service/factory)
+     * @param {Function} cf The Constructor function of the service
      * @param {String} name The name to register/id the service
      * @param {Array} deps List of dependencies
      * @param {Function} fn Content of the service
      * @returns {Object} Returns `this`
      */
-    function provider(type, name, deps, fn) {
+    function provider (type, cf, name, deps, fn) {
         const _this = this;
 
         if (_this.chev[name]) {
@@ -29,9 +30,12 @@
             //Add the service to container
             _this.chev[name] = {
                 type,
+                cf,
+
                 name,
                 deps,
                 fn,
+
                 init: false
             };
 
@@ -43,18 +47,15 @@
      * Adds a new service type
      *
      * @param {String} type The name of the type
-     * @param {Function} transformer Call this when the service is constructed
+     * @param {Function} cf Constructor function to init the service with
      * @returns {Object} Returns `this`
      */
-    function extend(type, transformer) {
+    function extend (type, cf) {
         const _this = this;
 
-        //Add transformer to typeList
-        _this.tl[type] = transformer;
-
         //Add customType method to container
-        _this[type] = function(name, deps, fn) {
-            return _this.provider(type, name, deps, fn);
+        _this[type] = function (name, deps, fn) {
+            return _this.provider(type, cf, name, deps, fn);
         };
 
         return _this;
@@ -69,7 +70,7 @@
      * @param {Object} list The list of dependencies
      * @returns {Object} Returns `service`
      */
-    function initialize(_this, service, list) {
+    function initialize (_this, service, list) {
         if (!service.init) {
             let bundle = [];
 
@@ -82,7 +83,7 @@
             });
 
             //Init service
-            service = _this.tl[service.type](service, bundle);
+            service = service.cf(service, bundle);
             service.init = true;
         }
 
@@ -158,7 +159,7 @@
     }
 
     /**
-     * Creates typeList entry for service
+     * Creates method entry for service
      *
      * @private
      * @param {Object} _this The context
@@ -179,7 +180,7 @@
     }
 
     /**
-     * Creates typeList entry for factory
+     * Creates method entry for factory
      *
      * @private
      * @param {Object} _this The context
@@ -211,8 +212,6 @@
 
         //Instance Id
         _this.id = id || "cv";
-        //Instance transformerList
-        _this.tl = {};
         //Instance container
         _this.chev = {};
 

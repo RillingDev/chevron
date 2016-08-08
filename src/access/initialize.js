@@ -9,7 +9,7 @@
  * @param {Object} list The list of dependencies
  * @returns {Object} Returns `service`
  */
-export default function(_this, service, list) {
+export default function (_this, service, list) {
     if (!service.init) {
         let bundle = [];
 
@@ -22,7 +22,7 @@ export default function(_this, service, list) {
         });
 
         //Init service
-        service = _this.tl[service.type](service, bundle);
+        service = service.cf(service, bundle);
         service.init = true;
     }
 

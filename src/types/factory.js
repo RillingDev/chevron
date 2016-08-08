@@ -5,7 +5,7 @@ import {
 } from "../constants";
 
 /**
- * Creates typeList entry for factory
+ * Creates method entry for factory
  *
  * @private
  * @param {Object} _this The context

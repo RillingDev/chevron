@@ -19,8 +19,6 @@ let Chevron = function(id) {
 
     //Instance Id
     _this.id = id || "cv";
-    //Instance transformerList
-    _this.tl = {};
     //Instance container
     _this.chev = {};
 

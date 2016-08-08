@@ -10,12 +10,13 @@ define('chevron', function () { 'use strict';
      * Checks if service exist, else add it
      *
      * @param {String} type The type of the service (service/factory)
+     * @param {Function} cf The Constructor function of the service
      * @param {String} name The name to register/id the service
      * @param {Array} deps List of dependencies
      * @param {Function} fn Content of the service
      * @returns {Object} Returns `this`
      */
-    function provider(type, name, deps, fn) {
+    function provider (type, cf, name, deps, fn) {
         const _this = this;
 
         if (_this.chev[name]) {
@@ -25,9 +26,12 @@ define('chevron', function () { 'use strict';
             //Add the service to container
             _this.chev[name] = {
                 type,
+                cf,
+
                 name,
                 deps,
                 fn,
+
                 init: false
             };
 
@@ -39,18 +43,15 @@ define('chevron', function () { 'use strict';
      * Adds a new service type
      *
      * @param {String} type The name of the type
-     * @param {Function} transformer Call this when the service is constructed
+     * @param {Function} cf Constructor function to init the service with
      * @returns {Object} Returns `this`
      */
-    function extend(type, transformer) {
+    function extend (type, cf) {
         const _this = this;
 
-        //Add transformer to typeList
-        _this.tl[type] = transformer;
-
         //Add customType method to container
-        _this[type] = function(name, deps, fn) {
-            return _this.provider(type, name, deps, fn);
+        _this[type] = function (name, deps, fn) {
+            return _this.provider(type, cf, name, deps, fn);
         };
 
         return _this;
@@ -65,7 +66,7 @@ define('chevron', function () { 'use strict';
      * @param {Object} list The list of dependencies
      * @returns {Object} Returns `service`
      */
-    function initialize(_this, service, list) {
+    function initialize (_this, service, list) {
         if (!service.init) {
             let bundle = [];
 
@@ -78,7 +79,7 @@ define('chevron', function () { 'use strict';
             });
 
             //Init service
-            service = _this.tl[service.type](service, bundle);
+            service = service.cf(service, bundle);
             service.init = true;
         }
 
@@ -154,7 +155,7 @@ define('chevron', function () { 'use strict';
     }
 
     /**
-     * Creates typeList entry for service
+     * Creates method entry for service
      *
      * @private
      * @param {Object} _this The context
@@ -175,7 +176,7 @@ define('chevron', function () { 'use strict';
     }
 
     /**
-     * Creates typeList entry for factory
+     * Creates method entry for factory
      *
      * @private
      * @param {Object} _this The context
@@ -207,8 +208,6 @@ define('chevron', function () { 'use strict';
 
         //Instance Id
         _this.id = id || "cv";
-        //Instance transformerList
-        _this.tl = {};
         //Instance container
         _this.chev = {};
 
