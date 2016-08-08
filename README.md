@@ -39,6 +39,8 @@ The Chevron Constructor can be called with options:
 var namedCv = new Chevron("myCustomContainer");
 ```
 
+When a named Chevron Instance throws an error, you can identify which Container errored by the id.
+
 ### Services
 
 Services are the bread and butter of Chevron, being the most common way to declare a new module function.
@@ -78,9 +80,7 @@ bar(2);//returns 24
 
 ### Factories
 
-Factories are similar to services but are treated as **Constructors** instead of classic functions.
-
-_Note: since v3.5.x the arguments parameter falls away; when upgrading from < v3.4.x simply remove the last parameter and you should be fine_
+Factories are very similar to services but are treated as **Constructors** instead of classic functions.
 
 ```javascript
 //Chevron.prototype.factory(name,[dependencies],Constructor);
@@ -124,15 +124,15 @@ Services and Factories can be accessed in two ways:
 cv.access("foo"); //returns the service or factory with dependencies injected into arguments
 ```
 
-or, if you just want the service without dependencies from the chevron container(called chev):
+or, if you just want the service without dependencies from the Chevron container(called chev):
 
 ```javascript
 cv.chev.foo; //returns the service as Chevron object.
 ```
 
-# API
+## API
 
-You can create your own service type/constructor by using the Chevron API. To declare a new type, simpy add a new entry to the "tl"(which stands for "typeList") property of your Chevron instance by calling the extend method.
+You can create your own service type/constructor by using the Chevron API. To declare a new type, simpy call the "extend" method with a name and Constructor for your new type:
 
 ```javascript
 //Chevron.prototype.extend(type,fn);
@@ -141,7 +141,7 @@ cv.extend("myType",function(service,bundle){
      * your init code here
      */
 
-    //return service
+    //returns the service
     return service;
 });
 ```
@@ -157,7 +157,7 @@ cv.myType("foo",[],function(){
 })
 ```
 
-After that you can simply call "access" again to access your new service type.
+Then you can simply call "access" again to access your new service type.
 
 ```javascript
 cv.access("foo");
