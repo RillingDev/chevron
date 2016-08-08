@@ -9,7 +9,7 @@ import recurseDependencies from "./recurseDependencies";
  * @private
  * @param {Object} _this The context
  * @param {Object} service The service to prepare
- * @return {Object} Initialized service
+ * @returns {Object} Initialized service
  */
 export default function(_this, service) {
     const list = {};

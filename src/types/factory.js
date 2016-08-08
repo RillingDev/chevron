@@ -5,11 +5,11 @@ import {
 } from "../constants";
 
 /**
- * Creates typeList entry for factory
+ * Creates method entry for factory
  *
  * @private
  * @param {Object} _this The context
- * @return void
+ * @returns Returns void
  */
 export default function(_this) {
     _this.extend(_factory, function(service, bundle) {

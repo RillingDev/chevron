@@ -9,12 +9,13 @@ import {
  * Checks if service exist, else add it
  *
  * @param {String} type The type of the service (service/factory)
+ * @param {Function} cf The Constructor function of the service
  * @param {String} name The name to register/id the service
  * @param {Array} deps List of dependencies
  * @param {Function} fn Content of the service
- * @return {Object} `this`
+ * @returns {Object} Returns `this`
  */
-export default function(type, name, deps, fn) {
+export default function (type, cf, name, deps, fn) {
     const _this = this;
 
     if (_this.chev[name]) {
@@ -24,6 +25,7 @@ export default function(type, name, deps, fn) {
         //Add the service to container
         _this.chev[name] = {
             type,
+            cf,
             name,
             deps,
             fn,

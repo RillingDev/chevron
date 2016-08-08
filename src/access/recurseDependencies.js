@@ -13,7 +13,7 @@ import {
  * @param {Object} _this The context
  * @param {Array} service The dependencyList to iterate
  * @param {Function} fn The function run over each dependency
- * @return void
+ * @returns void
  */
 export default function recurseDependencies(_this, service, fn) {
     //loop trough deps

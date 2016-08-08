@@ -5,11 +5,11 @@ import {
 } from "../constants";
 
 /**
- * Creates typeList entry for service
+ * Creates method entry for service
  *
  * @private
  * @param {Object} _this The context
- * @return void
+ * @returns Returns void
  */
 export default function(_this) {
     _this.extend(_service, function(service, bundle) {

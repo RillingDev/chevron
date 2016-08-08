@@ -7,12 +7,13 @@
  * @param {Object} _this The context
  * @param {Object} service The service to check
  * @param {Object} list The list of dependencies
- * @return {Object} `service`
+ * @returns {Object} Returns `service`
  */
-export default function(_this, service, list) {
+export default function (_this, service, list) {
     if (!service.init) {
         let bundle = [];
 
+        //Collect an ordered Array of dependencies
         service.deps.forEach(item => {
             const dependency = list[item];
 
@@ -22,7 +23,8 @@ export default function(_this, service, list) {
         });
 
         //Init service
-        service = _this.tl[service.type](service, bundle);
+        //Call Constructor fn with service/deps
+        service = service.cf(service, bundle);
         service.init = true;
     }
 

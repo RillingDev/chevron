@@ -6,7 +6,7 @@ import prepare from "./prepare";
  * Access service with dependencies bound
  *
  * @param {String} name The Name of the service
- * @return {*} Content of the service
+ * @returns {*} Returns Content of the service
  */
 export default function(name) {
     const _this = this,
@@ -16,8 +16,5 @@ export default function(name) {
     if (accessedService) {
         //Call prepare with bound context
         return prepare(_this, accessedService).fn;
-    } else {
-        //throw error if service does not exist
-        throw false;
     }
 }
