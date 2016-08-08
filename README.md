@@ -2,7 +2,7 @@
 
 # Chevron.js
 
-> An extremely small JavaScript service/dependency library
+> An super tiny JavaScript service library
 
 ## Introduction
 
@@ -43,7 +43,7 @@ When a named Chevron Instance throws an error, you can identify which Container 
 
 ### Services
 
-Services are the bread and butter of Chevron, being the most common way to declare a new module function.
+Services are the bread and butter of Chevron, being the most common way to declare a new module function. To create a new service, call the `service` method with a name, dependencies and service content.
 
 ```javascript
 
@@ -80,7 +80,7 @@ bar(2);//returns 24
 
 ### Factories
 
-Factories are very similar to services but are treated as **Constructors** instead of classic functions.
+Factories are very similar to services but are treated as **Constructors** instead of classic functions; Factories have the same syntax as services and can be called with the `factory` method. Pretty much all the time when talking about services in this documentation this includes factories too.
 
 ```javascript
 //Chevron.prototype.factory(name,[dependencies],Constructor);
@@ -115,9 +115,9 @@ var bar = cv.access("bar");
 bar(3);//returns 21
 ```
 
-### Accessing services
+### Accessing Services
 
-Services and Factories can be accessed in two ways:
+Services and Factories can be accessed in two ways. In most cases, you will want to get your service trough Chevrons `access` which returns the bundled and constructed service
 
 ```javascript
 //Chevron.prototype.access(name)
@@ -132,7 +132,7 @@ cv.chev.foo; //returns the service as Chevron object.
 
 ## API
 
-You can create your own service type/constructor by using the Chevron API. To declare a new type, simpy call the "extend" method with a name and Constructor for your new type:
+You can create your own service type/constructor by using the Chevron API. To declare a new type, simpy call the `extend` method with a name and Constructor for your new type:
 
 ```javascript
 //Chevron.prototype.extend(type,fn);
@@ -157,13 +157,13 @@ cv.myType("foo",[],function(){
 })
 ```
 
-Then you can simply call "access" again to access your new service type.
+Then you can simply call `access` again to access your new service type.
 
 ```javascript
 cv.access("foo");
 ```
 
-# FAQ
+## FAQ
 
 - **Q: Why are there no middleware/decorators?**
 - A: I actually had middleware/decorators in version 1.x, but I removed them because I felt like the lib should focus more on being tiny than on more features
