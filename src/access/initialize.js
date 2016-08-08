@@ -7,7 +7,7 @@
  * @param {Object} _this The context
  * @param {Object} service The service to check
  * @param {Object} list The list of dependencies
- * @return {Object} `service`
+ * @returns {Object} Returns `service`
  */
 export default function(_this, service, list) {
     if (!service.init) {

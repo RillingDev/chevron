@@ -12,7 +12,7 @@ import {
  * @param {String} name The name to register/id the service
  * @param {Array} deps List of dependencies
  * @param {Function} fn Content of the service
- * @return {Object} `this`
+ * @returns {Object} Returns `this`
  */
 export default function(type, name, deps, fn) {
     const _this = this;

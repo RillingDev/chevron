@@ -9,7 +9,7 @@ import {
  *
  * @private
  * @param {Object} _this The context
- * @return void
+ * @returns Returns void
  */
 export default function(_this) {
     _this.extend(_service, function(service, bundle) {

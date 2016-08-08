@@ -5,7 +5,7 @@
  *
  * @param {String} type The name of the type
  * @param {Function} transformer Call this when the service is constructed
- * @return {Object} `this`
+ * @returns {Object} Returns `this`
  */
 export default function(type, transformer) {
     const _this = this;

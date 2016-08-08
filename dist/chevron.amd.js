@@ -13,7 +13,7 @@ define('chevron', function () { 'use strict';
      * @param {String} name The name to register/id the service
      * @param {Array} deps List of dependencies
      * @param {Function} fn Content of the service
-     * @return {Object} `this`
+     * @returns {Object} Returns `this`
      */
     function provider(type, name, deps, fn) {
         const _this = this;
@@ -40,7 +40,7 @@ define('chevron', function () { 'use strict';
      *
      * @param {String} type The name of the type
      * @param {Function} transformer Call this when the service is constructed
-     * @return {Object} `this`
+     * @returns {Object} Returns `this`
      */
     function extend(type, transformer) {
         const _this = this;
@@ -63,7 +63,7 @@ define('chevron', function () { 'use strict';
      * @param {Object} _this The context
      * @param {Object} service The service to check
      * @param {Object} list The list of dependencies
-     * @return {Object} `service`
+     * @returns {Object} Returns `service`
      */
     function initialize(_this, service, list) {
         if (!service.init) {
@@ -92,7 +92,7 @@ define('chevron', function () { 'use strict';
      * @param {Object} _this The context
      * @param {Array} service The dependencyList to iterate
      * @param {Function} fn The function run over each dependency
-     * @return void
+     * @returns void
      */
     function recurseDependencies(_this, service, fn) {
         //loop trough deps
@@ -117,7 +117,7 @@ define('chevron', function () { 'use strict';
      * @private
      * @param {Object} _this The context
      * @param {Object} service The service to prepare
-     * @return {Object} Initialized service
+     * @returns {Object} Initialized service
      */
     function prepare(_this, service) {
         const list = {};
@@ -140,7 +140,7 @@ define('chevron', function () { 'use strict';
      * Access service with dependencies bound
      *
      * @param {String} name The Name of the service
-     * @return {*} Content of the service
+     * @returns {*} Returns Content of the service
      */
     function access(name) {
         const _this = this,
@@ -150,9 +150,6 @@ define('chevron', function () { 'use strict';
         if (accessedService) {
             //Call prepare with bound context
             return prepare(_this, accessedService).fn;
-        } else {
-            //throw error if service does not exist
-            throw false;
         }
     }
 
@@ -161,7 +158,7 @@ define('chevron', function () { 'use strict';
      *
      * @private
      * @param {Object} _this The context
-     * @return void
+     * @returns Returns void
      */
     function initService(_this) {
         _this.extend(_service, function(service, bundle) {
@@ -182,7 +179,7 @@ define('chevron', function () { 'use strict';
      *
      * @private
      * @param {Object} _this The context
-     * @return void
+     * @returns Returns void
      */
     function initFactory(_this) {
         _this.extend(_factory, function(service, bundle) {
