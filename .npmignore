@@ -1,0 +1,6 @@
+node_modules/
+.git/
+.tmp/
+.DS_Store
+chevron-logo.png
+chevron-logo.psd
