@@ -34,7 +34,6 @@ module.exports = function(grunt) {
                     "dist/chevron.min.js": "dist/chevron.js",
                 },
                 options: {
-                   sourceMap: true,
                     compress: {
                         drop_console: true,
                         screw_ie8: true
