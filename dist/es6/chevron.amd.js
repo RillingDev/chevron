@@ -1,8 +1,4 @@
-(function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define('chevron', factory) :
-    (global.Chevron = factory());
-}(this, function () { 'use strict';
+define('chevron', function () { 'use strict';
 
     const _more = ": ";
     const _error = "error in ";
@@ -70,7 +66,7 @@
      */
     function initialize (_this, service, list) {
         if (!service.init) {
-            let bundle = [];
+            const bundle = [];
 
             //Collect an ordered Array of dependencies
             service.deps.forEach(item => {
@@ -234,4 +230,4 @@
 
     return Chevron;
 
-}));
+});

@@ -17,19 +17,16 @@ export default {
         commonjs({})
     ],
     targets: [{
-        dest: "dist/chevron.amd.js",
+        dest: "dist/es6/chevron.amd.js",
         format: "amd"
     }, {
-        dest: "dist/chevron.common.js",
+        dest: "dist/es6/chevron.common.js",
         format: "cjs"
     }, {
-        dest: "dist/chevron.umd.js",
-        format: "umd"
-    }, {
-        dest: "dist/chevron.es.js",
+        dest: "dist/es6/chevron.es.js",
         format: "es"
     }, {
-        dest: "dist/chevron.js",
+        dest: "dist/es6/chevron.js",
         format: "iife"
     }]
 };

@@ -30,7 +30,6 @@
         "grunt-contrib-uglify": "^2.0.0",
         "grunt-contrib-watch": "^1.0.0",
         "grunt-exec": "^1.0.0",
-        "grunt-replace": "^1.0.1",
         "jit-grunt": "^0.10.0",
         "rollup": "^0.34.1",
         "rollup-plugin-commonjs": "^3.3.1",

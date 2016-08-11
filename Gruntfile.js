@@ -31,10 +31,10 @@ module.exports = function(grunt) {
         uglify: {
             main: {
                 files: {
-                    "dist/chevron.min.js": "dist/chevron.min.js",
-                    //"dist/chevron-lite-es5.min.js": ".tmp/chevron-lite-es5.js"
+                    "dist/chevron.min.js": "dist/chevron.js",
                 },
                 options: {
+                   sourceMap: true,
                     compress: {
                         drop_console: true,
                         screw_ie8: true
@@ -51,8 +51,10 @@ module.exports = function(grunt) {
             },
             dist: {
                 files: {
-                    "dist/chevron.js": "dist/chevron.js",
-                    //".tmp/chevron-lite-es5.js": ".tmp/chevron-lite.js"
+                    "dist/chevron.amd.js": "dist/es6/chevron.amd.js",
+                    "dist/chevron.common.js": "dist/es6/chevron.common.js",
+                    "dist/chevron.es.js": "dist/es6/chevron.es.js",
+                    "dist/chevron.js": "dist/es6/chevron.js"
                 }
             }
         },
@@ -60,22 +62,6 @@ module.exports = function(grunt) {
         exec: {
             rollup: {
                 cmd: "rollup -c"
-            }
-        },
-        replace: {
-            dist: {
-                options: {
-                    patterns: [
-                        /*{
-                            match: /_each/g,
-                            replacement: "e"
-                        }*/
-                    ]
-                },
-                files: {
-                    "dist/chevron.min.js": "dist/chevron.js"
-                },
-
             }
         }
 
@@ -89,7 +75,6 @@ module.exports = function(grunt) {
     grunt.registerTask("dist", [
         "build",
         "babel",
-        "replace",
         "uglify",
     ]);
 

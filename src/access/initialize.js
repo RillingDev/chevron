@@ -11,7 +11,7 @@
  */
 export default function (_this, service, list) {
     if (!service.init) {
-        let bundle = [];
+        const bundle = [];
 
         //Collect an ordered Array of dependencies
         service.deps.forEach(item => {

@@ -1,7 +1,6 @@
 {
   "ecmaVersion": 6,
-  "libs": [
-  ],
+  "libs": [],
   "plugins": {
     "complete_strings": {},
     "lint": {},
