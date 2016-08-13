@@ -1,5 +1,8 @@
 define('chevron', function () { 'use strict';
 
+    /**
+     * Store strings to avoid duplicate strings
+     */
     const _more = ": ";
     const _error = "error in ";
     const _factory = "factory";

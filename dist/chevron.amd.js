@@ -3,6 +3,10 @@
 define('chevron', function () {
     'use strict';
 
+    /**
+     * Store strings to avoid duplicate strings
+     */
+
     var _more = ": ";
     var _error = "error in ";
     var _factory = "factory";
