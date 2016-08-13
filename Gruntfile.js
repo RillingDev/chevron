@@ -8,7 +8,7 @@ module.exports = function(grunt) {
         watch: {
             js: {
                 files: [
-                    "src/{,*/}*.js"
+                    "src/**/*.js"
                 ],
                 tasks: [
                     "exec"
@@ -21,8 +21,7 @@ module.exports = function(grunt) {
                 files: [{
                     dot: true,
                     src: [
-                        "dist/{,*/}*",
-                        ".tmp/{,*/}*"
+                        "dist/{,*/}*"
                     ]
                 }]
             }
@@ -36,7 +35,9 @@ module.exports = function(grunt) {
                 options: {
                     compress: {
                         drop_console: true,
-                        screw_ie8: true
+                        screw_ie8: true,
+                        //unsafe: true,
+                        //unsafe_comps: true*
                     }
                 }
             }
@@ -46,7 +47,7 @@ module.exports = function(grunt) {
             options: {
                 sourceMap: true,
                 presets: ["es2015"],
-                plugins: ["array-includes"]
+                plugins: []
             },
             dist: {
                 files: {
