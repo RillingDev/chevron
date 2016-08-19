@@ -13,7 +13,6 @@ import {
  */
 export default function(_this) {
     _this.extend(_service, function(service, bundle) {
-        //Construct service
         const serviceFn = service.fn;
 
         service.fn = function() {

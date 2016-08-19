@@ -169,7 +169,6 @@ define('chevron', function () {
      */
     function initService(_this) {
         _this.extend(_service, function (service, bundle) {
-            //Construct service
             var serviceFn = service.fn;
 
             service.fn = function () {
@@ -190,8 +189,6 @@ define('chevron', function () {
      */
     function initFactory(_this) {
         _this.extend(_factory, function (service, bundle) {
-            //Construct factory
-
             //First value gets ignored by calling new like this, so we need to fill it
             bundle.unshift(null);
 

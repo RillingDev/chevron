@@ -164,7 +164,6 @@ function access(name) {
  */
 function initService(_this) {
     _this.extend(_service, function(service, bundle) {
-        //Construct service
         const serviceFn = service.fn;
 
         service.fn = function() {
@@ -185,8 +184,6 @@ function initService(_this) {
  */
 function initFactory(_this) {
     _this.extend(_factory, function(service, bundle) {
-        //Construct factory
-
         //First value gets ignored by calling new like this, so we need to fill it
         bundle.unshift(null);
 
@@ -204,7 +201,7 @@ function initFactory(_this) {
  * @param {String} id To identify the instance
  * @returns {Object} Returns Chevron instance
  */
-let Chevron = function(id) {
+const Chevron = function(id) {
     const _this = this;
 
     //Instance Id
