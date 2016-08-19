@@ -8,7 +8,10 @@
         "url": "git+https://github.com/FelixRilling/chevronjs.git"
     },
     "scripts": {
-        "build": "grunt"
+        "start": "npm run bundle && npm run babel && npm run uglify",
+        "bundle": "rollup -c",
+        "babel": "babel ./dist/es6 --out-dir ./dist",
+        "uglify": "uglifyjs ./dist/chevron.js -o ./dist/chevron.min.js --screw-ie8 --mangle --compress conditionals"
     },
     "keywords": [
         "dependencies",
@@ -22,18 +25,10 @@
     "homepage": "https://github.com/FelixRilling/chevronjs#readme",
     "devDependencies": {
         "babel-core": "^6.0.20",
-        "babel-preset-es2015": "^6.9.0",
-        "grunt": "^1.0.1",
-        "grunt-babel": "^6.0.0",
-        "grunt-contrib-clean": "^1.0.0",
-        "grunt-contrib-uglify": "^2.0.0",
-        "grunt-contrib-watch": "^1.0.0",
-        "grunt-exec": "^1.0.0",
-        "jit-grunt": "^0.10.0",
+        "babel-preset-es2015": "^6.13.0",
         "rollup": "^0.34.1",
         "rollup-plugin-commonjs": "^3.3.1",
-        "rollup-plugin-node-resolve": "^1.7.1",
-        "time-grunt": "^1.4.0",
+        "rollup-plugin-node-resolve": "^2.0.0",
         "uglify-js": "^2.7.0"
     },
     "dependencies": {}

@@ -14,7 +14,7 @@ import initFactory from "./types/factory";
  * @param {String} id To identify the instance
  * @returns {Object} Returns Chevron instance
  */
-let Chevron = function(id) {
+const Chevron = function(id) {
     const _this = this;
 
     //Instance Id

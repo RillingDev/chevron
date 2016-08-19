@@ -13,8 +13,6 @@ import {
  */
 export default function(_this) {
     _this.extend(_factory, function(service, bundle) {
-        //Construct factory
-
         //First value gets ignored by calling new like this, so we need to fill it
         bundle.unshift(null);
 

@@ -1,13 +1,8 @@
 {
-  "ecmaVersion": 6,
-  "libs": [],
-  "plugins": {
-    "complete_strings": {},
-    "lint": {},
-    "modules": {},
-    "es_modules": {},
-    "doc_comment": {
-      "fullDocs": true
+    "ecmaVersion": 6,
+    "libs": [],
+    "plugins": {
+        "complete_strings": {},
+        "es_modules": {}
     }
-  }
 }

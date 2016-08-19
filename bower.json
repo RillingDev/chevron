@@ -14,10 +14,6 @@
     "homepage": "https://github.com/FelixRilling/chevronjs",
     "ignore": [
         "**/.*",
-        "node_modules",
-        "bower_components",
-        "test",
-        "tests",
-        ".tmp"
+        "node_modules"
     ]
 }

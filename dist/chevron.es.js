@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 /**
-     * Store strings to avoid duplicate strings
-     */
+ * Store strings to avoid duplicate strings
+ */
 var _more = ": ";
 var _error = "error in ";
 var _factory = "factory";
@@ -13,15 +13,15 @@ var _service = "service";
 var _isUndefined = " is undefined";
 
 /**
-     * Checks if service exist, else add it
-     *
-     * @param {String} type The type of the service (service/factory)
-     * @param {Function} cf The Constructor function of the service
-     * @param {String} name The name to register/id the service
-     * @param {Array} deps List of dependencies
-     * @param {Function} fn Content of the service
-     * @returns {Object} Returns `this`
-     */
+ * Checks if service exist, else add it
+ *
+ * @param {String} type The type of the service (service/factory)
+ * @param {Function} cf The Constructor function of the service
+ * @param {String} name The name to register/id the service
+ * @param {Array} deps List of dependencies
+ * @param {Function} fn Content of the service
+ * @returns {Object} Returns `this`
+ */
 function provider(type, cf, name, deps, fn) {
     var _this = this;
 
@@ -44,12 +44,12 @@ function provider(type, cf, name, deps, fn) {
 }
 
 /**
-     * Adds a new service type
-     *
-     * @param {String} type The name of the type
-     * @param {Function} cf Constructor function to init the service with
-     * @returns {Object} Returns `this`
-     */
+ * Adds a new service type
+ *
+ * @param {String} type The name of the type
+ * @param {Function} cf Constructor function to init the service with
+ * @returns {Object} Returns `this`
+ */
 function extend(type, cf) {
     var _this = this;
 
@@ -62,14 +62,14 @@ function extend(type, cf) {
 }
 
 /**
-     * Collects dependencies and initializes service
-     *
-     * @private
-     * @param {Object} _this The context
-     * @param {Object} service The service to check
-     * @param {Object} list The list of dependencies
-     * @returns {Object} Returns `service`
-     */
+ * Collects dependencies and initializes service
+ *
+ * @private
+ * @param {Object} _this The context
+ * @param {Object} service The service to check
+ * @param {Object} list The list of dependencies
+ * @returns {Object} Returns `service`
+ */
 function initialize(_this, service, list) {
     if (!service.init) {
         (function () {
@@ -95,14 +95,14 @@ function initialize(_this, service, list) {
 }
 
 /**
-     * Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
-     *
-     * @private
-     * @param {Object} _this The context
-     * @param {Array} service The dependencyList to iterate
-     * @param {Function} fn The function run over each dependency
-     * @returns void
-     */
+ * Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
+ *
+ * @private
+ * @param {Object} _this The context
+ * @param {Array} service The dependencyList to iterate
+ * @param {Function} fn The function run over each dependency
+ * @returns void
+ */
 function recurseDependencies(_this, service, fn) {
     //loop trough deps
     service.deps.forEach(function (name) {
@@ -121,13 +121,13 @@ function recurseDependencies(_this, service, fn) {
 }
 
 /**
-     * Check if every dependency is available
-     *
-     * @private
-     * @param {Object} _this The context
-     * @param {Object} service The service to prepare
-     * @returns {Object} Initialized service
-     */
+ * Check if every dependency is available
+ *
+ * @private
+ * @param {Object} _this The context
+ * @param {Object} service The service to prepare
+ * @returns {Object} Initialized service
+ */
 function prepare(_this, service) {
     var list = {};
 
@@ -143,11 +143,11 @@ function prepare(_this, service) {
 }
 
 /**
-     * Access service with dependencies bound
-     *
-     * @param {String} name The Name of the service
-     * @returns {*} Returns Content of the service
-     */
+ * Access service with dependencies bound
+ *
+ * @param {String} name The Name of the service
+ * @returns {*} Returns Content of the service
+ */
 function access(name) {
     var _this = this,
         accessedService = _this.chev[name];
@@ -160,15 +160,14 @@ function access(name) {
 }
 
 /**
-     * Creates method entry for service
-     *
-     * @private
-     * @param {Object} _this The context
-     * @returns Returns void
-     */
+ * Creates method entry for service
+ *
+ * @private
+ * @param {Object} _this The context
+ * @returns Returns void
+ */
 function initService(_this) {
     _this.extend(_service, function (service, bundle) {
-        //Construct service
         var serviceFn = service.fn;
 
         service.fn = function () {
@@ -181,16 +180,14 @@ function initService(_this) {
 }
 
 /**
-     * Creates method entry for factory
-     *
-     * @private
-     * @param {Object} _this The context
-     * @returns Returns void
-     */
+ * Creates method entry for factory
+ *
+ * @private
+ * @param {Object} _this The context
+ * @returns Returns void
+ */
 function initFactory(_this) {
     _this.extend(_factory, function (service, bundle) {
-        //Construct factory
-
         //First value gets ignored by calling new like this, so we need to fill it
         bundle.unshift(null);
 
@@ -202,12 +199,12 @@ function initFactory(_this) {
 }
 
 /**
-     * Basic Chevron Constructor
-     *
-     * @constructor
-     * @param {String} id To identify the instance
-     * @returns {Object} Returns Chevron instance
-     */
+ * Basic Chevron Constructor
+ *
+ * @constructor
+ * @param {String} id To identify the instance
+ * @returns {Object} Returns Chevron instance
+ */
 var Chevron = function Chevron(id) {
     var _this = this;
 
@@ -234,4 +231,3 @@ Chevron.prototype = {
 };
 
 exports.default = Chevron;
-//# sourceMappingURL=chevron.es.js.map
