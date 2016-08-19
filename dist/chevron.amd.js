@@ -236,4 +236,3 @@ define('chevron', function () {
 
     return Chevron;
 });
-//# sourceMappingURL=chevron.amd.js.map
