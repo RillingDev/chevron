@@ -4,16 +4,6 @@ var Chevron = function () {
     'use strict';
 
     /**
-     * Store strings to avoid duplicate strings
-     */
-
-    var _more = ": ";
-    var _error = "error in ";
-    var _factory = "factory";
-    var _service = "service";
-    var _isUndefined = " is undefined";
-
-    /**
      * Collects dependencies and initializes service
      *
      * @private
@@ -22,6 +12,7 @@ var Chevron = function () {
      * @param {Object} list The list of dependencies
      * @returns {Object} Returns `service`
      */
+
     function initialize(service, list, cf) {
         if (!service.ready) {
             (function () {
@@ -47,6 +38,11 @@ var Chevron = function () {
     }
 
     /**
+     * Store strings to avoid duplicate strings
+     */
+    var _more = ": ";
+
+    /**
      * Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
      *
      * @private
@@ -67,7 +63,7 @@ var Chevron = function () {
                 fn(dependency);
             } else {
                 //if not found error with name
-                throw _this.id + _more + _error + service.name + _more + "dependency " + name + _isUndefined;
+                throw _this.id + _more + "error in " + service.name + _more + "dep " + name + " missing";
             }
         });
     }
@@ -105,8 +101,8 @@ var Chevron = function () {
      * @returns {Object} Returns `this`
      */
     function provider(type, cf, name, deps, fn) {
-        var _this = this,
-            entry = {
+        var _this = this;
+        var entry = {
             type: type,
             name: name,
             deps: deps,
@@ -147,8 +143,7 @@ var Chevron = function () {
      * @returns {*} Returns Content of the service
      */
     function access(name) {
-        var _this = this,
-            accessedService = _this.chev.get(name);
+        var accessedService = this.chev.get(name);
 
         //Check if accessed service is registered
         if (accessedService) {
@@ -164,8 +159,9 @@ var Chevron = function () {
      * @param {Object} _this The context
      * @returns Returns void
      */
-    function initService(_this) {
-        _this.extend(_service, function (service, bundle) {
+    function initService() {
+        this.extend("service", function (service, bundle) {
+            //dereference fn to avoid unwanted recursion
             var serviceFn = service.fn;
 
             service.fn = function () {
@@ -184,8 +180,8 @@ var Chevron = function () {
      * @param {Object} _this The context
      * @returns Returns void
      */
-    function initFactory(_this) {
-        _this.extend(_factory, function (service, bundle) {
+    function initFactory() {
+        this.extend("factory", function (service, bundle) {
             //First value gets ignored by calling 'new' like this, so we need to fill it
             bundle.unshift(0);
 
@@ -212,8 +208,8 @@ var Chevron = function () {
         _this.chev = new Map();
 
         //Init default types
-        initService(_this);
-        initFactory(_this);
+        initService.call(_this);
+        initFactory.call(_this);
     };
 
     /**

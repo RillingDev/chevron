@@ -23,8 +23,8 @@ const Chevron = function(id) {
     _this.chev = new Map();
 
     //Init default types
-    initService(_this);
-    initFactory(_this);
+    initService.call(_this);
+    initFactory.call(_this);
 };
 
 /**

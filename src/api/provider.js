@@ -1,10 +1,12 @@
 "use strict";
 
+import prepare from "../access/prepare";
 import {
     _more,
     _error
 } from "../constants";
-import prepare from "../access/prepare";
+
+
 /**
  * Checks if service exist, else add it
  *
@@ -16,20 +18,19 @@ import prepare from "../access/prepare";
  * @returns {Object} Returns `this`
  */
 export default function (type, cf, name, deps, fn) {
-    const _this = this,
-        entry = {
-            type,
-            name,
-            deps,
-            fn,
-            ready: false,
-            init: function () {
-                return prepare.call(_this, entry, cf);
-            },
-        };
+    const _this = this;
+    const entry = {
+        type,
+        name,
+        deps,
+        fn,
+        ready: false,
+        init: function () {
+            return prepare.call(_this, entry, cf);
+        },
+    };
 
     _this.chev.set(name, entry);
 
     return _this;
-
 }
