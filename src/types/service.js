@@ -4,7 +4,6 @@
  * Creates method entry for service
  *
  * @private
- * @param {Object} _this The context
  * @returns Returns void
  */
 export default function () {

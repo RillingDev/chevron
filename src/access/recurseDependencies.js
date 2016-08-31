@@ -1,8 +1,5 @@
 "use strict";
 
-import {
-    _more
-} from "../constants";
 
 /**
  * Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
@@ -25,7 +22,7 @@ export default function recurseDependencies(_this, service, fn) {
             fn(dependency);
         } else {
             //if not found error with name
-            throw _this.id + _more + "error in " + service.name + _more + "dep " + name + " missing";
+            throw _this.id + ": error in " + service.name + ": dep " + name + " missing";
         }
     });
 }

@@ -10,7 +10,7 @@
  * @returns {Object} Returns `service`
  */
 export default function (service, list, cf) {
-    if (!service.ready) {
+    if (!service.rdy) {
         const bundle = [];
 
         //Collect an ordered Array of dependencies
@@ -25,7 +25,7 @@ export default function (service, list, cf) {
         //Init service
         //Call Constructor fn with service/deps
         service = cf(service, bundle);
-        service.ready = true;
+        service.rdy = true;
     }
 
     return service;

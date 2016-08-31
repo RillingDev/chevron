@@ -7,8 +7,8 @@ import recurseDependencies from "./recurseDependencies";
  * Check if every dependency is available
  *
  * @private
- * @param {Object} _this The context
  * @param {Object} service The service to prepare
+ * @param {Function} cf The constructor function
  * @returns {Object} Initialized service
  */
 export default function (service, cf) {

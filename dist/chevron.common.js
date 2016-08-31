@@ -11,7 +11,7 @@
  */
 
 function initialize(service, list, cf) {
-    if (!service.ready) {
+    if (!service.rdy) {
         (function () {
             var bundle = [];
 
@@ -27,17 +27,12 @@ function initialize(service, list, cf) {
             //Init service
             //Call Constructor fn with service/deps
             service = cf(service, bundle);
-            service.ready = true;
+            service.rdy = true;
         })();
     }
 
     return service;
 }
-
-/**
- * Store strings to avoid duplicate strings
- */
-var _more = ": ";
 
 /**
  * Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
@@ -60,7 +55,7 @@ function recurseDependencies(_this, service, fn) {
             fn(dependency);
         } else {
             //if not found error with name
-            throw _this.id + _more + "error in " + service.name + _more + "dep " + name + " missing";
+            throw _this.id + ": error in " + service.name + ": dep " + name + " missing";
         }
     });
 }
@@ -69,8 +64,8 @@ function recurseDependencies(_this, service, fn) {
  * Check if every dependency is available
  *
  * @private
- * @param {Object} _this The context
  * @param {Object} service The service to prepare
+ * @param {Function} cf The constructor function
  * @returns {Object} Initialized service
  */
 function prepare(service, cf) {
@@ -104,7 +99,7 @@ function provider(type, cf, name, deps, fn) {
         name: name,
         deps: deps,
         fn: fn,
-        ready: false,
+        rdy: false,
         init: function init() {
             return prepare.call(_this, entry, cf);
         }
@@ -153,7 +148,6 @@ function access(name) {
  * Creates method entry for service
  *
  * @private
- * @param {Object} _this The context
  * @returns Returns void
  */
 function initService() {
@@ -174,7 +168,6 @@ function initService() {
  * Creates method entry for factory
  *
  * @private
- * @param {Object} _this The context
  * @returns Returns void
  */
 function initFactory() {

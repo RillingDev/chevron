@@ -24,7 +24,7 @@ export default function (type, cf, name, deps, fn) {
         name,
         deps,
         fn,
-        ready: false,
+        rdy: false,
         init: function () {
             return prepare.call(_this, entry, cf);
         },
