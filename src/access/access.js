@@ -8,9 +8,9 @@ import prepare from "./prepare";
  * @param {String} name The Name of the service
  * @returns {*} Returns Content of the service
  */
-export default function(name) {
+export default function (name) {
     const _this = this,
-        accessedService = _this.chev[name];
+        accessedService = _this.chev.get(name);
 
     //Check if accessed service is registered
     if (accessedService) {

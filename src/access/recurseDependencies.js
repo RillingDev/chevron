@@ -18,7 +18,7 @@ import {
 export default function recurseDependencies(_this, service, fn) {
     //loop trough deps
     service.deps.forEach(name => {
-        const dependency = _this.chev[name];
+        const dependency = _this.chev.get(name);
 
         if (dependency) {
             //recurse over sub-deps

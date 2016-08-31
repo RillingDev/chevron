@@ -31,14 +31,14 @@ var Chevron = function () {
             throw _this.id + _more + _error + name + " already exists";
         } else {
             //Add the service to container
-            _this.chev[name] = {
+            _this.chev.set(name, {
                 type: type,
                 cf: cf,
                 name: name,
                 deps: deps,
                 fn: fn,
                 init: false
-            };
+            });
 
             return _this;
         }
@@ -107,7 +107,7 @@ var Chevron = function () {
     function recurseDependencies(_this, service, fn) {
         //loop trough deps
         service.deps.forEach(function (name) {
-            var dependency = _this.chev[name];
+            var dependency = _this.chev.get(name);
 
             if (dependency) {
                 //recurse over sub-deps
@@ -151,7 +151,7 @@ var Chevron = function () {
      */
     function access(name) {
         var _this = this,
-            accessedService = _this.chev[name];
+            accessedService = _this.chev.get(name);
 
         //Check if accessed service is registered
         if (accessedService) {
@@ -212,7 +212,7 @@ var Chevron = function () {
         //Instance Id
         _this.id = id || "cv";
         //Instance container
-        _this.chev = {};
+        _this.chev = new Map();
 
         //Init default types
         initService(_this);

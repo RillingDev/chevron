@@ -20,7 +20,7 @@ const Chevron = function(id) {
     //Instance Id
     _this.id = id || "cv";
     //Instance container
-    _this.chev = {};
+    _this.chev = new Map();
 
     //Init default types
     initService(_this);

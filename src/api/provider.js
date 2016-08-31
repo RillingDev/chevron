@@ -23,14 +23,14 @@ export default function (type, cf, name, deps, fn) {
         throw _this.id + _more + _error + name + " already exists";
     } else {
         //Add the service to container
-        _this.chev[name] = {
+        _this.chev.set(name,{
             type,
             cf,
             name,
             deps,
             fn,
             init: false
-        };
+        });
 
         return _this;
     }

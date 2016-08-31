@@ -27,14 +27,14 @@ function provider (type, cf, name, deps, fn) {
         throw _this.id + _more + _error + name + " already exists";
     } else {
         //Add the service to container
-        _this.chev[name] = {
+        _this.chev.set(name,{
             type,
             cf,
             name,
             deps,
             fn,
             init: false
-        };
+        });
 
         return _this;
     }
@@ -101,7 +101,7 @@ function initialize (_this, service, list) {
 function recurseDependencies(_this, service, fn) {
     //loop trough deps
     service.deps.forEach(name => {
-        const dependency = _this.chev[name];
+        const dependency = _this.chev.get(name);
 
         if (dependency) {
             //recurse over sub-deps
@@ -146,9 +146,9 @@ function prepare(_this, service) {
  * @param {String} name The Name of the service
  * @returns {*} Returns Content of the service
  */
-function access(name) {
+function access (name) {
     const _this = this,
-        accessedService = _this.chev[name];
+        accessedService = _this.chev.get(name);
 
     //Check if accessed service is registered
     if (accessedService) {
@@ -209,7 +209,7 @@ const Chevron = function(id) {
     //Instance Id
     _this.id = id || "cv";
     //Instance container
-    _this.chev = {};
+    _this.chev = new Map();
 
     //Init default types
     initService(_this);
