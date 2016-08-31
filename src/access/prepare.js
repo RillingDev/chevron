@@ -21,7 +21,7 @@ export default function (service, cf) {
         //run this over every dependency to add it to the dependencyList
         dependency => {
             //make sure if dependency is initialized, then add
-            list[dependency.name] = dependency.cfi();
+            list[dependency.name] = dependency.init();
         }
     );
 

@@ -13,6 +13,6 @@ export default function (name) {
     //Check if accessed service is registered
     if (accessedService) {
         //Call prepare with bound context
-        return accessedService.cfi().fn;
+        return accessedService.init().fn;
     }
 }

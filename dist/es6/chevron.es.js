@@ -17,7 +17,7 @@ const _isUndefined = " is undefined";
  * @returns {Object} Returns `service`
  */
 function initialize (service, list, cf) {
-    if (!service.init) {
+    if (!service.ready) {
         const bundle = [];
 
         //Collect an ordered Array of dependencies
@@ -32,7 +32,7 @@ function initialize (service, list, cf) {
         //Init service
         //Call Constructor fn with service/deps
         service = cf(service, bundle);
-        service.init = true;
+        service.ready = true;
     }
 
     return service;
@@ -82,7 +82,7 @@ function prepare (service, cf) {
         //run this over every dependency to add it to the dependencyList
         dependency => {
             //make sure if dependency is initialized, then add
-            list[dependency.name] = dependency.cfi();
+            list[dependency.name] = dependency.init();
         }
     );
 
@@ -103,13 +103,13 @@ function provider (type, cf, name, deps, fn) {
     const _this = this,
         entry = {
             type,
-            cfi: function () {
-                return prepare.call(_this, entry, cf);
-            },
             name,
             deps,
             fn,
-            init: false
+            ready: false,
+            init: function () {
+                return prepare.call(_this, entry, cf);
+            },
         };
 
     _this.chev.set(name, entry);
@@ -149,7 +149,7 @@ function access (name) {
     //Check if accessed service is registered
     if (accessedService) {
         //Call prepare with bound context
-        return accessedService.cfi().fn;
+        return accessedService.init().fn;
     }
 }
 

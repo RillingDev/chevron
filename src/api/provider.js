@@ -19,13 +19,13 @@ export default function (type, cf, name, deps, fn) {
     const _this = this,
         entry = {
             type,
-            cfi: function () {
-                return prepare.call(_this, entry, cf);
-            },
             name,
             deps,
             fn,
-            init: false
+            ready: false,
+            init: function () {
+                return prepare.call(_this, entry, cf);
+            },
         };
 
     _this.chev.set(name, entry);
