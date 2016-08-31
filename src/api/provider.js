@@ -1,9 +1,11 @@
 "use strict";
 
+import prepare from "../access/prepare";
 import {
     _more,
     _error
 } from "../constants";
+
 
 /**
  * Checks if service exist, else add it
@@ -17,21 +19,18 @@ import {
  */
 export default function (type, cf, name, deps, fn) {
     const _this = this;
+    const entry = {
+        type,
+        name,
+        deps,
+        fn,
+        ready: false,
+        init: function () {
+            return prepare.call(_this, entry, cf);
+        },
+    };
 
-    if (_this.chev[name]) {
-        //throw error if a service with this name already exists
-        throw _this.id + _more + _error + name + " already exists";
-    } else {
-        //Add the service to container
-        _this.chev.set(name,{
-            type,
-            cf,
-            name,
-            deps,
-            fn,
-            init: false
-        });
+    _this.chev.set(name, entry);
 
-        return _this;
-    }
+    return _this;
 }

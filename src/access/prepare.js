@@ -11,19 +11,19 @@ import recurseDependencies from "./recurseDependencies";
  * @param {Object} service The service to prepare
  * @returns {Object} Initialized service
  */
-export default function(_this, service) {
+export default function (service, cf) {
     const list = {};
 
     //Recurse trough service deps
     recurseDependencies(
-        _this,
+        this,
         service,
         //run this over every dependency to add it to the dependencyList
         dependency => {
             //make sure if dependency is initialized, then add
-            list[dependency.name] = initialize(_this, dependency, list);
+            list[dependency.name] = dependency.init();
         }
     );
 
-    return initialize(_this, service, list);
+    return initialize(service, list, cf);
 }

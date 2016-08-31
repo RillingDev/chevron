@@ -4,64 +4,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 /**
- * Store strings to avoid duplicate strings
- */
-var _more = ": ";
-var _error = "error in ";
-var _factory = "factory";
-var _service = "service";
-var _isUndefined = " is undefined";
-
-/**
- * Checks if service exist, else add it
- *
- * @param {String} type The type of the service (service/factory)
- * @param {Function} cf The Constructor function of the service
- * @param {String} name The name to register/id the service
- * @param {Array} deps List of dependencies
- * @param {Function} fn Content of the service
- * @returns {Object} Returns `this`
- */
-function provider(type, cf, name, deps, fn) {
-    var _this = this;
-
-    if (_this.chev[name]) {
-        //throw error if a service with this name already exists
-        throw _this.id + _more + _error + name + " already exists";
-    } else {
-        //Add the service to container
-        _this.chev.set(name, {
-            type: type,
-            cf: cf,
-            name: name,
-            deps: deps,
-            fn: fn,
-            init: false
-        });
-
-        return _this;
-    }
-}
-
-/**
- * Adds a new service type
- *
- * @param {String} type The name of the type
- * @param {Function} cf Constructor function to init the service with
- * @returns {Object} Returns `this`
- */
-function extend(type, cf) {
-    var _this = this;
-
-    //Add customType method to container
-    _this[type] = function (name, deps, fn) {
-        return _this.provider(type, cf, name, deps, fn);
-    };
-
-    return _this;
-}
-
-/**
  * Collects dependencies and initializes service
  *
  * @private
@@ -70,8 +12,8 @@ function extend(type, cf) {
  * @param {Object} list The list of dependencies
  * @returns {Object} Returns `service`
  */
-function initialize(_this, service, list) {
-    if (!service.init) {
+function initialize(service, list, cf) {
+    if (!service.ready) {
         (function () {
             var bundle = [];
 
@@ -86,13 +28,18 @@ function initialize(_this, service, list) {
 
             //Init service
             //Call Constructor fn with service/deps
-            service = service.cf(service, bundle);
-            service.init = true;
+            service = cf(service, bundle);
+            service.ready = true;
         })();
     }
 
     return service;
 }
+
+/**
+ * Store strings to avoid duplicate strings
+ */
+var _more = ": ";
 
 /**
  * Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
@@ -115,7 +62,7 @@ function recurseDependencies(_this, service, fn) {
             fn(dependency);
         } else {
             //if not found error with name
-            throw _this.id + _more + _error + service.name + _more + "dependency " + name + _isUndefined;
+            throw _this.id + _more + "error in " + service.name + _more + "dep " + name + " missing";
         }
     });
 }
@@ -128,18 +75,64 @@ function recurseDependencies(_this, service, fn) {
  * @param {Object} service The service to prepare
  * @returns {Object} Initialized service
  */
-function prepare(_this, service) {
+function prepare(service, cf) {
     var list = {};
 
     //Recurse trough service deps
-    recurseDependencies(_this, service,
+    recurseDependencies(this, service,
     //run this over every dependency to add it to the dependencyList
     function (dependency) {
         //make sure if dependency is initialized, then add
-        list[dependency.name] = initialize(_this, dependency, list);
+        list[dependency.name] = dependency.init();
     });
 
-    return initialize(_this, service, list);
+    return initialize(service, list, cf);
+}
+
+/**
+ * Checks if service exist, else add it
+ *
+ * @param {String} type The type of the service (service/factory)
+ * @param {Function} cf The Constructor function of the service
+ * @param {String} name The name to register/id the service
+ * @param {Array} deps List of dependencies
+ * @param {Function} fn Content of the service
+ * @returns {Object} Returns `this`
+ */
+function provider(type, cf, name, deps, fn) {
+    var _this = this;
+    var entry = {
+        type: type,
+        name: name,
+        deps: deps,
+        fn: fn,
+        ready: false,
+        init: function init() {
+            return prepare.call(_this, entry, cf);
+        }
+    };
+
+    _this.chev.set(name, entry);
+
+    return _this;
+}
+
+/**
+ * Adds a new service type
+ *
+ * @param {String} type The name of the type
+ * @param {Function} cf Constructor function to init the service with
+ * @returns {Object} Returns `this`
+ */
+function extend(type, cf) {
+    var _this = this;
+
+    //Add customType method to container
+    _this[type] = function (name, deps, fn) {
+        return _this.provider(type, cf, name, deps, fn);
+    };
+
+    return _this;
 }
 
 /**
@@ -149,13 +142,12 @@ function prepare(_this, service) {
  * @returns {*} Returns Content of the service
  */
 function access(name) {
-    var _this = this,
-        accessedService = _this.chev.get(name);
+    var accessedService = this.chev.get(name);
 
     //Check if accessed service is registered
     if (accessedService) {
         //Call prepare with bound context
-        return prepare(_this, accessedService).fn;
+        return accessedService.init().fn;
     }
 }
 
@@ -166,8 +158,9 @@ function access(name) {
  * @param {Object} _this The context
  * @returns Returns void
  */
-function initService(_this) {
-    _this.extend(_service, function (service, bundle) {
+function initService() {
+    this.extend("service", function (service, bundle) {
+        //dereference fn to avoid unwanted recursion
         var serviceFn = service.fn;
 
         service.fn = function () {
@@ -186,10 +179,10 @@ function initService(_this) {
  * @param {Object} _this The context
  * @returns Returns void
  */
-function initFactory(_this) {
-    _this.extend(_factory, function (service, bundle) {
-        //First value gets ignored by calling new like this, so we need to fill it
-        bundle.unshift(null);
+function initFactory() {
+    this.extend("factory", function (service, bundle) {
+        //First value gets ignored by calling 'new' like this, so we need to fill it
+        bundle.unshift(0);
 
         //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
         service.fn = new (Function.prototype.bind.apply(service.fn, bundle))();
@@ -214,8 +207,8 @@ var Chevron = function Chevron(id) {
     _this.chev = new Map();
 
     //Init default types
-    initService(_this);
-    initFactory(_this);
+    initService.call(_this);
+    initFactory.call(_this);
 };
 
 /**

@@ -1,7 +1,5 @@
 "use strict";
 
-import prepare from "./prepare";
-
 /**
  * Access service with dependencies bound
  *
@@ -9,12 +7,11 @@ import prepare from "./prepare";
  * @returns {*} Returns Content of the service
  */
 export default function (name) {
-    const _this = this,
-        accessedService = _this.chev.get(name);
+    const accessedService = this.chev.get(name);
 
     //Check if accessed service is registered
     if (accessedService) {
         //Call prepare with bound context
-        return prepare(_this, accessedService).fn;
+        return accessedService.init().fn;
     }
 }
