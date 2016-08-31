@@ -1,7 +1,5 @@
 "use strict";
 
-import prepare from "./prepare";
-
 /**
  * Access service with dependencies bound
  *
@@ -15,6 +13,6 @@ export default function (name) {
     //Check if accessed service is registered
     if (accessedService) {
         //Call prepare with bound context
-        return prepare(_this, accessedService).fn;
+        return accessedService.cfi().fn;
     }
 }

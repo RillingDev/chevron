@@ -4,7 +4,7 @@ import {
     _more,
     _error
 } from "../constants";
-
+import prepare from "../access/prepare";
 /**
  * Checks if service exist, else add it
  *
@@ -16,22 +16,20 @@ import {
  * @returns {Object} Returns `this`
  */
 export default function (type, cf, name, deps, fn) {
-    const _this = this;
-
-    if (_this.chev[name]) {
-        //throw error if a service with this name already exists
-        throw _this.id + _more + _error + name + " already exists";
-    } else {
-        //Add the service to container
-        _this.chev.set(name,{
+    const _this = this,
+        entry = {
             type,
-            cf,
+            cfi: function () {
+                return prepare.call(_this, entry, cf);
+            },
             name,
             deps,
             fn,
             init: false
-        });
+        };
 
-        return _this;
-    }
+    _this.chev.set(name, entry);
+
+    return _this;
+
 }

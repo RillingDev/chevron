@@ -9,7 +9,7 @@
  * @param {Object} list The list of dependencies
  * @returns {Object} Returns `service`
  */
-export default function (_this, service, list) {
+export default function (service, list, cf) {
     if (!service.init) {
         const bundle = [];
 
@@ -24,7 +24,7 @@ export default function (_this, service, list) {
 
         //Init service
         //Call Constructor fn with service/deps
-        service = service.cf(service, bundle);
+        service = cf(service, bundle);
         service.init = true;
     }
 
