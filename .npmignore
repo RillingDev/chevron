@@ -2,5 +2,6 @@
 .git/
 .tmp/
 node_modules/
+npm-debug.*
 chevron-logo.png
 chevron-logo.psd

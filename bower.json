@@ -9,7 +9,8 @@
     "license": "MIT",
     "keywords": [
         "dependencies",
-        "services"
+        "service",
+        "factory"
     ],
     "homepage": "https://github.com/FelixRilling/chevronjs",
     "ignore": [
@@ -17,6 +18,7 @@
         ".git/",
         ".tmp/",
         "node_modules/",
+        "npm-debug.*",
         "chevron-logo.png",
         "chevron-logo.psd"
     ]
