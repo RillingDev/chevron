@@ -1,4 +1,5 @@
 node_modules/
 .git/
 .tmp/
+npm-debug.*
 .DS_Store

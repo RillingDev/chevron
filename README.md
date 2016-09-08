@@ -6,7 +6,7 @@
 
 ## Introduction
 
-Chevron is an extremely small(1.1kB) JavaScript service library for easy dependency managment and lazy module loading, inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
+Chevron is an extremely small(1.0kB) JavaScript service library for easy dependency managment and lazy module loading, inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
 
 [Demo](http://codepen.io/FelixRilling/pen/AXgydJ)
 
@@ -15,7 +15,7 @@ Chevron is an extremely small(1.1kB) JavaScript service library for easy depende
 Chevron supports both npm and bower:
 
 ```shell
-npm install chevronjs --save-dev
+npm install chevronjs --save
 ```
 
 ```shell
@@ -41,102 +41,107 @@ var namedCv = new Chevron("myCustomContainer");
 
 When a named Chevron Instance throws an error, you can identify which Container errored by the id.
 
-### Services
+### Module Types
 
-Services are the bread and butter of Chevron, being the most common way to declare a new module function. To create a new service, call the `service` method with a name, dependencies and service content.
+#### Services
+
+Services are the most common type of module. A service is simply a function wrapped by chevron + dependencies. The syntax for `service` is as follows:
 
 ```javascript
 
-//Chevron.prototype.service(name,[dependencies],content);
-cv.service("foo",[],
-  function(){
-      return 12;
-  }
+//Create new service
+//Chevron.prototype.service(name,[dependencies],function);
+cv.service("foo", [],
+    function() {
+        return 12;
+    }
 );
-
+//Access service from the Chevron Container
+//Chevron.prototype.access(name);
 var foo = cv.access("foo");
-foo();//returns 12
+foo(); //returns 12
 ```
 
 or with dependencies:
 
 ```javascript
 
-cv.service("foo",[],
-  function(){
-      return 12;
-  }
+cv.service("foo", [],
+    function() {
+        return 12;
+    }
 );
 
-cv.service("bar",["foo"],
-  function(foo, int){
-      return int * foo();
-  }
+//declare the service "foo" as dependency and as function argument
+cv.service("bar", ["foo"],
+    function(foo, int) {
+        return int * foo();
+    }
 );
 
 var bar = cv.access("bar");
-bar(2);//returns 24
+bar(2); //returns 24
 ```
 
-### Factories
+#### Factories
 
-Factories are very similar to services but are treated as **Constructors** instead of classic functions; Factories have the same syntax as services and can be called with the `factory` method. Pretty much all the time when talking about services in this documentation this includes factories too.
+Factories are very similar to services but are treated as **Constructors** instead of classic functions; Factories have the same syntax as services and can be called with the `factory` method.
 
 ```javascript
 //Chevron.prototype.factory(name,[dependencies],Constructor);
-cv.factory("foo",[],
-  function(){
-      this.foo = 12;
-      this.bar = 17;
-  }
+cv.factory("foo", [],
+    function() {
+        this.foo = 12;
+        this.bar = 17;
+    }
 );
 
 var foo = cv.access("foo");
-foo.bar;//returns 17
+foo.bar; //returns 17
 ```
 
 or combined with a service
 
 ```javascript
-cv.factory("foo",[],
-  function(){
-      this.foo = 7;
-      this.bar = 17;
-  }
+cv.factory("foo", [],
+    function() {
+        this.foo = 7;
+        this.bar = 17;
+    }
 );
 
-cv.service("bar",["foo"],
-  function(foo, int){
-      return int * foo.foo;
-  }
+cv.service("bar", ["foo"],
+    function(foo, int) {
+        return int * foo.foo;
+    }
 );
 
 var bar = cv.access("bar");
-bar(3);//returns 21
+bar(3); //returns 21
 ```
 
 ### Accessing Services
 
-Services and Factories can be accessed in two ways. In most cases, you will want to get your service trough Chevrons `access` which returns the bundled and constructed service
+Services and Factories can be accessed in two ways. In most cases, you will want to get your service trough Chevrons `access` method, which returns the bundled and constructed service
 
 ```javascript
 //Chevron.prototype.access(name)
 cv.access("foo"); //returns the service or factory with dependencies injected into arguments
 ```
 
-or, if you just want the service without dependencies from the Chevron container(called chev):
+or, if you just want the service without dependencies from the Chevron container(called "chev"):
 
 ```javascript
-cv.chev.foo; //returns the service as Chevron object.
+cv.chev.get("foo"); //returns the service as Chevron object.
 ```
 
 ## API
 
-You can create your own service type/constructor by using the Chevron API. To declare a new type, simpy call the `extend` method with a name and Constructor for your new type:
+You can easily create your own module type by using the Chevron API. To declare a new type, simpy call the `extend` method with a name and Constructor for your new type:
 
 ```javascript
 //Chevron.prototype.extend(type,fn);
-cv.extend("myType",function(service,bundle){
+cv.extend("myType", function(service, bundle) {
     /**
      * your init code here
      */
@@ -146,15 +151,15 @@ cv.extend("myType",function(service,bundle){
 });
 ```
 
-In the example above we created a new servicetype, "myType", with the given function as constructor. You'll probably want to start by using a modified version of the default Service or Factory constructor which you can find in the in ["src/types"](https://github.com/FelixRilling/chevronjs/tree/master/src/types) folder of the repo.
+In the example above we created a new module type, "myType", with the given function as constructor. You'll probably want to start by using a modified version of the default Service or Factory constructor which you can find in the in ["src/types"](https://github.com/FelixRilling/chevronjs/tree/master/src/types) folder of the repo.
 
 After you created the new type, you can use it by calling the type as a method
 
 ```javascript
 //Chevron.prototype.#name#(name,[dependencies],content);
-cv.myType("foo",[],function(){
+cv.myType("foo", [], function() {
     return "bar";
-})
+});
 ```
 
 Then you can simply call `access` again to access your new service type.
