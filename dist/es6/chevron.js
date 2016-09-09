@@ -1,3 +1,10 @@
+/**
+ * Chevron v5.2.0
+ * Author: Felix Rilling
+ * Homepage: https://github.com/FelixRilling/chevronjs#readme
+ * License: MIT
+ */
+
 var Chevron = (function () {
 'use strict';
 

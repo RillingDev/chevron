@@ -1,3 +1,10 @@
+/**
+ * Chevron v5.2.0
+ * Author: Felix Rilling
+ * Homepage: https://github.com/FelixRilling/chevronjs#readme
+ * License: MIT
+ */
+
 'use strict';
 
 /**
@@ -10,7 +17,7 @@
  * @returns {Object} Returns `service`
  */
 
-function initialize(service, list, cf) {
+function initialize (service, list, cf) {
     if (!service.rdy) {
         (function () {
             var bundle = [];
@@ -43,6 +50,7 @@ function initialize(service, list, cf) {
  * @param {Function} fn The function run over each dependency
  * @returns void
  */
+
 function recurseDependencies(_this, service, fn) {
     //loop trough deps
     service.deps.forEach(function (name) {
@@ -68,7 +76,7 @@ function recurseDependencies(_this, service, fn) {
  * @param {Function} cf The constructor function
  * @returns {Object} Initialized service
  */
-function prepare(service, cf) {
+function prepare (service, cf) {
     var list = {};
 
     //Recurse trough service deps
@@ -92,7 +100,7 @@ function prepare(service, cf) {
  * @param {Function} fn Content of the service
  * @returns {Object} Returns `this`
  */
-function provider(type, cf, name, deps, fn) {
+function provider (type, cf, name, deps, fn) {
     var _this = this;
     var entry = {
         type: type,
@@ -117,7 +125,8 @@ function provider(type, cf, name, deps, fn) {
  * @param {Function} cf Constructor function to init the service with
  * @returns {Object} Returns `this`
  */
-function extend(type, cf) {
+
+function extend (type, cf) {
     var _this = this;
 
     //Add customType method to container
@@ -134,7 +143,8 @@ function extend(type, cf) {
  * @param {String} name The Name of the service
  * @returns {*} Returns Content of the service
  */
-function access(name) {
+
+function access (name) {
     var accessedService = this.chev.get(name);
 
     //Check if accessed service is registered
@@ -150,7 +160,8 @@ function access(name) {
  * @private
  * @returns Returns void
  */
-function initService() {
+
+function initService () {
     this.extend("service", function (service, bundle) {
         //dereference fn to avoid unwanted recursion
         var serviceFn = service.fn;
@@ -170,7 +181,8 @@ function initService() {
  * @private
  * @returns Returns void
  */
-function initFactory() {
+
+function initFactory () {
     this.extend("factory", function (service, bundle) {
         //First value gets ignored by calling 'new' like this, so we need to fill it
         bundle.unshift(0);

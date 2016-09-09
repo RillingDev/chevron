@@ -5,9 +5,10 @@ import {
 } from "rollup";
 import commonjs from "rollup-plugin-commonjs";
 import nodeResolve from "rollup-plugin-node-resolve";
+import babel from "rollup-plugin-babel";
 
 const lib = require("./package.json").module;
-const base = "./dist/es6";
+const base = "./dist";
 
 export default {
     moduleName: lib.name,
@@ -18,7 +19,10 @@ export default {
             jsnext: false,
             main: true
         }),
-        commonjs({})
+        commonjs({}),
+        babel({
+            exclude: "node_modules/**"
+        })
     ],
     targets: [{
         dest: `${base}/${lib.id}.amd.js`,
