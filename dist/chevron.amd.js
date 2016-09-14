@@ -11,13 +11,14 @@ define('chevron', function () { 'use strict';
  * Collects dependencies and initializes module
  *
  * @private
- * @param {Object} _this The context
  * @param {Object} module The module to check
  * @param {Object} list The list of dependencies
+ * @param {Function} cf The Constructor function
  * @returns {Object} Returns `module`
  */
 
 function initialize (module, list, cf) {
+    //Only init if its not already initializes
     if (!module.rdy) {
         (function () {
             var bundle = [];
@@ -26,6 +27,7 @@ function initialize (module, list, cf) {
             module.deps.forEach(function (item) {
                 var dependency = list[item];
 
+                //If the dependency name is found in the list of deps, add it
                 if (dependency) {
                     bundle.push(dependency.fn);
                 }
@@ -51,19 +53,19 @@ function initialize (module, list, cf) {
  * @returns void
  */
 
-function recurseDependencies(_this, module, fn) {
+function recurseDependencies(chev, module, fn) {
     //loop trough deps
     module.deps.forEach(function (name) {
-        var dependency = _this.chev.get(name);
+        var dependency = chev.get(name);
 
         if (dependency) {
             //recurse over sub-deps
-            recurseDependencies(_this, dependency, fn);
+            recurseDependencies(chev, dependency, fn);
             //run fn
             fn(dependency);
         } else {
             //if not found error with name
-            throw _this.id + ": error in " + module.name + ": dep " + name + " missing";
+            throw "error in " + module.name + ": dep '" + name + "' missing";
         }
     });
 }
@@ -72,15 +74,16 @@ function recurseDependencies(_this, module, fn) {
  * Check if every dependency is available
  *
  * @private
+ * @param {Object} chev The chevron container
  * @param {Object} module The module to prepare
  * @param {Function} cf The constructor function
  * @returns {Object} Initialized module
  */
-function prepare (module, cf) {
+function prepare (chev, module, cf) {
     var list = {};
 
     //Recurse trough module deps
-    recurseDependencies(this, module,
+    recurseDependencies(chev, module,
     //run this over every dependency to add it to the dependencyList
     function (dependency) {
         //make sure if dependency is initialized, then add
@@ -110,7 +113,7 @@ function provider (type, cf, name, deps, fn) {
         rdy: false, //If the module is ready to access
         init: function init() {
             //init the module
-            return prepare.call(_this, entry, cf);
+            return prepare(_this.chev, entry, cf);
         }
     };
 
@@ -197,7 +200,8 @@ function initFactory (context) {
         //First value gets ignored by calling 'new' like this, so we need to fill it
         bundle.unshift(0);
 
-        //Apply into new constructor by accessing bind proto. from: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
+        //Apply into new constructor by accessing bind proto.
+        //@see: {@link http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible }
         service.fn = new (Function.prototype.bind.apply(service.fn, bundle))();
 
         return service;

@@ -4,12 +4,13 @@
  * Collects dependencies and initializes module
  *
  * @private
- * @param {Object} _this The context
  * @param {Object} module The module to check
  * @param {Object} list The list of dependencies
+ * @param {Function} cf The Constructor function
  * @returns {Object} Returns `module`
  */
 export default function (module, list, cf) {
+    //Only init if its not already initializes
     if (!module.rdy) {
         const bundle = [];
 
@@ -17,6 +18,7 @@ export default function (module, list, cf) {
         module.deps.forEach(item => {
             const dependency = list[item];
 
+            //If the dependency name is found in the list of deps, add it
             if (dependency) {
                 bundle.push(dependency.fn);
             }

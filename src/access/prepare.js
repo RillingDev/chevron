@@ -7,16 +7,17 @@ import recurseDependencies from "./recurseDependencies";
  * Check if every dependency is available
  *
  * @private
+ * @param {Object} chev The chevron container
  * @param {Object} module The module to prepare
  * @param {Function} cf The constructor function
  * @returns {Object} Initialized module
  */
-export default function (module, cf) {
+export default function (chev, module, cf) {
     const list = {};
 
     //Recurse trough module deps
     recurseDependencies(
-        this,
+        chev,
         module,
         //run this over every dependency to add it to the dependencyList
         dependency => {

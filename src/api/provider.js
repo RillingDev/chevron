@@ -21,7 +21,7 @@ export default function (type, cf, name, deps, fn) {
         fn, //Module content function
         rdy: false, //If the module is ready to access
         init: function () { //init the module
-            return prepare.call(_this, entry, cf);
+            return prepare(_this.chev, entry, cf);
         }
     };
 
