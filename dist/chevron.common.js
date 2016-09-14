@@ -158,17 +158,20 @@ function access (name) {
  * Creates method entry for service
  *
  * @private
- * @returns Returns void
+ * @param {Object} context Context to extend
  */
 
-function initService () {
-    this.extend("service", function (service, bundle) {
+function initService (context) {
+    context.extend("service", function (service, bundle) {
         //dereference fn to avoid unwanted recursion
         var serviceFn = service.fn;
 
         service.fn = function () {
             //Chevron service function wrapper
-            return serviceFn.apply(null, bundle.concat(Array.from(arguments)));
+            //Concat dependencies and arguments
+            var args = bundle.concat(Array.from(arguments));
+            //return function with args injected
+            return serviceFn.apply(null, args);
         };
 
         return service;
@@ -179,11 +182,11 @@ function initService () {
  * Creates method entry for factory
  *
  * @private
- * @returns Returns void
+ * @param {Object} context Context to extend
  */
 
-function initFactory () {
-    this.extend("factory", function (service, bundle) {
+function initFactory (context) {
+    context.extend("factory", function (service, bundle) {
         //First value gets ignored by calling 'new' like this, so we need to fill it
         bundle.unshift(0);
 
@@ -199,7 +202,7 @@ function initFactory () {
  *
  * @constructor
  * @param {String} id To identify the instance
- * @returns {Object} Returns Chevron instance
+ * @returns {Object} Chevron instance
  */
 var Chevron = function Chevron(id) {
     var _this = this;
@@ -210,8 +213,8 @@ var Chevron = function Chevron(id) {
     _this.chev = new Map();
 
     //Init default types
-    initService.call(_this);
-    initFactory.call(_this);
+    initService(_this);
+    initFactory(_this);
 };
 
 /**

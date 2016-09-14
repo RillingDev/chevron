@@ -1,14 +1,13 @@
 "use strict";
 
-
 /**
  * Creates method entry for factory
  *
  * @private
- * @returns Returns void
+ * @param {Object} context Context to extend
  */
-export default function() {
-    this.extend("factory", function(service, bundle) {
+export default function (context) {
+    context.extend("factory", function (service, bundle) {
         //First value gets ignored by calling 'new' like this, so we need to fill it
         bundle.unshift(0);
 

@@ -12,7 +12,7 @@ import initFactory from "./types/factory";
  *
  * @constructor
  * @param {String} id To identify the instance
- * @returns {Object} Returns Chevron instance
+ * @returns {Object} Chevron instance
  */
 const Chevron = function(id) {
     const _this = this;
@@ -23,8 +23,8 @@ const Chevron = function(id) {
     _this.chev = new Map();
 
     //Init default types
-    initService.call(_this);
-    initFactory.call(_this);
+    initService(_this);
+    initFactory(_this);
 };
 
 /**
