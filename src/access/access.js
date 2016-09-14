@@ -2,9 +2,8 @@
 
 /**
  * Access module with dependencies bound
- *
- * @param {String} name The Name of the module
- * @returns {*} Returns Content of the module
+ * @param {String} name The name of the module
+ * @returns {*} Content of the initialized module
  */
 export default function (name) {
     const accessedModule = this.chev.get(name);

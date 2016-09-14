@@ -2,12 +2,11 @@
 
 /**
  * Collects dependencies and initializes module
- *
  * @private
  * @param {Object} module The module to check
  * @param {Object} list The list of dependencies
  * @param {Function} cf The Constructor function
- * @returns {Object} Returns `module`
+ * @returns {Object} Initialized module
  */
 export default function (module, list, cf) {
     //Only init if its not already initializes

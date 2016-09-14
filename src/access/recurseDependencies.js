@@ -2,12 +2,10 @@
 
 /**
  * Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
- *
  * @private
- * @param {Object} _this The context
+ * @param {Object} chev The chevron container
  * @param {Array} module The dependencyList to iterate
  * @param {Function} fn The function run over each dependency
- * @returns void
  */
 export default function recurseDependencies(chev, module, fn) {
     //loop trough deps

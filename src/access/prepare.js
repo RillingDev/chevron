@@ -5,7 +5,6 @@ import recurseDependencies from "./recurseDependencies";
 
 /**
  * Check if every dependency is available
- *
  * @private
  * @param {Object} chev The chevron container
  * @param {Object} module The module to prepare

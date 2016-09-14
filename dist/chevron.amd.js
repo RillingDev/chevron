@@ -1,5 +1,5 @@
 /**
- * Chevron v5.3.0
+ * Chevron v5.3.1
  * Author: Felix Rilling
  * Homepage: https://github.com/FelixRilling/chevronjs#readme
  * License: MIT
@@ -9,12 +9,11 @@ define('chevron', function () { 'use strict';
 
 /**
  * Collects dependencies and initializes module
- *
  * @private
  * @param {Object} module The module to check
  * @param {Object} list The list of dependencies
  * @param {Function} cf The Constructor function
- * @returns {Object} Returns `module`
+ * @returns {Object} Initialized module
  */
 
 function initialize (module, list, cf) {
@@ -45,12 +44,10 @@ function initialize (module, list, cf) {
 
 /**
  * Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
- *
  * @private
- * @param {Object} _this The context
+ * @param {Object} chev The chevron container
  * @param {Array} module The dependencyList to iterate
  * @param {Function} fn The function run over each dependency
- * @returns void
  */
 
 function recurseDependencies(chev, module, fn) {
@@ -64,7 +61,7 @@ function recurseDependencies(chev, module, fn) {
             //run fn
             fn(dependency);
         } else {
-            //if not found error with name
+            //if not found, throw error with name
             throw "error in " + module.name + ": dep '" + name + "' missing";
         }
     });
@@ -72,7 +69,6 @@ function recurseDependencies(chev, module, fn) {
 
 /**
  * Check if every dependency is available
- *
  * @private
  * @param {Object} chev The chevron container
  * @param {Object} module The module to prepare
@@ -94,14 +90,13 @@ function prepare (chev, module, cf) {
 }
 
 /**
- * Checks if service exist, else add it
- *
+ * Adds a new module to the container
  * @param {String} type The type of the service (service/factory)
  * @param {Function} cf The Constructor function of the service
  * @param {String} name The name to register/id the service
  * @param {Array} deps List of dependencies
  * @param {Function} fn Content of the service
- * @returns {Object} Returns `this`
+ * @returns {Object} Chevron Instance
  */
 function provider (type, cf, name, deps, fn) {
     var _this = this;
@@ -124,11 +119,10 @@ function provider (type, cf, name, deps, fn) {
 }
 
 /**
- * Adds a new service type
- *
+ * Adds a new module type
  * @param {String} type The name of the type
- * @param {Function} cf Constructor function to init the service with
- * @returns {Object} Returns `this`
+ * @param {Function} cf Constructor function to init the module with
+ * @returns {Object} Chevron Instance
  */
 
 function extend (type, cf) {
@@ -149,9 +143,8 @@ function extend (type, cf) {
 
 /**
  * Access module with dependencies bound
- *
- * @param {String} name The Name of the module
- * @returns {*} Returns Content of the module
+ * @param {String} name The name of the module
+ * @returns {*} Content of the initialized module
  */
 
 function access (name) {
@@ -166,7 +159,6 @@ function access (name) {
 
 /**
  * Creates method entry for service
- *
  * @private
  * @param {Object} context Context to extend
  */
@@ -190,7 +182,6 @@ function initService (context) {
 
 /**
  * Creates method entry for factory
- *
  * @private
  * @param {Object} context Context to extend
  */
@@ -209,8 +200,7 @@ function initFactory (context) {
 }
 
 /**
- * Basic Chevron Constructor
- *
+ * Chevron Constructor
  * @constructor
  * @param {String} id To identify the instance
  * @returns {Object} Chevron instance
@@ -230,9 +220,9 @@ var Chevron = function Chevron(id) {
  * Expose Chevron methods
  */
 Chevron.prototype = {
-    provider: provider, //Core module creation method
-    access: access, //Init and return module with dependencies injected
-    extend: extend //Add new module type
+    extend: extend, //Adds a new module to the container
+    provider: provider, //Adds a new module to the container
+    access: access //Access module with dependencies bound
 };
 
 return Chevron;

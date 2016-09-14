@@ -1,11 +1,10 @@
 "use strict";
 
 /**
- * Adds a new service type
- *
+ * Adds a new module type
  * @param {String} type The name of the type
- * @param {Function} cf Constructor function to init the service with
- * @returns {Object} Returns `this`
+ * @param {Function} cf Constructor function to init the module with
+ * @returns {Object} Chevron Instance
  */
 export default function (type, cf) {
     const _this = this;

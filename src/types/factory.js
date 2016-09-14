@@ -2,7 +2,6 @@
 
 /**
  * Creates method entry for factory
- *
  * @private
  * @param {Object} context Context to extend
  */
