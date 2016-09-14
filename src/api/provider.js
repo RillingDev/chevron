@@ -1,11 +1,6 @@
 "use strict";
 
 import prepare from "../access/prepare";
-import {
-    _more,
-    _error
-} from "../constants";
-
 
 /**
  * Checks if service exist, else add it
@@ -20,16 +15,17 @@ import {
 export default function (type, cf, name, deps, fn) {
     const _this = this;
     const entry = {
-        type,
-        name,
-        deps,
-        fn,
-        rdy: false,
-        init: function () {
+        type, //Type of the module
+        name, //Name of the module
+        deps, //Array of dependencies
+        fn, //Module content function
+        rdy: false, //If the module is ready to access
+        init: function () { //init the module
             return prepare.call(_this, entry, cf);
-        },
+        }
     };
 
+    //Saves entry to chev container
     _this.chev.set(name, entry);
 
     return _this;

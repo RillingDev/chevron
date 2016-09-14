@@ -2,11 +2,11 @@
 
 # ChevronJS
 
-> An super tiny JavaScript service library
+> An super tiny JavaScript module library
 
 ## Introduction
 
-Chevron is an extremely small(1.0kB) JavaScript service library for easy dependency managment and lazy module loading, inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
+Chevron is an extremely small(1.0kB) JavaScript module library for easy module declaration, dependency managment and lazy module loading, inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
 
 [Demo](http://codepen.io/FelixRilling/pen/AXgydJ)
 
@@ -120,16 +120,16 @@ var bar = cv.access("bar");
 bar(3); //returns 21
 ```
 
-### Accessing Services
+### Accessing Modules
 
-Services and Factories can be accessed in two ways. In most cases, you will want to get your service trough Chevrons `access` method, which returns the bundled and constructed service
+Modules can be accessed in two ways. In most cases, you will want to get your module trough Chevrons `access` method, which returns the bundled and constructed module:
 
 ```javascript
 //Chevron.prototype.access(name)
 cv.access("foo"); //returns the service or factory with dependencies injected into arguments
 ```
 
-or, if you just want the service without dependencies from the Chevron container(called "chev"):
+or, if you just want the module without dependencies from the Chevron container(called "chev"):
 
 ```javascript
 cv.chev.get("foo"); //returns the service as Chevron object.
@@ -141,13 +141,13 @@ You can easily create your own module type by using the Chevron API. To declare 
 
 ```javascript
 //Chevron.prototype.extend(type,fn);
-cv.extend("myType", function(service, bundle) {
+cv.extend("myType", function(module, bundle) {
     /**
      * your init code here
      */
 
-    //returns the service
-    return service;
+    //returns the module
+    return module;
 });
 ```
 
@@ -162,7 +162,7 @@ cv.myType("foo", [], function() {
 });
 ```
 
-Then you can simply call `access` again to access your new service type.
+Then you can simply call `access` again to access your new module type.
 
 ```javascript
 cv.access("foo");
@@ -171,4 +171,4 @@ cv.access("foo");
 ## FAQ
 
 - **Q: Why are there no middleware/decorators?**
-- A: I actually had middleware/decorators in version 1.x, but I removed them because I felt like the lib should focus more on being tiny than on more features
+- A: I actually had middleware/decorators in version 1.x, but I removed them because I felt like the lib should focus more on being tiny than on more features/**/

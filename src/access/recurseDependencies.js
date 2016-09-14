@@ -6,13 +6,13 @@
  *
  * @private
  * @param {Object} _this The context
- * @param {Array} service The dependencyList to iterate
+ * @param {Array} module The dependencyList to iterate
  * @param {Function} fn The function run over each dependency
  * @returns void
  */
-export default function recurseDependencies(_this, service, fn) {
+export default function recurseDependencies(_this, module, fn) {
     //loop trough deps
-    service.deps.forEach(name => {
+    module.deps.forEach(name => {
         const dependency = _this.chev.get(name);
 
         if (dependency) {
@@ -22,7 +22,7 @@ export default function recurseDependencies(_this, service, fn) {
             fn(dependency);
         } else {
             //if not found error with name
-            throw _this.id + ": error in " + service.name + ": dep " + name + " missing";
+            throw _this.id + ": error in " + module.name + ": dep " + name + " missing";
         }
     });
 }

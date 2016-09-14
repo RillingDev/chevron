@@ -1,20 +1,20 @@
 "use strict";
 
 /**
- * Collects dependencies and initializes service
+ * Collects dependencies and initializes module
  *
  * @private
  * @param {Object} _this The context
- * @param {Object} service The service to check
+ * @param {Object} module The module to check
  * @param {Object} list The list of dependencies
- * @returns {Object} Returns `service`
+ * @returns {Object} Returns `module`
  */
-export default function (service, list, cf) {
-    if (!service.rdy) {
+export default function (module, list, cf) {
+    if (!module.rdy) {
         const bundle = [];
 
         //Collect an ordered Array of dependencies
-        service.deps.forEach(item => {
+        module.deps.forEach(item => {
             const dependency = list[item];
 
             if (dependency) {
@@ -22,11 +22,11 @@ export default function (service, list, cf) {
             }
         });
 
-        //Init service
-        //Call Constructor fn with service/deps
-        service = cf(service, bundle);
-        service.rdy = true;
+        //Init module
+        //Call Constructor fn with module/deps
+        module = cf(module, bundle);
+        module.rdy = true;
     }
 
-    return service;
+    return module;
 }

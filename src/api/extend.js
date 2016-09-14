@@ -12,7 +12,13 @@ export default function (type, cf) {
 
     //Add customType method to container
     _this[type] = function (name, deps, fn) {
-        return _this.provider(type, cf, name, deps, fn);
+        return _this.provider(
+            type, //static
+            cf, //static
+            name, //dynamic
+            deps, //dynamic
+            fn //dynamic
+        );
     };
 
     return _this;

@@ -7,17 +7,17 @@ import recurseDependencies from "./recurseDependencies";
  * Check if every dependency is available
  *
  * @private
- * @param {Object} service The service to prepare
+ * @param {Object} module The module to prepare
  * @param {Function} cf The constructor function
- * @returns {Object} Initialized service
+ * @returns {Object} Initialized module
  */
-export default function (service, cf) {
+export default function (module, cf) {
     const list = {};
 
-    //Recurse trough service deps
+    //Recurse trough module deps
     recurseDependencies(
         this,
-        service,
+        module,
         //run this over every dependency to add it to the dependencyList
         dependency => {
             //make sure if dependency is initialized, then add
@@ -25,5 +25,5 @@ export default function (service, cf) {
         }
     );
 
-    return initialize(service, list, cf);
+    return initialize(module, list, cf);
 }

@@ -1,5 +1,5 @@
 /**
- * Chevron v5.2.0
+ * Chevron v5.3.0
  * Author: Felix Rilling
  * Homepage: https://github.com/FelixRilling/chevronjs#readme
  * License: MIT
@@ -8,22 +8,22 @@
 define('chevron', function () { 'use strict';
 
 /**
- * Collects dependencies and initializes service
+ * Collects dependencies and initializes module
  *
  * @private
  * @param {Object} _this The context
- * @param {Object} service The service to check
+ * @param {Object} module The module to check
  * @param {Object} list The list of dependencies
- * @returns {Object} Returns `service`
+ * @returns {Object} Returns `module`
  */
 
-function initialize (service, list, cf) {
-    if (!service.rdy) {
+function initialize (module, list, cf) {
+    if (!module.rdy) {
         (function () {
             var bundle = [];
 
             //Collect an ordered Array of dependencies
-            service.deps.forEach(function (item) {
+            module.deps.forEach(function (item) {
                 var dependency = list[item];
 
                 if (dependency) {
@@ -31,14 +31,14 @@ function initialize (service, list, cf) {
                 }
             });
 
-            //Init service
-            //Call Constructor fn with service/deps
-            service = cf(service, bundle);
-            service.rdy = true;
+            //Init module
+            //Call Constructor fn with module/deps
+            module = cf(module, bundle);
+            module.rdy = true;
         })();
     }
 
-    return service;
+    return module;
 }
 
 /**
@@ -46,14 +46,14 @@ function initialize (service, list, cf) {
  *
  * @private
  * @param {Object} _this The context
- * @param {Array} service The dependencyList to iterate
+ * @param {Array} module The dependencyList to iterate
  * @param {Function} fn The function run over each dependency
  * @returns void
  */
 
-function recurseDependencies(_this, service, fn) {
+function recurseDependencies(_this, module, fn) {
     //loop trough deps
-    service.deps.forEach(function (name) {
+    module.deps.forEach(function (name) {
         var dependency = _this.chev.get(name);
 
         if (dependency) {
@@ -63,7 +63,7 @@ function recurseDependencies(_this, service, fn) {
             fn(dependency);
         } else {
             //if not found error with name
-            throw _this.id + ": error in " + service.name + ": dep " + name + " missing";
+            throw _this.id + ": error in " + module.name + ": dep " + name + " missing";
         }
     });
 }
@@ -72,22 +72,22 @@ function recurseDependencies(_this, service, fn) {
  * Check if every dependency is available
  *
  * @private
- * @param {Object} service The service to prepare
+ * @param {Object} module The module to prepare
  * @param {Function} cf The constructor function
- * @returns {Object} Initialized service
+ * @returns {Object} Initialized module
  */
-function prepare (service, cf) {
+function prepare (module, cf) {
     var list = {};
 
-    //Recurse trough service deps
-    recurseDependencies(this, service,
+    //Recurse trough module deps
+    recurseDependencies(this, module,
     //run this over every dependency to add it to the dependencyList
     function (dependency) {
         //make sure if dependency is initialized, then add
         list[dependency.name] = dependency.init();
     });
 
-    return initialize(service, list, cf);
+    return initialize(module, list, cf);
 }
 
 /**
@@ -103,16 +103,18 @@ function prepare (service, cf) {
 function provider (type, cf, name, deps, fn) {
     var _this = this;
     var entry = {
-        type: type,
-        name: name,
-        deps: deps,
-        fn: fn,
-        rdy: false,
+        type: type, //Type of the module
+        name: name, //Name of the module
+        deps: deps, //Array of dependencies
+        fn: fn, //Module content function
+        rdy: false, //If the module is ready to access
         init: function init() {
+            //init the module
             return prepare.call(_this, entry, cf);
         }
     };
 
+    //Saves entry to chev container
     _this.chev.set(name, entry);
 
     return _this;
@@ -131,26 +133,31 @@ function extend (type, cf) {
 
     //Add customType method to container
     _this[type] = function (name, deps, fn) {
-        return _this.provider(type, cf, name, deps, fn);
+        return _this.provider(type, //static
+        cf, //static
+        name, //dynamic
+        deps, //dynamic
+        fn //dynamic
+        );
     };
 
     return _this;
 }
 
 /**
- * Access service with dependencies bound
+ * Access module with dependencies bound
  *
- * @param {String} name The Name of the service
- * @returns {*} Returns Content of the service
+ * @param {String} name The Name of the module
+ * @returns {*} Returns Content of the module
  */
 
 function access (name) {
-    var accessedService = this.chev.get(name);
+    var accessedModule = this.chev.get(name);
 
-    //Check if accessed service is registered
-    if (accessedService) {
+    //Check if accessed module is registered
+    if (accessedModule) {
         //Call prepare with bound context
-        return accessedService.init().fn;
+        return accessedModule.init().fn;
     }
 }
 
@@ -207,10 +214,8 @@ function initFactory (context) {
 var Chevron = function Chevron(id) {
     var _this = this;
 
-    //Instance Id
-    _this.id = id || "cv";
-    //Instance container
-    _this.chev = new Map();
+    _this.id = id || "cv"; //Instance Id
+    _this.chev = new Map(); //Instance container
 
     //Init default types
     initService(_this);
@@ -221,12 +226,9 @@ var Chevron = function Chevron(id) {
  * Expose Chevron methods
  */
 Chevron.prototype = {
-    //Core service/factory method
-    provider: provider,
-    //Prepare/init services/factory with deps injected
-    access: access,
-    //Add new service type
-    extend: extend
+    provider: provider, //Core module creation method
+    access: access, //Init and return module with dependencies injected
+    extend: extend //Add new module type
 };
 
 return Chevron;

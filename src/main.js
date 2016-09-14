@@ -14,13 +14,11 @@ import initFactory from "./types/factory";
  * @param {String} id To identify the instance
  * @returns {Object} Chevron instance
  */
-const Chevron = function(id) {
+const Chevron = function (id) {
     const _this = this;
 
-    //Instance Id
-    _this.id = id || "cv";
-    //Instance container
-    _this.chev = new Map();
+    _this.id = id || "cv"; //Instance Id
+    _this.chev = new Map(); //Instance container
 
     //Init default types
     initService(_this);
@@ -31,12 +29,9 @@ const Chevron = function(id) {
  * Expose Chevron methods
  */
 Chevron.prototype = {
-    //Core service/factory method
-    provider,
-    //Prepare/init services/factory with deps injected
-    access,
-    //Add new service type
-    extend
+    provider, //Core module creation method
+    access, //Init and return module with dependencies injected
+    extend //Add new module type
 };
 
 export default Chevron;
