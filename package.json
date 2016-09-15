@@ -12,12 +12,14 @@
         "url": "git+https://github.com/FelixRilling/chevronjs.git"
     },
     "scripts": {
-        "start": "npm run sync  && npm run bundle && npm run babel && npm run uglify && npm run head",
-        "sync": "node ./tasks/sync.js",
+        "start": "npm run dist",
+        "dist": "npm run sync  && npm run build && npm run uglify && npm run header",
+        "build": "npm run bundle && npm run babel",
         "bundle": "rollup -c",
         "babel": "rollup -c ./rollup.babel.config.js",
-        "head": "node ./tasks/head.js",
-        "uglify": "node ./tasks/uglify.js"
+        "uglify": "node ./tasks/uglify.js",
+        "sync": "node ./tasks/sync.js",
+        "header": "node ./tasks/header.js"
     },
     "keywords": [
         "dependencies",
@@ -34,9 +36,9 @@
     "devDependencies": {
       "babel-plugin-external-helpers": "^6.8.0",
       "babel-preset-es2015": "^6.14.0",
-      "rollup": "^0.34.0",
+      "rollup": "^0.35.0",
       "rollup-plugin-babel": "^2.6.1",
-      "rollup-plugin-commonjs": "^3.3.0",
+      "rollup-plugin-commonjs": "^4.0.0",
       "rollup-plugin-node-resolve": "^2.0.0",
       "uglify-js": "^2.7.0"
     },

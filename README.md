@@ -2,11 +2,11 @@
 
 # ChevronJS
 
-> An super tiny JavaScript module library
+> A super tiny JavaScript module library
 
 ## Introduction
 
-Chevron is an extremely small(1.0kB) JavaScript module library for easy module declaration, dependency managment and lazy module loading, inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
+Chevron is an extremely small(1.0kB) JavaScript module library for easy module declaration, dependency management and lazy module loading, inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
 
 [Demo](http://codepen.io/FelixRilling/pen/AXgydJ)
 
@@ -151,7 +151,7 @@ cv.extend("myType", function(module, bundle) {
 });
 ```
 
-In the example above we created a new module type, "myType", with the given function as constructor. You'll probably want to start by using a modified version of the default Service or Factory constructor which you can find in the in ["src/types"](https://github.com/FelixRilling/chevronjs/tree/master/src/types) folder of the repo.
+In the example above we created a new module type, "myType", with the given function as the constructor. You'll probably want to start by using a modified version of the default Service or Factory constructor which you can find in the in ["src/types"](https://github.com/FelixRilling/chevronjs/tree/master/src/types) folder of the repo.
 
 After you created the new type, you can use it by calling the type as a method
 

@@ -13,7 +13,7 @@
  * @param {Function} cf The Constructor function
  * @returns {Object} Initialized module
  */
-function initialize (module, list, cf) {
+var initialize = function (module, list, cf) {
     //Only init if its not already initializes
     if (!module.rdy) {
         const bundle = [];
@@ -69,7 +69,7 @@ function recurseDependencies(chev, module, fn) {
  * @param {Function} cf The constructor function
  * @returns {Object} Initialized module
  */
-function prepare (chev, module, cf) {
+var prepare = function (chev, module, cf) {
     const list = {};
 
     //Recurse trough module deps
@@ -95,7 +95,7 @@ function prepare (chev, module, cf) {
  * @param {Function} fn Content of the service
  * @returns {Object} Chevron Instance
  */
-function provider (type, cf, name, deps, fn) {
+var provider = function (type, cf, name, deps, fn) {
     const _this = this;
     const entry = {
         type, //Type of the module
@@ -120,7 +120,7 @@ function provider (type, cf, name, deps, fn) {
  * @param {Function} cf Constructor function to init the module with
  * @returns {Object} Chevron Instance
  */
-function extend (type, cf) {
+var extend = function (type, cf) {
     const _this = this;
 
     //Add customType method to container
@@ -142,7 +142,7 @@ function extend (type, cf) {
  * @param {String} name The name of the module
  * @returns {*} Content of the initialized module
  */
-function access (name) {
+var access = function (name) {
     const accessedModule = this.chev.get(name);
 
     //Check if accessed module is registered
@@ -157,7 +157,7 @@ function access (name) {
  * @private
  * @param {Object} context Context to extend
  */
-function initService (context) {
+var initService = function (context) {
     context.extend("service", function (service, bundle) {
         //dereference fn to avoid unwanted recursion
         const serviceFn = service.fn;
@@ -179,7 +179,7 @@ function initService (context) {
  * @private
  * @param {Object} context Context to extend
  */
-function initFactory (context) {
+var initFactory = function (context) {
     context.extend("factory", function (service, bundle) {
         //First value gets ignored by calling 'new' like this, so we need to fill it
         bundle.unshift(0);

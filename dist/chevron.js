@@ -17,7 +17,7 @@ var Chevron = (function () {
  * @returns {Object} Initialized module
  */
 
-function initialize (module, list, cf) {
+var initialize = function (module, list, cf) {
     //Only init if its not already initializes
     if (!module.rdy) {
         (function () {
@@ -76,7 +76,7 @@ function recurseDependencies(chev, module, fn) {
  * @param {Function} cf The constructor function
  * @returns {Object} Initialized module
  */
-function prepare (chev, module, cf) {
+var prepare = function (chev, module, cf) {
     var list = {};
 
     //Recurse trough module deps
@@ -99,7 +99,7 @@ function prepare (chev, module, cf) {
  * @param {Function} fn Content of the service
  * @returns {Object} Chevron Instance
  */
-function provider (type, cf, name, deps, fn) {
+var provider = function (type, cf, name, deps, fn) {
     var _this = this;
     var entry = {
         type: type, //Type of the module
@@ -126,7 +126,7 @@ function provider (type, cf, name, deps, fn) {
  * @returns {Object} Chevron Instance
  */
 
-function extend (type, cf) {
+var extend = function (type, cf) {
     var _this = this;
 
     //Add customType method to container
@@ -148,7 +148,7 @@ function extend (type, cf) {
  * @returns {*} Content of the initialized module
  */
 
-function access (name) {
+var access = function (name) {
     var accessedModule = this.chev.get(name);
 
     //Check if accessed module is registered
@@ -164,7 +164,7 @@ function access (name) {
  * @param {Object} context Context to extend
  */
 
-function initService (context) {
+var initService = function (context) {
     context.extend("service", function (service, bundle) {
         //dereference fn to avoid unwanted recursion
         var serviceFn = service.fn;
@@ -187,7 +187,7 @@ function initService (context) {
  * @param {Object} context Context to extend
  */
 
-function initFactory (context) {
+var initFactory = function (context) {
     context.extend("factory", function (service, bundle) {
         //First value gets ignored by calling 'new' like this, so we need to fill it
         bundle.unshift(0);
