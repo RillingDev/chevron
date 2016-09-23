@@ -1,5 +1,5 @@
 /**
- * Chevron v5.3.1
+ * Chevron v5.3.2
  * Author: Felix Rilling
  * Homepage: https://github.com/FelixRilling/chevronjs#readme
  * License: MIT
