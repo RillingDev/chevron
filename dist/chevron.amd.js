@@ -1,5 +1,5 @@
 /**
- * Chevron v5.3.3
+ * Chevron v5.4.0
  * Author: Felix Rilling
  * Homepage: https://github.com/FelixRilling/chevronjs#readme
  * License: MIT
@@ -142,22 +142,6 @@ var extend = function (type, cf) {
 }
 
 /**
- * Access module with dependencies bound
- * @param {String} name The name of the module
- * @returns {*} Content of the initialized module
- */
-
-var access = function (name) {
-    var accessedModule = this.chev.get(name);
-
-    //Check if accessed module is registered
-    if (accessedModule) {
-        //Call prepare with bound context
-        return accessedModule.init().fn;
-    }
-}
-
-/**
  * Creates method entry for service
  * @private
  * @param {Object} context Context to extend
@@ -222,7 +206,15 @@ var Chevron = function Chevron(id) {
 Chevron.prototype = {
     extend: extend, //Adds a new module to the container
     provider: provider, //Adds a new module to the container
-    access: access //Access module with dependencies bound
+    access: //Access module with dependencies bound
+    function access(name) {
+        var accessedModule = this.chev.get(name);
+
+        //Check if accessed module is registered
+        if (accessedModule) {
+            return accessedModule.init().fn; //Call prepare with bound context
+        }
+    }
 };
 
 return Chevron;

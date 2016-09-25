@@ -2,7 +2,6 @@
 
 import provider from "./api/provider";
 import extend from "./api/extend";
-import access from "./access/access";
 
 import initService from "./types/service";
 import initFactory from "./types/factory";
@@ -13,7 +12,7 @@ import initFactory from "./types/factory";
  * @param {String} id To identify the instance
  * @returns {Object} Chevron instance
  */
-const Chevron = function (id) {
+const Chevron = function(id) {
     const _this = this;
 
     _this.id = id || "cv"; //Instance Id
@@ -30,7 +29,15 @@ const Chevron = function (id) {
 Chevron.prototype = {
     extend, //Adds a new module to the container
     provider, //Adds a new module to the container
-    access //Access module with dependencies bound
+    access: //Access module with dependencies bound
+        function(name) {
+        const accessedModule = this.chev.get(name);
+
+        //Check if accessed module is registered
+        if (accessedModule) {
+            return accessedModule.init().fn; //Call prepare with bound context
+        }
+    }
 };
 
 export default Chevron;

@@ -1,6 +1,6 @@
 "use strict";
 
-import prepare from "../access/prepare";
+import prepare from "../init/prepare";
 
 /**
  * Adds a new module to the container
