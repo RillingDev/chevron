@@ -1,46 +1,47 @@
 {
-    "name": "chevronjs",
-    "version": "v5.3.3",
-    "description": "Chevron is an extremely small(1.0kB) JavaScript library for easy module declaration, dependency managment and lazy module loading.",
-    "main": "dist/chevron.js",
-    "module": {
-        "name": "Chevron",
-        "id": "chevron"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/FelixRilling/chevronjs.git"
-    },
-    "scripts": {
-        "start": "npm run dist",
-        "dist": "npm run sync  && npm run build && npm run uglify && npm run header",
-        "build": "npm run bundle && npm run babel",
-        "bundle": "rollup -c",
-        "babel": "rollup -c ./rollup.babel.config.js",
-        "uglify": "node ./tasks/uglify.js",
-        "sync": "node ./tasks/sync.js",
-        "header": "node ./tasks/header.js"
-    },
-    "keywords": [
-        "dependencies",
-        "modules",
-        "service",
-        "factory"
-    ],
-    "author": "Felix Rilling",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/FelixRilling/chevronjs/issues"
-    },
-    "homepage": "https://github.com/FelixRilling/chevronjs#readme",
-    "devDependencies": {
-      "babel-plugin-external-helpers": "^6.8.0",
-      "babel-preset-es2015": "^6.14.0",
-      "rollup": "^0.36.0",
-      "rollup-plugin-babel": "^2.6.1",
-      "rollup-plugin-commonjs": "^5.0.0",
-      "rollup-plugin-node-resolve": "^2.0.0",
-      "uglify-js": "^2.7.0"
-    },
-    "dependencies": {}
+  "name": "chevronjs",
+  "version": "v5.3.3",
+  "description": "Chevron is an extremely small(1.0kB) JavaScript library for easy module declaration, dependency managment and lazy module loading.",
+  "main": "dist/chevron.js",
+  "module": {
+    "name": "Chevron",
+    "id": "chevron"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FelixRilling/chevronjs.git"
+  },
+  "scripts": {
+    "start": "npm run dist",
+    "dist": "npm run sync  && npm run build && npm run uglify && npm run header",
+    "build": "npm run bundle && npm run babel",
+    "bundle": "rollup -c",
+    "babel": "rollup -c ./rollup.babel.config.js",
+    "uglify": "node ./tasks/uglify.js",
+    "sync": "node ./tasks/sync.js",
+    "header": "node ./tasks/header.js"
+  },
+  "keywords": [
+    "dependencies",
+    "modules",
+    "service",
+    "factory"
+  ],
+  "author": "Felix Rilling",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FelixRilling/chevronjs/issues"
+  },
+  "homepage": "https://github.com/FelixRilling/chevronjs#readme",
+  "devDependencies": {
+    "babel-plugin-external-helpers": "^6.8.0",
+    "babel-preset-es2015": "^6.14.0",
+    "jasmine": "^2.5.2",
+    "rollup": "^0.36.0",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-commonjs": "^5.0.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "uglify-js": "^2.7.0"
+  },
+  "dependencies": {}
 }
