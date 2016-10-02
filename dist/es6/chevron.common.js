@@ -1,5 +1,5 @@
 /**
- * Chevron v5.5.1
+ * Chevron v5.5.2
  * Author: Felix Rilling
  * Homepage: https://github.com/FelixRilling/chevronjs#readme
  * License: MIT
@@ -57,8 +57,8 @@ function recurseDependencies(chev, module, fn) {
             //run fn
             fn(dependency);
         } else {
-            //if not found, throw error with name
-            throw "error in " + module.name + ": dep '" + name + "' missing";
+            //if the dependency isnot found, throw error with name
+            throw new Error(module.name + " is missing dep '" + name + "'");
         }
     });
 }
@@ -145,17 +145,17 @@ var extend = function (type, cf) {
  * @param {Object} context Context to extend
  */
 var initService = function (context) {
-    context.extend("service", function (service, dependencies) {
+    context.extend("service", function (module, dependencies) {
         //Dereference fn to avoid unwanted recursion
-        const serviceFn = service.fn;
+        const serviceFn = module.fn;
 
-        service.fn = function () {
+        module.fn = function () {
             //Chevron service function wrapper
             //return function with args injected
             return serviceFn.apply(null, dependencies.concat(Array.from(arguments)));
         };
 
-        return service;
+        return module;
     });
 }
 
@@ -165,15 +165,15 @@ var initService = function (context) {
  * @param {Object} context Context to extend
  */
 var initFactory = function (context) {
-    context.extend("factory", function (service, dependencies) {
+    context.extend("factory", function (module, dependencies) {
         //First value gets ignored by calling 'new' like this, so we need to fill it with something
         dependencies.unshift(0);
 
         //Apply into new constructor by binding applying the bind method.
         //@see: {@link http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible }
-        service.fn = new(Function.prototype.bind.apply(service.fn, dependencies));
+        module.fn = new(Function.prototype.bind.apply(module.fn, dependencies));
 
-        return service;
+        return module;
     });
 }
 

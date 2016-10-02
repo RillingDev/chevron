@@ -18,8 +18,8 @@ export default function recurseDependencies(chev, module, fn) {
             //run fn
             fn(dependency);
         } else {
-            //if not found, throw error with name
-            throw "error in " + module.name + ": dep '" + name + "' missing";
+            //if the dependency isnot found, throw error with name
+            throw new Error(module.name + " is missing dep '" + name + "'");
         }
     });
 }
