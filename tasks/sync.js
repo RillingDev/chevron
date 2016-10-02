@@ -6,7 +6,6 @@ const packageJson = require("../package.json");
 const bowerJson = require("../bower.json");
 const newBowerJson = bowerJson;
 
-
 newBowerJson.name = packageJson.name;
 newBowerJson.version = packageJson.version;
 newBowerJson.description = packageJson.description;

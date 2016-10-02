@@ -17,7 +17,6 @@
     "ignore": [
         ".git/",
         ".tmp/",
-        "spec/",
         "node_modules/",
         "bower_components/",
         "npm-debug.*",
