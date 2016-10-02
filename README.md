@@ -26,20 +26,11 @@ bower install chevronjs --save
 
 ### Constructor
 
-To start with Chevron, you need to create a new Chevron Container:
+To start with Chevron, you need to create a new Chevron container:
 
 ```javascript
 var cv = new Chevron();
 ```
-
-The Chevron Constructor can be called with options:
-
-```javascript
-//Chevron(id = "Chevron");
-var namedCv = new Chevron("myCustomContainer");
-```
-
-When a named Chevron Instance throws an error, you can identify which Container errored by the id.
 
 ### Module Types
 
@@ -48,7 +39,6 @@ When a named Chevron Instance throws an error, you can identify which Container 
 Services are the most common type of module. A service is simply a function wrapped by chevron + dependencies. The syntax for `service` is as follows:
 
 ```javascript
-
 //Create new service
 //Chevron.prototype.service(name,[dependencies],function);
 cv.service("foo", [],
@@ -65,7 +55,6 @@ foo(); //returns 12
 or with dependencies:
 
 ```javascript
-
 cv.service("foo", [],
     function() {
         return 12;
@@ -141,7 +130,7 @@ You can easily create your own module type by using the Chevron API. To declare 
 
 ```javascript
 //Chevron.prototype.extend(type,fn);
-cv.extend("myType", function(module, bundle) {
+cv.extend("myType", function(module, dependencies) {
     /**
      * your init code here
      */
@@ -151,7 +140,7 @@ cv.extend("myType", function(module, bundle) {
 });
 ```
 
-In the example above we created a new module type, "myType", with the given function as the constructor. You'll probably want to start by using a modified version of the default Service or Factory constructor which you can find in the in ["src/types"](https://github.com/FelixRilling/chevronjs/tree/master/src/types) folder of the repo.
+In the example above we created a new module type, "myType", with the given function as the constructor. You'll probably want to start by using a modified version of the default Service or Factory constructor which you can find in the in ["src/types"](https://github.com/FelixRilling/chevronjs/tree/master/src/types) folder of this repository.
 
 After you created the new type, you can use it by calling the type as a method
 
@@ -167,8 +156,3 @@ Then you can simply call `access` again to access your new module type.
 ```javascript
 cv.access("foo");
 ```
-
-## FAQ
-
-- **Q: Why are there no middleware/decorators?**
-- A: I actually had middleware/decorators in version 1.x, but I removed them because I felt like the lib should focus more on being tiny than on more features/**/

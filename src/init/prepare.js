@@ -4,7 +4,7 @@ import initialize from "./initialize";
 import recurseDependencies from "./recurseDependencies";
 
 /**
- * Check if every dependency is available
+ * Inits module and all dependencies
  * @private
  * @param {Object} chev The chevron container
  * @param {Object} module The module to prepare

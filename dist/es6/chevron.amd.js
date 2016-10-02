@@ -1,5 +1,5 @@
 /**
- * Chevron v5.5.0
+ * Chevron v5.5.1
  * Author: Felix Rilling
  * Homepage: https://github.com/FelixRilling/chevronjs#readme
  * License: MIT
@@ -18,7 +18,7 @@ define('chevron', function () { 'use strict';
 var initialize = function (module, list, cf) {
     //Only init if its not already initializes
     if (!module.rdy) {
-        const bundle = [];
+        const dependencies = [];
 
         //Collect an ordered Array of dependencies
         module.deps.forEach(item => {
@@ -26,13 +26,13 @@ var initialize = function (module, list, cf) {
 
             //If the dependency name is found in the list of deps, add it
             if (dependency) {
-                bundle.push(dependency.fn);
+                dependencies.push(dependency.fn);
             }
         });
 
         //Init module
         //Call Constructor fn with module/deps
-        module = cf(module, bundle);
+        module = cf(module, dependencies);
         module.rdy = true;
     }
 
@@ -64,7 +64,7 @@ function recurseDependencies(chev, module, fn) {
 }
 
 /**
- * Check if every dependency is available
+ * Inits module and all dependencies
  * @private
  * @param {Object} chev The chevron container
  * @param {Object} module The module to prepare
@@ -145,16 +145,14 @@ var extend = function (type, cf) {
  * @param {Object} context Context to extend
  */
 var initService = function (context) {
-    context.extend("service", function (service, bundle) {
-        //dereference fn to avoid unwanted recursion
+    context.extend("service", function (service, dependencies) {
+        //Dereference fn to avoid unwanted recursion
         const serviceFn = service.fn;
 
         service.fn = function () {
             //Chevron service function wrapper
-            //Concat dependencies and arguments
-            const args = bundle.concat(Array.from(arguments));
             //return function with args injected
-            return serviceFn.apply(null, args);
+            return serviceFn.apply(null, dependencies.concat(Array.from(arguments)));
         };
 
         return service;
@@ -167,13 +165,13 @@ var initService = function (context) {
  * @param {Object} context Context to extend
  */
 var initFactory = function (context) {
-    context.extend("factory", function (service, bundle) {
-        //First value gets ignored by calling 'new' like this, so we need to fill it
-        bundle.unshift(0);
+    context.extend("factory", function (service, dependencies) {
+        //First value gets ignored by calling 'new' like this, so we need to fill it with something
+        dependencies.unshift(0);
 
-        //Apply into new constructor by accessing bind proto.
+        //Apply into new constructor by binding applying the bind method.
         //@see: {@link http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible }
-        service.fn = new(Function.prototype.bind.apply(service.fn, bundle));
+        service.fn = new(Function.prototype.bind.apply(service.fn, dependencies));
 
         return service;
     });

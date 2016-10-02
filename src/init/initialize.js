@@ -11,7 +11,7 @@
 export default function (module, list, cf) {
     //Only init if its not already initializes
     if (!module.rdy) {
-        const bundle = [];
+        const dependencies = [];
 
         //Collect an ordered Array of dependencies
         module.deps.forEach(item => {
@@ -19,13 +19,13 @@ export default function (module, list, cf) {
 
             //If the dependency name is found in the list of deps, add it
             if (dependency) {
-                bundle.push(dependency.fn);
+                dependencies.push(dependency.fn);
             }
         });
 
         //Init module
         //Call Constructor fn with module/deps
-        module = cf(module, bundle);
+        module = cf(module, dependencies);
         module.rdy = true;
     }
 
