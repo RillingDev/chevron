@@ -1,7 +1,8 @@
 "use strict";
 
-import provider from "./api/provider";
 import extend from "./api/extend";
+import provider from "./api/provider";
+import access from "./api/access";
 
 import initService from "./types/service";
 import initFactory from "./types/factory";
@@ -17,20 +18,17 @@ const Chevron = function() {
     _this.chev = new Map(); //Instance container
 
     //Init default types
-    initService(_this);
-    initFactory(_this);
+    _this.extend("service", initService);
+    _this.extend("factory", initFactory);
 };
 
 /**
  * Expose Chevron methods
  */
 Chevron.prototype = {
-    extend, //Adds a new module to the container
-    provider, //Adds a new module to the container
-    access: function(name) {
-        //Access module with dependencies bound
-        return this.chev.get(name).init().fn;
-    }
+    extend, //Creates a new module type
+    provider, //Adds a new custom module to the container
+    access //Returns initialized module
 };
 
 export default Chevron;

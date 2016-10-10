@@ -1,5 +1,5 @@
 /**
- * Chevron v5.5.2
+ * Chevron v5.6.0
  * Author: Felix Rilling
  * Homepage: https://github.com/FelixRilling/chevronjs#readme
  * License: MIT
@@ -7,6 +7,29 @@
 
 var Chevron = (function () {
 'use strict';
+
+/**
+ * Adds a new module type to the Chevron instance
+ * @param {String} type The name of the type
+ * @param {Function} cf Constructor function to init the module with
+ * @returns {Object} Chevron instance
+ */
+
+var extend = function (type, cf) {
+    var _this = this;
+
+    //Add customType method to container
+    _this[type] = function (name, deps, fn) {
+        return _this.provider(type, //static
+        cf, //static
+        name, //dynamic
+        deps, //dynamic
+        fn //dynamic
+        );
+    };
+
+    return _this;
+};
 
 /**
  * Collects dependencies and initializes module
@@ -41,7 +64,7 @@ var initialize = function (module, list, cf) {
     }
 
     return module;
-}
+};
 
 /**
  * Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
@@ -51,7 +74,7 @@ var initialize = function (module, list, cf) {
  * @param {Function} fn The function run over each dependency
  */
 
-function recurseDependencies(chev, module, fn) {
+var recurseDependencies = function recurseDependencies(chev, module, fn) {
     //loop trough deps
     module.deps.forEach(function (name) {
         var dependency = chev.get(name);
@@ -66,7 +89,7 @@ function recurseDependencies(chev, module, fn) {
             throw new Error(module.name + " is missing dep '" + name + "'");
         }
     });
-}
+};
 
 /**
  * Inits module and all dependencies
@@ -88,16 +111,16 @@ var prepare = function (chev, module, cf) {
     });
 
     return initialize(module, list, cf);
-}
+};
 
 /**
  * Adds a new module to the container
- * @param {String} type The type of the service (service/factory)
- * @param {Function} cf The Constructor function of the service
- * @param {String} name The name to register/id the service
- * @param {Array} deps List of dependencies
- * @param {Function} fn Content of the service
- * @returns {Object} Chevron Instance
+ * @param {String} type The type of the module. ex: "factory"
+ * @param {Function} cf The constructor function of the module
+ * @param {String} name The name to register the module under. ex: "myFactory"
+ * @param {Array} deps Array of dependenciy names
+ * @param {Function} fn Content of the module
+ * @returns {Object} Chevron instance
  */
 var provider = function (type, cf, name, deps, fn) {
     var _this = this;
@@ -117,70 +140,57 @@ var provider = function (type, cf, name, deps, fn) {
     _this.chev.set(name, entry);
 
     return _this;
-}
+};
 
 /**
- * Adds a new module type
- * @param {String} type The name of the type
- * @param {Function} cf Constructor function to init the module with
- * @returns {Object} Chevron Instance
+ * Access module with dependencies bound
+ * @param {String} name The name of the module to access
+ * @returns {Mixed} Initialized Object content
  */
 
-var extend = function (type, cf) {
-    var _this = this;
+var access = function (name) {
+  return this.chev.get(name).init().fn;
+};
 
-    //Add customType method to container
-    _this[type] = function (name, deps, fn) {
-        return _this.provider(type, //static
-        cf, //static
-        name, //dynamic
-        deps, //dynamic
-        fn //dynamic
-        );
+/**
+ * Constructor function for the service type
+ * @private
+ * @param {Object} module The module object
+ * @param {Array} dependencies Array of dependency contents
+ * @returns {Mixed} Initialized module
+ */
+
+var initService = function (module, dependencies) {
+    //Dereference fn to avoid unwanted recursion
+    var serviceFn = module.fn;
+
+    module.fn = function () {
+        //Chevron service function wrapper
+        //return function with args injected
+        return serviceFn.apply(null, dependencies.concat(Array.from(arguments)));
     };
 
-    return _this;
-}
+    return module;
+};
 
 /**
- * Creates method entry for service
+ * Constructor function for the factory type
  * @private
- * @param {Object} context Context to extend
+ * @param {Object} module The module object
+ * @param {Array} dependencies Array of dependency contents
+ * @returns {Mixed} Initialized module
  */
 
-var initService = function (context) {
-    context.extend("service", function (module, dependencies) {
-        //Dereference fn to avoid unwanted recursion
-        var serviceFn = module.fn;
+var initFactory = function (module, dependencies) {
+    //First value gets ignored by calling 'new' like this, so we need to fill it with something
+    dependencies.unshift(0);
 
-        module.fn = function () {
-            //Chevron service function wrapper
-            //return function with args injected
-            return serviceFn.apply(null, dependencies.concat(Array.from(arguments)));
-        };
+    //Apply into new constructor by binding applying the bind method.
+    //@see: {@link http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible }
+    module.fn = new (Function.prototype.bind.apply(module.fn, dependencies))();
 
-        return module;
-    });
-}
-
-/**
- * Creates method entry for factory
- * @private
- * @param {Object} context Context to extend
- */
-
-var initFactory = function (context) {
-    context.extend("factory", function (module, dependencies) {
-        //First value gets ignored by calling 'new' like this, so we need to fill it with something
-        dependencies.unshift(0);
-
-        //Apply into new constructor by binding applying the bind method.
-        //@see: {@link http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible }
-        module.fn = new (Function.prototype.bind.apply(module.fn, dependencies))();
-
-        return module;
-    });
-}
+    return module;
+};
 
 /**
  * Chevron Constructor
@@ -193,20 +203,17 @@ var Chevron = function Chevron() {
     _this.chev = new Map(); //Instance container
 
     //Init default types
-    initService(_this);
-    initFactory(_this);
+    _this.extend("service", initService);
+    _this.extend("factory", initFactory);
 };
 
 /**
  * Expose Chevron methods
  */
 Chevron.prototype = {
-    extend: extend, //Adds a new module to the container
-    provider: provider, //Adds a new module to the container
-    access: function access(name) {
-        //Access module with dependencies bound
-        return this.chev.get(name).init().fn;
-    }
+    extend: extend, //Creates a new module type
+    provider: provider, //Adds a new custom module to the container
+    access: access //Returns initialized module
 };
 
 return Chevron;

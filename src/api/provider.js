@@ -4,12 +4,12 @@ import prepare from "../init/prepare";
 
 /**
  * Adds a new module to the container
- * @param {String} type The type of the service (service/factory)
- * @param {Function} cf The Constructor function of the service
- * @param {String} name The name to register/id the service
- * @param {Array} deps List of dependencies
- * @param {Function} fn Content of the service
- * @returns {Object} Chevron Instance
+ * @param {String} type The type of the module. ex: "factory"
+ * @param {Function} cf The constructor function of the module
+ * @param {String} name The name to register the module under. ex: "myFactory"
+ * @param {Array} deps Array of dependenciy names
+ * @param {Function} fn Content of the module
+ * @returns {Object} Chevron instance
  */
 export default function (type, cf, name, deps, fn) {
     const _this = this;

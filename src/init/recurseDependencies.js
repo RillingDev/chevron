@@ -7,7 +7,7 @@
  * @param {Array} module The dependencyList to iterate
  * @param {Function} fn The function run over each dependency
  */
-export default function recurseDependencies(chev, module, fn) {
+const recurseDependencies = function(chev, module, fn) {
     //loop trough deps
     module.deps.forEach(name => {
         const dependency = chev.get(name);
@@ -22,4 +22,6 @@ export default function recurseDependencies(chev, module, fn) {
             throw new Error(module.name + " is missing dep '" + name + "'");
         }
     });
-}
+};
+
+export default recurseDependencies;
