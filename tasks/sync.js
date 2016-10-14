@@ -4,19 +4,16 @@
 const fs = require("fs");
 const packageJson = require("../package.json");
 const bowerJson = require("../bower.json");
-const newBowerJson = bowerJson;
 
-newBowerJson.name = packageJson.name;
-newBowerJson.version = packageJson.version;
-newBowerJson.description = packageJson.description;
-newBowerJson.repository = packageJson.repository;
-newBowerJson.keywords = packageJson.keywords;
-newBowerJson.author = packageJson.author;
-newBowerJson.license = packageJson.author;
-newBowerJson.bugs = packageJson.author;
-newBowerJson.homepage = packageJson.homepage;
+const keysToSync = ["name", "version", "description", "repository", "keywords", "author", "license", "bugs", "homepage"];
 
-fs.writeFile("./bower.json", JSON.stringify(newBowerJson, null, "    "), function(err) {
+
+keysToSync.forEach(key => {
+    bowerJson[key] = packageJson[key];
+});
+
+
+fs.writeFile("./bower.json", JSON.stringify(bowerJson, null, "    "), function(err) {
     if (err) {
         throw err;
     }

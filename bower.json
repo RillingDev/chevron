@@ -6,7 +6,7 @@
     "authors": [
         "Felix Rilling"
     ],
-    "license": "Felix Rilling",
+    "license": "MIT",
     "keywords": [
         "dependencies",
         "modules",
@@ -29,5 +29,7 @@
         "url": "git+https://github.com/FelixRilling/chevronjs.git"
     },
     "author": "Felix Rilling",
-    "bugs": "Felix Rilling"
+    "bugs": {
+        "url": "https://github.com/FelixRilling/chevronjs/issues"
+    }
 }

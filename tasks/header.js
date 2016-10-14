@@ -3,6 +3,7 @@
 
 const fs = require("fs");
 const packageJson = require("../package.json");
+
 const id = packageJson.module.id;
 const base = "./dist/";
 const files = [
@@ -25,7 +26,8 @@ const head =
 
 `;
 
-function writeHeader(file) {
+
+files.forEach(file => {
     const path = base + file;
 
     fs.readFile(path, function read(err, data) {
@@ -39,8 +41,4 @@ function writeHeader(file) {
             console.log(`wrote ${path}`);
         });
     });
-}
-
-files.forEach(file => {
-    writeHeader(file);
 });

@@ -2,14 +2,26 @@
     "name": "chevronjs",
     "version": "v5.6.0",
     "description": "Chevron is an extremely small(1.0kB) JavaScript library for easy module declaration, dependency managment and lazy module loading.",
-    "main": "dist/chevron.js",
-    "module": {
-        "name": "Chevron",
-        "id": "chevron"
+    "author": "Felix Rilling",
+    "license": "MIT",
+    "keywords": [
+        "dependencies",
+        "modules",
+        "service",
+        "factory"
+    ],
+    "bugs": {
+        "url": "https://github.com/FelixRilling/chevronjs/issues"
     },
+    "homepage": "https://github.com/FelixRilling/chevronjs#readme",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/FelixRilling/chevronjs.git"
+    },
+    "main": "dist/chevron.es.js",
+    "module": {
+        "name": "Chevron",
+        "id": "chevron"
     },
     "scripts": {
         "start": "npm run dist && npm run test",
@@ -22,18 +34,6 @@
         "header": "node ./tasks/header.js",
         "test": "jasmine"
     },
-    "keywords": [
-        "dependencies",
-        "modules",
-        "service",
-        "factory"
-    ],
-    "author": "Felix Rilling",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/FelixRilling/chevronjs/issues"
-    },
-    "homepage": "https://github.com/FelixRilling/chevronjs#readme",
     "devDependencies": {
         "babel-plugin-external-helpers": "^6.8.0",
         "babel-preset-es2015": "^6.14.0",

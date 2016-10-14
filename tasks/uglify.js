@@ -14,10 +14,16 @@ const result = uglifyJS.minify([`./dist/${packageJson.module.id}.js`], {
         conditionals: true,
         comparisons: true,
         booleans: true,
+        evaluate: true,
         loops: true,
+        unused: true,
         if_return: true,
         join_vars: true,
-        passes: 3
+        cascade: true,
+        collapse_vars: true,
+        pure_getters: true,
+        drop_console: true,
+        passes: 1
     }
 });
 
