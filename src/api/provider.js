@@ -1,5 +1,7 @@
 "use strict";
-var prepare_1 = require("../init/prepare");
+
+import prepare from "../init/prepare";
+
 /**
  * Adds a new module to the container
  * @param {String} type The type of the module. ex: "factory"
@@ -9,21 +11,21 @@ var prepare_1 = require("../init/prepare");
  * @param {Function} fn Content of the module
  * @returns {Object} Chevron instance
  */
-function default_1(type, cf, name, deps, fn) {
-    var _this = this;
-    var entry = {
-        type: type,
-        name: name,
-        deps: deps,
-        fn: fn,
-        rdy: false,
-        init: function () {
-            return prepare_1["default"](_this.chev, entry, cf);
+export default function (type, cf, name, deps, fn) {
+    const _this = this;
+    const entry = {
+        type, //Type of the module
+        name, //Name of the module
+        deps, //Array of dependencies
+        fn, //Module content function
+        rdy: false, //If the module is ready to access
+        init: function () { //init the module
+            return prepare(_this.chev, entry, cf);
         }
     };
+
     //Saves entry to chev container
     _this.chev.set(name, entry);
+
     return _this;
 }
-exports.__esModule = true;
-exports["default"] = default_1;

@@ -1,28 +1,34 @@
 "use strict";
-var extend_1 = require("./api/extend");
-var provider_1 = require("./api/provider");
-var access_1 = require("./api/access");
-var service_1 = require("./types/service");
-var factory_1 = require("./types/factory");
+
+import extend from "./api/extend";
+import provider from "./api/provider";
+import access from "./api/access";
+
+import initService from "./types/service";
+import initFactory from "./types/factory";
+
 /**
  * Chevron Constructor
  * @constructor
  * @returns {Object} Chevron instance
  */
-var Chevron = function () {
-    var _this = this;
+const Chevron = function() {
+    const _this = this;
+
     _this.chev = new Map(); //Instance container
+
     //Init default types
-    _this.extend("service", service_1["default"]);
-    _this.extend("factory", factory_1["default"]);
+    _this.extend("service", initService);
+    _this.extend("factory", initFactory);
 };
+
 /**
  * Expose Chevron methods
  */
 Chevron.prototype = {
-    extend: extend_1["default"],
-    provider: provider_1["default"],
-    access: access_1["default"] //Returns initialized module
+    extend, //Creates a new module type
+    provider, //Adds a new custom module to the container
+    access //Returns initialized module
 };
-exports.__esModule = true;
-exports["default"] = Chevron;
+
+export default Chevron;

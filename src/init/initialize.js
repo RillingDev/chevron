@@ -1,4 +1,5 @@
 "use strict";
+
 /**
  * Collects dependencies and initializes module
  * @private
@@ -7,24 +8,26 @@
  * @param {Function} cf The Constructor function
  * @returns {Object} Initialized module
  */
-function default_1(module, list, cf) {
+export default function (module, list, cf) {
     //Only init if its not already initializes
     if (!module.rdy) {
-        var dependencies_1 = [];
+        const dependencies = [];
+
         //Collect an ordered Array of dependencies
-        module.deps.forEach(function (item) {
-            var dependency = list[item];
+        module.deps.forEach(item => {
+            const dependency = list[item];
+
             //If the dependency name is found in the list of deps, add it
             if (dependency) {
-                dependencies_1.push(dependency.fn);
+                dependencies.push(dependency.fn);
             }
         });
+
         //Init module
         //Call Constructor fn with module/deps
-        module = cf(module, dependencies_1);
+        module = cf(module, dependencies);
         module.rdy = true;
     }
+
     return module;
 }
-exports.__esModule = true;
-exports["default"] = default_1;
