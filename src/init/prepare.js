@@ -11,7 +11,7 @@ import recurseDependencies from "./recurseDependencies";
  * @param {Function} cf The constructor function
  * @returns {Object} Initialized module
  */
-export default function (chev, module, cf) {
+export default function(chev, module, cf) {
     const list = {};
 
     //Recurse trough module deps

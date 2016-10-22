@@ -1,5 +1,5 @@
 /**
- * Chevron v5.6.0
+ * Chevron v5.6.1
  * Author: Felix Rilling
  * Homepage: https://github.com/FelixRilling/chevronjs#readme
  * License: MIT
@@ -13,11 +13,11 @@ define('chevron', function () { 'use strict';
  * @param {Function} cf Constructor function to init the module with
  * @returns {Object} Chevron instance
  */
-var extend = function (type, cf) {
+var extend = function(type, cf) {
     const _this = this;
 
     //Add customType method to container
-    _this[type] = function (name, deps, fn) {
+    _this[type] = function(name, deps, fn) {
         return _this.provider(
             type, //static
             cf, //static
@@ -38,7 +38,7 @@ var extend = function (type, cf) {
  * @param {Function} cf The Constructor function
  * @returns {Object} Initialized module
  */
-var initialize = function (module, list, cf) {
+var initialize = function(module, list, cf) {
     //Only init if its not already initializes
     if (!module.rdy) {
         const dependencies = [];
@@ -94,7 +94,7 @@ const recurseDependencies = function(chev, module, fn) {
  * @param {Function} cf The constructor function
  * @returns {Object} Initialized module
  */
-var prepare = function (chev, module, cf) {
+var prepare = function(chev, module, cf) {
     const list = {};
 
     //Recurse trough module deps
@@ -120,7 +120,7 @@ var prepare = function (chev, module, cf) {
  * @param {Function} fn Content of the module
  * @returns {Object} Chevron instance
  */
-var provider = function (type, cf, name, deps, fn) {
+var provider = function(type, cf, name, deps, fn) {
     const _this = this;
     const entry = {
         type, //Type of the module
@@ -128,8 +128,8 @@ var provider = function (type, cf, name, deps, fn) {
         deps, //Array of dependencies
         fn, //Module content function
         rdy: false, //If the module is ready to access
-        init: function () { //init the module
-            return prepare(_this.chev, entry, cf);
+        init: function() {
+            return prepare(_this.chev, entry, cf); //init the module
         }
     };
 

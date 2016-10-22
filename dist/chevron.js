@@ -1,5 +1,5 @@
 /**
- * Chevron v5.6.0
+ * Chevron v5.6.1
  * Author: Felix Rilling
  * Homepage: https://github.com/FelixRilling/chevronjs#readme
  * License: MIT
@@ -131,8 +131,7 @@ var provider = function (type, cf, name, deps, fn) {
         fn: fn, //Module content function
         rdy: false, //If the module is ready to access
         init: function init() {
-            //init the module
-            return prepare(_this.chev, entry, cf);
+            return prepare(_this.chev, entry, cf); //init the module
         }
     };
 

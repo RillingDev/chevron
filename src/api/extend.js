@@ -6,11 +6,11 @@
  * @param {Function} cf Constructor function to init the module with
  * @returns {Object} Chevron instance
  */
-export default function (type, cf) {
+export default function(type, cf) {
     const _this = this;
 
     //Add customType method to container
-    _this[type] = function (name, deps, fn) {
+    _this[type] = function(name, deps, fn) {
         return _this.provider(
             type, //static
             cf, //static
