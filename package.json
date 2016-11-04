@@ -19,9 +19,9 @@
         "url": "git+https://github.com/FelixRilling/chevronjs.git"
     },
     "main": "dist/chevron.es.js",
-    "module": {
-        "name": "Chevron",
-        "id": "chevron"
+    "namespace": {
+        "module": "Chevron",
+        "file": "chevron"
     },
     "scripts": {
         "start": "npm run dist && npm run test",
@@ -35,14 +35,22 @@
         "test": "jasmine"
     },
     "devDependencies": {
-        "babel-plugin-external-helpers": "^6.8.0",
-        "babel-preset-es2015": "^6.14.0",
-        "jasmine": "^2.5.2",
-        "rollup": "^0.36.0",
+        "babel-plugin-external-helpers": "^6.18.0",
+        "babel-preset-es2015": "^6.18.0",
+        "gulp": "^3.9.1",
+        "gulp-clean": "^0.3.2",
+        "gulp-config-sync": "^1.0.2",
+        "gulp-header": "^1.8.8",
+        "gulp-jasmine": "^2.4.2",
+        "gulp-rename": "^1.2.2",
+        "gulp-sequence": "^0.4.6",
+        "gulp-sourcemaps": "^2.2.0",
+        "gulp-uglify": "^2.0.0",
+        "pump": "^1.0.1",
         "rollup-plugin-babel": "^2.6.1",
-        "rollup-plugin-commonjs": "^5.0.0",
-        "rollup-plugin-node-resolve": "^2.0.0",
-        "uglify-js": "^2.7.0"
+        "rollup-stream": "^1.14.0",
+        "vinyl-buffer": "^1.0.0",
+        "vinyl-source-stream": "^1.1.0"
     },
     "dependencies": {}
 }

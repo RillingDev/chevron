@@ -1,8 +1,7 @@
 /**
  * Chevron v5.6.1
  * Author: Felix Rilling
- * Homepage: https://github.com/FelixRilling/chevronjs#readme
- * License: MIT
+ * Repository: git+https://github.com/FelixRilling/chevronjs.git
  */
 
 var Chevron = (function () {
@@ -218,3 +217,5 @@ Chevron.prototype = {
 return Chevron;
 
 }());
+
+//# sourceMappingURL=chevron.js.map

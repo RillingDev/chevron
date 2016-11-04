@@ -70,5 +70,10 @@
     "wsh": false,
     "yui": false,
 
-    "globals": {}
+    "globals": {
+        "element": false,
+        "angular": false,
+        "_": false,
+        "$": false
+    }
 }

@@ -1,35 +1,35 @@
 {
-    "name": "chevronjs",
-    "version": "v5.6.1",
-    "description": "Chevron is an extremely small(1.0kB) JavaScript library for easy module declaration, dependency managment and lazy module loading.",
-    "main": "dist/chevron.js",
-    "authors": [
-        "Felix Rilling"
-    ],
-    "license": "MIT",
-    "keywords": [
-        "dependencies",
-        "modules",
-        "service",
-        "factory"
-    ],
-    "homepage": "https://github.com/FelixRilling/chevronjs#readme",
-    "ignore": [
-        ".git/",
-        ".tmp/",
-        "node_modules/",
-        "bower_components/",
-        "npm-debug.*",
-        ".DS_Store",
-        "logo.png",
-        "logo.psd"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/FelixRilling/chevronjs.git"
-    },
-    "author": "Felix Rilling",
-    "bugs": {
-        "url": "https://github.com/FelixRilling/chevronjs/issues"
-    }
+  "name": "chevronjs",
+  "version": "v5.6.1",
+  "description": "Chevron is an extremely small(1.0kB) JavaScript library for easy module declaration, dependency managment and lazy module loading.",
+  "main": "dist/chevron.js",
+  "authors": [
+    "Felix Rilling"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "dependencies",
+    "modules",
+    "service",
+    "factory"
+  ],
+  "homepage": "https://github.com/FelixRilling/chevronjs#readme",
+  "ignore": [
+    ".git/",
+    ".tmp/",
+    "node_modules/",
+    "bower_components/",
+    "npm-debug.*",
+    ".DS_Store",
+    "logo.png",
+    "logo.psd"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FelixRilling/chevronjs.git"
+  },
+  "author": "Felix Rilling",
+  "bugs": {
+    "url": "https://github.com/FelixRilling/chevronjs/issues"
+  }
 }
