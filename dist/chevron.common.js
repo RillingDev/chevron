@@ -1,3 +1,9 @@
+/**
+ * Chevron v6.0.0
+ * Author: Felix Rilling
+ * Repository: git+https://github.com/FelixRilling/chevronjs.git
+ */
+
 'use strict';
 
 /**

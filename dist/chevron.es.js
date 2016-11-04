@@ -1,4 +1,10 @@
 /**
+ * Chevron v6.0.0
+ * Author: Felix Rilling
+ * Repository: git+https://github.com/FelixRilling/chevronjs.git
+ */
+
+/**
  * Adds a new module type to the Chevron instance
  * @param {String} type The name of the type
  * @param {Function} cf Constructor function to init the module with
