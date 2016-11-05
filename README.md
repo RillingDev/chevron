@@ -12,14 +12,14 @@ Chevron is an extremely small(1.0kB) JavaScript module library for easy module d
 
 ## Usage
 
-Chevron supports both npm and bower:
+Chevron can be installed from the npm registry:
 
 ```shell
 npm install chevronjs --save
 ```
 
 ```shell
-bower install chevronjs --save
+yarn add chevronjs
 ```
 
 ## Syntax
@@ -29,7 +29,7 @@ bower install chevronjs --save
 To start with Chevron, you need to create a new Chevron container:
 
 ```javascript
-var cv = new Chevron();
+const cv = new Chevron();
 ```
 
 ### Module Types
@@ -41,35 +41,29 @@ Services are the most common type of module. A service is simply a function wrap
 ```javascript
 //Create new service
 //Chevron.prototype.service(name,[dependencies],function);
-cv.service("foo", [],
-    function() {
-        return 12;
-    }
-);
+cv.service("myService", [], function() {
+    return 12;
+});
 //Access service from the Chevron Container
 //Chevron.prototype.access(name);
-var foo = cv.access("foo");
-foo(); //returns 12
+const myService = cv.access("myService");
+myService(); //returns 12
 ```
 
 or with dependencies:
 
 ```javascript
-cv.service("foo", [],
-    function() {
-        return 12;
-    }
-);
+cv.service("myService", [], function() {
+    return 12;
+});
 
 //declare the service "foo" as dependency and as function argument
-cv.service("bar", ["foo"],
-    function(foo, int) {
-        return int * foo();
-    }
-);
+cv.service("myOtherService", ["myService"], function(myService, int) {
+    return int * myService();
+});
 
-var bar = cv.access("bar");
-bar(2); //returns 24
+const myOtherService = cv.access("myOtherService");
+myOtherService(2); //returns 24
 ```
 
 #### Factories
@@ -78,35 +72,30 @@ Factories are very similar to services but are treated as **Constructors** inste
 
 ```javascript
 //Chevron.prototype.factory(name,[dependencies],Constructor);
-cv.factory("foo", [],
-    function() {
-        this.foo = 12;
-        this.bar = 17;
-    }
-);
+cv.factory("myFactory", [], function() {
+    this.foo = 12;
+    this.bar = 17;
+});
 
-var foo = cv.access("foo");
-foo.bar; //returns 17
+const myFactory = cv.access("myFactory");
+myFactory.bar; //returns 17
 ```
 
 or combined with a service
 
 ```javascript
-cv.factory("foo", [],
-    function() {
-        this.foo = 7;
-        this.bar = 17;
-    }
-);
+cv.factory("myFactory", [], function() {
+    this.foo = 7;
+    this.bar = 17;
+});
 
-cv.service("bar", ["foo"],
-    function(foo, int) {
-        return int * foo.foo;
-    }
-);
+cv.service("myService", ["myFactory"], function(myFactory, int) {
+    return int * myFactory.foo;
+});
 
-var bar = cv.access("bar");
-bar(3); //returns 21
+const myService = cv.access("myService");
+myService(3); //returns 21
+
 ```
 
 ### Accessing Modules
@@ -115,13 +104,13 @@ Modules can be accessed in two ways. In most cases, you will want to get your mo
 
 ```javascript
 //Chevron.prototype.access(name)
-cv.access("foo"); //returns the service or factory with dependencies injected into arguments
+cv.access("myModule"); //returns the service or factory with dependencies injected into arguments
 ```
 
 or, if you just want the module without dependencies from the Chevron container(called "chev"):
 
 ```javascript
-cv.chev.get("foo"); //returns the service as Chevron object.
+cv.chev.get("myModule"); //returns the service as Chevron object.
 ```
 
 ## API
@@ -146,7 +135,7 @@ After you created the new type, you can use it by calling the type as a method
 
 ```javascript
 //Chevron.prototype.#name#(name,[dependencies],content);
-cv.myType("foo", [], function() {
+cv.myType("myCustomTypeModule", [], function() {
     return "bar";
 });
 ```
@@ -154,5 +143,5 @@ cv.myType("foo", [], function() {
 Then you can simply call `access` again to access your new module type.
 
 ```javascript
-cv.access("foo");
+cv.access("myCustomTypeModule");
 ```
