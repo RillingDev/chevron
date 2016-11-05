@@ -8,7 +8,7 @@
  * @param {Function} cf The Constructor function
  * @returns {Object} Initialized module
  */
-export default function(module, list, cf) {
+const initialize = function(module, list, cf) {
     //Only init if its not already initializes
     if (!module.rdy) {
         const dependencies = [];
@@ -30,4 +30,6 @@ export default function(module, list, cf) {
     }
 
     return module;
-}
+};
+
+export default initialize;

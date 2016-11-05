@@ -7,7 +7,7 @@
  * @param {Array} dependencies Array of dependency contents
  * @returns {Mixed} Initialized module
  */
-export default function(module, dependencies) {
+const factory = function(module, dependencies) {
     //First value gets ignored by calling 'new' like this, so we need to fill it with something
     dependencies.unshift(0);
 
@@ -16,4 +16,6 @@ export default function(module, dependencies) {
     module.fn = new(Function.prototype.bind.apply(module.fn, dependencies));
 
     return module;
-}
+};
+
+export default factory;

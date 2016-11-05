@@ -11,7 +11,7 @@ import prepare from "../init/prepare";
  * @param {Function} fn Content of the module
  * @returns {Object} Chevron instance
  */
-export default function(type, cf, name, deps, fn) {
+const provider = function(type, cf, name, deps, fn) {
     const _this = this;
     const entry = {
         type, //Type of the module
@@ -28,4 +28,6 @@ export default function(type, cf, name, deps, fn) {
     _this.chev.set(name, entry);
 
     return _this;
-}
+};
+
+export default provider;

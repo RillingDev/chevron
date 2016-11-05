@@ -1,5 +1,5 @@
 /**
- * Chevron v6.0.0
+ * Chevron v6.1.0
  * Author: Felix Rilling
  * Repository: git+https://github.com/FelixRilling/chevronjs.git
  */
@@ -10,7 +10,7 @@
  * @param {Function} cf Constructor function to init the module with
  * @returns {Object} Chevron instance
  */
-var extend = function(type, cf) {
+const extend = function(type, cf) {
     const _this = this;
 
     //Add customType method to container
@@ -35,7 +35,7 @@ var extend = function(type, cf) {
  * @param {Function} cf The Constructor function
  * @returns {Object} Initialized module
  */
-var initialize = function(module, list, cf) {
+const initialize = function(module, list, cf) {
     //Only init if its not already initializes
     if (!module.rdy) {
         const dependencies = [];
@@ -91,7 +91,7 @@ const recurseDependencies = function(chev, module, fn) {
  * @param {Function} cf The constructor function
  * @returns {Object} Initialized module
  */
-var prepare = function(chev, module, cf) {
+const prepare =function(chev, module, cf) {
     const list = {};
 
     //Recurse trough module deps
@@ -117,7 +117,7 @@ var prepare = function(chev, module, cf) {
  * @param {Function} fn Content of the module
  * @returns {Object} Chevron instance
  */
-var provider = function(type, cf, name, deps, fn) {
+const provider = function(type, cf, name, deps, fn) {
     const _this = this;
     const entry = {
         type, //Type of the module
@@ -141,7 +141,7 @@ var provider = function(type, cf, name, deps, fn) {
  * @param {String} name The name of the module to access
  * @returns {Mixed} Initialized Object content
  */
-var access = function(name) {
+const access = function(name) {
     return this.chev.get(name).init().fn;
 };
 
@@ -152,7 +152,7 @@ var access = function(name) {
  * @param {Array} dependencies Array of dependency contents
  * @returns {Mixed} Initialized module
  */
-var initService = function(module, dependencies) {
+const service = function(module, dependencies) {
     //Dereference fn to avoid unwanted recursion
     const serviceFn = module.fn;
 
@@ -172,7 +172,7 @@ var initService = function(module, dependencies) {
  * @param {Array} dependencies Array of dependency contents
  * @returns {Mixed} Initialized module
  */
-var initFactory = function(module, dependencies) {
+const factory = function(module, dependencies) {
     //First value gets ignored by calling 'new' like this, so we need to fill it with something
     dependencies.unshift(0);
 
@@ -194,8 +194,8 @@ const Chevron = function() {
     _this.chev = new Map(); //Instance container
 
     //Init default types
-    _this.extend("service", initService);
-    _this.extend("factory", initFactory);
+    _this.extend("service", service);
+    _this.extend("factory", factory);
 };
 
 /**

@@ -7,7 +7,7 @@
  * @param {Array} dependencies Array of dependency contents
  * @returns {Mixed} Initialized module
  */
-export default function(module, dependencies) {
+const service = function(module, dependencies) {
     //Dereference fn to avoid unwanted recursion
     const serviceFn = module.fn;
 
@@ -18,4 +18,6 @@ export default function(module, dependencies) {
     };
 
     return module;
-}
+};
+
+export default service;
