@@ -2,7 +2,10 @@
 .tmp/
 test/
 spec/
+demo/
 node_modules/
 bower_components/
 .DS_Store
 npm-debug.*
+logo.png
+logo.psd
