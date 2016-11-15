@@ -1,5 +1,5 @@
 /**
- * Chevron v6.1.1
+ * Chevron v6.2.0
  * Author: Felix Rilling
  * Repository: git+https://github.com/FelixRilling/chevronjs.git
  */
@@ -41,6 +41,7 @@ var extend = function extend(type, cf) {
 
 var constructModule = function constructModule(_module, list, constructorFunction) {
     var dependencies = [];
+    var result = void 0;
 
     //Collect an ordered Array of dependencies
     _module.deps.forEach(function (item) {
@@ -52,10 +53,11 @@ var constructModule = function constructModule(_module, list, constructorFunctio
         }
     });
 
-    //Init module
-    _module.rdy = true;
     //Call Constructor fn with _module/deps
-    return constructorFunction(_module, dependencies);
+    result = constructorFunction(_module, dependencies);
+    result.rdy = true;
+
+    return result;
 };
 
 /**
