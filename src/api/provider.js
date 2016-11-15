@@ -1,6 +1,6 @@
 "use strict";
 
-import prepare from "../init/prepare";
+import initialize from "../init/initialize";
 
 /**
  * Adds a new module to the container
@@ -11,7 +11,7 @@ import prepare from "../init/prepare";
  * @param {Function} fn Content of the module
  * @returns {Object} Chevron instance
  */
-const provider = function(type, cf, name, deps, fn) {
+const provider = function(type, constructorFunction, name, deps, fn) {
     const _this = this;
     const entry = {
         type, //Type of the module
@@ -20,7 +20,7 @@ const provider = function(type, cf, name, deps, fn) {
         fn, //Module content function
         rdy: false, //If the module is ready to access
         init: function() {
-            return prepare(_this.chev, entry, cf); //init the module
+            return initialize(_this.chev, entry, constructorFunction); //init the module
         }
     };
 

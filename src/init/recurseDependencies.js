@@ -4,12 +4,11 @@
  * Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
  * @private
  * @param {Object} chev The chevron container
- * @param {Array} module The dependencyList to iterate
+ * @param {Array} _module The module to recurse
  * @param {Function} fn The function run over each dependency
  */
-const recurseDependencies = function(chev, module, fn) {
-    //loop trough deps
-    module.deps.forEach(name => {
+const recurseDependencies = function(chev, _module, fn) {
+    _module.deps.forEach(name => {
         const dependency = chev.get(name);
 
         if (dependency) {
@@ -18,8 +17,8 @@ const recurseDependencies = function(chev, module, fn) {
             //run fn
             fn(dependency);
         } else {
-            //if the dependency isnot found, throw error with name
-            throw new Error(module.name + " is missing dep '" + name + "'");
+            //if the dependency is not found, throw error with name
+            throw new Error(_module.name + " is missing dep '" + name + "'");
         }
     });
 };

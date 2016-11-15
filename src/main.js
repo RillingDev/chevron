@@ -15,7 +15,8 @@ import initFactory from "./types/factory";
 const Chevron = function() {
     const _this = this;
 
-    _this.chev = new Map(); //Instance container
+    //Instance container
+    _this.chev = new Map();
 
     //Init default types
     _this.extend("service", initService);

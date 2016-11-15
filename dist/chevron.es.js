@@ -30,45 +30,39 @@ const extend = function(type, cf) {
 /**
  * Collects dependencies and initializes module
  * @private
- * @param {Object} module The module to check
+ * @param {Object} _module The module to check
  * @param {Object} list The list of dependencies
  * @param {Function} cf The Constructor function
- * @returns {Object} Initialized module
+ * @returns {Object} Initialized _module
  */
-const initialize = function(module, list, cf) {
-    //Only init if its not already initializes
-    if (!module.rdy) {
-        const dependencies = [];
+const constructModule = function(_module, list, constructorFunction) {
+    const dependencies = [];
 
-        //Collect an ordered Array of dependencies
-        module.deps.forEach(item => {
-            const dependency = list[item];
+    //Collect an ordered Array of dependencies
+    _module.deps.forEach(item => {
+        const dependency = list[item];
 
-            //If the dependency name is found in the list of deps, add it
-            if (dependency) {
-                dependencies.push(dependency.fn);
-            }
-        });
+        //If the dependency name is found in the list of deps, add it
+        if (dependency) {
+            dependencies.push(dependency.fn);
+        }
+    });
 
-        //Init module
-        //Call Constructor fn with module/deps
-        module = cf(module, dependencies);
-        module.rdy = true;
-    }
-
-    return module;
+    //Init module
+    _module.rdy = true;
+    //Call Constructor fn with _module/deps
+    return constructorFunction(_module, dependencies);
 };
 
 /**
  * Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
  * @private
  * @param {Object} chev The chevron container
- * @param {Array} module The dependencyList to iterate
+ * @param {Array} _module The module to recurse
  * @param {Function} fn The function run over each dependency
  */
-const recurseDependencies = function(chev, module, fn) {
-    //loop trough deps
-    module.deps.forEach(name => {
+const recurseDependencies = function(chev, _module, fn) {
+    _module.deps.forEach(name => {
         const dependency = chev.get(name);
 
         if (dependency) {
@@ -77,8 +71,8 @@ const recurseDependencies = function(chev, module, fn) {
             //run fn
             fn(dependency);
         } else {
-            //if the dependency isnot found, throw error with name
-            throw new Error(module.name + " is missing dep '" + name + "'");
+            //if the dependency is not found, throw error with name
+            throw new Error(_module.name + " is missing dep '" + name + "'");
         }
     });
 };
@@ -87,25 +81,25 @@ const recurseDependencies = function(chev, module, fn) {
  * Inits module and all dependencies
  * @private
  * @param {Object} chev The chevron container
- * @param {Object} module The module to prepare
+ * @param {Object} _module The module to prepare
  * @param {Function} cf The constructor function
  * @returns {Object} Initialized module
  */
-const prepare =function(chev, module, cf) {
+const initialize = function(chev, _module, constructorFunction) {
     const list = {};
 
-    //Recurse trough module deps
+    //Recurse trough _module deps
     recurseDependencies(
         chev,
-        module,
+        _module,
         //run this over every dependency to add it to the dependencyList
         dependency => {
             //make sure if dependency is initialized, then add
-            list[dependency.name] = dependency.init();
+            list[dependency.name] = dependency.rdy ? dependency : dependency.init();
         }
     );
 
-    return initialize(module, list, cf);
+    return constructModule(_module, list, constructorFunction);
 };
 
 /**
@@ -117,7 +111,7 @@ const prepare =function(chev, module, cf) {
  * @param {Function} fn Content of the module
  * @returns {Object} Chevron instance
  */
-const provider = function(type, cf, name, deps, fn) {
+const provider = function(type, constructorFunction, name, deps, fn) {
     const _this = this;
     const entry = {
         type, //Type of the module
@@ -126,7 +120,7 @@ const provider = function(type, cf, name, deps, fn) {
         fn, //Module content function
         rdy: false, //If the module is ready to access
         init: function() {
-            return prepare(_this.chev, entry, cf); //init the module
+            return initialize(_this.chev, entry, constructorFunction); //init the module
         }
     };
 
@@ -148,39 +142,39 @@ const access = function(name) {
 /**
  * Constructor function for the service type
  * @private
- * @param {Object} module The module object
+ * @param {Object} _module The module object
  * @param {Array} dependencies Array of dependency contents
- * @returns {Mixed} Initialized module
+ * @returns {Mixed} Initialized _module
  */
-const service = function(module, dependencies) {
+const service = function(_module, dependencies) {
     //Dereference fn to avoid unwanted recursion
-    const serviceFn = module.fn;
+    const serviceFn = _module.fn;
 
-    module.fn = function() {
+    _module.fn = function() {
         //Chevron service function wrapper
         //return function with args injected
         return serviceFn.apply(null, dependencies.concat(Array.from(arguments)));
     };
 
-    return module;
+    return _module;
 };
 
 /**
  * Constructor function for the factory type
  * @private
- * @param {Object} module The module object
+ * @param {Object} _module The module object
  * @param {Array} dependencies Array of dependency contents
  * @returns {Mixed} Initialized module
  */
-const factory = function(module, dependencies) {
+const factory = function(_module, dependencies) {
     //First value gets ignored by calling 'new' like this, so we need to fill it with something
     dependencies.unshift(0);
 
     //Apply into new constructor by binding applying the bind method.
     //@see: {@link http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible }
-    module.fn = new(Function.prototype.bind.apply(module.fn, dependencies));
+    _module.fn = new(Function.prototype.bind.apply(_module.fn, dependencies));
 
-    return module;
+    return _module;
 };
 
 /**
@@ -191,7 +185,8 @@ const factory = function(module, dependencies) {
 const Chevron = function() {
     const _this = this;
 
-    _this.chev = new Map(); //Instance container
+    //Instance container
+    _this.chev = new Map();
 
     //Init default types
     _this.extend("service", service);

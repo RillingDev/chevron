@@ -1,35 +1,31 @@
 "use strict";
 
+import constructModule from "./constructModule";
+import recurseDependencies from "./recurseDependencies";
+
 /**
- * Collects dependencies and initializes module
+ * Inits module and all dependencies
  * @private
- * @param {Object} module The module to check
- * @param {Object} list The list of dependencies
- * @param {Function} cf The Constructor function
+ * @param {Object} chev The chevron container
+ * @param {Object} _module The module to prepare
+ * @param {Function} cf The constructor function
  * @returns {Object} Initialized module
  */
-const initialize = function(module, list, cf) {
-    //Only init if its not already initializes
-    if (!module.rdy) {
-        const dependencies = [];
+const initialize = function(chev, _module, constructorFunction) {
+    const list = {};
 
-        //Collect an ordered Array of dependencies
-        module.deps.forEach(item => {
-            const dependency = list[item];
+    //Recurse trough _module deps
+    recurseDependencies(
+        chev,
+        _module,
+        //run this over every dependency to add it to the dependencyList
+        dependency => {
+            //make sure if dependency is initialized, then add
+            list[dependency.name] = dependency.rdy ? dependency : dependency.init();
+        }
+    );
 
-            //If the dependency name is found in the list of deps, add it
-            if (dependency) {
-                dependencies.push(dependency.fn);
-            }
-        });
-
-        //Init module
-        //Call Constructor fn with module/deps
-        module = cf(module, dependencies);
-        module.rdy = true;
-    }
-
-    return module;
+    return constructModule(_module, list, constructorFunction);
 };
 
 export default initialize;
