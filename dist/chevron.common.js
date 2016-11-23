@@ -35,7 +35,7 @@ const extend = function(type, cf) {
  * @param {Object} _module The module to check
  * @param {Object} list The list of dependencies
  * @param {Function} cf The Constructor function
- * @returns {Object} Initialized _module
+ * @returns {Object} Initialized module
  */
 const constructModule = function(_module, list, constructorFunction) {
     const dependencies = [];
@@ -51,7 +51,7 @@ const constructModule = function(_module, list, constructorFunction) {
         }
     });
 
-    //Call Constructor fn with _module/deps
+    //Call Constructor fn with module and dependencies
     result = constructorFunction(_module, dependencies);
     result.rdy = true;
 
@@ -92,13 +92,13 @@ const recurseDependencies = function(chev, _module, fn) {
 const initialize = function(chev, _module, constructorFunction) {
     const list = {};
 
-    //Recurse trough _module deps
+    //Recurse trough module dependencies
     recurseDependencies(
         chev,
         _module,
         //run this over every dependency to add it to the dependencyList
         dependency => {
-            //make sure if dependency is initialized, then add
+            //Add the dependency, and init it if its not ready
             list[dependency.name] = dependency.rdy ? dependency : dependency.init();
         }
     );
@@ -144,11 +144,11 @@ const access = function(name) {
 };
 
 /**
- * Constructor function for the service type
+ * Constructor function for the service module type
  * @private
  * @param {Object} _module The module object
- * @param {Array} dependencies Array of dependency contents
- * @returns {Mixed} Initialized _module
+ * @param {Array} dependencies Array of dependencies
+ * @returns {Mixed} Initialized module
  */
 const service = function(_module, dependencies) {
     //Dereference fn to avoid unwanted recursion
@@ -164,10 +164,10 @@ const service = function(_module, dependencies) {
 };
 
 /**
- * Constructor function for the factory type
+ * Constructor function for the factory module type
  * @private
  * @param {Object} _module The module object
- * @param {Array} dependencies Array of dependency contents
+ * @param {Array} dependencies Array of dependencies
  * @returns {Mixed} Initialized module
  */
 const factory = function(_module, dependencies) {

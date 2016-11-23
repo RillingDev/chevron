@@ -36,7 +36,7 @@ var extend = function extend(type, cf) {
  * @param {Object} _module The module to check
  * @param {Object} list The list of dependencies
  * @param {Function} cf The Constructor function
- * @returns {Object} Initialized _module
+ * @returns {Object} Initialized module
  */
 
 var constructModule = function constructModule(_module, list, constructorFunction) {
@@ -53,7 +53,7 @@ var constructModule = function constructModule(_module, list, constructorFunctio
         }
     });
 
-    //Call Constructor fn with _module/deps
+    //Call Constructor fn with module and dependencies
     result = constructorFunction(_module, dependencies);
     result.rdy = true;
 
@@ -95,11 +95,11 @@ var recurseDependencies = function recurseDependencies(chev, _module, fn) {
 var initialize = function initialize(chev, _module, constructorFunction) {
     var list = {};
 
-    //Recurse trough _module deps
+    //Recurse trough module dependencies
     recurseDependencies(chev, _module,
     //run this over every dependency to add it to the dependencyList
     function (dependency) {
-        //make sure if dependency is initialized, then add
+        //Add the dependency, and init it if its not ready
         list[dependency.name] = dependency.rdy ? dependency : dependency.init();
     });
 
@@ -145,11 +145,11 @@ var access = function access(name) {
 };
 
 /**
- * Constructor function for the service type
+ * Constructor function for the service module type
  * @private
  * @param {Object} _module The module object
- * @param {Array} dependencies Array of dependency contents
- * @returns {Mixed} Initialized _module
+ * @param {Array} dependencies Array of dependencies
+ * @returns {Mixed} Initialized module
  */
 
 var service = function service(_module, dependencies) {
@@ -166,10 +166,10 @@ var service = function service(_module, dependencies) {
 };
 
 /**
- * Constructor function for the factory type
+ * Constructor function for the factory module type
  * @private
  * @param {Object} _module The module object
- * @param {Array} dependencies Array of dependency contents
+ * @param {Array} dependencies Array of dependencies
  * @returns {Mixed} Initialized module
  */
 

@@ -6,7 +6,7 @@
  * @param {Object} _module The module to check
  * @param {Object} list The list of dependencies
  * @param {Function} cf The Constructor function
- * @returns {Object} Initialized _module
+ * @returns {Object} Initialized module
  */
 const constructModule = function(_module, list, constructorFunction) {
     const dependencies = [];
@@ -22,7 +22,7 @@ const constructModule = function(_module, list, constructorFunction) {
         }
     });
 
-    //Call Constructor fn with _module/deps
+    //Call Constructor fn with module and dependencies
     result = constructorFunction(_module, dependencies);
     result.rdy = true;
 

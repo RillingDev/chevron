@@ -1,10 +1,10 @@
 "use strict";
 
 /**
- * Constructor function for the factory type
+ * Constructor function for the factory module type
  * @private
  * @param {Object} _module The module object
- * @param {Array} dependencies Array of dependency contents
+ * @param {Array} dependencies Array of dependencies
  * @returns {Mixed} Initialized module
  */
 const factory = function(_module, dependencies) {

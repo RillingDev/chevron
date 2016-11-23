@@ -14,13 +14,13 @@ import recurseDependencies from "./recurseDependencies";
 const initialize = function(chev, _module, constructorFunction) {
     const list = {};
 
-    //Recurse trough _module deps
+    //Recurse trough module dependencies
     recurseDependencies(
         chev,
         _module,
         //run this over every dependency to add it to the dependencyList
         dependency => {
-            //make sure if dependency is initialized, then add
+            //Add the dependency, and init it if its not ready
             list[dependency.name] = dependency.rdy ? dependency : dependency.init();
         }
     );
