@@ -1,6 +1,6 @@
 {
     "name": "chevronjs",
-    "version": "v6.3.0",
+    "version": "v6.3.1",
     "description": "Chevron is an extremely small(1kB) JavaScript library for easy module declaration, dependency managment and lazy module loading.",
     "author": "Felix Rilling",
     "license": "MIT",

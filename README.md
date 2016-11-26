@@ -95,7 +95,6 @@ cv.service("myService", ["myFactory"], function(myFactory, int) {
 
 const myService = cv.access("myService");
 myService(3); //returns 21
-
 ```
 
 ### Accessing Modules
