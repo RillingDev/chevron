@@ -1,5 +1,5 @@
 /**
- * Chevron v6.3.1
+ * Chevron v6.3.3
  * Author: Felix Rilling
  * Repository: git+https://github.com/FelixRilling/chevronjs.git
  */
@@ -195,6 +195,8 @@ const Chevron = function() {
     //Init default types
     _this.extend("service", service);
     _this.extend("factory", factory);
+
+    return _this;
 };
 
 /**

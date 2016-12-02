@@ -21,6 +21,8 @@ const Chevron = function() {
     //Init default types
     _this.extend("service", initService);
     _this.extend("factory", initFactory);
+
+    return _this;
 };
 
 /**

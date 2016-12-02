@@ -14,7 +14,7 @@ module.exports = function() {
             format: "es"
         })
         .pipe(source(`${packageJson.namespace.file}.es.js`))
-		.pipe(buffer())
-		.pipe(header(createHeader(packageJson)))
+        .pipe(buffer())
+        .pipe(header(createHeader(packageJson)))
         .pipe(gulp.dest("./dist"));
 };

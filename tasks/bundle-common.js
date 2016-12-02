@@ -14,7 +14,7 @@ module.exports = function() {
             format: "cjs"
         })
         .pipe(source(`${packageJson.namespace.file}.common.js`))
-		.pipe(buffer())
-		.pipe(header(createHeader(packageJson)))
+        .pipe(buffer())
+        .pipe(header(createHeader(packageJson)))
         .pipe(gulp.dest("./dist"));
 };
