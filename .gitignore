@@ -1,6 +1,10 @@
-.git/
-.tmp/
+# System Files
+.DS_Store
+
+# Vendor Files
 node_modules/
 bower_components/
-.DS_Store
+
+# Debug Files
+.tmp/
 npm-debug.*
