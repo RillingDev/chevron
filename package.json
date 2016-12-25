@@ -1,6 +1,6 @@
 {
   "name": "chevronjs",
-  "version": "6.3.4",
+  "version": "6.3.5",
   "description": "Chevron is an extremely small(1kB) JavaScript library for easy module declaration, dependency managment and lazy module loading.",
   "author": "Felix Rilling",
   "license": "MIT",
@@ -40,7 +40,7 @@
     "gulp-sourcemaps": "^2.2.0",
     "gulp-uglify": "^2.0.0",
     "pump": "^1.0.1",
-    "rollup": "^0.37.0",
+    "rollup": "^0.38.0",
     "rollup-plugin-babel": "^2.6.1",
     "rollup-stream": "^1.14.0",
     "uglify-js": "^2.7.5",
