@@ -616,12 +616,16 @@ currently-unhandled@^0.4.1:
   dependencies:
     array-find-index "^1.0.1"
 
-dateformat@^1.0.11, dateformat@^1.0.7-1.2.3:
+dateformat@^1.0.7-1.2.3:
   version "1.0.12"
   resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-1.0.12.tgz#9f124b67594c937ff706932e4a642cca8dbbfee9"
   dependencies:
     get-stdin "^4.0.1"
     meow "^3.3.0"
+
+dateformat@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-2.0.0.tgz#2743e3abb5c3fc2462e527dca445e04e9f4dee17"
 
 debug-fabulous@0.0.X:
   version "0.0.4"
@@ -632,8 +636,8 @@ debug-fabulous@0.0.X:
     object-assign "4.1.0"
 
 debug@2.X, debug@^2.1.1, debug@^2.2.0:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-2.5.1.tgz#9107bb4a506052ec2a02314bc606313ed2b921c1"
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.0.tgz#bc596bcabe7617f11d9fa15361eded5608b8499b"
   dependencies:
     ms "0.7.2"
 
@@ -736,8 +740,8 @@ extglob@^0.3.1:
     is-extglob "^1.0.0"
 
 fancy-log@^1.1.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/fancy-log/-/fancy-log-1.2.0.tgz#d5a51b53e9ab22ca07d558f2b67ae55fdb5fcbd8"
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/fancy-log/-/fancy-log-1.3.0.tgz#45be17d02bb9917d60ccffd4995c999e6c8c9948"
   dependencies:
     chalk "^1.1.1"
     time-stamp "^1.0.0"
@@ -1003,14 +1007,14 @@ gulp-uglify@^2.0.0:
     vinyl-sourcemaps-apply "^0.2.0"
 
 gulp-util@*, gulp-util@>=3.0.0, gulp-util@^3.0.0:
-  version "3.0.7"
-  resolved "https://registry.yarnpkg.com/gulp-util/-/gulp-util-3.0.7.tgz#78925c4b8f8b49005ac01a011c557e6218941cbb"
+  version "3.0.8"
+  resolved "https://registry.yarnpkg.com/gulp-util/-/gulp-util-3.0.8.tgz#0054e1e744502e27c04c187c3ecc505dd54bbb4f"
   dependencies:
     array-differ "^1.0.0"
     array-uniq "^1.0.2"
     beeper "^1.0.0"
     chalk "^1.0.0"
-    dateformat "^1.0.11"
+    dateformat "^2.0.0"
     fancy-log "^1.1.0"
     gulplog "^1.0.0"
     has-gulplog "^0.1.0"
@@ -1509,8 +1513,8 @@ lodash.values@~2.4.1:
     lodash.keys "~2.4.1"
 
 lodash@^4.13.1, lodash@^4.2.0:
-  version "4.17.3"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.3.tgz#557ed7d2a9438cac5fd5a43043ca60cb455e01f7"
+  version "4.17.4"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
 lodash@~1.0.1:
   version "1.0.2"
@@ -1971,20 +1975,14 @@ rollup-pluginutils@^1.5.0:
     minimatch "^3.0.2"
 
 rollup-stream@^1.14.0:
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/rollup-stream/-/rollup-stream-1.14.0.tgz#e2347902276c90618d2873c972f3e680c9b349cc"
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/rollup-stream/-/rollup-stream-1.16.0.tgz#19980efd77d6b81ba585d488cc0b6e94ef0d5393"
   dependencies:
-    rollup "^0.36.0"
-
-rollup@^0.36.0:
-  version "0.36.4"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.36.4.tgz#a224494c5386c1d73d38f7bb86f69f5eb011a3d2"
-  dependencies:
-    source-map-support "^0.4.0"
+    rollup "^0.38.0"
 
 rollup@^0.38.0:
-  version "0.38.0"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.38.0.tgz#b58d99538ad96dd1c0239f1de383a80b0e067f70"
+  version "0.38.3"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.38.3.tgz#8a8695d416fe713ff354b7fd3c487f8da4b5c1ad"
   dependencies:
     source-map-support "^0.4.0"
 

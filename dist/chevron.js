@@ -1,5 +1,5 @@
 /**
- * Chevron 6.3.5
+ * Chevron 6.3.6
  * Author: Felix Rilling
  * Repository: git+https://github.com/FelixRilling/chevronjs.git
  */
