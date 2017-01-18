@@ -6,7 +6,7 @@
  * @returns {Mixed} Initialized Object content
  */
 const access = function (name) {
-    return this.chev.get(name).init().fn;
+    return this.$map.get(name).init().fn;
 };
 
 export default access;

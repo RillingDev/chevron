@@ -3,17 +3,17 @@
 /**
  * Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
  * @private
- * @param {Object} chev The chevron container
+ * @param {Object} $map The chevron container
  * @param {Array} _module The module to recurse
  * @param {Function} fn The function run over each dependency
  */
-const recurseDependencies = function (chev, _module, fn) {
+const recurseDependencies = function ($map, _module, fn) {
     _module.deps.forEach(name => {
-        const dependency = chev.get(name);
+        const dependency = $map.get(name);
 
         if (dependency) {
             //recurse over sub-deps
-            recurseDependencies(chev, dependency, fn);
+            recurseDependencies($map, dependency, fn);
             //run fn
             fn(dependency);
         } else {

@@ -20,12 +20,12 @@ const provider = function (type, constructorFunction, name, deps, fn) {
         fn, //Module content function
         rdy: false, //If the module is ready to access
         init: function () {
-            return initialize(_this.chev, entry, constructorFunction); //init the module
+            return initialize(_this.$map, entry, constructorFunction); //init the module
         }
     };
 
     //Saves entry to chev container
-    _this.chev.set(name, entry);
+    _this.$map.set(name, entry);
 
     return _this;
 };

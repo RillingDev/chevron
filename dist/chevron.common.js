@@ -1,5 +1,5 @@
 /**
- * Chevron 6.3.6
+ * Chevron 6.4.0
  * Author: Felix Rilling
  * Repository: git+https://github.com/FelixRilling/chevronjs.git
  */
@@ -61,17 +61,17 @@ const constructModule = function (_module, list, constructorFunction) {
 /**
  * Loops trough dependencies, recurse if new dependencies has dependencies itself; then execute fn.
  * @private
- * @param {Object} chev The chevron container
+ * @param {Object} $map The chevron container
  * @param {Array} _module The module to recurse
  * @param {Function} fn The function run over each dependency
  */
-const recurseDependencies = function (chev, _module, fn) {
+const recurseDependencies = function ($map, _module, fn) {
     _module.deps.forEach(name => {
-        const dependency = chev.get(name);
+        const dependency = $map.get(name);
 
         if (dependency) {
             //recurse over sub-deps
-            recurseDependencies(chev, dependency, fn);
+            recurseDependencies($map, dependency, fn);
             //run fn
             fn(dependency);
         } else {
@@ -89,12 +89,12 @@ const recurseDependencies = function (chev, _module, fn) {
  * @param {Function} cf The constructor function
  * @returns {Object} Initialized module
  */
-const initialize = function (chev, _module, constructorFunction) {
+const initialize = function ($map, _module, constructorFunction) {
     const list = {};
 
     //Recurse trough module dependencies
     recurseDependencies(
-        chev,
+        $map,
         _module,
         //run this over every dependency to add it to the dependencyList
         dependency => {
@@ -124,12 +124,12 @@ const provider = function (type, constructorFunction, name, deps, fn) {
         fn, //Module content function
         rdy: false, //If the module is ready to access
         init: function () {
-            return initialize(_this.chev, entry, constructorFunction); //init the module
+            return initialize(_this.$map, entry, constructorFunction); //init the module
         }
     };
 
     //Saves entry to chev container
-    _this.chev.set(name, entry);
+    _this.$map.set(name, entry);
 
     return _this;
 };
@@ -140,7 +140,7 @@ const provider = function (type, constructorFunction, name, deps, fn) {
  * @returns {Mixed} Initialized Object content
  */
 const access = function (name) {
-    return this.chev.get(name).init().fn;
+    return this.$map.get(name).init().fn;
 };
 
 /**
@@ -190,7 +190,7 @@ const Chevron = function () {
     const _this = this;
 
     //Instance container
-    _this.chev = new Map();
+    _this.$map = new Map();
 
     //Init default types
     _this.extend("service", service);

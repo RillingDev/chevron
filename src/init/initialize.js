@@ -11,12 +11,12 @@ import recurseDependencies from "./recurseDependencies";
  * @param {Function} cf The constructor function
  * @returns {Object} Initialized module
  */
-const initialize = function (chev, _module, constructorFunction) {
+const initialize = function ($map, _module, constructorFunction) {
     const list = {};
 
     //Recurse trough module dependencies
     recurseDependencies(
-        chev,
+        $map,
         _module,
         //run this over every dependency to add it to the dependencyList
         dependency => {

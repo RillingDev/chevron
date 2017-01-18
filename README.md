@@ -106,7 +106,7 @@ Modules can be accessed in two ways. In most cases, you will want to get your mo
 cv.access("myModule"); //returns the service or factory with dependencies injected into arguments
 ```
 
-or, if you just want the module without dependencies from the Chevron container(called "chev"):
+or, if you just want the module without dependencies from the Chevron container(called "$map"):
 
 ```javascript
 cv.chev.get("myModule"); //returns the service as Chevron object.

@@ -16,7 +16,7 @@ const Chevron = function () {
     const _this = this;
 
     //Instance container
-    _this.chev = new Map();
+    _this.$map = new Map();
 
     //Init default types
     _this.extend("service", initService);

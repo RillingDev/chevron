@@ -11,9 +11,7 @@ module.exports = function (cb) {
     const commands = [
         gulp.src(`./dist/${packageJson.namespace.file}.js`),
         sourcemaps.init(),
-        uglify({
-            mangleProperties: true
-        }),
+        uglify(),
         rename({
             suffix: ".min",
         }),
