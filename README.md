@@ -106,7 +106,7 @@ Modules can be accessed in two ways. In most cases, you will want to get your mo
 cv.access("myModule"); //returns the service or factory with dependencies injected into arguments
 ```
 
-or, if you just want the module without dependencies from the Chevron container(called "$map"):
+or, if you just want the module itself without dependencies from the Chevron container(called "$map"):
 
 ```javascript
 cv.chev.get("myModule"); //returns the service as Chevron object.
@@ -118,13 +118,17 @@ You can easily create your own module type by using the Chevron API. To declare 
 
 ```javascript
 //Chevron.prototype.extend(type,fn);
-cv.extend("myType", function(module, dependencies) {
-    /**
-     * your init code here
-     */
+cv.extend("myType", function(moduleContent, dependencies) {
+    //Dereference fn to avoid unwanted recursion
+    const serviceFn = moduleContent;
 
-    //returns the module
-    return module;
+    moduleContent = function () {
+        //Chevron service function wrapper
+        //return function with args injected
+        return serviceFn.apply(null, dependencies.concat(Array.from(arguments)));
+    };
+
+    return moduleContent;
 });
 ```
 
@@ -144,3 +148,8 @@ Then you can simply call `access` again to access your new module type.
 ```javascript
 cv.access("myCustomTypeModule");
 ```
+
+
+## Upgrading
+
+ **6.x to 7.x:** Make sure to your custom types to only use moduleContent instead of the whole module, see the updated examples above

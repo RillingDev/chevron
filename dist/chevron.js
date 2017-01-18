@@ -58,7 +58,7 @@ const construct = function ($map, _module, cf) {
  * @constructor
  * @returns {Object} Chevron instance
  */
-const Chevron = class {
+const ChevronMain = class {
     constructor() {
         const _this = this;
 
@@ -101,7 +101,7 @@ const Chevron = class {
     }
 };
 
-return Chevron;
+return ChevronMain;
 
 }());
 

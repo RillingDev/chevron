@@ -1,6 +1,5 @@
 "use strict";
 
-
 import typeService from "./types/service";
 import typeFactory from "./types/factory";
 
@@ -11,7 +10,7 @@ import construct from "./lib/construct";
  * @constructor
  * @returns {Object} Chevron instance
  */
-const Chevron = class {
+const ChevronMain = class {
     constructor() {
         const _this = this;
 
@@ -54,4 +53,4 @@ const Chevron = class {
     }
 };
 
-export default Chevron;
+export default ChevronMain;
