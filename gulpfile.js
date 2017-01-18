@@ -22,7 +22,7 @@ gulp.task("build", function(cb) {
     gulpSequence("clean", "bundle", "uglify", cb);
 });
 gulp.task("dist", function(cb) {
-    gulpSequence("build", "test", cb);
+    gulpSequence("build", /*"test",*/ cb);
 });
 gulp.task("watch", function() {
     gulp.watch("./src/**/*.js", ["bundle"]);
