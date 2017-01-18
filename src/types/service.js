@@ -1,8 +1,6 @@
 "use strict";
 
 const typeService = function (_module, dependencies) {
-    console.log("SERVICE", _module, dependencies);
-
     //Dereference fn to avoid unwanted recursion
     const serviceFn = _module.fn;
 

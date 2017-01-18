@@ -4,18 +4,19 @@ const construct = function ($map, _module, cf) {
     const dependencies = [];
     let constructedModule;
 
+    //Collects dependencies
     _module.deps.forEach(depName => {
         const dependency = $map.get(depName);
 
         if (dependency) {
-            dependencies.push(dependency.init === true ? dependency.fn : dependency.construct());
+            dependencies.push(dependency.rdy ? dependency.fn : dependency.init());
         } else {
-            throw new Error("missing " + depName);
+            throw new Error(`missing '${depName}'`);
         }
     });
 
     constructedModule = cf(_module, dependencies);
-    _module.init = true;
+    _module.rdy = true;
 
     return constructedModule.fn;
 };

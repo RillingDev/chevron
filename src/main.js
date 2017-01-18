@@ -18,33 +18,39 @@ const Chevron = class {
         //Instance container
         _this.$map = new Map();
 
+        //Adds default types
         _this.extend("service", typeService);
         _this.extend("factory", typeFactory);
     }
-    extend(typeName, cf) {
+    extend(typeName, constructorFunction) {
         const _this = this;
 
+        //stores type with name into instance
         _this[typeName] = function (id, deps, fn) {
-            _this.provider(id, deps, fn, cf);
+            _this.provider(id, deps, fn, constructorFunction);
         };
+
+        return _this;
     }
-    provider(id, deps, fn, cf) {
+    provider(id, deps, fn, constructorFunction) {
         const _this = this;
-        const entry = {
+        const _module = {
             deps,
             fn,
-            init: false,
-            construct: function () {
-                return construct(_this.$map, entry, cf);
+            rdy: false,
+            init: function () {
+                return construct(_this.$map, _module, constructorFunction);
             }
         };
 
-        _this.$map.set(id, entry);
+        _this.$map.set(id, _module);
+
+        return _this;
     }
     access(id) {
         const _module = this.$map.get(id);
 
-        return _module.init ? _module.fn : _module.construct();
+        return _module.rdy ? _module.fn : _module.init();
     }
 };
 
