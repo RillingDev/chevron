@@ -7,7 +7,7 @@
  * @param {Array} _module The module to recurse
  * @param {Function} fn The function run over each dependency
  */
-const recurseDependencies = function(chev, _module, fn) {
+const recurseDependencies = function (chev, _module, fn) {
     _module.deps.forEach(name => {
         const dependency = chev.get(name);
 

@@ -11,7 +11,7 @@ import recurseDependencies from "./recurseDependencies";
  * @param {Function} cf The constructor function
  * @returns {Object} Initialized module
  */
-const initialize = function(chev, _module, constructorFunction) {
+const initialize = function (chev, _module, constructorFunction) {
     const list = {};
 
     //Recurse trough module dependencies

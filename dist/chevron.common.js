@@ -12,11 +12,11 @@
  * @param {Function} cf Constructor function to init the module with
  * @returns {Object} Chevron instance
  */
-const extend = function(type, cf) {
+const extend = function (type, cf) {
     const _this = this;
 
     //Add customType method to container
-    _this[type] = function(name, deps, fn) {
+    _this[type] = function (name, deps, fn) {
         return _this.provider(
             type, //static
             cf, //static
@@ -37,7 +37,7 @@ const extend = function(type, cf) {
  * @param {Function} cf The Constructor function
  * @returns {Object} Initialized module
  */
-const constructModule = function(_module, list, constructorFunction) {
+const constructModule = function (_module, list, constructorFunction) {
     const dependencies = [];
     let result;
 
@@ -65,7 +65,7 @@ const constructModule = function(_module, list, constructorFunction) {
  * @param {Array} _module The module to recurse
  * @param {Function} fn The function run over each dependency
  */
-const recurseDependencies = function(chev, _module, fn) {
+const recurseDependencies = function (chev, _module, fn) {
     _module.deps.forEach(name => {
         const dependency = chev.get(name);
 
@@ -89,7 +89,7 @@ const recurseDependencies = function(chev, _module, fn) {
  * @param {Function} cf The constructor function
  * @returns {Object} Initialized module
  */
-const initialize = function(chev, _module, constructorFunction) {
+const initialize = function (chev, _module, constructorFunction) {
     const list = {};
 
     //Recurse trough module dependencies
@@ -115,7 +115,7 @@ const initialize = function(chev, _module, constructorFunction) {
  * @param {Function} fn Content of the module
  * @returns {Object} Chevron instance
  */
-const provider = function(type, constructorFunction, name, deps, fn) {
+const provider = function (type, constructorFunction, name, deps, fn) {
     const _this = this;
     const entry = {
         type, //Type of the module
@@ -123,7 +123,7 @@ const provider = function(type, constructorFunction, name, deps, fn) {
         deps, //Array of dependencies
         fn, //Module content function
         rdy: false, //If the module is ready to access
-        init: function() {
+        init: function () {
             return initialize(_this.chev, entry, constructorFunction); //init the module
         }
     };
@@ -139,7 +139,7 @@ const provider = function(type, constructorFunction, name, deps, fn) {
  * @param {String} name The name of the module to access
  * @returns {Mixed} Initialized Object content
  */
-const access = function(name) {
+const access = function (name) {
     return this.chev.get(name).init().fn;
 };
 
@@ -150,11 +150,11 @@ const access = function(name) {
  * @param {Array} dependencies Array of dependencies
  * @returns {Mixed} Initialized module
  */
-const service = function(_module, dependencies) {
+const service = function (_module, dependencies) {
     //Dereference fn to avoid unwanted recursion
     const serviceFn = _module.fn;
 
-    _module.fn = function() {
+    _module.fn = function () {
         //Chevron service function wrapper
         //return function with args injected
         return serviceFn.apply(null, dependencies.concat(Array.from(arguments)));
@@ -170,7 +170,7 @@ const service = function(_module, dependencies) {
  * @param {Array} dependencies Array of dependencies
  * @returns {Mixed} Initialized module
  */
-const factory = function(_module, dependencies) {
+const factory = function (_module, dependencies) {
     //First value gets ignored by calling 'new' like this, so we need to fill it with something
     dependencies.unshift(0);
 
@@ -186,7 +186,7 @@ const factory = function(_module, dependencies) {
  * @constructor
  * @returns {Object} Chevron instance
  */
-const Chevron = function() {
+const Chevron = function () {
     const _this = this;
 
     //Instance container

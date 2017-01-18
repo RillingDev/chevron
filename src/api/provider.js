@@ -11,7 +11,7 @@ import initialize from "../init/initialize";
  * @param {Function} fn Content of the module
  * @returns {Object} Chevron instance
  */
-const provider = function(type, constructorFunction, name, deps, fn) {
+const provider = function (type, constructorFunction, name, deps, fn) {
     const _this = this;
     const entry = {
         type, //Type of the module
@@ -19,7 +19,7 @@ const provider = function(type, constructorFunction, name, deps, fn) {
         deps, //Array of dependencies
         fn, //Module content function
         rdy: false, //If the module is ready to access
-        init: function() {
+        init: function () {
             return initialize(_this.chev, entry, constructorFunction); //init the module
         }
     };

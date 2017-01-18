@@ -8,7 +8,7 @@
  * @param {Function} cf The Constructor function
  * @returns {Object} Initialized module
  */
-const constructModule = function(_module, list, constructorFunction) {
+const constructModule = function (_module, list, constructorFunction) {
     const dependencies = [];
     let result;
 

@@ -7,11 +7,13 @@ const rename = require("gulp-rename");
 const uglify = require("gulp-uglify");
 const packageJson = require("../package.json");
 
-module.exports = function(cb) {
+module.exports = function (cb) {
     const commands = [
         gulp.src(`./dist/${packageJson.namespace.file}.js`),
         sourcemaps.init(),
-        uglify(),
+        uglify({
+            mangleProperties: true
+        }),
         rename({
             suffix: ".min",
         }),

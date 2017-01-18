@@ -5,7 +5,7 @@
  * @param {String} name The name of the module to access
  * @returns {Mixed} Initialized Object content
  */
-const access = function(name) {
+const access = function (name) {
     return this.chev.get(name).init().fn;
 };
 

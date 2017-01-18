@@ -7,7 +7,7 @@
  * @param {Array} dependencies Array of dependencies
  * @returns {Mixed} Initialized module
  */
-const factory = function(_module, dependencies) {
+const factory = function (_module, dependencies) {
     //First value gets ignored by calling 'new' like this, so we need to fill it with something
     dependencies.unshift(0);
 

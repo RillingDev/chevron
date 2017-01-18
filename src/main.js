@@ -12,7 +12,7 @@ import initFactory from "./types/factory";
  * @constructor
  * @returns {Object} Chevron instance
  */
-const Chevron = function() {
+const Chevron = function () {
     const _this = this;
 
     //Instance container
