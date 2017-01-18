@@ -4,20 +4,20 @@
  * Repository: git+https://github.com/FelixRilling/chevronjs.git
  */
 
-const typeService = function (_module, dependencies) {
+const typeService = function (moduleContent, dependencies) {
     //Dereference fn to avoid unwanted recursion
-    const serviceFn = _module.fn;
+    const serviceFn = moduleContent;
 
-    _module.fn = function () {
+    moduleContent = function () {
         //Chevron service function wrapper
         //return function with args injected
         return serviceFn.apply(null, dependencies.concat(Array.from(arguments)));
     };
 
-    return _module;
+    return moduleContent;
 };
 
-const typeFactory = function (_module, dependencies) {
+const typeFactory = function (moduleContent, dependencies) {
     //dereference array, because we dont wanna mutate the arg
     const dependenciesArr = Array.from(dependencies);
     //First value gets ignored by calling 'new' like this, so we need to fill it with something
@@ -25,14 +25,13 @@ const typeFactory = function (_module, dependencies) {
 
     //Apply into new constructor by binding applying the bind method.
     //@see: {@link http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible }
-    _module.fn = new(Function.prototype.bind.apply(_module.fn, dependenciesArr));
+    moduleContent = new(Function.prototype.bind.apply(moduleContent, dependenciesArr));
 
-    return _module;
+    return moduleContent;
 };
 
 const construct = function ($map, _module, cf) {
     const dependencies = [];
-    let constructedModule;
 
     //Collects dependencies
     _module.deps.forEach(depName => {
@@ -41,14 +40,14 @@ const construct = function ($map, _module, cf) {
         if (dependency) {
             dependencies.push(dependency.rdy ? dependency.fn : dependency.init());
         } else {
-            throw new Error(`missing '${depName}'`);
+            throw new Error(`Missing '${depName}'`);
         }
     });
 
-    constructedModule = cf(_module, dependencies);
+    _module.fn = cf(_module.fn, dependencies);
     _module.rdy = true;
 
-    return constructedModule.fn;
+    return _module.fn;
 };
 
 /**
