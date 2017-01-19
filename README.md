@@ -2,11 +2,14 @@
 
 # ChevronJS
 
-> A super tiny JavaScript module library
+> A super tiny JavaScript library for module declaration
 
 ## Introduction
 
-Chevron is an extremely small(1.0kB) JavaScript module library for easy module declaration, dependency management and lazy module loading, inspired by [BottleJS](https://github.com/young-steveo/bottlejs) and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
+Chevron is an extremely small(780Byte) JavaScript library for easy module declaration,
+dependency management and lazy module loading,
+inspired by [BottleJS](https://github.com/young-steveo/bottlejs),
+and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
 
 [Demo](http://codepen.io/FelixRilling/pen/AXgydJ)
 
@@ -34,9 +37,12 @@ const cv = new Chevron();
 
 ### Module Types
 
+Chevron comes with two built-in types.
+
 #### Services
 
-Services are the most common type of module. A service is simply a function wrapped by chevron + dependencies. The syntax for `service` is as follows:
+Services are the most common type of module. A service is simply a function wrapped by Chevron to inject dependencies.
+The syntax for `service` is as follows:
 
 ```javascript
 //Create new service
@@ -50,7 +56,7 @@ const myService = cv.access("myService");
 myService(); //returns 12
 ```
 
-or with dependencies:
+With dependencies:
 
 ```javascript
 cv.service("myService", [], function() {
@@ -68,7 +74,8 @@ myOtherService(2); //returns 24
 
 #### Factories
 
-Factories are very similar to services but are treated as **Constructors** instead of classic functions; Factories have the same syntax as services and can be called with the `factory` method.
+Factories are very similar to services but are treated as **Constructors** instead of functions.
+Factories can be called with the `factory` method.
 
 ```javascript
 //Chevron.prototype.factory(name,[dependencies],Constructor);
@@ -81,7 +88,7 @@ const myFactory = cv.access("myFactory");
 myFactory.bar; //returns 17
 ```
 
-or combined with a service
+Combined with a service:
 
 ```javascript
 cv.factory("myFactory", [], function() {
@@ -99,25 +106,28 @@ myService(3); //returns 21
 
 ### Accessing Modules
 
-Modules can be accessed in two ways. In most cases, you will want to get your module trough Chevrons `access` method, which returns the bundled and constructed module:
+Modules can be accessed in two ways.
+In most cases, you will want to get your module trough Chevrons `access` method,
+which returns the constructed module with all dependencies:
 
 ```javascript
 //Chevron.prototype.access(name)
 cv.access("myModule"); //returns the service or factory with dependencies injected into arguments
 ```
 
-or, if you just want the module itself without dependencies from the Chevron container(called "$map"):
+Or, if you just want the module itself without dependencies from the Chevron container(called "$map"):
 
 ```javascript
-cv.chev.get("myModule"); //returns the service as Chevron object.
+cv.$map.get("myModule"); //returns the service as Chevron object.
 ```
 
 ## API
 
-You can easily create your own module type by using the Chevron API. To declare a new type, simply call the `extend` method with a name and Constructor for your new type:
+You can easily create your own module type by using the Chevron API.
+To declare a new type, simply call the `extend` method with a typeName and constructorFunction for your new type:
 
 ```javascript
-//Chevron.prototype.extend(type,fn);
+//Chevron.prototype.extend(typeName,constructorFunction);
 cv.extend("myType", function(moduleContent, dependencies) {
     //Dereference fn to avoid unwanted recursion
     const serviceFn = moduleContent;
@@ -132,13 +142,15 @@ cv.extend("myType", function(moduleContent, dependencies) {
 });
 ```
 
-In the example above we created a new module type, "myType", with the given function as the constructor. You'll probably want to start by using a modified version of the default Service or Factory constructor which you can find in the in ["src/types"](https://github.com/FelixRilling/chevronjs/tree/master/src/types) folder of this repository.
+In the example above we created a new module type, "myType", with the given function as the constructor.
+You'll probably want to start by using a modified version of the default Service or Factory constructorFunction,
+which you can find in the in ["src/types"](https://github.com/FelixRilling/chevronjs/tree/master/src/types) folder of this repository.
 
-After you created the new type, you can use it by calling the type as a method
+After you created the new type, you can use it by calling the type as a method of the Chevron instance:
 
 ```javascript
 //Chevron.prototype.#name#(name,[dependencies],content);
-cv.myType("myCustomTypeModule", [], function() {
+cv.myType("myTypeModule", [], function() {
     return "bar";
 });
 ```
@@ -146,9 +158,8 @@ cv.myType("myCustomTypeModule", [], function() {
 Then you can simply call `access` again to access your new module type.
 
 ```javascript
-cv.access("myCustomTypeModule");
+cv.access("myTypeModule");
 ```
-
 
 ## Upgrading
 
