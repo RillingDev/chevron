@@ -32,7 +32,14 @@ const typeFactory = function (moduleContent, dependencies) {
     return moduleContent;
 };
 
-const construct = function ($map, _module, cf) {
+/**
+ * @private
+ * @param {Map} $map Chevron instance map
+ * @param {Object} _module module
+ * @param {Function} constructorFunction function init the module with
+ * @returns {Mixed} constructed module content
+ */
+const construct = function ($map, _module, constructorFunction) {
     const dependencies = [];
 
     //Collects dependencies
@@ -46,7 +53,7 @@ const construct = function ($map, _module, cf) {
         }
     });
 
-    _module.fn = cf(_module.fn, dependencies);
+    _module.fn = constructorFunction(_module.fn, dependencies);
     _module.rdy = true;
 
     return _module.fn;
@@ -69,6 +76,9 @@ const ChevronMain = class {
         _this.extend("factory", typeFactory);
     }
     extend(typeName, constructorFunction) {
+        /**
+         * Defines a new module type
+         */
         const _this = this;
 
         //stores type with name into instance
@@ -79,6 +89,9 @@ const ChevronMain = class {
         return _this;
     }
     provider(id, deps, fn, constructorFunction) {
+        /**
+         * Adds a new module to the container
+         */
         const _this = this;
         const _module = {
             deps,
@@ -94,6 +107,9 @@ const ChevronMain = class {
         return _this;
     }
     access(id) {
+        /**
+         * Accesses and inits a module
+         */
         const _module = this.$map.get(id);
 
         return _module.rdy ? _module.fn : _module.init();

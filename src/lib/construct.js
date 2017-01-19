@@ -1,6 +1,13 @@
 "use strict";
 
-const construct = function ($map, _module, cf) {
+/**
+ * @private
+ * @param {Map} $map Chevron instance map
+ * @param {Object} _module module
+ * @param {Function} constructorFunction function init the module with
+ * @returns {Mixed} constructed module content
+ */
+const construct = function ($map, _module, constructorFunction) {
     const dependencies = [];
 
     //Collects dependencies
@@ -14,7 +21,7 @@ const construct = function ($map, _module, cf) {
         }
     });
 
-    _module.fn = cf(_module.fn, dependencies);
+    _module.fn = constructorFunction(_module.fn, dependencies);
     _module.rdy = true;
 
     return _module.fn;

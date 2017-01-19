@@ -22,6 +22,9 @@ const ChevronMain = class {
         _this.extend("factory", typeFactory);
     }
     extend(typeName, constructorFunction) {
+        /**
+         * Defines a new module type
+         */
         const _this = this;
 
         //stores type with name into instance
@@ -32,6 +35,9 @@ const ChevronMain = class {
         return _this;
     }
     provider(id, deps, fn, constructorFunction) {
+        /**
+         * Adds a new module to the container
+         */
         const _this = this;
         const _module = {
             deps,
@@ -47,6 +53,9 @@ const ChevronMain = class {
         return _this;
     }
     access(id) {
+        /**
+         * Accesses and inits a module
+         */
         const _module = this.$map.get(id);
 
         return _module.rdy ? _module.fn : _module.init();
