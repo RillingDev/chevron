@@ -1,9 +1,3 @@
-/**
- * Chevron 7.0.0
- * Author: Felix Rilling
- * Repository: git+https://github.com/FelixRilling/chevronjs.git
- */
-
 'use strict';
 
 const typeService = function (moduleContent, dependencies) {

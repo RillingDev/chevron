@@ -24,26 +24,15 @@
         "file": "chevron"
     },
     "scripts": {
-        "start": "gulp",
+        "start": "node build.js",
         "test": "jasmine"
     },
     "devDependencies": {
+        "babel-core": "^6.21.0",
         "babel-plugin-external-helpers": "^6.18.0",
         "babel-preset-es2016": "^6.16.0",
-        "gulp": "^3.9.1",
-        "gulp-clean": "^0.3.2",
-        "gulp-header": "^1.8.8",
-        "gulp-jasmine": "^2.4.2",
-        "gulp-rename": "^1.2.2",
-        "gulp-sequence": "^0.4.6",
-        "gulp-sourcemaps": "^2.2.0",
-        "gulp-uglify": "^2.0.0",
-        "pump": "^1.0.1",
-        "rollup-plugin-babel": "^2.6.1",
-        "rollup-stream": "^1.14.0",
-        "uglify-js": "git://github.com/mishoo/UglifyJS2.git#harmony",
-        "vinyl-buffer": "^1.0.0",
-        "vinyl-source-stream": "^1.1.0"
+        "rollup": "^0.41.4",
+        "uglify-js": "git://github.com/mishoo/UglifyJS2.git#harmony"
     },
     "dependencies": {}
 }
