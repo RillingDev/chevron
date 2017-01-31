@@ -68,12 +68,5 @@
     "typed": false,
     "worker": false,
     "wsh": false,
-    "yui": false,
-
-    "globals": {
-        "element": false,
-        "angular": false,
-        "_": false,
-        "$": false
-    }
+    "yui": false
 }

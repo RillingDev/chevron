@@ -91,7 +91,7 @@ var Chevron = function () {
                         if (dependency) {
                             dependencies.push(dependency.rdy ? dependency.fn : dependency.init());
                         } else {
-                            throw new Error(`Missing '${ depName }'`);
+                            throw new Error(`Missing '${depName}'`);
                         }
                     });
 
