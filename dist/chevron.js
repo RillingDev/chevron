@@ -1,6 +1,15 @@
 var Chevron = function () {
     'use strict';
 
+    /**
+     * Service-type constructor function
+     *
+     * @private
+     * @param {Function} moduleContent module to be constructed as service
+     * @param {Array} dependencies Array of dependency contents
+     * @returns {Function} constructed function
+     */
+
     const typeService = function (moduleContent, dependencies) {
         //Dereference fn to avoid unwanted recursion
         const serviceFn = moduleContent;
@@ -14,6 +23,14 @@ var Chevron = function () {
         return moduleContent;
     };
 
+    /**
+     * Factory-type constructor function
+     *
+     * @private
+     * @param {Function} moduleContent module to be constructed as factory
+     * @param {Array} dependencies Array of dependency contents
+     * @returns {Object} constructed Factory
+     */
     const typeFactory = function (moduleContent, dependencies) {
         //dereference array, because we dont wanna mutate the arg
         const dependenciesArr = Array.from(dependencies);
@@ -29,11 +46,13 @@ var Chevron = function () {
 
     /**
      * Chevron Class
+     *
      * @class
      */
     const ChevronMain = class {
         /**
          * Chevron Constructor
+         *
          * @constructor
          * @returns {Chevron} Chevron instance
          */
@@ -49,6 +68,7 @@ var Chevron = function () {
         }
         /**
          * Defines a new module type
+         *
          * @param {String} typeName name of the new type
          * @param {Function} constructorFunction function init modules with
          * @returns {Chevron} Chevron instance
@@ -65,6 +85,7 @@ var Chevron = function () {
         }
         /**
          * Defines a new module
+         *
          * @param {String} moduleName name of the module
          * @param {Array} deps array of dependency names
          * @param {Function} fn module content
@@ -109,6 +130,7 @@ var Chevron = function () {
         }
         /**
          * Access and init a module
+         *
          * @param {String} moduleName name of the module to access
          * @returns {Mixed} module content
          */

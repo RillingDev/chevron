@@ -5,11 +5,13 @@ import typeFactory from "./types/factory";
 
 /**
  * Chevron Class
+ *
  * @class
  */
 const ChevronMain = class {
     /**
      * Chevron Constructor
+     *
      * @constructor
      * @returns {Chevron} Chevron instance
      */
@@ -25,6 +27,7 @@ const ChevronMain = class {
     }
     /**
      * Defines a new module type
+     *
      * @param {String} typeName name of the new type
      * @param {Function} constructorFunction function init modules with
      * @returns {Chevron} Chevron instance
@@ -41,6 +44,7 @@ const ChevronMain = class {
     }
     /**
      * Defines a new module
+     *
      * @param {String} moduleName name of the module
      * @param {Array} deps array of dependency names
      * @param {Function} fn module content
@@ -85,6 +89,7 @@ const ChevronMain = class {
     }
     /**
      * Access and init a module
+     *
      * @param {String} moduleName name of the module to access
      * @returns {Mixed} module content
      */
