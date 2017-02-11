@@ -18,11 +18,11 @@ and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Mo
 Chevron can be installed from the npm registry:
 
 ```shell
-npm install chevronjs --save
+npm install chevronjs -S
 ```
 
 ```shell
-yarn add chevronjs
+yarn add chevronjs -S
 ```
 
 ## Syntax

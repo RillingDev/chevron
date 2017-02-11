@@ -62,7 +62,7 @@ var Chevron = function () {
             //Instance container
             _this.$map = new Map();
 
-            //Adds default types
+            // Adds default types
             _this.extend("service", typeService);
             _this.extend("factory", typeFactory);
         }
