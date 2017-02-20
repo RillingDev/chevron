@@ -49,7 +49,7 @@ var Chevron = function () {
      *
      * @class
      */
-    const ChevronMain = class {
+    const Chevron = class {
         /**
          * Chevron Constructor
          *
@@ -141,5 +141,5 @@ var Chevron = function () {
         }
     };
 
-    return ChevronMain;
+    return Chevron;
 }();

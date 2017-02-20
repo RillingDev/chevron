@@ -47,7 +47,7 @@ const typeFactory = function (moduleContent, dependencies) {
  *
  * @class
  */
-const ChevronMain = class {
+const Chevron = class {
     /**
      * Chevron Constructor
      *
@@ -139,4 +139,4 @@ const ChevronMain = class {
     }
 };
 
-module.exports = ChevronMain;
+module.exports = Chevron;
