@@ -16,7 +16,7 @@
         "file": "chevron"
     },
     "scripts": {
-        "start":"npm run lint && npm run build && npm run test",
+        "start": "npm run lint && npm run build && npm run test",
         "build": "node build.js",
         "lint": "./node_modules/.bin/eslint ./src/",
         "test": "./node_modules/.bin/jasmine"
