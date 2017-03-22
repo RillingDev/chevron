@@ -6,20 +6,21 @@
 
 ## Introduction
 
-Chevron is an extremely small(780Byte) JavaScript library for easy module declaration,
+Chevron is an extremely small(640Byte) JavaScript library for easy module declaration,
 dependency management and lazy module loading,
-inspired by [BottleJS](https://github.com/young-steveo/bottlejs),
-and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
+inspired by [BottleJS](https://github.com/young-steveo/bottlejs), and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
 
 [Demo](http://codepen.io/FelixRilling/pen/AXgydJ)
 
 ## Usage
 
-Chevron can be installed from the npm registry:
+Chevron can be installed via the npm registry:
 
 ```shell
 npm install chevronjs -S
 ```
+
+or with yarn
 
 ```shell
 yarn add chevronjs -S
@@ -115,12 +116,6 @@ which returns the constructed module with all dependencies:
 cv.access("myModule"); //returns the service or factory with dependencies injected into arguments
 ```
 
-Or, if you just want the module itself without dependencies from the Chevron container(called "$map"):
-
-```javascript
-cv.$map.get("myModule"); //returns the service as Chevron object.
-```
-
 ## API
 
 You can easily create your own module type by using the Chevron API.
@@ -160,7 +155,3 @@ Then you can simply call `access` again to access your new module type.
 ```javascript
 cv.access("myTypeModule");
 ```
-
-## Upgrading
-
- **6.x to 7.x:** Make sure to your custom types to only use moduleContent instead of the whole module, see the updated examples above
