@@ -13,7 +13,7 @@ const typeService = function (moduleContent, dependencies) {
     moduleContent = function () {
         //Chevron service function wrapper
         //return function with args injected
-        return serviceFn.apply(null, dependencies.concat(Array.from(arguments)));
+        return serviceFn(...dependencies, ...arguments);
     };
 
     return moduleContent;
@@ -42,13 +42,11 @@ const typeFactory = function (moduleContent, dependencies) {
 
 /**
  * Chevron Class
- *
  * @class
  */
 const Chevron = class {
     /**
      * Chevron Constructor
-     *
      * @constructor
      * @returns {Chevron} Chevron instance
      */
@@ -56,7 +54,7 @@ const Chevron = class {
         const _this = this;
 
         //Instance container
-        _this.$map = new Map();
+        _this.$ = new Map();
 
         // Adds default types
         _this.extend("service", typeService);
@@ -64,7 +62,6 @@ const Chevron = class {
     }
     /**
      * Defines a new module type
-     *
      * @param {String} typeName name of the new type
      * @param {Function} constructorFunction function init modules with
      * @returns {Chevron} Chevron instance
@@ -72,7 +69,7 @@ const Chevron = class {
     extend(typeName, constructorFunction) {
         const _this = this;
 
-        //stores type with name into instance
+        //stores type as provider with name into instance
         _this[typeName] = function (id, deps, fn) {
             _this.provider(id, deps, fn, constructorFunction);
         };
@@ -81,7 +78,6 @@ const Chevron = class {
     }
     /**
      * Defines a new module
-     *
      * @param {String} moduleName name of the module
      * @param {Array} deps array of dependency names
      * @param {Function} fn module content
@@ -103,7 +99,7 @@ const Chevron = class {
 
                 //Collects dependencies
                 _module.deps.forEach(depName => {
-                    const dependency = _this.$map.get(depName);
+                    const dependency = _this.$.get(depName);
 
                     if (dependency) {
                         dependencies.push(dependency.rdy ? dependency.fn : dependency.init());
@@ -120,18 +116,17 @@ const Chevron = class {
             }
         };
 
-        _this.$map.set(moduleName, _module);
+        _this.$.set(moduleName, _module);
 
         return _this;
     }
     /**
      * Access and init a module
-     *
      * @param {String} moduleName name of the module to access
      * @returns {Mixed} module content
      */
     access(moduleName) {
-        const _module = this.$map.get(moduleName);
+        const _module = this.$.get(moduleName);
 
         return _module.rdy ? _module.fn : _module.init();
     }

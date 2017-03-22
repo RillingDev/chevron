@@ -15,7 +15,7 @@ const typeService = function (moduleContent, dependencies) {
     moduleContent = function () {
         //Chevron service function wrapper
         //return function with args injected
-        return serviceFn.apply(null, dependencies.concat(Array.from(arguments)));
+        return serviceFn(...dependencies, ...arguments);
     };
 
     return moduleContent;
