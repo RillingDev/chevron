@@ -1,8 +1,9 @@
 {
     "env": {
+        "node": true,
+        "es6": true,
         "browser": false,
-        "node":true,
-        "es6": true
+        "jasmine": true
     },
     "extends": "eslint:recommended",
     "parserOptions": {

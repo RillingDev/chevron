@@ -32,9 +32,12 @@ rollup
 
         result.iife_min = uglify.minify(result.iife, {
             fromString: true,
-            mangleProperties: true,
+            //mangleProperties: true,
             compress: {
                 unsafe: true
+            },
+            mangleProperties:{
+                regex:/(noMatch)/g
             }
         }).code;
 

@@ -72,8 +72,8 @@ const Chevron = class {
         const _this = this;
 
         //stores type as provider with name into instance
-        _this[typeName] = function (id, deps, fn) {
-            _this.provider(id, deps, fn, constructorFunction);
+        _this[typeName] = function (id, dependencies, fn) {
+            _this.provider(id, dependencies, fn, constructorFunction);
         };
 
         return _this;
@@ -81,17 +81,17 @@ const Chevron = class {
     /**
      * Defines a new module
      * @param {String} moduleName name of the module
-     * @param {Array} deps array of dependency names
-     * @param {Function} fn module content
+     * @param {Array} dependencies array of dependency names
+     * @param {Function} content module content
      * @param {Function} constructorFunction function init the modules with
      * @returns {Chevron} Chevron instance
      */
-    provider(moduleName, deps, fn, constructorFunction) {
+    provider(moduleName, dependencies, fn, constructorFunction) {
         const _this = this;
         const _module = {
-            deps,
+            dependencies,
             fn,
-            rdy: false,
+            ready: false,
             /**
              * Inits the module
              * @returns {Mixed} Module content
@@ -100,11 +100,11 @@ const Chevron = class {
                 const dependencies = [];
 
                 //Collects dependencies
-                _module.deps.forEach(depName => {
+                _module.dependencies.forEach(depName => {
                     const dependency = _this.$.get(depName);
 
                     if (dependency) {
-                        dependencies.push(dependency.rdy ? dependency.fn : dependency.init());
+                        dependencies.push(dependency.ready ? dependency.fn : dependency.init());
                     } else {
                         throw new Error(`Missing '${depName}'`);
                     }
@@ -112,7 +112,7 @@ const Chevron = class {
 
                 //Calls constructorFunction on the module
                 _module.fn = constructorFunction(_module.fn, dependencies);
-                _module.rdy = true;
+                _module.ready = true;
 
                 return _module.fn;
             }
@@ -130,7 +130,7 @@ const Chevron = class {
     access(moduleName) {
         const _module = this.$.get(moduleName);
 
-        return _module.rdy ? _module.fn : _module.init();
+        return _module.ready ? _module.fn : _module.init();
     }
 };
 
