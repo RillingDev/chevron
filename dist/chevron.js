@@ -88,35 +88,35 @@ var Chevron = function () {
          * @param {Function} constructorFunction function init the modules with
          * @returns {Chevron} Chevron instance
          */
-        provider(moduleName, dependencies, fn, constructorFunction) {
+        provider(moduleName, dependencies, content, constructorFunction) {
             const _this = this;
             const _module = {
-                dependencies,
-                fn,
-                ready: false,
+                d: dependencies,
+                c: content,
+                r: false,
                 /**
                  * Inits the module
                  * @returns {Mixed} Module content
                  */
-                init: function () {
+                i: function () {
                     const dependencies = [];
 
                     //Collects dependencies
-                    _module.dependencies.forEach(depName => {
+                    _module.d.forEach(depName => {
                         const dependency = _this.$.get(depName);
 
                         if (dependency) {
-                            dependencies.push(dependency.ready ? dependency.fn : dependency.init());
+                            dependencies.push(dependency.r ? dependency.c : dependency.i());
                         } else {
                             throw new Error(`Missing '${depName}'`);
                         }
                     });
 
                     //Calls constructorFunction on the module
-                    _module.fn = constructorFunction(_module.fn, dependencies);
-                    _module.ready = true;
+                    _module.c = constructorFunction(_module.c, dependencies);
+                    _module.r = true;
 
-                    return _module.fn;
+                    return _module.c;
                 }
             };
 
@@ -132,7 +132,7 @@ var Chevron = function () {
         access(moduleName) {
             const _module = this.$.get(moduleName);
 
-            return _module.ready ? _module.fn : _module.init();
+            return _module.r ? _module.c : _module.i();
         }
     };
 

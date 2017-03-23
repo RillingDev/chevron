@@ -6,7 +6,7 @@
 
 ## Introduction
 
-Chevron is an extremely small(640Byte) JavaScript library for easy module declaration,
+Chevron is an extremely small(670Bytes) JavaScript library for easy module declaration,
 dependency management and lazy module loading,
 inspired by [BottleJS](https://github.com/young-steveo/bottlejs), and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
 
