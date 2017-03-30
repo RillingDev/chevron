@@ -38,5 +38,7 @@
         "rollup": "^0.41.4",
         "uglify-js": "git://github.com/mishoo/UglifyJS2.git#harmony"
     },
-    "dependencies": {}
+    "dependencies": {
+        "global": "^4.3.1"
+    }
 }
