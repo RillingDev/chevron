@@ -29,5 +29,4 @@ describe("Basic Service: ", function() {
     it("Service with multiple dependencies", function() {
         expect(myChev.access("myService4")("foo")).toBe("foobaripsumfoobarLoremet dolorfoobarLorem");
     });
-
 });

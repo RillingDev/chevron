@@ -4,7 +4,7 @@ describe("API usage: ", function() {
     const Chevron = require("../dist/chevron.common.js");
     const myChev = new Chevron();
 
-    myChev.extend("myEmtpyType", function(module, dependencies) {
+    myChev.extend("myEmtpyType", function(module) {
         return module;
     });
     myChev.service("myEmtpyTypeModule", [], function() {
@@ -32,5 +32,4 @@ describe("API usage: ", function() {
     it("Custom servicelike type", function() {
         expect(myChev.access("myServiceLikeModule")("foo")).toBe("foobar");
     });
-
 });

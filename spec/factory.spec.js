@@ -30,5 +30,4 @@ describe("Basic Factory: ", function() {
     it("Factory with dependencies", function() {
         expect(myChev.access("myFactory3").foobar).toBe("foobar");
     });
-
 });

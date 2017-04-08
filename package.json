@@ -1,6 +1,6 @@
 {
     "name": "chevronjs",
-    "version": "8.1.0",
+    "version": "8.1.1",
     "description": "A super tiny JavaScript library for module declaration",
     "author": "Felix Rilling",
     "license": "MIT",
@@ -30,15 +30,13 @@
         "url": "git+https://github.com/FelixRilling/chevronjs.git"
     },
     "devDependencies": {
-        "babel-core": "^6.21.0",
-        "babel-plugin-external-helpers": "^6.18.0",
-        "babel-preset-es2016": "^6.16.0",
-        "eslint": "^3.15.0",
+        "babel-core": "^6.24.1",
+        "babel-plugin-external-helpers": "^6.22.0",
+        "babel-preset-es2016": "^6.24.1",
+        "eslint": "^3.19.0",
         "jasmine": "^2.5.3",
-        "rollup": "^0.41.4",
+        "rollup": "^0.41.6",
         "uglify-js": "git://github.com/mishoo/UglifyJS2.git#harmony"
     },
-    "dependencies": {
-        "global": "^4.3.1"
-    }
+    "dependencies": {}
 }

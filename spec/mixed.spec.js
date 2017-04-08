@@ -30,5 +30,4 @@ describe("Mixed types: ", function () {
     it("Complex mixed types", function () {
         expect(myChev.access("myFactory2").foo).toBe(168);
     });
-
 });
