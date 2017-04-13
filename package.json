@@ -2,14 +2,6 @@
     "name": "chevronjs",
     "version": "8.1.1",
     "description": "A super tiny JavaScript library for module declaration",
-    "author": "Felix Rilling",
-    "license": "MIT",
-    "keywords": [
-        "dependencies",
-        "modules",
-        "service",
-        "factory"
-    ],
     "main": "dist/chevron.common.js",
     "namespace": {
         "module": "Chevron",
@@ -21,14 +13,23 @@
         "lint": "./node_modules/.bin/eslint ./src/",
         "test": "./node_modules/.bin/jasmine"
     },
-    "bugs": {
-        "url": "https://github.com/FelixRilling/chevronjs/issues"
-    },
-    "homepage": "https://github.com/FelixRilling/chevronjs#readme",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/FelixRilling/chevronjs.git"
     },
+    "keywords": [
+        "dependencies",
+        "modules",
+        "service",
+        "factory"
+    ],
+    "author": "Felix Rilling",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/FelixRilling/chevronjs/issues"
+    },
+    "homepage": "https://github.com/FelixRilling/chevronjs#readme",
+
     "devDependencies": {
         "babel-core": "^6.24.1",
         "babel-plugin-external-helpers": "^6.22.0",
