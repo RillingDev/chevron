@@ -8,10 +8,10 @@
         "file": "chevron"
     },
     "scripts": {
-        "start": "npm run lint && npm run build && npm run test",
+        "start": "npm-run-all lint build test",
         "build": "node build.js",
-        "lint": "./node_modules/.bin/eslint ./src/",
-        "test": "./node_modules/.bin/jasmine"
+        "lint": "eslint ./src/",
+        "test": "jasmine"
     },
     "repository": {
         "type": "git",
@@ -29,13 +29,12 @@
         "url": "https://github.com/FelixRilling/chevronjs/issues"
     },
     "homepage": "https://github.com/FelixRilling/chevronjs#readme",
-
     "devDependencies": {
-        "babel-core": "^6.24.1",
-        "babel-plugin-external-helpers": "^6.22.0",
-        "babel-preset-es2016": "^6.24.1",
+        "babel-core": "^7.0.0-alpha.9",
+        "babel-preset-latest": "^7.0.0-alpha.9",
         "eslint": "^3.19.0",
         "jasmine": "^2.5.3",
+        "npm-run-all": "^4.0.2",
         "rollup": "^0.41.6",
         "uglify-js": "git://github.com/mishoo/UglifyJS2.git#harmony"
     },
