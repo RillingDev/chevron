@@ -1,6 +1,30 @@
 var Chevron = function () {
     'use strict';
 
+    const bootstrapDependency = function (_container, dependencyName) {
+        const dependency = _container.get(dependencyName);
+
+        if (dependency) {
+            return dependency.r ? dependency.c : dependency.i();
+        } else {
+            throw new Error(`Missing '${dependencyName}'`);
+        }
+    };
+
+    /**
+    * Inits the module
+    * @returns {Mixed} Module content
+    */
+    const createInit = function (_container, _module, dependencies, constructorFunction) {
+        const constructedDependencies = dependencies.map(dependencyName => bootstrapDependency(_container, dependencyName));
+
+        //Calls constructorFunction on the module
+        _module.c = constructorFunction(_module.c, constructedDependencies);
+        _module.r = true;
+
+        return _module.c;
+    };
+
     /**
      * Service-type constructor function
      * @private
@@ -8,7 +32,6 @@ var Chevron = function () {
      * @param {Array} dependencies Array of dependency contents
      * @returns {Function} constructed function
      */
-
     const typeService = function (moduleContent, dependencies) {
         //Dereference fn to avoid unwanted recursion
         const serviceFn = moduleContent;
@@ -71,9 +94,9 @@ var Chevron = function () {
         extend(typeName, constructorFunction) {
             const _this = this;
 
-            //stores type as provider with name into instance
+            //stores type as set with name into instance
             _this[typeName] = function (id, dependencies, fn) {
-                _this.provider(id, dependencies, fn, constructorFunction);
+                _this.set(id, dependencies, fn, constructorFunction);
             };
 
             return _this;
@@ -86,38 +109,14 @@ var Chevron = function () {
          * @param {Function} constructorFunction function init the modules with
          * @returns {Chevron} Chevron instance
          */
-        provider(moduleName, dependencies, content, constructorFunction) {
+        set(moduleName, dependencies, content, constructorFunction) {
             const _this = this;
             const _module = {
-                d: dependencies,
                 c: content,
-                r: false,
-                /**
-                 * Inits the module
-                 * @returns {Mixed} Module content
-                 */
-                i: function () {
-                    const dependencies = [];
-
-                    //Collects dependencies
-                    _module.d.forEach(depName => {
-                        const dependency = _this.$.get(depName);
-
-                        if (dependency) {
-                            dependencies.push(dependency.r ? dependency.c : dependency.i());
-                        } else {
-                            throw new Error(`Missing '${depName}'`);
-                        }
-                    });
-
-                    //Calls constructorFunction on the module
-                    _module.c = constructorFunction(_module.c, dependencies);
-                    _module.r = true;
-
-                    return _module.c;
-                }
+                r: false
             };
 
+            _module.i = createInit(_this.$, _module, dependencies, constructorFunction);
             _this.$.set(moduleName, _module);
 
             return _this;
@@ -127,7 +126,7 @@ var Chevron = function () {
          * @param {String} moduleName name of the module to access
          * @returns {Mixed} module content
          */
-        access(moduleName) {
+        get(moduleName) {
             const _module = this.$.get(moduleName);
 
             return _module.r ? _module.c : _module.i();

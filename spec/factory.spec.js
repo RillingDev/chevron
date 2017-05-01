@@ -10,7 +10,7 @@ describe("Basic Factory: ", function() {
         _this.foo = "foo";
     });
     it("Simple factory", function() {
-        expect(myChev.access("myFactory1").foo).toBe("foo");
+        expect(myChev.get("myFactory1").foo).toBe("foo");
     });
 
 
@@ -28,6 +28,6 @@ describe("Basic Factory: ", function() {
         _this.foobar = myFactory1.foo + myFactory2.bar;
     });
     it("Factory with dependencies", function() {
-        expect(myChev.access("myFactory3").foobar).toBe("foobar");
+        expect(myChev.get("myFactory3").foobar).toBe("foobar");
     });
 });

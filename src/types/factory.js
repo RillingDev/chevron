@@ -15,7 +15,7 @@ const typeFactory = function (moduleContent, dependencies) {
 
     //Apply into new constructor by binding applying the bind method.
     //@see: {@link http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible }
-    moduleContent = new(Function.prototype.bind.apply(moduleContent, dependenciesArr));
+    moduleContent = new (Function.prototype.bind.apply(moduleContent, dependenciesArr));
 
     return moduleContent;
 };

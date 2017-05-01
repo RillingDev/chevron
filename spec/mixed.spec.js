@@ -14,7 +14,7 @@ describe("Mixed types: ", function () {
         _this.bar = myService1(21);
     });
     it("Simple mixed types", function () {
-        expect(myChev.access("myFactory1").bar).toBe(42);
+        expect(myChev.get("myFactory1").bar).toBe(42);
     });
 
 
@@ -28,6 +28,6 @@ describe("Mixed types: ", function () {
         _this.foo = myService2() + myService1(myFactory1.bar);
     });
     it("Complex mixed types", function () {
-        expect(myChev.access("myFactory2").foo).toBe(168);
+        expect(myChev.get("myFactory2").foo).toBe(168);
     });
 });

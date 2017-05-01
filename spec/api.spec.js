@@ -11,7 +11,7 @@ describe("API usage: ", function() {
         return "foo";
     });
     it("Custom empty type", function() {
-        expect(myChev.access("myEmtpyTypeModule")()).toBe("foo");
+        expect(myChev.get("myEmtpyTypeModule")()).toBe("foo");
     });
 
 
@@ -30,6 +30,6 @@ describe("API usage: ", function() {
         return foo + "bar";
     });
     it("Custom servicelike type", function() {
-        expect(myChev.access("myServiceLikeModule")("foo")).toBe("foobar");
+        expect(myChev.get("myServiceLikeModule")("foo")).toBe("foobar");
     });
 });

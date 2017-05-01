@@ -8,7 +8,7 @@ describe("Basic Service: ", function() {
         return foo + "bar";
     });
     it("Simple service", function() {
-        expect(myChev.access("myService1")("foo")).toBe("foobar");
+        expect(myChev.get("myService1")("foo")).toBe("foobar");
     });
 
 
@@ -16,7 +16,7 @@ describe("Basic Service: ", function() {
         return myService1(foo) + "Lorem";
     });
     it("Service with dependency", function() {
-        expect(myChev.access("myService2")("foo")).toBe("foobarLorem");
+        expect(myChev.get("myService2")("foo")).toBe("foobarLorem");
     });
 
 
@@ -27,6 +27,6 @@ describe("Basic Service: ", function() {
         return myService3(foo) + "et dolor" + myService2(foo);
     });
     it("Service with multiple dependencies", function() {
-        expect(myChev.access("myService4")("foo")).toBe("foobaripsumfoobarLoremet dolorfoobarLorem");
+        expect(myChev.get("myService4")("foo")).toBe("foobaripsumfoobarLoremet dolorfoobarLorem");
     });
 });

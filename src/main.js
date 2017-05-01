@@ -1,5 +1,6 @@
 "use strict";
 
+import createInit from "./createInit";
 import typeService from "./types/service";
 import typeFactory from "./types/factory";
 
@@ -32,9 +33,9 @@ const Chevron = class {
     extend(typeName, constructorFunction) {
         const _this = this;
 
-        //stores type as provider with name into instance
+        //stores type as set with name into instance
         _this[typeName] = function (id, dependencies, fn) {
-            _this.provider(id, dependencies, fn, constructorFunction);
+            _this.set(id, dependencies, fn, constructorFunction);
         };
 
         return _this;
@@ -47,38 +48,14 @@ const Chevron = class {
      * @param {Function} constructorFunction function init the modules with
      * @returns {Chevron} Chevron instance
      */
-    provider(moduleName, dependencies, content, constructorFunction) {
+    set(moduleName, dependencies, content, constructorFunction) {
         const _this = this;
         const _module = {
-            d: dependencies,
             c: content,
             r: false,
-            /**
-             * Inits the module
-             * @returns {Mixed} Module content
-             */
-            i: function () {
-                const dependencies = [];
-
-                //Collects dependencies
-                _module.d.forEach(depName => {
-                    const dependency = _this.$.get(depName);
-
-                    if (dependency) {
-                        dependencies.push(dependency.r ? dependency.c : dependency.i());
-                    } else {
-                        throw new Error(`Missing '${depName}'`);
-                    }
-                });
-
-                //Calls constructorFunction on the module
-                _module.c = constructorFunction(_module.c, dependencies);
-                _module.r = true;
-
-                return _module.c;
-            }
         };
 
+        _module.i = createInit(_this.$, _module, dependencies, constructorFunction);
         _this.$.set(moduleName, _module);
 
         return _this;
@@ -88,7 +65,7 @@ const Chevron = class {
      * @param {String} moduleName name of the module to access
      * @returns {Mixed} module content
      */
-    access(moduleName) {
+    get(moduleName) {
         const _module = this.$.get(moduleName);
 
         return _module.r ? _module.c : _module.i();
