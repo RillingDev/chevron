@@ -1,6 +1,6 @@
 "use strict";
 
-import createInit from "./createInit";
+import initModule from "./initModule";
 import typeService from "./types/service";
 import typeFactory from "./types/factory";
 
@@ -55,7 +55,7 @@ const Chevron = class {
             r: false,
         };
 
-        _module.i = createInit(_this.$, _module, dependencies, constructorFunction);
+        _module.i = initModule(_this.$, _module, dependencies, constructorFunction);
         _this.$.set(moduleName, _module);
 
         return _this;

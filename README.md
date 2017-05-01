@@ -51,9 +51,9 @@ The syntax for `service` is as follows:
 cv.service("myService", [], function() {
     return 12;
 });
-//Access service from the Chevron Container
-//Chevron.prototype.access(name);
-const myService = cv.access("myService");
+//get service from the Chevron Container
+//Chevron.prototype.get(name);
+const myService = cv.get("myService");
 myService(); //returns 12
 ```
 
@@ -69,7 +69,7 @@ cv.service("myOtherService", ["myService"], function(myService, int) {
     return int * myService();
 });
 
-const myOtherService = cv.access("myOtherService");
+const myOtherService = cv.get("myOtherService");
 myOtherService(2); //returns 24
 ```
 
@@ -85,7 +85,7 @@ cv.factory("myFactory", [], function() {
     this.bar = 17;
 });
 
-const myFactory = cv.access("myFactory");
+const myFactory = cv.get("myFactory");
 myFactory.bar; //returns 17
 ```
 
@@ -101,19 +101,19 @@ cv.service("myService", ["myFactory"], function(myFactory, int) {
     return int * myFactory.foo;
 });
 
-const myService = cv.access("myService");
+const myService = cv.get("myService");
 myService(3); //returns 21
 ```
 
-### Accessing Modules
+### geting Modules
 
-Modules can be accessed in two ways.
-In most cases, you will want to get your module trough Chevrons `access` method,
+Modules can be geted in two ways.
+In most cases, you will want to get your module trough Chevrons `get` method,
 which returns the constructed module with all dependencies:
 
 ```javascript
-//Chevron.prototype.access(name)
-cv.access("myModule"); //returns the service or factory with dependencies injected into arguments
+//Chevron.prototype.get(name)
+cv.get("myModule"); //returns the service or factory with dependencies injected into arguments
 ```
 
 ## API
@@ -150,8 +150,8 @@ cv.myType("myTypeModule", [], function() {
 });
 ```
 
-Then you can simply call `access` again to access your new module type.
+Then you can simply call `get` again to get your new module type.
 
 ```javascript
-cv.access("myTypeModule");
+cv.get("myTypeModule");
 ```

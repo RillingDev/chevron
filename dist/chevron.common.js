@@ -1,9 +1,15 @@
 'use strict';
 
+/**
+ * Bootstrap a single dependency
+ * @param {Map} _container
+ * @param {String} dependencyName
+ * @returns {Mixed}
+ */
 const bootstrapDependency = function (_container, dependencyName) {
-    const dependency = _container.get(dependencyName);
+    if (_container.has(dependencyName)) {
+        const dependency = _container.get(dependencyName);
 
-    if (dependency) {
         return dependency.r ? dependency.c : dependency.i();
     } else {
         throw new Error(`Missing '${dependencyName}'`);
@@ -11,10 +17,14 @@ const bootstrapDependency = function (_container, dependencyName) {
 };
 
 /**
-* Inits the module
-* @returns {Mixed} Module content
-*/
-const createInit = function (_container, _module, dependencies, constructorFunction) {
+ * Init function for a module
+ * @param {Map} _container
+ * @param {Object} _module
+ * @param {Array} dependencies
+ * @param {Function} constructorFunction
+ * @returns {Mixed}
+ */
+const initModule = function (_container, _module, dependencies, constructorFunction) {
     const constructedDependencies = dependencies.map(dependencyName => bootstrapDependency(_container, dependencyName));
 
     //Calls constructorFunction on the module
@@ -115,7 +125,7 @@ const Chevron = class {
             r: false,
         };
 
-        _module.i = createInit(_this.$, _module, dependencies, constructorFunction);
+        _module.i = initModule(_this.$, _module, dependencies, constructorFunction);
         _this.$.set(moduleName, _module);
 
         return _this;

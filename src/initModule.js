@@ -3,10 +3,14 @@
 import bootstrapDependency from "./bootstrapDependency";
 
 /**
- * Inits the module
- * @returns {Mixed} Module content
+ * Init function for a module
+ * @param {Map} _container
+ * @param {Object} _module
+ * @param {Array} dependencies
+ * @param {Function} constructorFunction
+ * @returns {Mixed}
  */
-const createInit = function (_container, _module, dependencies, constructorFunction) {
+const initModule = function (_container, _module, dependencies, constructorFunction) {
     const constructedDependencies = dependencies.map(dependencyName => bootstrapDependency(_container, dependencyName));
 
     //Calls constructorFunction on the module
@@ -16,4 +20,4 @@ const createInit = function (_container, _module, dependencies, constructorFunct
     return _module.c;
 };
 
-export default createInit;
+export default initModule;
