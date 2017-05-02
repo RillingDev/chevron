@@ -101,14 +101,6 @@ babel-code-frame@7.0.0-alpha.3:
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-babel-code-frame@7.0.0-alpha.9:
-  version "7.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/babel-code-frame/-/babel-code-frame-7.0.0-alpha.9.tgz#b861deec3e9f744a30405137d4ad0216ccef0cba"
-  dependencies:
-    chalk "^1.1.0"
-    esutils "^2.0.2"
-    js-tokens "^3.0.0"
-
 babel-code-frame@^6.16.0:
   version "6.22.0"
   resolved "https://registry.yarnpkg.com/babel-code-frame/-/babel-code-frame-6.22.0.tgz#027620bee567a88c32561574e7fd0801d33118e4"
@@ -117,17 +109,17 @@ babel-code-frame@^6.16.0:
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-babel-core@^7.0.0-alpha.9:
-  version "7.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-7.0.0-alpha.9.tgz#1868005f160dbcd2325e6b3472f3f9ea010a9313"
+babel-core@v7.0.0-alpha.7:
+  version "7.0.0-alpha.7"
+  resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-7.0.0-alpha.7.tgz#714bde734537de00dce30bae27432ed52cc2aac3"
   dependencies:
-    babel-code-frame "7.0.0-alpha.9"
-    babel-generator "7.0.0-alpha.9"
-    babel-helpers "7.0.0-alpha.9"
-    babel-messages "7.0.0-alpha.9"
-    babel-template "7.0.0-alpha.9"
-    babel-traverse "7.0.0-alpha.9"
-    babel-types "7.0.0-alpha.9"
+    babel-code-frame "7.0.0-alpha.3"
+    babel-generator "7.0.0-alpha.7"
+    babel-helpers "7.0.0-alpha.7"
+    babel-messages "7.0.0-alpha.3"
+    babel-template "7.0.0-alpha.7"
+    babel-traverse "7.0.0-alpha.7"
+    babel-types "7.0.0-alpha.7"
     babylon "7.0.0-beta.8"
     convert-source-map "^1.1.0"
     debug "^2.1.1"
@@ -139,12 +131,12 @@ babel-core@^7.0.0-alpha.9:
     slash "^1.0.0"
     source-map "^0.5.0"
 
-babel-generator@7.0.0-alpha.9:
-  version "7.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/babel-generator/-/babel-generator-7.0.0-alpha.9.tgz#4b4f41963e70beda87d94a3d358a6caf86172692"
+babel-generator@7.0.0-alpha.7:
+  version "7.0.0-alpha.7"
+  resolved "https://registry.yarnpkg.com/babel-generator/-/babel-generator-7.0.0-alpha.7.tgz#80f6b833063fe6445c29fa1b38fe6bc057425f0f"
   dependencies:
-    babel-messages "7.0.0-alpha.9"
-    babel-types "7.0.0-alpha.9"
+    babel-messages "7.0.0-alpha.3"
+    babel-types "7.0.0-alpha.7"
     detect-indent "^4.0.0"
     jsesc "^1.3.0"
     lodash "^4.2.0"
@@ -234,19 +226,15 @@ babel-helper-replace-supers@7.0.0-alpha.7:
     babel-traverse "7.0.0-alpha.7"
     babel-types "7.0.0-alpha.7"
 
-babel-helpers@7.0.0-alpha.9:
-  version "7.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/babel-helpers/-/babel-helpers-7.0.0-alpha.9.tgz#653f391654e0c18556e78d39fe58fd7f9e730f27"
+babel-helpers@7.0.0-alpha.7:
+  version "7.0.0-alpha.7"
+  resolved "https://registry.yarnpkg.com/babel-helpers/-/babel-helpers-7.0.0-alpha.7.tgz#1640077af095fd516bec82527466fb17348b057a"
   dependencies:
-    babel-template "7.0.0-alpha.9"
+    babel-template "7.0.0-alpha.7"
 
 babel-messages@7.0.0-alpha.3:
   version "7.0.0-alpha.3"
   resolved "https://registry.yarnpkg.com/babel-messages/-/babel-messages-7.0.0-alpha.3.tgz#c8390a468478b8384da134612e12a6bc31a684e9"
-
-babel-messages@7.0.0-alpha.9:
-  version "7.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/babel-messages/-/babel-messages-7.0.0-alpha.9.tgz#472b5e7158c4b3fded5eec0fb76f0ad930cb4ea8"
 
 babel-plugin-check-es2015-constants@7.0.0-alpha.7:
   version "7.0.0-alpha.7"
@@ -470,7 +458,7 @@ babel-preset-es2017@7.0.0-alpha.7:
     babel-plugin-syntax-trailing-function-commas "7.0.0-alpha.7"
     babel-plugin-transform-async-to-generator "7.0.0-alpha.7"
 
-babel-preset-latest@^7.0.0-alpha.9:
+babel-preset-latest@v7.0.0-alpha.7:
   version "7.0.0-alpha.7"
   resolved "https://registry.yarnpkg.com/babel-preset-latest/-/babel-preset-latest-7.0.0-alpha.7.tgz#c1a87c35592747532d923fae5f3ee2ee939d9888"
   dependencies:
@@ -494,15 +482,6 @@ babel-template@7.0.0-alpha.7:
     babylon "7.0.0-beta.8"
     lodash "^4.2.0"
 
-babel-template@7.0.0-alpha.9:
-  version "7.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/babel-template/-/babel-template-7.0.0-alpha.9.tgz#e32c51ea13f8ed391ed4a1c9adcfd3ed9ca928dc"
-  dependencies:
-    babel-traverse "7.0.0-alpha.9"
-    babel-types "7.0.0-alpha.9"
-    babylon "7.0.0-beta.8"
-    lodash "^4.2.0"
-
 babel-traverse@7.0.0-alpha.7:
   version "7.0.0-alpha.7"
   resolved "https://registry.yarnpkg.com/babel-traverse/-/babel-traverse-7.0.0-alpha.7.tgz#61cc89061b0ad0a5f9fc6df81117fac428bc4148"
@@ -516,30 +495,9 @@ babel-traverse@7.0.0-alpha.7:
     invariant "^2.2.0"
     lodash "^4.2.0"
 
-babel-traverse@7.0.0-alpha.9:
-  version "7.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/babel-traverse/-/babel-traverse-7.0.0-alpha.9.tgz#749abf53c908ca80a8c96f5ca958d33732e0714f"
-  dependencies:
-    babel-code-frame "7.0.0-alpha.9"
-    babel-messages "7.0.0-alpha.9"
-    babel-types "7.0.0-alpha.9"
-    babylon "7.0.0-beta.8"
-    debug "^2.2.0"
-    globals "^9.0.0"
-    invariant "^2.2.0"
-    lodash "^4.2.0"
-
 babel-types@7.0.0-alpha.7:
   version "7.0.0-alpha.7"
   resolved "https://registry.yarnpkg.com/babel-types/-/babel-types-7.0.0-alpha.7.tgz#4bdb77386d1f6e2001f42fa9ac21b6c3d6ad0d82"
-  dependencies:
-    esutils "^2.0.2"
-    lodash "^4.2.0"
-    to-fast-properties "^1.0.1"
-
-babel-types@7.0.0-alpha.9:
-  version "7.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/babel-types/-/babel-types-7.0.0-alpha.9.tgz#45e48b93cecdd9d306ab6953d7819622a7c1462b"
   dependencies:
     esutils "^2.0.2"
     lodash "^4.2.0"
@@ -1080,8 +1038,8 @@ hosted-git-info@^2.1.4:
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.4.2.tgz#0076b9f46a270506ddbaaea56496897460612a67"
 
 ignore@^3.2.0:
-  version "3.2.7"
-  resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.2.7.tgz#4810ca5f1d8eca5595213a34b94f2eb4ed926bbd"
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.3.0.tgz#3812d22cbe9125f2c2b4915755a1b8abd745a001"
 
 imurmurhash@^0.1.4:
   version "0.1.4"
@@ -1265,7 +1223,7 @@ jasmine-core@~2.6.0:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/jasmine-core/-/jasmine-core-2.6.1.tgz#66a61cddb699958e3613edef346c996f6311fc3b"
 
-jasmine@^2.5.3:
+jasmine@^2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/jasmine/-/jasmine-2.6.0.tgz#6b22e70883e8e589d456346153b4d206ddbe217f"
   dependencies:
