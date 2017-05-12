@@ -2,31 +2,13 @@ var Chevron = function () {
     'use strict';
 
     /**
-     * Init function for a module
-     * @param {Chevron} instance
-     * @param {Object} _module
-     * @param {Array} dependencies
-     * @param {Function} constructorFunction
-     * @returns {Mixed}
-     */
-
-    const initModule = function (instance, _module, dependencies, constructorFunction) {
-        const constructedDependencies = dependencies.map(dependencyName => instance.get(dependencyName));
-
-        //Calls constructorFunction on the module
-        _module.c = constructorFunction(_module.c, constructedDependencies);
-        _module.r = true;
-
-        return _module.c;
-    };
-
-    /**
      * Service-type constructor function
      * @private
      * @param {Function} moduleContent module to be constructed as service
      * @param {Array} dependencies Array of dependency contents
      * @returns {Function} constructed function
      */
+
     const typeService = function (moduleContent, dependencies) {
         //Dereference fn to avoid unwanted recursion
         const serviceFn = moduleContent;
@@ -90,9 +72,7 @@ var Chevron = function () {
             const _this = this;
 
             //stores type as set with name into instance
-            _this[typeName] = function (id, dependencies, fn) {
-                _this.set(id, dependencies, fn, constructorFunction);
-            };
+            _this[typeName] = (id, dependencies, fn) => _this.set(id, dependencies, fn, constructorFunction);
 
             return _this;
         }
@@ -103,15 +83,25 @@ var Chevron = function () {
          * @param {Function} content module content
          * @param {Function} constructorFunction function init the modules with
          * @returns {Chevron} Chevron instance
+         *
+         * Internal Module structure:
+         * [ready<boolean>,content<mixed>,init<fn>]
          */
         set(moduleName, dependencies, content, constructorFunction) {
             const _this = this;
-            const _module = {
-                c: content,
-                r: false
-            };
+            const _module = [false, content];
 
-            _module.i = initModule(_this, _module, dependencies, constructorFunction);
+            //Add init-fn
+            _module.push(() => {
+                const constructedDependencies = dependencies.map(dependencyName => _this.get(dependencyName));
+
+                //Calls constructorFunction on the module
+                _module[1] = constructorFunction(_module[1], constructedDependencies);
+                _module[0] = true;
+
+                return _module[1];
+            });
+
             _this.$.set(moduleName, _module);
 
             return _this;
@@ -127,7 +117,7 @@ var Chevron = function () {
             if (_this.$.has(moduleName)) {
                 const dependency = _this.$.get(moduleName);
 
-                return dependency.r ? dependency.c : dependency.i();
+                return dependency[0] ? dependency[1] : dependency[2]();
             } else {
                 throw new Error(`Missing '${moduleName}'`);
             }

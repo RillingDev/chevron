@@ -1,6 +1,5 @@
 "use strict";
 
-import initModule from "./initModule";
 import typeService from "./types/service";
 import typeFactory from "./types/factory";
 
@@ -34,9 +33,7 @@ const Chevron = class {
         const _this = this;
 
         //stores type as set with name into instance
-        _this[typeName] = function (id, dependencies, fn) {
-            _this.set(id, dependencies, fn, constructorFunction);
-        };
+        _this[typeName] = (id, dependencies, fn) => _this.set(id, dependencies, fn, constructorFunction);
 
         return _this;
     }
@@ -47,15 +44,25 @@ const Chevron = class {
      * @param {Function} content module content
      * @param {Function} constructorFunction function init the modules with
      * @returns {Chevron} Chevron instance
+     *
+     * Internal Module structure:
+     * [ready<boolean>,content<mixed>,init<fn>]
      */
     set(moduleName, dependencies, content, constructorFunction) {
         const _this = this;
-        const _module = {
-            c: content,
-            r: false,
-        };
+        const _module = [false, content];
 
-        _module.i = initModule(_this, _module, dependencies, constructorFunction);
+        //Add init-fn
+        _module.push(() => {
+            const constructedDependencies = dependencies.map(dependencyName => _this.get(dependencyName));
+
+            //Calls constructorFunction on the module
+            _module[1] = constructorFunction(_module[1], constructedDependencies);
+            _module[0] = true;
+
+            return _module[1];
+        });
+
         _this.$.set(moduleName, _module);
 
         return _this;
@@ -71,7 +78,7 @@ const Chevron = class {
         if (_this.$.has(moduleName)) {
             const dependency = _this.$.get(moduleName);
 
-            return dependency.r ? dependency.c : dependency.i();
+            return dependency[0] ? dependency[1] : dependency[2]();
         } else {
             throw new Error(`Missing '${moduleName}'`);
         }

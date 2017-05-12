@@ -1,35 +1,39 @@
 "use strict";
 
-describe("API usage: ", function() {
-    const Chevron = require("../dist/chevron.common.js");
-    const myChev = new Chevron();
+const Chevron = require("../dist/chevron.common.js");
+const myChev = new Chevron();
 
-    myChev.extend("myEmtpyType", function(module) {
+describe("API usage: ", function () {
+    myChev.extend("myEmtpyType", function (module) {
         return module;
     });
-    myChev.service("myEmtpyTypeModule", [], function() {
+
+    myChev.service("myEmtpyTypeModule", [], function () {
         return "foo";
     });
-    it("Custom empty type", function() {
+
+    it("Custom empty type", function () {
         expect(myChev.get("myEmtpyTypeModule")()).toBe("foo");
     });
 
 
-    myChev.extend("myServiceLikeType", function(module, dependencies) {
-        const serviceFn = module.fn;
+    myChev.extend("myServiceLikeType", function (moduleContent, dependencies) {
+        const serviceFn = moduleContent;
 
-        module.fn = function() {
+        moduleContent = function () {
             //Chevron service function wrapper
-            //return function with args injected
-            return serviceFn.apply(null, dependencies.concat(Array.from(arguments)));
+            //Return function with args injected
+            return serviceFn(...dependencies, ...arguments);
         };
 
-        return module;
+        return moduleContent;
     });
-    myChev.service("myServiceLikeModule", [], function(foo) {
+
+    myChev.service("myServiceLikeModule", [], function (foo) {
         return foo + "bar";
     });
-    it("Custom servicelike type", function() {
+
+    it("Custom servicelike type", function () {
         expect(myChev.get("myServiceLikeModule")("foo")).toBe("foobar");
     });
 });
