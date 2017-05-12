@@ -29,18 +29,8 @@ rollup
         const result_iife_min = uglify.minify(result_iife, {
             compress: {
                 dead_code: true
-            },
-            mangleProperties:{
-                //regex:/(\$map|init|ready|content)/g
-                debug:"debug-"
             }
         }).code;
-
-        console.log(uglify.minify(result_iife, {
-            compress: {
-                dead_code: true
-            }
-        }))
 
 
         fs.writeFile(`${DIR_DIST_FILE}.es.js`, result_es, (err) => console.log(err || "Saved ES file"));

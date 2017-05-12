@@ -1,6 +1,6 @@
 {
   "name": "chevronjs",
-  "version": "9.0.1",
+  "version": "9.1.0",
   "description": "A super tiny JavaScript library for module declaration",
   "main": "dist/chevron.common.js",
   "namespace": {
