@@ -2,32 +2,16 @@ var Chevron = function () {
     'use strict';
 
     /**
-     * Bootstrap a single dependency
-     * @param {Map} _container
-     * @param {String} dependencyName
-     * @returns {Mixed}
-     */
-
-    const bootstrapDependency = function (_container, dependencyName) {
-        if (_container.has(dependencyName)) {
-            const dependency = _container.get(dependencyName);
-
-            return dependency.r ? dependency.c : dependency.i();
-        } else {
-            throw new Error(`Missing '${dependencyName}'`);
-        }
-    };
-
-    /**
      * Init function for a module
-     * @param {Map} _container
+     * @param {Chevron} instance
      * @param {Object} _module
      * @param {Array} dependencies
      * @param {Function} constructorFunction
      * @returns {Mixed}
      */
-    const initModule = function (_container, _module, dependencies, constructorFunction) {
-        const constructedDependencies = dependencies.map(dependencyName => bootstrapDependency(_container, dependencyName));
+
+    const initModule = function (instance, _module, dependencies, constructorFunction) {
+        const constructedDependencies = dependencies.map(dependencyName => instance.get(dependencyName));
 
         //Calls constructorFunction on the module
         _module.c = constructorFunction(_module.c, constructedDependencies);
@@ -127,7 +111,7 @@ var Chevron = function () {
                 r: false
             };
 
-            _module.i = initModule(_this.$, _module, dependencies, constructorFunction);
+            _module.i = initModule(_this, _module, dependencies, constructorFunction);
             _this.$.set(moduleName, _module);
 
             return _this;
@@ -138,9 +122,15 @@ var Chevron = function () {
          * @returns {Mixed} module content
          */
         get(moduleName) {
-            const _module = this.$.get(moduleName);
+            const _this = this;
 
-            return _module.r ? _module.c : _module.i();
+            if (_this.$.has(moduleName)) {
+                const dependency = _this.$.get(moduleName);
+
+                return dependency.r ? dependency.c : dependency.i();
+            } else {
+                throw new Error(`Missing '${moduleName}'`);
+            }
         }
     };
 

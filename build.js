@@ -3,7 +3,7 @@
 const fs = require("fs");
 const rollup = require("rollup");
 const babel = require("babel-core");
-const uglify = require("uglify-js");
+const uglify = require("uglify-es");
 const packageJson = require("./package.json");
 
 const DIR_SRC = "./src/";
@@ -27,8 +27,21 @@ rollup
             format: "iife"
         }).code).code;
         const result_iife_min = uglify.minify(result_iife, {
-            fromString: true
+            compress: {
+                dead_code: true
+            },
+            mangleProperties:{
+                //regex:/(\$map|init|ready|content)/g
+                debug:"debug-"
+            }
         }).code;
+
+        console.log(uglify.minify(result_iife, {
+            compress: {
+                dead_code: true
+            }
+        }))
+
 
         fs.writeFile(`${DIR_DIST_FILE}.es.js`, result_es, (err) => console.log(err || "Saved ES file"));
         fs.writeFile(`${DIR_DIST_FILE}.common.js`, result_cjs, (err) => console.log(err || "Saved CJS file"));

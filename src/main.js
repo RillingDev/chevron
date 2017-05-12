@@ -55,7 +55,7 @@ const Chevron = class {
             r: false,
         };
 
-        _module.i = initModule(_this.$, _module, dependencies, constructorFunction);
+        _module.i = initModule(_this, _module, dependencies, constructorFunction);
         _this.$.set(moduleName, _module);
 
         return _this;
@@ -66,9 +66,15 @@ const Chevron = class {
      * @returns {Mixed} module content
      */
     get(moduleName) {
-        const _module = this.$.get(moduleName);
+        const _this = this;
 
-        return _module.r ? _module.c : _module.i();
+        if (_this.$.has(moduleName)) {
+            const dependency = _this.$.get(moduleName);
+
+            return dependency.r ? dependency.c : dependency.i();
+        } else {
+            throw new Error(`Missing '${moduleName}'`);
+        }
     }
 };
 
