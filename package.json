@@ -1,41 +1,42 @@
 {
-  "name": "chevronjs",
-  "version": "9.1.2",
-  "description": "A super tiny JavaScript library for module declaration",
-  "main": "dist/chevron.common.js",
-  "namespace": {
-    "module": "Chevron",
-    "file": "chevron"
-  },
-  "scripts": {
-    "start": "npm-run-all lint build test",
-    "build": "node tasks/build.js",
-    "lint": "eslint src/",
-    "test": "jasmine"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/FelixRilling/chevronjs.git"
-  },
-  "keywords": [
-    "dependencies",
-    "modules",
-    "service",
-    "factory"
-  ],
-  "author": "Felix Rilling",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/FelixRilling/chevronjs/issues"
-  },
-  "homepage": "https://github.com/FelixRilling/chevronjs#readme",
-  "devDependencies": {
-    "babel-core": "^7.0.0-alpha.12",
-    "babel-preset-es2016": "^7.0.0-alpha.12",
-    "eslint": "^4.0.0",
-    "jasmine": "^2.6.0",
-    "npm-run-all": "^4.0.2",
-    "rollup": "^0.43.0",
-    "uglify-es": "^3.0.17"
-  }
+    "name": "chevronjs",
+    "version": "9.1.2",
+    "description": "A super tiny JavaScript library for module declaration",
+    "main": "dist/chevron.common.js",
+    "module": "dist/chevron.esm.js",
+    "namespace": {
+        "module": "Chevron",
+        "file": "chevron"
+    },
+    "scripts": {
+        "start": "npm-run-all lint build test",
+        "build": "node tasks/build.js",
+        "lint": "eslint src/",
+        "test": "jasmine"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/FelixRilling/chevronjs.git"
+    },
+    "keywords": [
+        "dependencies",
+        "modules",
+        "service",
+        "factory"
+    ],
+    "author": "Felix Rilling",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/FelixRilling/chevronjs/issues"
+    },
+    "homepage": "https://github.com/FelixRilling/chevronjs#readme",
+    "devDependencies": {
+        "babel-core": "^7.0.0-alpha.12",
+        "babel-preset-es2016": "^7.0.0-alpha.12",
+        "eslint": "^4.1.1",
+        "jasmine": "^2.6.0",
+        "npm-run-all": "^4.0.2",
+        "rollup": "^0.43.0",
+        "uglify-es": "^3.0.22"
+    }
 }
