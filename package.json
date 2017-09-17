@@ -32,13 +32,13 @@
     },
     "homepage": "https://github.com/FelixRilling/chevronjs#readme",
     "devDependencies": {
-        "babel-core": "^7.0.0-alpha.12",
-        "babel-preset-es2016": "^7.0.0-alpha.12",
-        "eslint": "^4.3.0",
+        "babel-core": "^7.0.0-beta",
+        "babel-preset-env": "^1.6.0",
+        "eslint": "^4.7.0",
         "eslint-plugin-unicorn": "^2.1.2",
-        "jasmine": "^2.7.0",
-        "npm-run-all": "^4.0.2",
-        "rollup": "^0.45.2",
-        "uglify-es": "^3.0.27"
+        "jasmine": "^2.8.0",
+        "npm-run-all": "^4.1.1",
+        "rollup": "^0.50.0",
+        "uglify-es": "^3.1.1"
     }
 }
