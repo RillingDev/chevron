@@ -4,14 +4,23 @@
     "description": "A super tiny JavaScript library for module declaration",
     "main": "dist/chevron.common.js",
     "module": "dist/chevron.esm.js",
-    "namespace": {
-        "module": "Chevron",
-        "file": "chevron"
+    "constants": {
+        "dirBase": {
+            "input": "./src",
+            "output": "./dist"
+        },
+        "js": {
+            "input": "main",
+            "namespace": {
+                "module": "Chevron",
+                "file": "chevron"
+            }
+        }
     },
     "scripts": {
         "start": "npm-run-all lint build test",
-        "build": "node tasks/build.js",
-        "dist": "node tasks/dist.js",
+        "build": "node tasks/jsDev.js",
+        "dist": "node tasks/jsDist.js",
         "lint": "eslint src/",
         "test": "jasmine"
     },

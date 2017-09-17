@@ -1,10 +1,9 @@
-"use strict";
-
 /**
  * Factory-type constructor function
+ *
  * @private
  * @param {Function} moduleContent module to be constructed as factory
- * @param {Array} dependencies Array of dependency contents
+ * @param {Array<any>} dependencies Array of dependency contents
  * @returns {Object} constructed Factory
  */
 const typeFactory = function (moduleContent, dependencies) {
