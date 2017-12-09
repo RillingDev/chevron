@@ -6,11 +6,11 @@
  * @param {Array<any>} dependencies Array of dependency contents
  * @returns {Function} constructed function
  */
-const typeService = function (moduleContent, dependencies) {
+const typeService = function(moduleContent, dependencies) {
     //Dereference fn to avoid unwanted recursion
     const serviceFn = moduleContent;
 
-    moduleContent = function () {
+    moduleContent = function() {
         //Chevron service function wrapper
         //Return function with args injected
         return serviceFn(...dependencies, ...arguments);
