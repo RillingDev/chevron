@@ -1,2 +1,2 @@
-declare const factoryConstructorFn: (content: any, dependencies: string[]) => any;
+declare const factoryConstructorFn: (content: any, dependencies: any[]) => any;
 export { factoryConstructorFn };

@@ -1,5 +1,6 @@
-declare type dependencyArr = string[];
-declare type constructorFunction = (content: any, dependencies: dependencyArr) => any;
+declare type dependencyDefArr = string[];
+declare type dependencyArr = any[];
+declare type constructorFunction = (content: any, dependencies: dependencyDefArr) => any;
 interface IChevronEntry extends Array<any> {
     [0]: boolean;
     [1]: any;
@@ -14,4 +15,4 @@ declare const Chevron: {
         get(id: string): any;
     };
 };
-export { Chevron, IChevronEntry, constructorFunction, dependencyArr };
+export { Chevron, IChevronEntry, constructorFunction, dependencyArr, dependencyDefArr };

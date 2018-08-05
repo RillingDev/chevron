@@ -1,8 +1,12 @@
 import { factoryConstructorFn } from "./constructors/factory";
 import { serviceConstructorFn } from "./constructors/service";
 
-type dependencyArr = string[];
-type constructorFunction = (content: any, dependencies: dependencyArr) => any;
+type dependencyDefArr = string[];
+type dependencyArr = any[];
+type constructorFunction = (
+    content: any,
+    dependencies: dependencyDefArr
+) => any;
 
 interface IChevronEntry extends Array<any> {
     [0]: boolean; // State of construction
@@ -26,7 +30,7 @@ const Chevron = class {
     set(
         id: string,
         type: string,
-        dependencies: dependencyArr,
+        dependencies: dependencyDefArr,
         content: any
     ): void {
         if (!this.$.has(type)) {
@@ -63,4 +67,10 @@ const Chevron = class {
     }
 };
 
-export { Chevron, IChevronEntry, constructorFunction, dependencyArr };
+export {
+    Chevron,
+    IChevronEntry,
+    constructorFunction,
+    dependencyArr,
+    dependencyDefArr
+};
