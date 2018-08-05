@@ -1,8 +1,8 @@
 import { factoryConstructorFn } from "./constructors/factory";
 import { serviceConstructorFn } from "./constructors/service";
 
-type constructorFunction = (content: any, dependencies: dependencyArr) => any;
 type dependencyArr = string[];
+type constructorFunction = (content: any, dependencies: dependencyArr) => any;
 
 interface IChevronEntry extends Array<any> {
     [0]: boolean; // State of construction
@@ -50,9 +50,12 @@ const Chevron = class {
 
         this._.set(id, entry);
     }
+    has(id: string): boolean {
+        return this._.has(id);
+    }
     get(id: string): any {
-        if (!this._.has(id)) {
-            throw new Error(`Missing entry '${id}'.`);
+        if (!this.has(id)) {
+            return null;
         }
         const entry = <IChevronEntry>this._.get(id);
 

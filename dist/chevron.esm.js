@@ -10,7 +10,7 @@ const factoryConstructorFn = (content, dependencies) => {
 };
 
 const serviceConstructorFn = (content, dependencies) => 
-// tslint-ignore
+// tslint:disable-next-line:only-arrow-functions
 function () {
     return content(...dependencies, ...arguments);
 };
@@ -40,9 +40,12 @@ const Chevron = class {
         ];
         this._.set(id, entry);
     }
+    has(id) {
+        return this._.has(id);
+    }
     get(id) {
-        if (!this._.has(id)) {
-            throw new Error(`Missing entry '${id}'.`);
+        if (!this.has(id)) {
+            return null;
         }
         const entry = this._.get(id);
         return entry[0] ? entry[1] : entry[2]();
