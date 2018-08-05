@@ -1,8 +1,6 @@
 {
+    "extends": "eslint:recommended",
     "plugins": [],
-    "extends": [
-        "eslint:recommended"
-    ],
     "env": {
         "es6": true,
         "node": true,
@@ -14,10 +12,10 @@
         "ecmaVersion": 8
     },
     "rules": {
-        "indent": ["warn", 4],
-        "linebreak-style": ["error", "unix"],
-        "quotes": ["error", "double"],
-        "semi": ["error", "always"],
-        "no-console": "warn"
+        "no-console": 1,
+        "no-else-return": 2,
+        "consistent-return": 2,
+        "no-extra-parens": 1,
+        "block-scoped-var": 1
     }
 }

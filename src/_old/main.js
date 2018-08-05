@@ -30,7 +30,8 @@ const Chevron = class {
      */
     extend(typeName, constructorFunction) {
         //stores type as set with name into instance
-        this[typeName] = (id, dependencies, fn) => this.set(id, dependencies, fn, constructorFunction);
+        this[typeName] = (id, dependencies, fn) =>
+            this.set(id, dependencies, fn, constructorFunction);
 
         return this;
     }
@@ -51,10 +52,15 @@ const Chevron = class {
 
         //Add init-fn
         _module.push(() => {
-            const constructedDependencies = dependencies.map(dependencyName => this.get(dependencyName));
+            const constructedDependencies = dependencies.map(dependencyName =>
+                this.get(dependencyName)
+            );
 
             //Calls constructorFunction on the module
-            _module[1] = constructorFunction(_module[1], constructedDependencies);
+            _module[1] = constructorFunction(
+                _module[1],
+                constructedDependencies
+            );
             _module[0] = true;
 
             return _module[1];

@@ -4,34 +4,41 @@
     "description": "A super tiny JavaScript library for module declaration",
     "main": "dist/chevron.common.js",
     "module": "dist/chevron.esm.js",
-    "constants": {
-        "dirBase": {
-            "input": "./src",
-            "output": "./dist"
+    "settings": {
+        "input": "main.ts",
+        "namespace": {
+            "module": "Chevron",
+            "file": "chevron"
         },
-        "js": {
-            "input": "main",
-            "namespace": {
-                "module": "Chevron",
-                "file": "chevron"
-            },
-            "targets": {
-                "browsers": ["Chrome >= 60"]
-            }
-        }
+        "external": []
     },
     "scripts": {
-        "start": "npm-run-all lint build test",
-        "build": "node tasks/jsDev.js",
-        "dist": "node tasks/jsDist.js",
-        "lint": "eslint src/",
-        "test": "jasmine"
+        "start": "npm-run-all lint build test docs",
+        "build": "rollup -c ./tasks/rollup.config.js",
+        "build:iife": "rollup -c ./tasks/rollup.config.iife.js",
+        "build:iife-min": "rollup -c ./tasks/rollup.config.iife-min.js",
+        "watch": "rollup -c ./tasks/rollup.config.js --watch",
+        "dist": "npm-run-all --parallel build build:iife build:iife-min",
+        "lint": "npm-run-all --parallel lint:ts lint:es",
+        "lint:ts": "tslint ./src/**/*.ts",
+        "lint:es": "eslint ./spec/**/*.js",
+        "fix": "npm-run-all fix:ts fix:es fix:prettier",
+        "fix:ts": "tslint ./src/**/*.ts --fix",
+        "fix:es": "eslint ./spec/**/*.js --fix",
+        "fix:prettier": "prettier ./src/**/* ./spec/**/* --write",
+        "test": "jasmine",
+        "docs": "jsdoc -c jsdoc.json"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/FelixRilling/chevronjs.git"
     },
-    "keywords": ["dependencies", "modules", "service", "factory"],
+    "keywords": [
+        "dependencies",
+        "modules",
+        "service",
+        "factory"
+    ],
     "author": "Felix Rilling",
     "license": "MIT",
     "bugs": {
@@ -39,17 +46,21 @@
     },
     "homepage": "https://github.com/FelixRilling/chevronjs#readme",
     "devDependencies": {
-        "babel-core": "^6.26.0",
-        "babel-plugin-external-helpers": "^6.22.0",
-        "babel-preset-env": "^1.6.1",
-        "eslint": "^4.13.0",
-        "eslint-plugin-unicorn": "^2.1.2",
-        "jasmine": "^2.8.0",
-        "npm-run-all": "^4.1.1",
-        "rollup": "^0.52.1",
-        "rollup-plugin-babel": "^3.0.2",
-        "rollup-plugin-node-resolve": "^3.0.0",
+        "countly-docdash": "^0.5.0",
+        "eslint": "^5.3.0",
+        "jasmine": "^3.1.0",
+        "jsdoc": "^3.5.5",
+        "npm-run-all": "^4.1.3",
+        "prettier": "^1.14.0",
+        "rollup": "^0.63.5",
+        "rollup-plugin-node-resolve": "^3.3.0",
+        "rollup-plugin-typescript2": "^0.16.1",
         "rollup-plugin-uglify-es": "0.0.1",
-        "uglify-es": "^3.2.1"
+        "tslint": "^5.11.0",
+        "typescript": "^3.0.1",
+        "uglify-es": "^3.3.10"
+    },
+    "dependencies": {
+        "lightdash": "^8.2.0"
     }
 }
