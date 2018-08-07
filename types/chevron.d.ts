@@ -11,7 +11,7 @@ declare const Chevron: {
         readonly $: Map<string, constructorFunction>;
         readonly _: Map<string, IChevronEntry>;
         /**
-         * Set a new entry on the content map.
+         * Set a new dependency on the dependency container.
          *
          * @public
          * @param {string} id
@@ -21,7 +21,7 @@ declare const Chevron: {
          */
         set(id: string, type: string, dependencies: string[], content: any): void;
         /**
-         * Checks if the content map has an entry.
+         * Checks if the content map has a dependency.
          *
          * @public
          * @param {string} id
@@ -29,10 +29,10 @@ declare const Chevron: {
          */
         has(id: string): boolean;
         /**
-         * Gets an entry from the content map.
+         * Gets a constructed dependency from the content map.
          *
          * @public
-         * @param id {string} id
+         * @param {string} id
          * @returns {*}
          */
         get(id: string): any;

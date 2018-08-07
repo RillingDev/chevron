@@ -2,13 +2,11 @@
 
 # ChevronJS
 
-> A super tiny JavaScript library for module declaration
+> A super tiny JavaScript library for dependency injection.
 
 ## Introduction
 
-Chevron is an extremely small(650Bytes) JavaScript library for easy module declaration,
-dependency management and lazy module loading,
-inspired by [BottleJS](https://github.com/young-steveo/bottlejs), and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
+Chevron is an extremely small(~600Bytes) JavaScript library for easy dependency injection inspired by [BottleJS](https://github.com/young-steveo/bottlejs), and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
 
 [Demo](http://codepen.io/FelixRilling/pen/AXgydJ)
 
@@ -36,13 +34,13 @@ To start with Chevron, you need to create a new Chevron container:
 const cv = new Chevron();
 ```
 
-### Module Types
+### Dependency Types
 
 Chevron comes with two built-in types.
 
 #### Services
 
-Services are the most common type of module. A service is simply a function wrapped by Chevron to inject dependencies.
+Services are the most common type of dependencies. A service is simply a function wrapped by Chevron to inject dependencies.
 The syntax for `service` is as follows:
 
 ```javascript
@@ -109,10 +107,10 @@ You can easily create your own type by using the Chevron API.
 To declare a new type, simply call add a typeName and constructorFunction for your new type on the type map of a chevron instance:
 
 ```javascript
-cv.$.set("myType", function(moduleContent, dependencies) {
+cv.$.set("myType", function(content, dependencies) {
     console.log("Hello World");
 
-    return moduleContent;
+    return content;
 });
 ```
 

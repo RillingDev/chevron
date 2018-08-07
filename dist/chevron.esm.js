@@ -30,13 +30,13 @@ const Chevron = class {
     constructor() {
         // Type map
         this.$ = new Map();
-        // Content map
+        // Container map
         this._ = new Map();
         this.$.set("service", serviceConstructorFn);
         this.$.set("factory", factoryConstructorFn);
     }
     /**
-     * Set a new entry on the content map.
+     * Set a new dependency on the dependency container.
      *
      * @public
      * @param {string} id
@@ -61,7 +61,7 @@ const Chevron = class {
         this._.set(id, entry);
     }
     /**
-     * Checks if the content map has an entry.
+     * Checks if the content map has a dependency.
      *
      * @public
      * @param {string} id
@@ -71,10 +71,10 @@ const Chevron = class {
         return this._.has(id);
     }
     /**
-     * Gets an entry from the content map.
+     * Gets a constructed dependency from the content map.
      *
      * @public
-     * @param id {string} id
+     * @param {string} id
      * @returns {*}
      */
     get(id) {
