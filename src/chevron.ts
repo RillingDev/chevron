@@ -18,6 +18,12 @@ const Chevron = class {
     public readonly $: Map<string, constructorFunction>;
     public readonly _: Map<string, IChevronEntry>;
 
+    /**
+     * Main Chevron class.
+     *
+     * @public
+     * @class Chevron
+     */
     constructor() {
         // Type map
         this.$ = new Map<string, constructorFunction>();
@@ -27,6 +33,16 @@ const Chevron = class {
         this.$.set("service", serviceConstructorFn);
         this.$.set("factory", factoryConstructorFn);
     }
+
+    /**
+     * Set a new entry on the content map.
+     *
+     * @public
+     * @param {string} id
+     * @param {string} type
+     * @param {string[]} dependencies
+     * @param {*} content
+     */
     set(
         id: string,
         type: string,
@@ -54,9 +70,25 @@ const Chevron = class {
 
         this._.set(id, entry);
     }
+
+    /**
+     * Checks if the content map has an entry.
+     *
+     * @public
+     * @param {string} id
+     * @returns {boolean}
+     */
     has(id: string): boolean {
         return this._.has(id);
     }
+
+    /**
+     * Gets an entry from the content map.
+     *
+     * @public
+     * @param id {string} id
+     * @returns {*}
+     */
     get(id: string): any {
         if (!this.has(id)) {
             return null;

@@ -1,5 +1,19 @@
+/**
+ * Built-in factory constructor.
+ *
+ * @private
+ * @param {*} content
+ * @param {Array<*>} dependencies
+ */
 const factoryConstructorFn = (content, dependencies) => new (Function.prototype.bind.apply(content, ["", ...dependencies]))();
 
+/**
+ * Built-in service constructor.
+ *
+ * @private
+ * @param {*} content
+ * @param {Array<*>} dependencies
+ */
 const serviceConstructorFn = (content, dependencies) => 
 // tslint:disable-next-line:only-arrow-functions
 function () {
@@ -7,6 +21,12 @@ function () {
 };
 
 const Chevron = class {
+    /**
+     * Main Chevron class.
+     *
+     * @public
+     * @class Chevron
+     */
     constructor() {
         // Type map
         this.$ = new Map();
@@ -15,6 +35,15 @@ const Chevron = class {
         this.$.set("service", serviceConstructorFn);
         this.$.set("factory", factoryConstructorFn);
     }
+    /**
+     * Set a new entry on the content map.
+     *
+     * @public
+     * @param {string} id
+     * @param {string} type
+     * @param {string[]} dependencies
+     * @param {*} content
+     */
     set(id, type, dependencies, content) {
         if (!this.$.has(type)) {
             throw new Error(`Missing type '${type}'.`);
@@ -31,9 +60,23 @@ const Chevron = class {
         ];
         this._.set(id, entry);
     }
+    /**
+     * Checks if the content map has an entry.
+     *
+     * @public
+     * @param {string} id
+     * @returns {boolean}
+     */
     has(id) {
         return this._.has(id);
     }
+    /**
+     * Gets an entry from the content map.
+     *
+     * @public
+     * @param id {string} id
+     * @returns {*}
+     */
     get(id) {
         if (!this.has(id)) {
             return null;
