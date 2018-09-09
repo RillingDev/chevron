@@ -1,10 +1,9 @@
-"use strict";
-
-const Chevron = require("../dist/chevron.common.js");
-const myChevron = new Chevron();
+import { Chevron } from "../src/chevron";
 
 describe("Basic Service: ", () => {
-    myChevron.set("myService1", "service", [], function(foo) {
+    const myChevron = new Chevron();
+
+    myChevron.set("myService1", "service", [], function(foo: any) {
         return foo + "bar";
     });
 
@@ -13,8 +12,8 @@ describe("Basic Service: ", () => {
     });
 
     myChevron.set("myService2", "service", ["myService1"], function(
-        myService1,
-        foo
+        myService1: any,
+        foo: any
     ) {
         return myService1(foo) + "Lorem";
     });
@@ -27,7 +26,7 @@ describe("Basic Service: ", () => {
         "myService3",
         "service",
         ["myService1", "myService2"],
-        function(myService1, myService2, foo) {
+        function(myService1: any, myService2: any, foo: any) {
             return myService1(foo) + "ipsum" + myService2(foo);
         }
     );
@@ -36,7 +35,7 @@ describe("Basic Service: ", () => {
         "myService4",
         "service",
         ["myService3", "myService2"],
-        function(myService3, myService2, foo) {
+        function(myService3: any, myService2: any, foo: any) {
             return myService3(foo) + "et dolor" + myService2(foo);
         }
     );

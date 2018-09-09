@@ -1,7 +1,8 @@
-const Chevron = require("../dist/chevron.common.js");
-const myChevron = new Chevron();
+import { Chevron } from "../src/chevron";
 
 describe("API usage: ", () => {
+    const myChevron = new Chevron();
+
     myChevron.$.set("myEmtpyType", content => content);
 
     myChevron.set("myEmtpyTypeModule", "myEmtpyType", [], function() {
@@ -22,7 +23,7 @@ describe("API usage: ", () => {
     );
 
     myChevron.set("myServiceLikeModule", "myServiceLikeType", [], function(
-        foo
+        foo: any
     ) {
         return foo + "bar";
     });

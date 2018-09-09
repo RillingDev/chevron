@@ -1,13 +1,15 @@
-const Chevron = require("../dist/chevron.common.js");
-const myChevron = new Chevron();
+import { Chevron } from "../src/chevron";
 
 describe("Mixed types: ", () => {
-    myChevron.set("myService1", "service", [], function(foo) {
+    const myChevron = new Chevron();
+
+    myChevron.set("myService1", "service", [], function(foo: any) {
         return foo * 2;
     });
 
     myChevron.set("myFactory1", "factory", ["myService1"], function(
-        myService1
+        this: any,
+        myService1: any
     ) {
         const _this = this;
 
@@ -22,7 +24,7 @@ describe("Mixed types: ", () => {
         "myService2",
         "service",
         ["myFactory1", "myService1"],
-        function(myFactory1, myService1) {
+        function(myFactory1: any, myService1: any) {
             return myService1(myFactory1.bar);
         }
     );
@@ -31,7 +33,7 @@ describe("Mixed types: ", () => {
         "myFactory2",
         "factory",
         ["myService2", "myFactory1", "myService1"],
-        function(myService2, myFactory1, myService1) {
+        function(this: any, myService2: any, myFactory1: any, myService1: any) {
             const _this = this;
 
             _this.foo = myService2() + myService1(myFactory1.bar);

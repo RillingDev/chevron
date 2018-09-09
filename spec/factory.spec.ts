@@ -1,8 +1,9 @@
-const Chevron = require("../dist/chevron.common.js");
-const myChevron = new Chevron();
+import { Chevron } from "../src/chevron";
 
 describe("Basic Factory: ", () => {
-    myChevron.set("myFactory1", "factory", [], function() {
+    const myChevron = new Chevron();
+
+    myChevron.set("myFactory1", "factory", [], function(this: any) {
         const _this = this;
 
         _this.foo = "foo";
@@ -13,7 +14,8 @@ describe("Basic Factory: ", () => {
     });
 
     myChevron.set("myFactory2", "factory", ["myFactory1"], function(
-        myFactory1
+        this: any,
+        myFactory1: any
     ) {
         const _this = this;
 
@@ -25,7 +27,7 @@ describe("Basic Factory: ", () => {
         "myFactory3",
         "factory",
         ["myFactory2", "myFactory1"],
-        function(myFactory2, myFactory1) {
+        function(this: any, myFactory2: any, myFactory1: any) {
             const _this = this;
 
             _this.foofoo = myFactory2.foo + myFactory1.foo;
