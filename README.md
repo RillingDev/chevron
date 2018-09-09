@@ -1,5 +1,3 @@
-![ChevronJS](./logo.png)
-
 # ChevronJS
 
 > A super tiny JavaScript library for dependency injection.
