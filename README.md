@@ -1,10 +1,10 @@
 # ChevronJS
 
-> A super tiny JavaScript library for dependency injection.
+> A super tiny TypeScript library for dependency injection.
 
 ## Introduction
 
-Chevron is an extremely small(~600Bytes) JavaScript library for easy dependency injection inspired by [BottleJS](https://github.com/young-steveo/bottlejs), and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
+Chevron is an extremely small(~600Bytes) JavaScript library for dependency injection inspired by [BottleJS](https://github.com/young-steveo/bottlejs), and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
 
 [Demo](http://codepen.io/FelixRilling/pen/AXgydJ)
 
@@ -13,13 +13,7 @@ Chevron is an extremely small(~600Bytes) JavaScript library for easy dependency 
 Chevron can be installed via the npm registry:
 
 ```shell
-npm install chevronjs -S
-```
-
-or with yarn
-
-```shell
-yarn add chevronjs -S
+npm install chevronjs
 ```
 
 ## Syntax
@@ -28,7 +22,9 @@ yarn add chevronjs -S
 
 To start with Chevron, you need to create a new Chevron container:
 
-```javascript
+```typescript
+import {Chevron} from "chevronjs";
+
 const cv = new Chevron();
 ```
 
@@ -41,7 +37,11 @@ Chevron comes with two built-in types.
 Services are the most common type of dependencies. A service is simply a function wrapped by Chevron to inject dependencies.
 The syntax for `service` is as follows:
 
-```javascript
+```typescript
+import {Chevron} from "chevronjs";
+
+const cv = new Chevron();
+
 // Create new service
 cv.set("myService", "service", [], function() {
     return 12;
@@ -53,7 +53,11 @@ myService(); // => 12
 
 With dependencies:
 
-```javascript
+```typescript
+import {Chevron} from "chevronjs";
+
+const cv = new Chevron();
+
 cv.set("myService", "service", [], function() {
     return 12;
 });
@@ -72,7 +76,11 @@ myOtherService(2); // => 24
 Factories are very similar to services but are treated as **constructors** instead of functions.
 Factories can be called with the `factory` method.
 
-```javascript
+```typescript
+import {Chevron} from "chevronjs";
+
+const cv = new Chevron();
+
 // Create new factory
 cv.set("myFactory", "factory", [], function() {
     this.foo = 12;
@@ -85,7 +93,11 @@ myFactory.bar; // => 17
 
 Combined with a service:
 
-```javascript
+```typescript
+import {Chevron} from "chevronjs";
+
+const cv = new Chevron();
+
 cv.set("myFactory", "factory", [], function() {
     this.foo = 7;
     this.bar = 17;
@@ -104,7 +116,11 @@ myService(3); // => 21
 You can easily create your own type by using the Chevron API.
 To declare a new type, simply call add a typeName and constructorFunction for your new type on the type map of a chevron instance:
 
-```javascript
+```typescript
+import {Chevron} from "chevronjs";
+
+const cv = new Chevron();
+
 cv.$.set("myType", function(content, dependencies) {
     console.log("Hello World");
 
@@ -115,8 +131,11 @@ cv.$.set("myType", function(content, dependencies) {
 You'll probably want to start by using a modified version of the default Service or Factory constructorFunction.
 After you created the new type, you can use it when setting a new entry:
 
-```javascript
-//Chevron.prototype.#name#(name,[dependencies],content);
+```typescript
+import {Chevron} from "chevronjs";
+
+const cv = new Chevron();
+
 cv.set("myTypeModule", "myType", [], function() {
     return "bar";
 });
