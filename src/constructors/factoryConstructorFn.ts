@@ -1,4 +1,4 @@
-import { dependencyArr } from "../chevron";
+import { dependencyArr } from "../dependency/dependencyArr";
 
 /**
  * Built-in factory constructor.

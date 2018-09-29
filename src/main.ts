@@ -1,3 +1,3 @@
-import { Chevron } from "./chevron";
+import { Chevron } from "./Chevron";
 
 export default Chevron;

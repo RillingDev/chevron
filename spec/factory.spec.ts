@@ -1,4 +1,4 @@
-import { Chevron } from "../src/chevron";
+import { Chevron } from "src/Chevron";
 
 describe("Basic Factory: ", () => {
     const myChevron = new Chevron();

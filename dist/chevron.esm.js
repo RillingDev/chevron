@@ -20,7 +20,7 @@ function () {
     return content(...dependencies, ...arguments);
 };
 
-const Chevron = class {
+class Chevron {
     /**
      * Main Chevron class.
      *
@@ -28,12 +28,13 @@ const Chevron = class {
      * @class Chevron
      */
     constructor() {
-        // Type map
-        this.$ = new Map();
         // Container map
         this._ = new Map();
-        this.$.set("service", serviceConstructorFn);
-        this.$.set("factory", factoryConstructorFn);
+        // Type map
+        this.$ = new Map([
+            ["service", serviceConstructorFn],
+            ["factory", factoryConstructorFn]
+        ]);
     }
     /**
      * Set a new dependency on the dependency container.
@@ -84,6 +85,6 @@ const Chevron = class {
         const entry = this._.get(id);
         return entry[0] ? entry[1] : entry[2]();
     }
-};
+}
 
 export default Chevron;

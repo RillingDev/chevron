@@ -1,20 +1,10 @@
-import { factoryConstructorFn } from "./constructors/factory";
-import { serviceConstructorFn } from "./constructors/service";
+import { factoryConstructorFn } from "./constructors/factoryConstructorFn";
+import { serviceConstructorFn } from "./constructors/serviceConstructorFn";
+import { constructorFunction } from "./constructors/constructorFunction";
+import { IChevronEntry } from "./IChevronEntry";
+import { dependencyDefArr } from "./dependency/dependencyDefArr";
 
-type dependencyDefArr = string[];
-type dependencyArr = any[];
-type constructorFunction = (
-    content: any,
-    dependencies: dependencyDefArr
-) => any;
-
-interface IChevronEntry extends Array<any> {
-    [0]: boolean; // State of construction
-    [1]: any; // Content
-    [2]?: () => any; // Constructor
-}
-
-const Chevron = class {
+class Chevron {
     public readonly $: Map<string, constructorFunction>;
     public readonly _: Map<string, IChevronEntry>;
 
@@ -25,13 +15,14 @@ const Chevron = class {
      * @class Chevron
      */
     constructor() {
-        // Type map
-        this.$ = new Map<string, constructorFunction>();
         // Container map
         this._ = new Map<string, IChevronEntry>();
 
-        this.$.set("service", serviceConstructorFn);
-        this.$.set("factory", factoryConstructorFn);
+        // Type map
+        this.$ = new Map<string, constructorFunction>([
+            ["service", serviceConstructorFn],
+            ["factory", factoryConstructorFn]
+        ]);
     }
 
     /**
@@ -43,7 +34,7 @@ const Chevron = class {
      * @param {string[]} dependencies
      * @param {*} content
      */
-    set(
+    public set(
         id: string,
         type: string,
         dependencies: dependencyDefArr,
@@ -78,7 +69,7 @@ const Chevron = class {
      * @param {string} id
      * @returns {boolean}
      */
-    has(id: string): boolean {
+    public has(id: string): boolean {
         return this._.has(id);
     }
 
@@ -93,16 +84,11 @@ const Chevron = class {
         if (!this.has(id)) {
             return null;
         }
-        const entry = <IChevronEntry>this._.get(id);
+
+        const entry = this._.get(id)!;
 
         return entry[0] ? entry[1] : entry[2]!();
     }
-};
+}
 
-export {
-    Chevron,
-    IChevronEntry,
-    constructorFunction,
-    dependencyArr,
-    dependencyDefArr
-};
+export { Chevron };

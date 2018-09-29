@@ -23,7 +23,7 @@ var Chevron = (function () {
         return content(...dependencies, ...arguments);
     };
 
-    const Chevron = class {
+    class Chevron {
         /**
          * Main Chevron class.
          *
@@ -31,12 +31,13 @@ var Chevron = (function () {
          * @class Chevron
          */
         constructor() {
-            // Type map
-            this.$ = new Map();
             // Container map
             this._ = new Map();
-            this.$.set("service", serviceConstructorFn);
-            this.$.set("factory", factoryConstructorFn);
+            // Type map
+            this.$ = new Map([
+                ["service", serviceConstructorFn],
+                ["factory", factoryConstructorFn]
+            ]);
         }
         /**
          * Set a new dependency on the dependency container.
@@ -87,7 +88,7 @@ var Chevron = (function () {
             const entry = this._.get(id);
             return entry[0] ? entry[1] : entry[2]();
         }
-    };
+    }
 
     return Chevron;
 

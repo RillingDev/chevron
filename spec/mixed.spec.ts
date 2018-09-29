@@ -1,11 +1,9 @@
-import { Chevron } from "../src/chevron";
+import { Chevron } from "src/Chevron";
 
 describe("Mixed types: ", () => {
     const myChevron = new Chevron();
 
-    myChevron.set("myService1", "service", [], function(foo: any) {
-        return foo * 2;
-    });
+    myChevron.set("myService1", "service", [], (foo: any) => foo * 2);
 
     myChevron.set("myFactory1", "factory", ["myService1"], function(
         this: any,
@@ -24,9 +22,7 @@ describe("Mixed types: ", () => {
         "myService2",
         "service",
         ["myFactory1", "myService1"],
-        function(myFactory1: any, myService1: any) {
-            return myService1(myFactory1.bar);
-        }
+        (myFactory1: any, myService1: any) => myService1(myFactory1.bar)
     );
 
     myChevron.set(
