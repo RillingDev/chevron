@@ -8,15 +8,13 @@ Chevron is an extremely small(~600Bytes) JavaScript library for dependency injec
 
 [Demo](http://codepen.io/FelixRilling/pen/AXgydJ)
 
-## Usage
+[Docs](https://felixrilling.github.io/chevron/)
 
-Chevron can be installed via the npm registry:
+## Usage
 
 ```shell
 npm install chevronjs
 ```
-
-## Syntax
 
 ### Constructor
 
