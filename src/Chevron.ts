@@ -1,8 +1,8 @@
-import { factoryConstructorFn } from "./constructors/factoryConstructorFn";
-import { serviceConstructorFn } from "./constructors/serviceConstructorFn";
-import { constructorFunction } from "./constructors/constructorFunction";
-import { IChevronEntry } from "./IChevronEntry";
-import { dependencyDefArr } from "./dependency/dependencyDefArr";
+import {constructorFunction} from "./constructors/constructorFunction";
+import {factoryConstructorFn} from "./constructors/factoryConstructorFn";
+import {serviceConstructorFn} from "./constructors/serviceConstructorFn";
+import {dependencyDefArr} from "./dependency/dependencyDefArr";
+import {IChevronEntry} from "./IChevronEntry";
 
 class Chevron {
     public readonly $: Map<string, constructorFunction>;
@@ -80,7 +80,7 @@ class Chevron {
      * @param {string} id
      * @returns {*}
      */
-    get(id: string): any {
+    public get(id: string): any {
         if (!this.has(id)) {
             return null;
         }
@@ -91,4 +91,4 @@ class Chevron {
     }
 }
 
-export { Chevron };
+export {Chevron};

@@ -1,6 +1,6 @@
 import { constructorFunction } from "./constructors/constructorFunction";
-import { IChevronEntry } from "./IChevronEntry";
 import { dependencyDefArr } from "./dependency/dependencyDefArr";
+import { IChevronEntry } from "./IChevronEntry";
 declare class Chevron {
     readonly $: Map<string, constructorFunction>;
     readonly _: Map<string, IChevronEntry>;

@@ -4,4 +4,4 @@ interface IChevronEntry extends Array<any> {
     [2]?: () => any; // Constructor
 }
 
-export { IChevronEntry };
+export {IChevronEntry};
