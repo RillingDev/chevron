@@ -8,6 +8,6 @@ import { dependencyArr } from "../dependency/dependencyArr";
  * @param {Array<*>} dependencies
  */
 const factoryConstructorFn = (content: any, dependencies: dependencyArr) =>
-    new (Function.prototype.bind.apply(content, ["", ...dependencies]))();
+    Reflect.construct(content, dependencies);
 
 export { factoryConstructorFn };
