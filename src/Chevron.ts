@@ -1,12 +1,13 @@
-import {constructorFunction} from "./constructors/constructorFunction";
-import {factoryConstructorFn} from "./constructors/factoryConstructorFn";
-import {serviceConstructorFn} from "./constructors/serviceConstructorFn";
-import {dependencyDefArr} from "./dependency/dependencyDefArr";
-import {IChevronEntry} from "./IChevronEntry";
+import { dependencyDefinitionArr } from "./dependency/dependencyDefinitionArr";
+import { bootstrapperFunction } from "./entry/bootstrapperFunction";
+import { IEntry } from "./entry/IEntry";
+import { factoryBootstrapper } from "./injectableTypes/factory";
+import { InjectableType } from "./injectableTypes/InjectableType";
+import { serviceBootstrapper } from "./injectableTypes/service";
 
 class Chevron {
-    public readonly $: Map<string, constructorFunction>;
-    public readonly _: Map<string, IChevronEntry>;
+    private readonly types: Map<string, bootstrapperFunction>;
+    private readonly injectables: Map<string, IEntry>;
 
     /**
      * Main Chevron class.
@@ -15,79 +16,105 @@ class Chevron {
      * @class Chevron
      */
     constructor() {
-        // Container map
-        this._ = new Map<string, IChevronEntry>();
+        this.types = new Map();
+        this.setType(InjectableType.SERVICE, serviceBootstrapper);
+        this.setType(InjectableType.FACTORY, factoryBootstrapper);
 
-        // Type map
-        this.$ = new Map<string, constructorFunction>([
-            ["service", serviceConstructorFn],
-            ["factory", factoryConstructorFn]
-        ]);
+        this.injectables = new Map();
     }
 
     /**
-     * Set a new dependency on the dependency container.
+     * Set a new injectable on the chevron instance.
      *
      * @public
-     * @param {string} id
+     * @param {string} name
      * @param {string} type
      * @param {string[]} dependencies
      * @param {*} content
      */
     public set(
-        id: string,
+        name: string,
         type: string,
-        dependencies: dependencyDefArr,
+        dependencies: dependencyDefinitionArr,
         content: any
     ): void {
-        if (!this.$.has(type)) {
+        this.injectables.set(
+            name,
+            this.createEntry(type, content, dependencies)
+        );
+    }
+
+    /**
+     * Checks if the chevron instance has a given injectable.
+     *
+     * @public
+     * @param {string} name
+     * @returns {boolean}
+     */
+    public has(name: string): boolean {
+        return this.injectables.has(name);
+    }
+
+    /**
+     * Gets a bootstrapped injectable from the chevron instance.
+     *
+     * @public
+     * @param {string} name
+     * @returns {*}
+     */
+    public get(name: string): any {
+        return this.resolveEntry(name);
+    }
+
+    public setType(name: string, bootstrapperFn: bootstrapperFunction): void {
+        this.types.set(name, bootstrapperFn);
+    }
+
+    public hasType(name: string): boolean {
+        return this.types.has(name);
+    }
+
+    private createEntry(
+        type: string,
+        content: any,
+        dependencies: dependencyDefinitionArr
+    ): IEntry {
+        if (!this.hasType(type)) {
             throw new Error(`Missing type '${type}'.`);
         }
+        const bootstrapperFn = this.types.get(type)!;
 
-        const entry: IChevronEntry = [
-            false,
+        const entry: IEntry = {
+            isBootstrapped: false,
             content,
-            () => {
-                const dependenciesConstructed = dependencies.map(
+            bootstrap: () => {
+                const constructedDependencies = dependencies.map(
                     dependencyName => this.get(dependencyName)
                 );
 
-                entry[1] = this.$.get(type)!(entry[1], dependenciesConstructed);
-                entry[0] = true;
-
-                return entry[1];
+                entry.content = bootstrapperFn(
+                    entry.content,
+                    constructedDependencies
+                );
+                entry.isBootstrapped = true;
             }
-        ];
+        };
 
-        this._.set(id, entry);
+        return entry;
     }
 
-    /**
-     * Checks if the content map has a dependency.
-     *
-     * @public
-     * @param {string} id
-     * @returns {boolean}
-     */
-    public has(id: string): boolean {
-        return this._.has(id);
-    }
-
-    /**
-     * Gets a constructed dependency from the content map.
-     *
-     * @public
-     * @param {string} id
-     * @returns {*}
-     */
-    public get(id: string): any {
-        if (!this.has(id)) {
-            return null;
+    private resolveEntry(name: string) {
+        if (!this.has(name)) {
+            throw new Error(`Injectable '${name}' does not exist.`);
         }
-        const entry = this._.get(id)!;
+        const entry = this.injectables.get(name)!;
 
-        return entry[0] ? entry[1] : entry[2]();
+        if (!entry.isBootstrapped) {
+            entry.bootstrap();
+        }
+
+        return entry.content;
     }
 }
 
-export {Chevron};
+export { Chevron };

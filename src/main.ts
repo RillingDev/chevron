@@ -1,3 +1,4 @@
-import {Chevron} from "./Chevron";
+import { Chevron } from "./Chevron";
+import { InjectableType } from "./injectableTypes/InjectableType";
 
-export default Chevron;
+export { Chevron, InjectableType };

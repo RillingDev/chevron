@@ -1,9 +1,8 @@
-import { constructorFunction } from "./constructors/constructorFunction";
-import { dependencyDefArr } from "./dependency/dependencyDefArr";
-import { IChevronEntry } from "./IChevronEntry";
+import { dependencyDefinitionArr } from "./dependency/dependencyDefinitionArr";
+import { bootstrapperFunction } from "./entry/bootstrapperFunction";
 declare class Chevron {
-    readonly $: Map<string, constructorFunction>;
-    readonly _: Map<string, IChevronEntry>;
+    private readonly types;
+    private readonly injectables;
     /**
      * Main Chevron class.
      *
@@ -12,30 +11,34 @@ declare class Chevron {
      */
     constructor();
     /**
-     * Set a new dependency on the dependency container.
+     * Set a new injectable on the chevron instance.
      *
      * @public
-     * @param {string} id
+     * @param {string} name
      * @param {string} type
      * @param {string[]} dependencies
      * @param {*} content
      */
-    set(id: string, type: string, dependencies: dependencyDefArr, content: any): void;
+    set(name: string, type: string, dependencies: dependencyDefinitionArr, content: any): void;
     /**
-     * Checks if the content map has a dependency.
+     * Checks if the chevron instance has a given injectable.
      *
      * @public
-     * @param {string} id
+     * @param {string} name
      * @returns {boolean}
      */
-    has(id: string): boolean;
+    has(name: string): boolean;
     /**
-     * Gets a constructed dependency from the content map.
+     * Gets a bootstrapped injectable from the chevron instance.
      *
      * @public
-     * @param {string} id
+     * @param {string} name
      * @returns {*}
      */
-    get(id: string): any;
+    get(name: string): any;
+    setType(name: string, bootstrapperFn: bootstrapperFunction): void;
+    hasType(name: string): boolean;
+    private createEntry;
+    private resolveEntry;
 }
 export { Chevron };

@@ -1,7 +1,8 @@
-import { factoryConstructorFn } from "../../src/constructors/factoryConstructorFn";
+import { factoryBootstrapper } from "../../src/injectableTypes/factory";
+import { dependencyArr } from "../../src/dependency/dependencyArr";
 
-describe("factoryConstructor tests", () => {
-    it("Asserts that factoryConstructor constructs a class", () => {
+describe("factoryBootstrapper tests", () => {
+    it("Asserts that factoryBootstrapper constructs a class", () => {
         const result = 123;
         // tslint:disable-next-line:max-classes-per-file
         const TestClass = class {
@@ -16,10 +17,10 @@ describe("factoryConstructor tests", () => {
             }
         };
 
-        expect(factoryConstructorFn(TestClass, []).getVal()).toBe(result);
+        expect(factoryBootstrapper(TestClass, []).getVal()).toBe(result);
     });
 
-    it("Asserts that factoryConstructor constructs a class with dependencies", () => {
+    it("Asserts that factoryBootstrapper constructs a class with dependencies", () => {
         const result = 123;
         // tslint:disable-next-line:max-classes-per-file
         const TestClass = class {
@@ -34,6 +35,8 @@ describe("factoryConstructor tests", () => {
             }
         };
 
-        expect(factoryConstructorFn(TestClass, [result]).getVal()).toBe(result);
+        expect(
+            factoryBootstrapper(TestClass, <dependencyArr>[result]).getVal()
+        ).toBe(result);
     });
 });

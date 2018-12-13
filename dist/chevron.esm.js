@@ -1,20 +1,20 @@
 /**
- * Built-in factory constructor.
+ * Built-in factoryBootstrapper constructor.
  *
  * @private
  * @param {*} content
  * @param {Array<*>} dependencies
  */
-const factoryConstructorFn = (content, dependencies) => Reflect.construct(content, dependencies);
+const factoryBootstrapper = (content, dependencies) => Reflect.construct(content, dependencies);
 
 /**
- * Built-in service constructor.
+ * Built-in serviceBootstrapper constructor.
  *
  * @private
  * @param {*} content
  * @param {Array<*>} dependencies
  */
-const serviceConstructorFn = (content, dependencies) => 
+const serviceBootstrapper = (content, dependencies) => 
 // tslint:disable-next-line:only-arrow-functions
 function () {
     return content(...dependencies, ...arguments);
@@ -28,63 +28,75 @@ class Chevron {
      * @class Chevron
      */
     constructor() {
-        // Container map
-        this._ = new Map();
-        // Type map
-        this.$ = new Map([
-            ["service", serviceConstructorFn],
-            ["factory", factoryConstructorFn]
-        ]);
+        this.types = new Map();
+        this.setType("service" /* SERVICE */, serviceBootstrapper);
+        this.setType("factory" /* FACTORY */, factoryBootstrapper);
+        this.injectables = new Map();
     }
     /**
-     * Set a new dependency on the dependency container.
+     * Set a new injectable on the chevron instance.
      *
      * @public
-     * @param {string} id
+     * @param {string} name
      * @param {string} type
      * @param {string[]} dependencies
      * @param {*} content
      */
-    set(id, type, dependencies, content) {
-        if (!this.$.has(type)) {
-            throw new Error(`Missing type '${type}'.`);
-        }
-        const entry = [
-            false,
-            content,
-            () => {
-                const dependenciesConstructed = dependencies.map(dependencyName => this.get(dependencyName));
-                entry[1] = this.$.get(type)(entry[1], dependenciesConstructed);
-                entry[0] = true;
-                return entry[1];
-            }
-        ];
-        this._.set(id, entry);
+    set(name, type, dependencies, content) {
+        this.injectables.set(name, this.createEntry(type, content, dependencies));
     }
     /**
-     * Checks if the content map has a dependency.
+     * Checks if the chevron instance has a given injectable.
      *
      * @public
-     * @param {string} id
+     * @param {string} name
      * @returns {boolean}
      */
-    has(id) {
-        return this._.has(id);
+    has(name) {
+        return this.injectables.has(name);
     }
     /**
-     * Gets a constructed dependency from the content map.
+     * Gets a bootstrapped injectable from the chevron instance.
      *
      * @public
-     * @param {string} id
+     * @param {string} name
      * @returns {*}
      */
-    get(id) {
-        if (!this.has(id)) {
-            return null;
+    get(name) {
+        return this.resolveEntry(name);
+    }
+    setType(name, bootstrapperFn) {
+        this.types.set(name, bootstrapperFn);
+    }
+    hasType(name) {
+        return this.types.has(name);
+    }
+    createEntry(type, content, dependencies) {
+        if (!this.hasType(type)) {
+            throw new Error(`Missing type '${type}'.`);
         }
-        const entry = this._.get(id);
-        return entry[0] ? entry[1] : entry[2]();
+        const bootstrapperFn = this.types.get(type);
+        const entry = {
+            isBootstrapped: false,
+            content,
+            bootstrap: () => {
+                const constructedDependencies = dependencies.map(dependencyName => this.get(dependencyName));
+                entry.content = bootstrapperFn(entry.content, constructedDependencies);
+                entry.isBootstrapped = true;
+            }
+        };
+        return entry;
+    }
+    resolveEntry(name) {
+        if (!this.has(name)) {
+            throw new Error(`Injectable '${name}' does not exist.`);
+        }
+        const entry = this.injectables.get(name);
+        if (!entry.isBootstrapped) {
+            entry.bootstrap();
+        }
+        return entry.content;
     }
 }
 
-export default Chevron;
+export { Chevron };

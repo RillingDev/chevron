@@ -7,7 +7,7 @@ describe("Chevron API ITs", () => {
 
         const testTypeName = "testType";
         const testTypeFn = (content: any) => content;
-        cv.$.set(testTypeName, testTypeFn);
+        cv.setType(testTypeName, testTypeFn);
 
         const testInjectableName = "testFactoryName";
         // tslint:disable-next-line:max-classes-per-file

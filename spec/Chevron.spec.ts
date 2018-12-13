@@ -1,8 +1,8 @@
 import { Chevron } from "../src/Chevron";
 
 describe("Chevron tests", () => {
-    it("Asserts that Chevron#get returns null for missing injectables", () => {
-        expect(new Chevron().get("foo")).toBeNull();
+    it("Asserts that Chevron#get throws an exception for missing injectables", () => {
+        expect(() => new Chevron().get("foo")).toThrow();
     });
 
     it("Asserts that Chevron#set throws an exception when using an unknown type", () => {

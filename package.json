@@ -7,7 +7,7 @@
     "types": "./types/main.d.ts",
     "settings": {
         "namespace": {
-            "module": "Chevron",
+            "module": "chevron",
             "file": "chevron"
         },
         "external": []
