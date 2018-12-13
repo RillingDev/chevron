@@ -8,7 +8,7 @@ var Chevron = (function () {
      * @param {*} content
      * @param {Array<*>} dependencies
      */
-    const factoryConstructorFn = (content, dependencies) => new (Function.prototype.bind.apply(content, ["", ...dependencies]))();
+    const factoryConstructorFn = (content, dependencies) => Reflect.construct(content, dependencies);
 
     /**
      * Built-in service constructor.

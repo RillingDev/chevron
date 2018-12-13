@@ -84,10 +84,9 @@ class Chevron {
         if (!this.has(id)) {
             return null;
         }
-
         const entry = this._.get(id)!;
 
-        return entry[0] ? entry[1] : entry[2]!();
+        return entry[0] ? entry[1] : entry[2]();
     }
 }
 
