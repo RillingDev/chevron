@@ -1,5 +1,5 @@
-import { dependencyDefinitionArr } from "./dependency/dependencyDefinitionArr";
-import { bootstrapperFunction } from "./entry/bootstrapperFunction";
+import { bootstrapperFunction } from "./injectableTypes/bootstrapperFunction";
+import { dependencyDefinitionArr } from "./dependencyDefinitionArr";
 declare class Chevron {
     private readonly types;
     private readonly injectables;

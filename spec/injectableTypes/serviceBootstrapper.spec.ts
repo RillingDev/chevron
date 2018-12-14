@@ -1,5 +1,5 @@
+import { dependencyArr } from "../../src/dependencyArr";
 import { serviceBootstrapper } from "../../src/injectableTypes/service";
-import { dependencyArr } from "../../src/dependency/dependencyArr";
 
 describe("serviceBootstrapper tests", () => {
     it("Asserts that serviceBootstrapper returns the wrapper function", () => {

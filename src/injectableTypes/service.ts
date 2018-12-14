@@ -1,8 +1,5 @@
-import { dependencyArr } from "../dependency/dependencyArr";
-import { bootstrapperFunction } from "../entry/bootstrapperFunction";
-
-type serviceInput<T> = (...args: any[]) => T;
-type serviceOutput<T> = () => T;
+import { dependencyArr } from "../dependencyArr";
+import { bootstrapperFunction } from "./bootstrapperFunction";
 
 /**
  * Built-in serviceBootstrapper constructor.
@@ -12,9 +9,9 @@ type serviceOutput<T> = () => T;
  * @param {Array<*>} dependencies
  */
 const serviceBootstrapper: bootstrapperFunction = <T>(
-    content: serviceInput<T>,
+    content: (...args: any[]) => T,
     dependencies: dependencyArr
-): serviceOutput<T> =>
+): (() => T) =>
     // tslint:disable-next-line:only-arrow-functions
     function() {
         return content(...dependencies, ...arguments);

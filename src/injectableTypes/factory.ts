@@ -1,8 +1,5 @@
-import { dependencyArr } from "../dependency/dependencyArr";
-import { bootstrapperFunction } from "../entry/bootstrapperFunction";
-
-type factoryInput<T> = (...args: any[]) => T;
-type factoryOutput<T> = T;
+import { dependencyArr } from "../dependencyArr";
+import { bootstrapperFunction } from "./bootstrapperFunction";
 
 /**
  * Built-in factoryBootstrapper constructor.
@@ -12,8 +9,8 @@ type factoryOutput<T> = T;
  * @param {Array<*>} dependencies
  */
 const factoryBootstrapper: bootstrapperFunction = <T>(
-    content: factoryInput<T>,
+    content: (...args: any[]) => T,
     dependencies: dependencyArr
-): factoryOutput<T> => Reflect.construct(content, dependencies);
+): T => Reflect.construct(content, dependencies);
 
 export { factoryBootstrapper };

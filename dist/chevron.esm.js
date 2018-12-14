@@ -8,6 +8,14 @@
 const factoryBootstrapper = (content, dependencies) => Reflect.construct(content, dependencies);
 
 /**
+ * Built-in plainBootstrapper constructor.
+ *
+ * @private
+ * @param {*} content
+ */
+const plainBootstrapper = (content) => content;
+
+/**
  * Built-in serviceBootstrapper constructor.
  *
  * @private
@@ -31,6 +39,7 @@ class Chevron {
         this.types = new Map();
         this.setType("service" /* SERVICE */, serviceBootstrapper);
         this.setType("factory" /* FACTORY */, factoryBootstrapper);
+        this.setType("plain" /* PLAIN */, plainBootstrapper);
         this.injectables = new Map();
     }
     /**

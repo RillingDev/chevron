@@ -1,5 +1,6 @@
 declare const enum InjectableType {
     FACTORY = "factory",
-    SERVICE = "service"
+    SERVICE = "service",
+    PLAIN = "plain"
 }
 export { InjectableType };

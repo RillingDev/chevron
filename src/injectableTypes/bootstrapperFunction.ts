@@ -1,4 +1,4 @@
-import { dependencyDefinitionArr } from "../dependency/dependencyDefinitionArr";
+import { dependencyDefinitionArr } from "../dependencyDefinitionArr";
 
 type bootstrapperFunction = (
     content: any,

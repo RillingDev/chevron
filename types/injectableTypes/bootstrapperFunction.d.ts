@@ -1,3 +1,3 @@
-import { dependencyDefinitionArr } from "../dependency/dependencyDefinitionArr";
+import { dependencyDefinitionArr } from "../dependencyDefinitionArr";
 declare type bootstrapperFunction = (content: any, dependencies: dependencyDefinitionArr) => any;
 export { bootstrapperFunction };

@@ -1,5 +1,5 @@
+import { dependencyArr } from "../../src/dependencyArr";
 import { factoryBootstrapper } from "../../src/injectableTypes/factory";
-import { dependencyArr } from "../../src/dependency/dependencyArr";
 
 describe("factoryBootstrapper tests", () => {
     it("Asserts that factoryBootstrapper constructs a class", () => {

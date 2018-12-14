@@ -1,9 +1,10 @@
-import { dependencyDefinitionArr } from "./dependency/dependencyDefinitionArr";
-import { bootstrapperFunction } from "./entry/bootstrapperFunction";
-import { IEntry } from "./entry/IEntry";
+import { bootstrapperFunction } from "./injectableTypes/bootstrapperFunction";
 import { factoryBootstrapper } from "./injectableTypes/factory";
 import { InjectableType } from "./injectableTypes/InjectableType";
+import { plainBootstrapper } from "./injectableTypes/plain";
 import { serviceBootstrapper } from "./injectableTypes/service";
+import { dependencyDefinitionArr } from "./dependencyDefinitionArr";
+import { IEntry } from "./IEntry";
 
 class Chevron {
     private readonly types: Map<string, bootstrapperFunction>;
@@ -19,6 +20,7 @@ class Chevron {
         this.types = new Map();
         this.setType(InjectableType.SERVICE, serviceBootstrapper);
         this.setType(InjectableType.FACTORY, factoryBootstrapper);
+        this.setType(InjectableType.PLAIN, plainBootstrapper);
 
         this.injectables = new Map();
     }

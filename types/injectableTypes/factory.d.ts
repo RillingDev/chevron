@@ -1,4 +1,4 @@
-import { bootstrapperFunction } from "../entry/bootstrapperFunction";
+import { bootstrapperFunction } from "./bootstrapperFunction";
 /**
  * Built-in factoryBootstrapper constructor.
  *
