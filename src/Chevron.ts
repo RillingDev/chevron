@@ -1,13 +1,13 @@
-import { bootstrapperFunction } from "./injectableTypes/bootstrapperFunction";
+import { dependencyDefinitionArr } from "./dependencyDefinitionArr";
+import { IEntry } from "./IEntry";
 import { factoryBootstrapper } from "./injectableTypes/factory";
 import { InjectableType } from "./injectableTypes/InjectableType";
 import { plainBootstrapper } from "./injectableTypes/plain";
 import { serviceBootstrapper } from "./injectableTypes/service";
-import { dependencyDefinitionArr } from "./dependencyDefinitionArr";
-import { IEntry } from "./IEntry";
+import { typeBootstrapperFn } from "./injectableTypes/typeBootstrapperFn";
 
 class Chevron {
-    private readonly types: Map<string, bootstrapperFunction>;
+    private readonly types: Map<string, typeBootstrapperFn>;
     private readonly injectables: Map<string, IEntry>;
 
     /**
@@ -65,10 +65,10 @@ class Chevron {
      * @returns {*}
      */
     public get(name: string): any {
-        return this.resolveEntry(name);
+        return this.resolveEntry(name, new Set());
     }
 
-    public setType(name: string, bootstrapperFn: bootstrapperFunction): void {
+    public setType(name: string, bootstrapperFn: typeBootstrapperFn): void {
         this.types.set(name, bootstrapperFn);
     }
 
@@ -84,17 +84,17 @@ class Chevron {
         if (!this.hasType(type)) {
             throw new Error(`Missing type '${type}'.`);
         }
-        const bootstrapperFn = this.types.get(type)!;
+        const typeBootstrapper = this.types.get(type)!;
 
         const entry: IEntry = {
             isBootstrapped: false,
             content,
-            bootstrap: () => {
+            bootstrap: (accessStack: Set<string>) => {
                 const constructedDependencies = dependencies.map(
-                    dependencyName => this.get(dependencyName)
+                    dependencyName => this.resolveEntry(dependencyName, accessStack)
                 );
 
-                entry.content = bootstrapperFn(
+                entry.content = typeBootstrapper(
                     entry.content,
                     constructedDependencies
                 );
@@ -105,14 +105,19 @@ class Chevron {
         return entry;
     }
 
-    private resolveEntry(name: string) {
+    private resolveEntry(name: string, accessStack: Set<string>) {
+        if (accessStack.has(name)) {
+            throw new Error(`Circular dependencies were found: '${[...accessStack, name].join("->")}'.`);
+        }
         if (!this.has(name)) {
             throw new Error(`Injectable '${name}' does not exist.`);
         }
         const entry = this.injectables.get(name)!;
 
         if (!entry.isBootstrapped) {
-            entry.bootstrap();
+            accessStack.add(name);
+            entry.bootstrap(accessStack);
+            accessStack.delete(name);
         }
 
         return entry.content;

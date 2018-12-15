@@ -1,5 +1,5 @@
 import { dependencyArr } from "../dependencyArr";
-import { bootstrapperFunction } from "./bootstrapperFunction";
+import { typeBootstrapperFn } from "./typeBootstrapperFn";
 
 /**
  * Built-in factoryBootstrapper constructor.
@@ -8,7 +8,7 @@ import { bootstrapperFunction } from "./bootstrapperFunction";
  * @param {*} content
  * @param {Array<*>} dependencies
  */
-const factoryBootstrapper: bootstrapperFunction = <T>(
+const factoryBootstrapper: typeBootstrapperFn = <T>(
     content: (...args: any[]) => T,
     dependencies: dependencyArr
 ): T => Reflect.construct(content, dependencies);

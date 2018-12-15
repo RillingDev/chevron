@@ -1,4 +1,4 @@
-import { bootstrapperFunction } from "./bootstrapperFunction";
+import { typeBootstrapperFn } from "./typeBootstrapperFn";
 
 /**
  * Built-in plainBootstrapper constructor.
@@ -6,6 +6,6 @@ import { bootstrapperFunction } from "./bootstrapperFunction";
  * @private
  * @param {*} content
  */
-const plainBootstrapper: bootstrapperFunction = <T>(content: T): T => content;
+const plainBootstrapper: typeBootstrapperFn = <T>(content: T): T => content;
 
 export { plainBootstrapper };

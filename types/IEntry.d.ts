@@ -1,6 +1,6 @@
 interface IEntry {
     isBootstrapped: boolean;
-    bootstrap: () => void;
+    bootstrap: (accessStack: Set<string>) => void;
     content: any;
 }
 export { IEntry };

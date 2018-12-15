@@ -1,5 +1,5 @@
-import { bootstrapperFunction } from "./injectableTypes/bootstrapperFunction";
 import { dependencyDefinitionArr } from "./dependencyDefinitionArr";
+import { typeBootstrapperFn } from "./injectableTypes/typeBootstrapperFn";
 declare class Chevron {
     private readonly types;
     private readonly injectables;
@@ -36,7 +36,7 @@ declare class Chevron {
      * @returns {*}
      */
     get(name: string): any;
-    setType(name: string, bootstrapperFn: bootstrapperFunction): void;
+    setType(name: string, bootstrapperFn: typeBootstrapperFn): void;
     hasType(name: string): boolean;
     private createEntry;
     private resolveEntry;

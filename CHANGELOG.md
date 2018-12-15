@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file. See [standa
 breaking: custom types are done using Chevron#setType rather than setting a property
 breaking: Chevron#get throws an exception if the given name does not exist.
 new: TypeScript decorators @Injectable and @Autowired
+new: Circular dependencies thrown an exception upon bootstrapping.
 
 <a name="10.0.0"></a>
 

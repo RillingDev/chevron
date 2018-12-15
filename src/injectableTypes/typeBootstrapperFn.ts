@@ -1,8 +1,8 @@
 import { dependencyDefinitionArr } from "../dependencyDefinitionArr";
 
-type bootstrapperFunction = (
+type typeBootstrapperFn = (
     content: any,
     dependencies: dependencyDefinitionArr
 ) => any;
 
-export { bootstrapperFunction };
+export { typeBootstrapperFn };

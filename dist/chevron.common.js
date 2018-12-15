@@ -76,7 +76,7 @@ class Chevron {
      * @returns {*}
      */
     get(name) {
-        return this.resolveEntry(name);
+        return this.resolveEntry(name, new Set());
     }
     setType(name, bootstrapperFn) {
         this.types.set(name, bootstrapperFn);
@@ -88,25 +88,30 @@ class Chevron {
         if (!this.hasType(type)) {
             throw new Error(`Missing type '${type}'.`);
         }
-        const bootstrapperFn = this.types.get(type);
+        const typeBootstrapper = this.types.get(type);
         const entry = {
             isBootstrapped: false,
             content,
-            bootstrap: () => {
-                const constructedDependencies = dependencies.map(dependencyName => this.get(dependencyName));
-                entry.content = bootstrapperFn(entry.content, constructedDependencies);
+            bootstrap: (accessStack) => {
+                const constructedDependencies = dependencies.map(dependencyName => this.resolveEntry(dependencyName, accessStack));
+                entry.content = typeBootstrapper(entry.content, constructedDependencies);
                 entry.isBootstrapped = true;
             }
         };
         return entry;
     }
-    resolveEntry(name) {
+    resolveEntry(name, accessStack) {
+        if (accessStack.has(name)) {
+            throw new Error(`Circular dependencies were found: '${[...accessStack, name].join("->")}'.`);
+        }
         if (!this.has(name)) {
             throw new Error(`Injectable '${name}' does not exist.`);
         }
         const entry = this.injectables.get(name);
         if (!entry.isBootstrapped) {
-            entry.bootstrap();
+            accessStack.add(name);
+            entry.bootstrap(accessStack);
+            accessStack.delete(name);
         }
         return entry.content;
     }

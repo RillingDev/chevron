@@ -1,5 +1,5 @@
 import { dependencyArr } from "../dependencyArr";
-import { bootstrapperFunction } from "./bootstrapperFunction";
+import { typeBootstrapperFn } from "./typeBootstrapperFn";
 
 /**
  * Built-in serviceBootstrapper constructor.
@@ -8,7 +8,7 @@ import { bootstrapperFunction } from "./bootstrapperFunction";
  * @param {*} content
  * @param {Array<*>} dependencies
  */
-const serviceBootstrapper: bootstrapperFunction = <T>(
+const serviceBootstrapper: typeBootstrapperFn = <T>(
     content: (...args: any[]) => T,
     dependencies: dependencyArr
 ): (() => T) =>

@@ -1,4 +1,4 @@
-import { bootstrapperFunction } from "./bootstrapperFunction";
+import { typeBootstrapperFn } from "./typeBootstrapperFn";
 /**
  * Built-in factoryBootstrapper constructor.
  *
@@ -6,5 +6,5 @@ import { bootstrapperFunction } from "./bootstrapperFunction";
  * @param {*} content
  * @param {Array<*>} dependencies
  */
-declare const factoryBootstrapper: bootstrapperFunction;
+declare const factoryBootstrapper: typeBootstrapperFn;
 export { factoryBootstrapper };
