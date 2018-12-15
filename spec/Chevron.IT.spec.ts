@@ -1,4 +1,6 @@
+/* tslint:disable:max-classes-per-file */
 import { Chevron } from "../src/Chevron";
+import { InjectableType } from "../src/injectableTypes/InjectableType";
 
 describe("Chevron ITs", () => {
     it("Asserts that services construct", () => {
@@ -7,7 +9,7 @@ describe("Chevron ITs", () => {
 
         const testServiceName = "testServiceName";
         const testServiceFn = () => result;
-        cv.set(testServiceName, "service", [], testServiceFn);
+        cv.set(testServiceName, InjectableType.SERVICE, [], testServiceFn);
 
         expect(cv.get(testServiceName)()).toBe(result);
     });
@@ -17,13 +19,14 @@ describe("Chevron ITs", () => {
         const result = 123;
 
         const testFactoryName = "testFactoryName";
-        // tslint:disable-next-line:max-classes-per-file
-        const TestFactoryClass = class {
+
+        class TestFactoryClass {
             public getVal() {
                 return result;
             }
-        };
-        cv.set(testFactoryName, "factory", [], TestFactoryClass);
+        }
+
+        cv.set(testFactoryName, InjectableType.FACTORY, [], TestFactoryClass);
 
         expect(cv.get(testFactoryName).getVal()).toBe(result);
     });
@@ -34,11 +37,11 @@ describe("Chevron ITs", () => {
 
         const testServiceName = "testServiceName";
         const testServiceFn = () => result;
-        cv.set(testServiceName, "service", [], testServiceFn);
+        cv.set(testServiceName, InjectableType.SERVICE, [], testServiceFn);
 
         const testFactoryName = "testFactoryName";
-        // tslint:disable-next-line:max-classes-per-file
-        const TestFactoryClass = class {
+
+        class TestFactoryClass {
             private readonly numberService: () => number;
 
             constructor(numberService: () => number) {
@@ -48,8 +51,9 @@ describe("Chevron ITs", () => {
             public getVal() {
                 return this.numberService();
             }
-        };
-        cv.set(testFactoryName, "factory", [testServiceName], TestFactoryClass);
+        }
+
+        cv.set(testFactoryName, InjectableType.FACTORY, [testServiceName], TestFactoryClass);
 
         expect(cv.get(testFactoryName).getVal()).toBe(result);
     });
@@ -60,16 +64,17 @@ describe("Chevron ITs", () => {
 
         const testService1Name = "testService1Name";
         const testService1Fn = () => result;
-        cv.set(testService1Name, "service", [], testService1Fn);
+        cv.set(testService1Name, InjectableType.SERVICE, [], testService1Fn);
 
         const testFactoryName1 = "testFactoryName1";
-        // tslint:disable-next-line:max-classes-per-file
-        const TestFactoryClass1 = class {
+
+        class TestFactoryClass1 {
             public isAllowed() {
                 return true;
             }
-        };
-        cv.set(testFactoryName1, "factory", [], TestFactoryClass1);
+        }
+
+        cv.set(testFactoryName1, InjectableType.FACTORY, [], TestFactoryClass1);
 
         const testService2Name = "testService2Name";
         const testService2Fn = (testService1: any, testFactory1: any) => {
@@ -81,13 +86,12 @@ describe("Chevron ITs", () => {
         };
         cv.set(
             testService2Name,
-            "service",
+            InjectableType.SERVICE,
             [testService1Name, testFactoryName1],
             testService2Fn
         );
 
         const testFactoryName2 = "testFactoryName2";
-        // tslint:disable-next-line:max-classes-per-file
         const TestFactoryClass2 = class {
             private readonly numberService: () => number;
 
@@ -101,7 +105,7 @@ describe("Chevron ITs", () => {
         };
         cv.set(
             testFactoryName2,
-            "factory",
+            InjectableType.FACTORY,
             [testService2Name],
             TestFactoryClass2
         );

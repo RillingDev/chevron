@@ -1,11 +1,12 @@
+/* tslint:disable:max-classes-per-file */
 import { dependencyArr } from "../../src/dependencyArr";
 import { factoryBootstrapper } from "../../src/injectableTypes/factory";
 
 describe("factoryBootstrapper tests", () => {
     it("Asserts that factoryBootstrapper constructs a class", () => {
         const result = 123;
-        // tslint:disable-next-line:max-classes-per-file
-        const TestClass = class {
+
+        class TestClass {
             private readonly val: number;
 
             constructor() {
@@ -15,15 +16,15 @@ describe("factoryBootstrapper tests", () => {
             public getVal() {
                 return this.val;
             }
-        };
+        }
 
         expect(factoryBootstrapper(TestClass, []).getVal()).toBe(result);
     });
 
     it("Asserts that factoryBootstrapper constructs a class with dependencies", () => {
         const result = 123;
-        // tslint:disable-next-line:max-classes-per-file
-        const TestClass = class {
+
+        class TestClass {
             private readonly val: number;
 
             constructor(val: number) {
@@ -33,7 +34,7 @@ describe("factoryBootstrapper tests", () => {
             public getVal() {
                 return this.val;
             }
-        };
+        }
 
         expect(
             factoryBootstrapper(TestClass, <dependencyArr>[result]).getVal()

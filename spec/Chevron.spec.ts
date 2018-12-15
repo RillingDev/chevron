@@ -1,4 +1,5 @@
 import { Chevron } from "../src/Chevron";
+import { InjectableType } from "../src/injectableTypes/InjectableType";
 
 describe("Chevron tests", () => {
     it("Asserts that Chevron#get throws an exception for missing injectables", () => {
@@ -13,12 +14,12 @@ describe("Chevron tests", () => {
 
     it(
         "Asserts that Chevron initialises with the types 'service' and 'factory'" +
-            " and does not throw any exceptions when using them",
+        " and does not throw any exceptions when using them",
         () => {
             const cv = new Chevron();
 
-            cv.set("myService", "service", [], 123);
-            cv.set("myFactory", "factory", [], 321);
+            cv.set("myService", InjectableType.SERVICE, [], 123);
+            cv.set("myFactory", InjectableType.FACTORY, [], 321);
         }
     );
 });
