@@ -3,28 +3,23 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 /**
- * Built-in factoryBootstrapper constructor.
+ * Built-in factory bootstrapper.
  *
  * @private
- * @param {*} content
- * @param {Array<*>} dependencies
  */
 const factoryBootstrapper = (content, dependencies) => Reflect.construct(content, dependencies);
 
 /**
- * Built-in plainBootstrapper constructor.
+ * Built-in plain bootstrapper.
  *
  * @private
- * @param {*} content
  */
 const plainBootstrapper = (content) => content;
 
 /**
- * Built-in serviceBootstrapper constructor.
+ * Built-in service bootstrapper.
  *
  * @private
- * @param {*} content
- * @param {Array<*>} dependencies
  */
 const serviceBootstrapper = (content, dependencies) => 
 // tslint:disable-next-line:only-arrow-functions
@@ -34,7 +29,7 @@ function () {
 
 class Chevron {
     /**
-     * Main Chevron class.
+     * Main chevron class.
      *
      * @public
      * @class Chevron
@@ -47,42 +42,75 @@ class Chevron {
         this.injectables = new Map();
     }
     /**
-     * Set a new injectable on the chevron instance.
+     * Gets a bootstrapped injectable from the chevron instance.
      *
      * @public
-     * @param {string} name
-     * @param {string} type
-     * @param {string[]} dependencies
-     * @param {*} content
+     * @param {string} name Name of the injectable to get.
+     * @returns {*} Bootstrapped content of the injectable.
+     * @throws Error when the name cannot be found, or circular dependencies exist.
      */
-    set(name, type, dependencies, content) {
-        this.injectables.set(name, this.createEntry(type, content, dependencies));
+    get(name) {
+        return this.resolveEntry(name, new Set());
     }
     /**
      * Checks if the chevron instance has a given injectable.
      *
      * @public
-     * @param {string} name
-     * @returns {boolean}
+     * @param {string} name Name of the injectable to check.
+     * @returns {boolean} If the chevron instance has a given injectable.
      */
     has(name) {
         return this.injectables.has(name);
     }
     /**
-     * Gets a bootstrapped injectable from the chevron instance.
+     * Set a new injectable on the chevron instance.
      *
      * @public
-     * @param {string} name
-     * @returns {*}
+     * @param {string} name Name of the injectable.
+     * @param {string} type Type of the injectable.
+     * @param {string[]} dependencies Array of dependency names.
+     * @param {*} content Content of the injectable.
      */
-    get(name) {
-        return this.resolveEntry(name, new Set());
+    set(name, type, dependencies, content) {
+        this.injectables.set(name, this.createEntry(type, content, dependencies));
     }
+    /**
+     * Checks if the chevron instance has a given injectable type.
+     *
+     * @public
+     * @param {string} name Name of the injectable type to check.
+     * @returns {boolean} If the chevron instance has a given injectable type.
+     */
+    hasType(name) {
+        return this.types.has(name);
+    }
+    /**
+     * Sets a type of injectables.
+     *
+     * @public
+     * @param {string} name Name of the type.
+     * @param {function} bootstrapperFn Bootstrap function for injectables of this type.
+     */
     setType(name, bootstrapperFn) {
         this.types.set(name, bootstrapperFn);
     }
-    hasType(name) {
-        return this.types.has(name);
+    resolveEntry(name, accessStack) {
+        if (accessStack.has(name)) {
+            throw new Error(`Circular dependencies were found: '${[
+                ...accessStack,
+                name
+            ].join("->")}'.`);
+        }
+        if (!this.has(name)) {
+            throw new Error(`Injectable '${name}' does not exist.`);
+        }
+        const entry = this.injectables.get(name);
+        if (!entry.isBootstrapped) {
+            accessStack.add(name);
+            entry.bootstrap(accessStack);
+            accessStack.delete(name);
+        }
+        return entry.content;
     }
     createEntry(type, content, dependencies) {
         if (!this.hasType(type)) {
@@ -99,21 +127,6 @@ class Chevron {
             }
         };
         return entry;
-    }
-    resolveEntry(name, accessStack) {
-        if (accessStack.has(name)) {
-            throw new Error(`Circular dependencies were found: '${[...accessStack, name].join("->")}'.`);
-        }
-        if (!this.has(name)) {
-            throw new Error(`Injectable '${name}' does not exist.`);
-        }
-        const entry = this.injectables.get(name);
-        if (!entry.isBootstrapped) {
-            accessStack.add(name);
-            entry.bootstrap(accessStack);
-            accessStack.delete(name);
-        }
-        return entry.content;
     }
 }
 

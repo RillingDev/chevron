@@ -26,7 +26,7 @@
 
 <nav>
     
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Chevron.html">Chevron</a><ul class='methods'><li data-type='method'><a href="Chevron.html#get">get</a></li><li data-type='method'><a href="Chevron.html#has">has</a></li><li data-type='method'><a href="Chevron.html#set">set</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Chevron.html">Chevron</a><ul class='methods'><li data-type='method'><a href="Chevron.html#get">get</a></li><li data-type='method'><a href="Chevron.html#has">has</a></li><li data-type='method'><a href="Chevron.html#hasType">hasType</a></li><li data-type='method'><a href="Chevron.html#set">set</a></li><li data-type='method'><a href="Chevron.html#setType">setType</a></li></ul></li></ul>
 </nav>
 
 <div id="main">
@@ -70,7 +70,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line24">line 24</a>
+        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line27">line 27</a>
     </li></ul></dd>
     
 
@@ -110,7 +110,7 @@
 
 
 <div class="description">
-    <p>Main Chevron class.</p>
+    <p>Main chevron class.</p>
 </div>
 
 
@@ -161,7 +161,7 @@
 
     
 
-    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(id)</span><span class="type-signature"> &rarr; {*}</span></h4>
+    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(name)</span><span class="type-signature"> &rarr; {*}</span></h4>
 
     
 
@@ -173,7 +173,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line81">line 81</a>
+        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line70">line 70</a>
     </li></ul></dd>
     
 
@@ -213,7 +213,7 @@
 
 
 <div class="description">
-    <p>Gets a constructed dependency from the content map.</p>
+    <p>Gets a bootstrapped injectable from the chevron instance.</p>
 </div>
 
 
@@ -251,7 +251,7 @@
 
         <tr>
             
-                <td class="name"><code>id</code></td>
+                <td class="name"><code>name</code></td>
             
 
             <td class="type">
@@ -267,7 +267,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>Name of the injectable to get.</p></td>
         </tr>
 
     
@@ -285,11 +285,27 @@
 
 
 
+<h5>Throws:</h5>
+
+        
+
+    <div class="param-desc">
+    
+        <p>Error when the name cannot be found, or circular dependencies exist.</p>
+    
+    </div>
+
+
+    
 
 
 <h5>Returns:</h5>
 
         
+<div class="param-desc">
+    <p>Bootstrapped content of the injectable.</p>
+</div>
+
 
 
 <dl class="param-type">
@@ -312,7 +328,7 @@
 
     
 
-    <h4 class="name" id="has"><span class="type-signature"></span>has<span class="signature">(id)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="has"><span class="type-signature"></span>has<span class="signature">(name)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
 
     
 
@@ -324,7 +340,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line71">line 71</a>
+        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line59">line 59</a>
     </li></ul></dd>
     
 
@@ -364,7 +380,7 @@
 
 
 <div class="description">
-    <p>Checks if the content map has a dependency.</p>
+    <p>Checks if the chevron instance has a given injectable.</p>
 </div>
 
 
@@ -402,7 +418,7 @@
 
         <tr>
             
-                <td class="name"><code>id</code></td>
+                <td class="name"><code>name</code></td>
             
 
             <td class="type">
@@ -418,7 +434,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>Name of the injectable to check.</p></td>
         </tr>
 
     
@@ -441,6 +457,10 @@
 <h5>Returns:</h5>
 
         
+<div class="param-desc">
+    <p>If the chevron instance has a given injectable.</p>
+</div>
+
 
 
 <dl class="param-type">
@@ -463,7 +483,7 @@
 
     
 
-    <h4 class="name" id="set"><span class="type-signature"></span>set<span class="signature">(id, type, dependencies, content)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="hasType"><span class="type-signature"></span>hasType<span class="signature">(name)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
 
     
 
@@ -475,7 +495,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line48">line 48</a>
+        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line90">line 90</a>
     </li></ul></dd>
     
 
@@ -515,7 +535,7 @@
 
 
 <div class="description">
-    <p>Set a new dependency on the dependency container.</p>
+    <p>Checks if the chevron instance has a given injectable type.</p>
 </div>
 
 
@@ -553,7 +573,7 @@
 
         <tr>
             
-                <td class="name"><code>id</code></td>
+                <td class="name"><code>name</code></td>
             
 
             <td class="type">
@@ -569,7 +589,162 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>Name of the injectable type to check.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>If the chevron instance has a given injectable type.</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="set"><span class="type-signature"></span>set<span class="signature">(name, type, dependencies, content)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line49">line 49</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Set a new injectable on the chevron instance.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the injectable.</p></td>
         </tr>
 
     
@@ -592,7 +767,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>Type of the injectable.</p></td>
         </tr>
 
     
@@ -615,7 +790,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>Array of dependency names.</p></td>
         </tr>
 
     
@@ -638,7 +813,153 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>Content of the injectable.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="setType"><span class="type-signature"></span>setType<span class="signature">(name, bootstrapperFn)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line80">line 80</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Sets a type of injectables.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the type.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>bootstrapperFn</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Bootstrap function for injectables of this type.</p></td>
         </tr>
 
     
@@ -680,7 +1001,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Dec 13 2018 14:54:21 GMT+0100 (Central European Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Dec 16 2018 17:39:20 GMT+0100 (Central European Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

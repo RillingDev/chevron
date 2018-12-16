@@ -1,10 +1,8 @@
 import { typeBootstrapperFn } from "./typeBootstrapperFn";
 /**
- * Built-in serviceBootstrapper constructor.
+ * Built-in service bootstrapper.
  *
  * @private
- * @param {*} content
- * @param {Array<*>} dependencies
  */
 declare const serviceBootstrapper: typeBootstrapperFn;
 export { serviceBootstrapper };

@@ -2,11 +2,9 @@ import { dependencyArr } from "../dependencyArr";
 import { typeBootstrapperFn } from "./typeBootstrapperFn";
 
 /**
- * Built-in serviceBootstrapper constructor.
+ * Built-in service bootstrapper.
  *
  * @private
- * @param {*} content
- * @param {Array<*>} dependencies
  */
 const serviceBootstrapper: typeBootstrapperFn = <T>(
     content: (...args: any[]) => T,

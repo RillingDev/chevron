@@ -2,11 +2,9 @@ import { dependencyArr } from "../dependencyArr";
 import { typeBootstrapperFn } from "./typeBootstrapperFn";
 
 /**
- * Built-in factoryBootstrapper constructor.
+ * Built-in factory bootstrapper.
  *
  * @private
- * @param {*} content
- * @param {Array<*>} dependencies
  */
 const factoryBootstrapper: typeBootstrapperFn = <T>(
     content: (...args: any[]) => T,

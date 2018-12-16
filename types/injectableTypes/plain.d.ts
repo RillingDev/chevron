@@ -1,9 +1,8 @@
 import { typeBootstrapperFn } from "./typeBootstrapperFn";
 /**
- * Built-in plainBootstrapper constructor.
+ * Built-in plain bootstrapper.
  *
  * @private
- * @param {*} content
  */
 declare const plainBootstrapper: typeBootstrapperFn;
 export { plainBootstrapper };

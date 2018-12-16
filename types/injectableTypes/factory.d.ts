@@ -1,10 +1,8 @@
 import { typeBootstrapperFn } from "./typeBootstrapperFn";
 /**
- * Built-in factoryBootstrapper constructor.
+ * Built-in factory bootstrapper.
  *
  * @private
- * @param {*} content
- * @param {Array<*>} dependencies
  */
 declare const factoryBootstrapper: typeBootstrapperFn;
 export { factoryBootstrapper };
