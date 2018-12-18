@@ -12,6 +12,7 @@ describe("Autowired tests", () => {
         const testFactoryName = "testFactoryName";
 
         class TestFactoryClass {
+            // noinspection JSMethodCanBeStatic
             public getVal() {
                 return result;
             }
@@ -39,6 +40,7 @@ describe("Autowired tests", () => {
 
         @Injectable(cv, InjectableType.FACTORY, [], testFactoryName)
         class TestFactoryClass {
+            // noinspection JSUnusedGlobalSymbols,JSMethodCanBeStatic
             public getVal() {
                 return result;
             }

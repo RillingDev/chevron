@@ -31,6 +31,7 @@ describe("Chevron ITs", () => {
         const testFactoryName = "testFactoryName";
 
         class TestFactoryClass {
+            // noinspection JSMethodCanBeStatic
             public getVal() {
                 return result;
             }
@@ -58,12 +59,18 @@ describe("Chevron ITs", () => {
                 this.numberService = numberService;
             }
 
+            // noinspection JSUnusedGlobalSymbols
             public getVal() {
                 return this.numberService();
             }
         }
 
-        cv.set(InjectableType.FACTORY, [testServiceName], TestFactoryClass, testFactoryName);
+        cv.set(
+            InjectableType.FACTORY,
+            [testServiceName],
+            TestFactoryClass,
+            testFactoryName
+        );
 
         expect(cv.get(testFactoryName).getVal()).toBe(result);
     });
@@ -79,6 +86,7 @@ describe("Chevron ITs", () => {
         const testFactoryName1 = "testFactoryName1";
 
         class TestFactoryClass1 {
+            // noinspection JSMethodCanBeStatic
             public isAllowed() {
                 return true;
             }
@@ -94,7 +102,12 @@ describe("Chevron ITs", () => {
 
             return testService1();
         };
-        cv.set(InjectableType.SERVICE, [testService1Name, testFactoryName1], testService2Fn, testService2Name);
+        cv.set(
+            InjectableType.SERVICE,
+            [testService1Name, testFactoryName1],
+            testService2Fn,
+            testService2Name
+        );
 
         const testFactoryName2 = "testFactoryName2";
         const TestFactoryClass2 = class {
@@ -104,11 +117,17 @@ describe("Chevron ITs", () => {
                 this.numberService = numberService;
             }
 
+            // noinspection JSUnusedGlobalSymbols
             public getVal() {
                 return this.numberService();
             }
         };
-        cv.set(InjectableType.FACTORY, [testService2Name], TestFactoryClass2, testFactoryName2);
+        cv.set(
+            InjectableType.FACTORY,
+            [testService2Name],
+            TestFactoryClass2,
+            testFactoryName2
+        );
 
         expect(cv.get(testFactoryName2).getVal()).toBe(result);
     });
@@ -118,6 +137,7 @@ describe("Chevron ITs", () => {
         const result = 123;
 
         class TestFactoryClass {
+            // noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
             public getVal() {
                 return result;
             }
@@ -133,6 +153,7 @@ describe("Chevron ITs", () => {
         const result = 123;
 
         class TestFactoryClass {
+            // noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
             public getVal() {
                 return result;
             }

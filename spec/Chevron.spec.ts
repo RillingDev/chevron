@@ -9,9 +9,10 @@ describe("Chevron tests", () => {
     it("Asserts that Chevron#set throws an exception when using a duplicate key", () => {
         const cv = new Chevron();
 
-        cv.set("service", [], 123, "foo");
+        const key = "foo";
+        cv.set(InjectableType.SERVICE, [], 123, key);
 
-        expect(() => cv.set(InjectableType.SERVICE, [], 321, "foo")).toThrowError(
+        expect(() => cv.set(InjectableType.SERVICE, [], 321, key)).toThrowError(
             /Key already exists.+/
         );
     });
@@ -22,14 +23,13 @@ describe("Chevron tests", () => {
         ).toThrowError(/Missing type.+/);
     });
 
-    it(
-        "Asserts that Chevron initialises with the types 'service' and 'factory'" +
-        " and does not throw any exceptions when using them",
-        () => {
-            const cv = new Chevron();
+    it("Asserts that Chevron initialises with the types 'plain', 'service' and 'factory'", () => {
+        const cv = new Chevron();
 
-            cv.set(InjectableType.SERVICE, [], 123, "myService");
-            cv.set(InjectableType.FACTORY, [], 321, "myFactory");
-        }
-    );
+        expect(cv.hasType(InjectableType.PLAIN)).toBeTruthy();
+        expect(cv.hasType(InjectableType.SERVICE)).toBeTruthy();
+        expect(cv.hasType(InjectableType.FACTORY)).toBeTruthy();
+
+        expect(cv.hasType("unknown")).toBeFalsy();
+    });
 });

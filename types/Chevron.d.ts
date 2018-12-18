@@ -28,11 +28,11 @@ declare class Chevron {
      */
     has(key: any): boolean;
     /**
-     * Set a new injectable on the chevron instance.
+     * Sets a new injectable on the chevron instance.
      *
      * @public
      * @param {string} type Type of the injectable.
-     * @param {string[]} dependencies Array of dependency names.
+     * @param {string[]} dependencies Array of dependency keys.
      * @param {*} initializer Content of the injectable.
      * @param {*?} key Custom key of the injectable. If none is given, the initializer will be used.
      * @throws Error when the key already exists, or the type is invalid.
@@ -54,8 +54,17 @@ declare class Chevron {
      * @param {function} bootstrapperFn Bootstrap function for injectables of this type.
      */
     setType(name: string, bootstrapperFn: typeBootstrapperFn): void;
+    /**
+     * Resolves an entry by its key, keeping track of the access stack.
+     *
+     * @private
+     */
     private resolveEntry;
+    /**
+     * Bootstraps an entry, keeping track of the access stack.
+     *
+     * @private
+     */
     private bootstrap;
-    private createEntry;
 }
 export { Chevron };

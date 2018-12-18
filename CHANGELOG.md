@@ -6,10 +6,12 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [11.0.0](https://github.com/FelixRilling/chevron/compare/v10.0.0...v11.0.0) (2018-08-07)
 
-breaking: custom types are done using Chevron#setType rather than setting a property
-breaking: Chevron#get throws an exception if the given name does not exist.
+breaking: Chevron#set The key is now an optional last parameter which will be inferred from the content if not provided.
+breaking: Chevron#set throws an exception if the given key is a duplicate.
+breaking: Chevron#get throws an exception if the given key does not exist.
+breaking: Chevron#get throws an exception if the injectable has circular dependencies.
+breaking: Custom types are done using Chevron#setType rather than setting a property
 new: TypeScript decorators @Injectable and @Autowired
-new: Circular dependencies thrown an exception upon bootstrapping.
 
 <a name="10.0.0"></a>
 

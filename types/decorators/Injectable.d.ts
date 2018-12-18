@@ -8,8 +8,8 @@ import { InjectableType } from "../injectableTypes/InjectableType";
  *
  * @param {Chevron} instance Chevron instance to use.
  * @param {string} type Type of the injectable.
- * @param {string[]} dependencies Array of dependency names.
- * @param {*?} key Key of the injectable. If not set, the name will be inferred from the content.
+ * @param {string[]} dependencies Array of dependency keys.
+ * @param {*?} key Custom key of the injectable. If none is given, the initializer will be used.
  * @example
  * const cv = new Chevron();
  *

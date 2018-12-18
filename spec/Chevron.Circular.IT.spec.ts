@@ -11,7 +11,12 @@ describe("Chevron ITs", () => {
         const testServiceName = "testServiceName";
 
         const testServiceFn = () => result;
-        cv.set(InjectableType.SERVICE, [testFactoryName], testServiceFn, testServiceName);
+        cv.set(
+            InjectableType.SERVICE,
+            [testFactoryName],
+            testServiceFn,
+            testServiceName
+        );
 
         class TestFactoryClass {
             private readonly numberService: () => number;
@@ -20,12 +25,18 @@ describe("Chevron ITs", () => {
                 this.numberService = numberService;
             }
 
+            // noinspection JSUnusedGlobalSymbols
             public getVal() {
                 return this.numberService();
             }
         }
 
-        cv.set(InjectableType.FACTORY, [testServiceName], TestFactoryClass, testFactoryName);
+        cv.set(
+            InjectableType.FACTORY,
+            [testServiceName],
+            TestFactoryClass,
+            testFactoryName
+        );
 
         expect(() => cv.get(testFactoryName)).toThrowError(
             /Circular dependencies found.+/

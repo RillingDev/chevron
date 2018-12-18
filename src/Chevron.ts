@@ -19,9 +19,9 @@ class Chevron {
      */
     constructor() {
         this.types = new Map();
+        this.setType(InjectableType.PLAIN, plainBootstrapper);
         this.setType(InjectableType.SERVICE, serviceBootstrapper);
         this.setType(InjectableType.FACTORY, factoryBootstrapper);
-        this.setType(InjectableType.PLAIN, plainBootstrapper);
 
         this.injectables = new Map();
     }
@@ -50,11 +50,11 @@ class Chevron {
     }
 
     /**
-     * Set a new injectable on the chevron instance.
+     * Sets a new injectable on the chevron instance.
      *
      * @public
      * @param {string} type Type of the injectable.
-     * @param {string[]} dependencies Array of dependency names.
+     * @param {string[]} dependencies Array of dependency keys.
      * @param {*} initializer Content of the injectable.
      * @param {*?} key Custom key of the injectable. If none is given, the initializer will be used.
      * @throws Error when the key already exists, or the type is invalid.
@@ -65,15 +65,25 @@ class Chevron {
         initializer: any,
         key?: any
     ): void {
+        if (!this.hasType(type)) {
+            throw new Error(`Missing type '${type}'.`);
+        }
+
+        /*
+         * Infer the key from the initializer only if no key was explicitly given.
+         */
         const effectiveKey = isNil(key) ? initializer : key;
+
         if (this.has(effectiveKey)) {
             throw new Error(`Key already exists: '${effectiveKey}'.`);
         }
 
-        this.injectables.set(
-            effectiveKey,
-            this.createEntry(type, initializer, dependencies)
-        );
+        this.injectables.set(effectiveKey, {
+            typeBootstrapper: this.types.get(type)!,
+            dependencies,
+            initializer,
+            content: null
+        });
     }
 
     /**
@@ -98,7 +108,36 @@ class Chevron {
         this.types.set(name, bootstrapperFn);
     }
 
+    /**
+     * Resolves an entry by its key, keeping track of the access stack.
+     *
+     * @private
+     */
     private resolveEntry(key: any, accessStack: Set<string>): any {
+        if (!this.has(key)) {
+            throw new Error(`Injectable '${key}' does not exist.`);
+        }
+
+        const entry = this.injectables.get(key)!;
+        if (isNil(entry.content)) {
+            /*
+             * Entry is not constructed, recursively bootstrap dependencies and the entry itself.
+             */
+            this.bootstrap(key, accessStack, entry);
+        }
+
+        return entry.content;
+    }
+
+    /**
+     * Bootstraps an entry, keeping track of the access stack.
+     *
+     * @private
+     */
+    private bootstrap(key: any, accessStack: Set<string>, entry: IEntry): void {
+        /*
+         * Check if we already tried accessing this injectable before; if we did, assume circular dependencies.
+         */
         if (accessStack.has(key)) {
             throw new Error(
                 `Circular dependencies found: '${[...accessStack, key].join(
@@ -106,45 +145,15 @@ class Chevron {
                 )}'.`
             );
         }
-        if (!this.has(key)) {
-            throw new Error(`Injectable '${key}' does not exist.`);
-        }
 
-        const entry = this.injectables.get(key)!;
-        if (isNil(entry.content)) {
-            accessStack.add(key);
-            this.bootstrap(entry, accessStack);
-            accessStack.delete(key);
-        }
-
-        return entry.content;
-    }
-
-    private bootstrap(entry: IEntry, accessStack: Set<string>): void {
-        const constructedDependencies = entry.dependencies.map(dependencyName =>
-            this.resolveEntry(dependencyName, accessStack)
-        );
+        accessStack.add(key);
         entry.content = entry.typeBootstrapper(
             entry.initializer,
-            constructedDependencies
+            entry.dependencies.map(dependencyName =>
+                this.resolveEntry(dependencyName, accessStack)
+            )
         );
-    }
-
-    private createEntry(
-        type: string,
-        initializer: any,
-        dependencies: dependencyDefinitionArr
-    ): IEntry {
-        if (!this.hasType(type)) {
-            throw new Error(`Missing type '${type}'.`);
-        }
-
-        return {
-            typeBootstrapper: this.types.get(type)!,
-            dependencies,
-            initializer,
-            content: null
-        };
+        accessStack.delete(key);
     }
 }
 

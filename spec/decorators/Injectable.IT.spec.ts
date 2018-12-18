@@ -1,8 +1,8 @@
 /* tslint:disable:max-classes-per-file */
 import { Chevron } from "../../src/Chevron";
+import { Autowired } from "../../src/decorators/Autowired";
 import { Injectable } from "../../src/decorators/Injectable";
 import { InjectableType } from "../../src/injectableTypes/InjectableType";
-import { Autowired } from "../../src/decorators/Autowired";
 
 describe("Injectable tests", () => {
     it("Asserts that @Injectable works", () => {
@@ -13,6 +13,7 @@ describe("Injectable tests", () => {
 
         @Injectable(cv, InjectableType.FACTORY, [], testFactoryName)
         class TestFactoryClass {
+            // noinspection JSMethodCanBeStatic
             public getVal() {
                 return result;
             }
@@ -21,13 +22,14 @@ describe("Injectable tests", () => {
         expect(cv.get(testFactoryName).getVal()).toBe(result);
     });
 
-    it("Asserts that @Injectable can interfere the name", () => {
+    it("Asserts that @Injectable can infer the name", () => {
         const cv = new Chevron();
 
         const result = 123;
 
         @Injectable(cv, InjectableType.FACTORY, [])
         class TestFactoryClass {
+            // noinspection JSUnusedGlobalSymbols,JSMethodCanBeStatic
             public getVal() {
                 return result;
             }

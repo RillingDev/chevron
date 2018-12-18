@@ -31,6 +31,7 @@ describe("factoryBootstrapper tests", () => {
                 this.val = val;
             }
 
+            // noinspection JSUnusedGlobalSymbols
             public getVal() {
                 return this.val;
             }

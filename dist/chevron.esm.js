@@ -56,9 +56,9 @@ class Chevron {
      */
     constructor() {
         this.types = new Map();
+        this.setType("plain" /* PLAIN */, plainBootstrapper);
         this.setType("service" /* SERVICE */, serviceBootstrapper);
         this.setType("factory" /* FACTORY */, factoryBootstrapper);
-        this.setType("plain" /* PLAIN */, plainBootstrapper);
         this.injectables = new Map();
     }
     /**
@@ -83,21 +83,32 @@ class Chevron {
         return this.injectables.has(key);
     }
     /**
-     * Set a new injectable on the chevron instance.
+     * Sets a new injectable on the chevron instance.
      *
      * @public
      * @param {string} type Type of the injectable.
-     * @param {string[]} dependencies Array of dependency names.
+     * @param {string[]} dependencies Array of dependency keys.
      * @param {*} initializer Content of the injectable.
      * @param {*?} key Custom key of the injectable. If none is given, the initializer will be used.
      * @throws Error when the key already exists, or the type is invalid.
      */
     set(type, dependencies, initializer, key) {
+        if (!this.hasType(type)) {
+            throw new Error(`Missing type '${type}'.`);
+        }
+        /*
+         * Infer the key from the initializer only if no key was explicitly given.
+         */
         const effectiveKey = isNil(key) ? initializer : key;
         if (this.has(effectiveKey)) {
             throw new Error(`Key already exists: '${effectiveKey}'.`);
         }
-        this.injectables.set(effectiveKey, this.createEntry(type, initializer, dependencies));
+        this.injectables.set(effectiveKey, {
+            typeBootstrapper: this.types.get(type),
+            dependencies,
+            initializer,
+            content: null
+        });
     }
     /**
      * Checks if the chevron instance has a given injectable type.
@@ -119,35 +130,39 @@ class Chevron {
     setType(name, bootstrapperFn) {
         this.types.set(name, bootstrapperFn);
     }
+    /**
+     * Resolves an entry by its key, keeping track of the access stack.
+     *
+     * @private
+     */
     resolveEntry(key, accessStack) {
-        if (accessStack.has(key)) {
-            throw new Error(`Circular dependencies found: '${[...accessStack, key].join("->")}'.`);
-        }
         if (!this.has(key)) {
             throw new Error(`Injectable '${key}' does not exist.`);
         }
         const entry = this.injectables.get(key);
         if (isNil(entry.content)) {
-            accessStack.add(key);
-            this.bootstrap(entry, accessStack);
-            accessStack.delete(key);
+            /*
+             * Entry is not constructed, recursively bootstrap dependencies and the entry itself.
+             */
+            this.bootstrap(key, accessStack, entry);
         }
         return entry.content;
     }
-    bootstrap(entry, accessStack) {
-        const constructedDependencies = entry.dependencies.map(dependencyName => this.resolveEntry(dependencyName, accessStack));
-        entry.content = entry.typeBootstrapper(entry.initializer, constructedDependencies);
-    }
-    createEntry(type, initializer, dependencies) {
-        if (!this.hasType(type)) {
-            throw new Error(`Missing type '${type}'.`);
+    /**
+     * Bootstraps an entry, keeping track of the access stack.
+     *
+     * @private
+     */
+    bootstrap(key, accessStack, entry) {
+        /*
+         * Check if we already tried accessing this injectable before; if we did, assume circular dependencies.
+         */
+        if (accessStack.has(key)) {
+            throw new Error(`Circular dependencies found: '${[...accessStack, key].join("->")}'.`);
         }
-        return {
-            typeBootstrapper: this.types.get(type),
-            dependencies,
-            initializer,
-            content: null
-        };
+        accessStack.add(key);
+        entry.content = entry.typeBootstrapper(entry.initializer, entry.dependencies.map(dependencyName => this.resolveEntry(dependencyName, accessStack)));
+        accessStack.delete(key);
     }
 }
 

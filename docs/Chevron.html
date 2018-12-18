@@ -70,7 +70,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line27">line 27</a>
+        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line51">line 51</a>
     </li></ul></dd>
     
 
@@ -161,7 +161,7 @@
 
     
 
-    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(name)</span><span class="type-signature"> &rarr; {*}</span></h4>
+    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(key)</span><span class="type-signature"> &rarr; {*}</span></h4>
 
     
 
@@ -173,7 +173,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line70">line 70</a>
+        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line72">line 72</a>
     </li></ul></dd>
     
 
@@ -251,13 +251,13 @@
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>key</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">*</span>
 
 
             
@@ -267,7 +267,7 @@
 
             
 
-            <td class="description last"><p>Name of the injectable to get.</p></td>
+            <td class="description last"><p>Key of the injectable to get.</p></td>
         </tr>
 
     
@@ -291,7 +291,7 @@
 
     <div class="param-desc">
     
-        <p>Error when the name cannot be found, or circular dependencies exist.</p>
+        <p>Error when the key cannot be found, or circular dependencies exist.</p>
     
     </div>
 
@@ -328,7 +328,7 @@
 
     
 
-    <h4 class="name" id="has"><span class="type-signature"></span>has<span class="signature">(name)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="has"><span class="type-signature"></span>has<span class="signature">(key)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
 
     
 
@@ -340,7 +340,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line59">line 59</a>
+        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line82">line 82</a>
     </li></ul></dd>
     
 
@@ -418,13 +418,13 @@
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>key</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">*</span>
 
 
             
@@ -434,7 +434,7 @@
 
             
 
-            <td class="description last"><p>Name of the injectable to check.</p></td>
+            <td class="description last"><p>Key of the injectable to check.</p></td>
         </tr>
 
     
@@ -495,7 +495,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line90">line 90</a>
+        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line120">line 120</a>
     </li></ul></dd>
     
 
@@ -638,7 +638,7 @@
 
     
 
-    <h4 class="name" id="set"><span class="type-signature"></span>set<span class="signature">(name, type, dependencies, content)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="set"><span class="type-signature"></span>set<span class="signature">(type, dependencies, initializer, key<span class="signature-attributes">nullable</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -650,7 +650,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line49">line 49</a>
+        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line95">line 95</a>
     </li></ul></dd>
     
 
@@ -690,7 +690,7 @@
 
 
 <div class="description">
-    <p>Set a new injectable on the chevron instance.</p>
+    <p>Sets a new injectable on the chevron instance.</p>
 </div>
 
 
@@ -716,6 +716,8 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -724,29 +726,6 @@
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Name of the injectable.</p></td>
-        </tr>
-
     
 
         <tr>
@@ -763,6 +742,14 @@
             
             </td>
 
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -787,17 +774,25 @@
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last"><p>Array of dependency names.</p></td>
+            <td class="description last"><p>Array of dependency keys.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>content</code></td>
+                <td class="name"><code>initializer</code></td>
             
 
             <td class="type">
@@ -810,10 +805,51 @@
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
             <td class="description last"><p>Content of the injectable.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Custom key of the injectable. If none is given, the initializer will be used.</p></td>
         </tr>
 
     
@@ -831,6 +867,18 @@
 
 
 
+<h5>Throws:</h5>
+
+        
+
+    <div class="param-desc">
+    
+        <p>Error when the key already exists, or the type is invalid.</p>
+    
+    </div>
+
+
+    
 
 
 
@@ -852,7 +900,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line80">line 80</a>
+        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line130">line 130</a>
     </li></ul></dd>
     
 
@@ -935,6 +983,11 @@
 
             <td class="type">
             
+                
+<span class="param-type">string</span>
+
+
+            
             </td>
 
             
@@ -952,6 +1005,11 @@
             
 
             <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
             
             </td>
 
@@ -1001,7 +1059,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Dec 16 2018 17:39:20 GMT+0100 (Central European Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Dec 18 2018 11:22:32 GMT+0100 (Central European Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
