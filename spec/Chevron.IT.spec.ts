@@ -3,13 +3,23 @@ import { Chevron } from "../src/Chevron";
 import { InjectableType } from "../src/injectableTypes/InjectableType";
 
 describe("Chevron ITs", () => {
+    it("Asserts that plains construct", () => {
+        const cv = new Chevron();
+        const result = 123;
+
+        const testPlainName = "testPlainName";
+        cv.set(InjectableType.PLAIN, [], result, testPlainName);
+
+        expect(cv.get(testPlainName)).toBe(result);
+    });
+
     it("Asserts that services construct", () => {
         const cv = new Chevron();
         const result = 123;
 
         const testServiceName = "testServiceName";
         const testServiceFn = () => result;
-        cv.set(testServiceName, InjectableType.SERVICE, [], testServiceFn);
+        cv.set(InjectableType.SERVICE, [], testServiceFn, testServiceName);
 
         expect(cv.get(testServiceName)()).toBe(result);
     });
@@ -26,7 +36,7 @@ describe("Chevron ITs", () => {
             }
         }
 
-        cv.set(testFactoryName, InjectableType.FACTORY, [], TestFactoryClass);
+        cv.set(InjectableType.FACTORY, [], TestFactoryClass, testFactoryName);
 
         expect(cv.get(testFactoryName).getVal()).toBe(result);
     });
@@ -37,7 +47,7 @@ describe("Chevron ITs", () => {
 
         const testServiceName = "testServiceName";
         const testServiceFn = () => result;
-        cv.set(testServiceName, InjectableType.SERVICE, [], testServiceFn);
+        cv.set(InjectableType.SERVICE, [], testServiceFn, testServiceName);
 
         const testFactoryName = "testFactoryName";
 
@@ -53,7 +63,7 @@ describe("Chevron ITs", () => {
             }
         }
 
-        cv.set(testFactoryName, InjectableType.FACTORY, [testServiceName], TestFactoryClass);
+        cv.set(InjectableType.FACTORY, [testServiceName], TestFactoryClass, testFactoryName);
 
         expect(cv.get(testFactoryName).getVal()).toBe(result);
     });
@@ -64,7 +74,7 @@ describe("Chevron ITs", () => {
 
         const testService1Name = "testService1Name";
         const testService1Fn = () => result;
-        cv.set(testService1Name, InjectableType.SERVICE, [], testService1Fn);
+        cv.set(InjectableType.SERVICE, [], testService1Fn, testService1Name);
 
         const testFactoryName1 = "testFactoryName1";
 
@@ -74,7 +84,7 @@ describe("Chevron ITs", () => {
             }
         }
 
-        cv.set(testFactoryName1, InjectableType.FACTORY, [], TestFactoryClass1);
+        cv.set(InjectableType.FACTORY, [], TestFactoryClass1, testFactoryName1);
 
         const testService2Name = "testService2Name";
         const testService2Fn = (testService1: any, testFactory1: any) => {
@@ -84,12 +94,7 @@ describe("Chevron ITs", () => {
 
             return testService1();
         };
-        cv.set(
-            testService2Name,
-            InjectableType.SERVICE,
-            [testService1Name, testFactoryName1],
-            testService2Fn
-        );
+        cv.set(InjectableType.SERVICE, [testService1Name, testFactoryName1], testService2Fn, testService2Name);
 
         const testFactoryName2 = "testFactoryName2";
         const TestFactoryClass2 = class {
@@ -103,13 +108,38 @@ describe("Chevron ITs", () => {
                 return this.numberService();
             }
         };
-        cv.set(
-            testFactoryName2,
-            InjectableType.FACTORY,
-            [testService2Name],
-            TestFactoryClass2
-        );
+        cv.set(InjectableType.FACTORY, [testService2Name], TestFactoryClass2, testFactoryName2);
 
         expect(cv.get(testFactoryName2).getVal()).toBe(result);
+    });
+
+    it("Asserts that non-string keys construct", () => {
+        const cv = new Chevron();
+        const result = 123;
+
+        class TestFactoryClass {
+            public getVal() {
+                return result;
+            }
+        }
+
+        cv.set(InjectableType.FACTORY, [], TestFactoryClass, TestFactoryClass);
+
+        expect(cv.get(TestFactoryClass).getVal()).toBe(result);
+    });
+
+    it("Asserts that the key can be inferred from the initializer", () => {
+        const cv = new Chevron();
+        const result = 123;
+
+        class TestFactoryClass {
+            public getVal() {
+                return result;
+            }
+        }
+
+        cv.set(InjectableType.FACTORY, [], TestFactoryClass);
+
+        expect(cv.get(TestFactoryClass).getVal()).toBe(result);
     });
 });

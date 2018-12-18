@@ -7,8 +7,8 @@ import { typeBootstrapperFn } from "./typeBootstrapperFn";
  * @private
  */
 const factoryBootstrapper: typeBootstrapperFn = <T>(
-    content: (...args: any[]) => T,
+    initializer: (...args: any[]) => T,
     dependencies: dependencyArr
-): T => Reflect.construct(content, dependencies);
+): T => Reflect.construct(initializer, dependencies);
 
 export { factoryBootstrapper };

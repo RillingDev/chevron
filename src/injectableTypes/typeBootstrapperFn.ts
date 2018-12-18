@@ -1,7 +1,7 @@
 import { dependencyDefinitionArr } from "../dependencyDefinitionArr";
 
 type typeBootstrapperFn = (
-    content: any,
+    initializer: any,
     dependencies: dependencyDefinitionArr
 ) => any;
 

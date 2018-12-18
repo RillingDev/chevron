@@ -5,6 +5,7 @@ import { typeBootstrapperFn } from "./typeBootstrapperFn";
  *
  * @private
  */
-const plainBootstrapper: typeBootstrapperFn = <T>(content: T): T => content;
+const plainBootstrapper: typeBootstrapperFn = <T>(initializer: T): T =>
+    initializer;
 
 export { plainBootstrapper };

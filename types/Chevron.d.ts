@@ -14,29 +14,30 @@ declare class Chevron {
      * Gets a bootstrapped injectable from the chevron instance.
      *
      * @public
-     * @param {string} name Name of the injectable to get.
+     * @param {*} key Key of the injectable to get.
      * @returns {*} Bootstrapped content of the injectable.
-     * @throws Error when the name cannot be found, or circular dependencies exist.
+     * @throws Error when the key cannot be found, or circular dependencies exist.
      */
-    get(name: string): any;
+    get(key: any): any;
     /**
      * Checks if the chevron instance has a given injectable.
      *
      * @public
-     * @param {string} name Name of the injectable to check.
+     * @param {*} key Key of the injectable to check.
      * @returns {boolean} If the chevron instance has a given injectable.
      */
-    has(name: string): boolean;
+    has(key: any): boolean;
     /**
      * Set a new injectable on the chevron instance.
      *
      * @public
-     * @param {string} name Name of the injectable.
      * @param {string} type Type of the injectable.
      * @param {string[]} dependencies Array of dependency names.
-     * @param {*} content Content of the injectable.
+     * @param {*} initializer Content of the injectable.
+     * @param {*?} key Custom key of the injectable. If none is given, the initializer will be used.
+     * @throws Error when the key already exists, or the type is invalid.
      */
-    set(name: string, type: string, dependencies: dependencyDefinitionArr, content: any): void;
+    set(type: string, dependencies: dependencyDefinitionArr, initializer: any, key?: any): void;
     /**
      * Checks if the chevron instance has a given injectable type.
      *
@@ -54,6 +55,7 @@ declare class Chevron {
      */
     setType(name: string, bootstrapperFn: typeBootstrapperFn): void;
     private resolveEntry;
+    private bootstrap;
     private createEntry;
 }
 export { Chevron };

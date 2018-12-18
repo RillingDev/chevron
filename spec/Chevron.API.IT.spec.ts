@@ -10,7 +10,7 @@ describe("Chevron API ITs", () => {
         cv.setType(testTypeName, testTypeFn);
 
         const testInjectableName = "testFactoryName";
-        cv.set(testInjectableName, testTypeName, [], result);
+        cv.set(testTypeName, [], result, testInjectableName);
 
         expect(cv.get(testInjectableName)).toBe(result);
     });

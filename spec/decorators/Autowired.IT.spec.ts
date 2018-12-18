@@ -17,7 +17,7 @@ describe("Autowired tests", () => {
             }
         }
 
-        cv.set(testFactoryName, "factory", [], TestFactoryClass);
+        cv.set("factory", [], TestFactoryClass, testFactoryName);
 
         class ConsumerClass {
             @Autowired(cv, testFactoryName)
@@ -37,7 +37,7 @@ describe("Autowired tests", () => {
 
         const testFactoryName = "testFactoryName";
 
-        @Injectable(cv, testFactoryName, InjectableType.FACTORY, [])
+        @Injectable(cv, InjectableType.FACTORY, [], testFactoryName)
         class TestFactoryClass {
             public getVal() {
                 return result;

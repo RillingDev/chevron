@@ -6,10 +6,20 @@ describe("Chevron tests", () => {
         expect(() => new Chevron().get("foo")).toThrow();
     });
 
+    it("Asserts that Chevron#set throws an exception when using a duplicate key", () => {
+        const cv = new Chevron();
+
+        cv.set("service", [], 123, "foo");
+
+        expect(() => cv.set(InjectableType.SERVICE, [], 321, "foo")).toThrowError(
+            /Key already exists.+/
+        );
+    });
+
     it("Asserts that Chevron#set throws an exception when using an unknown type", () => {
         expect(() =>
-            new Chevron().set("myUnknown", "unknown", [], 123)
-        ).toThrow();
+            new Chevron().set("unknown", [], 123, "myUnknown")
+        ).toThrowError(/Missing type.+/);
     });
 
     it(
@@ -18,8 +28,8 @@ describe("Chevron tests", () => {
         () => {
             const cv = new Chevron();
 
-            cv.set("myService", InjectableType.SERVICE, [], 123);
-            cv.set("myFactory", InjectableType.FACTORY, [], 321);
+            cv.set(InjectableType.SERVICE, [], 123, "myService");
+            cv.set(InjectableType.FACTORY, [], 321, "myFactory");
         }
     );
 });

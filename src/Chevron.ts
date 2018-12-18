@@ -1,3 +1,4 @@
+import { isNil } from "lightdash";
 import { dependencyDefinitionArr } from "./dependencyDefinitionArr";
 import { IEntry } from "./IEntry";
 import { factoryBootstrapper } from "./injectableTypes/factory";
@@ -8,7 +9,7 @@ import { typeBootstrapperFn } from "./injectableTypes/typeBootstrapperFn";
 
 class Chevron {
     private readonly types: Map<string, typeBootstrapperFn>;
-    private readonly injectables: Map<string, IEntry>;
+    private readonly injectables: Map<any, IEntry>;
 
     /**
      * Main chevron class.
@@ -29,43 +30,49 @@ class Chevron {
      * Gets a bootstrapped injectable from the chevron instance.
      *
      * @public
-     * @param {string} name Name of the injectable to get.
+     * @param {*} key Key of the injectable to get.
      * @returns {*} Bootstrapped content of the injectable.
-     * @throws Error when the name cannot be found, or circular dependencies exist.
+     * @throws Error when the key cannot be found, or circular dependencies exist.
      */
-    public get(name: string): any {
-        return this.resolveEntry(name, new Set());
+    public get(key: any): any {
+        return this.resolveEntry(key, new Set());
     }
 
     /**
      * Checks if the chevron instance has a given injectable.
      *
      * @public
-     * @param {string} name Name of the injectable to check.
+     * @param {*} key Key of the injectable to check.
      * @returns {boolean} If the chevron instance has a given injectable.
      */
-    public has(name: string): boolean {
-        return this.injectables.has(name);
+    public has(key: any): boolean {
+        return this.injectables.has(key);
     }
 
     /**
      * Set a new injectable on the chevron instance.
      *
      * @public
-     * @param {string} name Name of the injectable.
      * @param {string} type Type of the injectable.
      * @param {string[]} dependencies Array of dependency names.
-     * @param {*} content Content of the injectable.
+     * @param {*} initializer Content of the injectable.
+     * @param {*?} key Custom key of the injectable. If none is given, the initializer will be used.
+     * @throws Error when the key already exists, or the type is invalid.
      */
     public set(
-        name: string,
         type: string,
         dependencies: dependencyDefinitionArr,
-        content: any
+        initializer: any,
+        key?: any
     ): void {
+        const effectiveKey = isNil(key) ? initializer : key;
+        if (this.has(effectiveKey)) {
+            throw new Error(`Key already exists: '${effectiveKey}'.`);
+        }
+
         this.injectables.set(
-            name,
-            this.createEntry(type, content, dependencies)
+            effectiveKey,
+            this.createEntry(type, initializer, dependencies)
         );
     }
 
@@ -91,57 +98,53 @@ class Chevron {
         this.types.set(name, bootstrapperFn);
     }
 
-    private resolveEntry(name: string, accessStack: Set<string>) {
-        if (accessStack.has(name)) {
+    private resolveEntry(key: any, accessStack: Set<string>): any {
+        if (accessStack.has(key)) {
             throw new Error(
-                `Circular dependencies were found: '${[
-                    ...accessStack,
-                    name
-                ].join("->")}'.`
+                `Circular dependencies found: '${[...accessStack, key].join(
+                    "->"
+                )}'.`
             );
         }
-        if (!this.has(name)) {
-            throw new Error(`Injectable '${name}' does not exist.`);
+        if (!this.has(key)) {
+            throw new Error(`Injectable '${key}' does not exist.`);
         }
-        const entry = this.injectables.get(name)!;
 
-        if (!entry.isBootstrapped) {
-            accessStack.add(name);
-            entry.bootstrap(accessStack);
-            accessStack.delete(name);
+        const entry = this.injectables.get(key)!;
+        if (isNil(entry.content)) {
+            accessStack.add(key);
+            this.bootstrap(entry, accessStack);
+            accessStack.delete(key);
         }
 
         return entry.content;
     }
 
+    private bootstrap(entry: IEntry, accessStack: Set<string>): void {
+        const constructedDependencies = entry.dependencies.map(dependencyName =>
+            this.resolveEntry(dependencyName, accessStack)
+        );
+        entry.content = entry.typeBootstrapper(
+            entry.initializer,
+            constructedDependencies
+        );
+    }
+
     private createEntry(
         type: string,
-        content: any,
+        initializer: any,
         dependencies: dependencyDefinitionArr
     ): IEntry {
         if (!this.hasType(type)) {
             throw new Error(`Missing type '${type}'.`);
         }
-        const typeBootstrapper = this.types.get(type)!;
 
-        const entry: IEntry = {
-            isBootstrapped: false,
-            content,
-            bootstrap: (accessStack: Set<string>) => {
-                const constructedDependencies = dependencies.map(
-                    dependencyName =>
-                        this.resolveEntry(dependencyName, accessStack)
-                );
-
-                entry.content = typeBootstrapper(
-                    entry.content,
-                    constructedDependencies
-                );
-                entry.isBootstrapped = true;
-            }
+        return {
+            typeBootstrapper: this.types.get(type)!,
+            dependencies,
+            initializer,
+            content: null
         };
-
-        return entry;
     }
 }
 

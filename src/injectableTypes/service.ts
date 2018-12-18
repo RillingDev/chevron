@@ -7,12 +7,12 @@ import { typeBootstrapperFn } from "./typeBootstrapperFn";
  * @private
  */
 const serviceBootstrapper: typeBootstrapperFn = <T>(
-    content: (...args: any[]) => T,
+    initializer: (...args: any[]) => T,
     dependencies: dependencyArr
 ): (() => T) =>
     // tslint:disable-next-line:only-arrow-functions
     function() {
-        return content(...dependencies, ...arguments);
+        return initializer(...dependencies, ...arguments);
     };
 
 export { serviceBootstrapper };

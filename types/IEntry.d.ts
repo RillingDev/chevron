@@ -1,6 +1,9 @@
+import { dependencyDefinitionArr } from "./dependencyDefinitionArr";
+import { typeBootstrapperFn } from "./injectableTypes/typeBootstrapperFn";
 interface IEntry {
-    isBootstrapped: boolean;
-    bootstrap: (accessStack: Set<string>) => void;
+    typeBootstrapper: typeBootstrapperFn;
+    dependencies: dependencyDefinitionArr;
+    initializer: any;
     content: any;
 }
 export { IEntry };
