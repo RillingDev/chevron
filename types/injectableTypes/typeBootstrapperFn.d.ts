@@ -1,3 +1,3 @@
-import { dependencyDefinitionArr } from "../dependencyDefinitionArr";
-declare type typeBootstrapperFn = (initializer: any, dependencies: dependencyDefinitionArr) => any;
+import { dependencyArr } from "../dependencyArr";
+declare type typeBootstrapperFn = (initializer: any, dependencies: dependencyArr) => any;
 export { typeBootstrapperFn };

@@ -1,5 +1,5 @@
 import { Chevron } from "../Chevron";
-import { dependencyDefinitionArr } from "../dependencyDefinitionArr";
+import { dependencyKeyArr } from "../dependencyKeyArr";
 import { InjectableType } from "../injectableTypes/InjectableType";
 
 /**
@@ -54,7 +54,7 @@ import { InjectableType } from "../injectableTypes/InjectableType";
 const Injectable = (
     instance: Chevron,
     type: InjectableType,
-    dependencies: dependencyDefinitionArr,
+    dependencies: dependencyKeyArr,
     key?: any
 ) => (target: any) => {
     instance.set(type, dependencies, target, key);

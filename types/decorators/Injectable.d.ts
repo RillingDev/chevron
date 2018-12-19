@@ -49,5 +49,5 @@ import { InjectableType } from "../injectableTypes/InjectableType";
  *   }
  * }
  */
-declare const Injectable: (instance: Chevron, type: InjectableType, dependencies: string[], key?: any) => (target: any) => any;
+declare const Injectable: (instance: Chevron, type: InjectableType, dependencies: any[], key?: any) => (target: any) => any;
 export { Injectable };

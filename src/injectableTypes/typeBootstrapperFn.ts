@@ -1,8 +1,8 @@
-import { dependencyDefinitionArr } from "../dependencyDefinitionArr";
+import { dependencyArr } from "../dependencyArr";
 
 type typeBootstrapperFn = (
     initializer: any,
-    dependencies: dependencyDefinitionArr
+    dependencies: dependencyArr
 ) => any;
 
 export { typeBootstrapperFn };

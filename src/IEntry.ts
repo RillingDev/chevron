@@ -1,9 +1,9 @@
-import { dependencyDefinitionArr } from "./dependencyDefinitionArr";
+import { dependencyKeyArr } from "./dependencyKeyArr";
 import { typeBootstrapperFn } from "./injectableTypes/typeBootstrapperFn";
 
 interface IEntry {
     typeBootstrapper: typeBootstrapperFn;
-    dependencies: dependencyDefinitionArr;
+    dependencies: dependencyKeyArr;
     initializer: any;
     content: any;
 }

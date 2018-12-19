@@ -1,5 +1,5 @@
 import { isNil } from "lightdash";
-import { dependencyDefinitionArr } from "./dependencyDefinitionArr";
+import { dependencyKeyArr } from "./dependencyKeyArr";
 import { IEntry } from "./IEntry";
 import { factoryBootstrapper } from "./injectableTypes/factory";
 import { InjectableType } from "./injectableTypes/InjectableType";
@@ -61,7 +61,7 @@ class Chevron {
      */
     public set(
         type: string,
-        dependencies: dependencyDefinitionArr,
+        dependencies: dependencyKeyArr,
         initializer: any,
         key?: any
     ): void {
