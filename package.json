@@ -1,7 +1,7 @@
 {
     "name": "chevronjs",
     "version": "11.0.0-0",
-    "description": "A super tiny TypeScript library for dependency injection",
+    "description": "A small TypeScript library for lazy dependency injection",
     "main": "dist/chevron.common.js",
     "module": "dist/chevron.esm.js",
     "types": "./types/main.d.ts",
@@ -50,7 +50,7 @@
         "lightdash": "^10.2.0"
     },
     "devDependencies": {
-        "@types/jasmine": "^3.3.2",
+        "@types/jasmine": "^3.3.4",
         "docdash": "^1.0.1",
         "jasmine": "^3.3.1",
         "jsdoc": "^3.5.5",
@@ -60,7 +60,7 @@
         "rollup-plugin-node-resolve": "^4.0.0",
         "rollup-plugin-typescript2": "^0.18.1",
         "rollup-plugin-uglify-es": "0.0.1",
-        "tslint": "^5.11.0",
+        "tslint": "^5.12.0",
         "typescript": "^3.2.2",
         "uglify-es": "^3.3.10"
     }

@@ -1,12 +1,10 @@
 # ChevronJS
 
-> A super tiny TypeScript library for dependency injection.
+> A small TypeScript library for lazy dependency injection.
 
 ## Introduction
 
-Chevron is an extremely small(~600Bytes) JavaScript library for dependency injection inspired by [BottleJS](https://github.com/young-steveo/bottlejs), and the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module).
-
-[Demo](http://codepen.io/FelixRilling/pen/AXgydJ)
+Chevron is a small TypeScript library for lazy dependency injection inspired by the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module) and [Spring's DI System](https://www.baeldung.com/inversion-control-and-dependency-injection-in-spring).
 
 [Docs](https://felixrilling.github.io/chevron/)
 
@@ -16,125 +14,203 @@ Chevron is an extremely small(~600Bytes) JavaScript library for dependency injec
 npm install chevronjs
 ```
 
-### Constructor
-
-To start with Chevron, you need to create a new Chevron container:
+Chevron can be used in two ways, either the classic programmatic API, calling Chevron#set and Chevron#get to set and get injectables, or by using the typescript decorators `@Injectable` and `@Autowired` on the given values.
 
 ```typescript
-import {Chevron} from "chevronjs";
+import {Chevron, InjectableType} from "chevronjs";
+
+const cv = new Chevron(); // Create a new instance which acts as the container for the injectables
+
+/*
+ * Classic API.
+ */
+class MyFactory {
+    public sayHello() {
+        console.log("Hello!");
+    }
+}
+
+cv.set(
+    InjectableType.FACTORY, // Type of the injectable.
+    [], // Dependencies this injectable uses, none in this case.
+    MyFactory // Content of the injectable. In this case, it will also be used as the key for accessing the injectable later.
+);
+
+cv.get(MyFactory).sayHello(); // Prints "Hello!"
+```
+```typescript
+import {Chevron, InjectableType} from "chevronjs";
+import { Autowired } from "chevronjs/src/decorators/Autowired";
+import { Injectable } from "chevronjs/src/decorators/Injectable";
 
 const cv = new Chevron();
+
+/*
+ * Decorator API.
+ */
+@Injectable(cv, InjectableType.FACTORY, [])
+class MyFactory {
+    public sayHello() {
+        console.log("Hello!");
+    }
+}
+
+class ConsumerClass {
+    @Autowired(cv, MyFactory)
+    private readonly injectedMyFactory: any;
+
+    public run() {
+        this.injectedMyFactory.sayHello();
+    }
+}
+
+new ConsumerClass().run(); // Prints "Hello!"
 ```
 
-### Dependency Types
+### Dependencies
 
-Chevron comes with two built-in types.
-
-#### Services
-
-Services are the most common type of dependencies. A service is simply a function wrapped by Chevron to inject dependencies.
-The syntax for `service` is as follows:
+When an injectable relies on others in order to be constructed, you can declare those as its dependencies:
 
 ```typescript
-import {Chevron} from "chevronjs";
+import {Chevron, InjectableType} from "chevronjs";
 
-const cv = new Chevron();
+const cv = new Chevron(); // Create a new instance which acts as the container for the injectables
 
-// Create new service
-cv.set("myService", "service", [], function() {
-    return 12;
-});
-// Get service from the Chevron Container
-const myService = cv.get("myService");
-myService(); // => 12
+class MyFactory {
+    public sayHello() {
+        console.log("Hello!");
+    }
+}
+
+cv.set(
+    InjectableType.FACTORY,
+    [],
+    MyFactory
+);
+
+function myService(myFactory: MyFactory) { // Dependency will be available in the service as an argument.
+    myFactory.sayHello();
+}
+
+cv.set(
+    InjectableType.SERVICE,
+    [MyFactory], // Key of the dependency is listed here.
+    myService
+);
+
+cv.get(myService)(); // Prints "Hello!"
 ```
 
-With dependencies:
+Upon construction of the injectable, all dependencies will be accessed, and constructed of they are not already.
+
+### Keys
+
+By default, Chevron will try to use the content of an injectable as its key, but if that is not what you want (if you want the same class in two injectables for example) you can provide an explicit key:
 
 ```typescript
-import {Chevron} from "chevronjs";
+import {Chevron, InjectableType} from "chevronjs";
 
 const cv = new Chevron();
 
-cv.set("myService", "service", [], function() {
-    return 12;
-});
+class MyFactory {
+    public sayHello() {
+        console.log("Hello!");
+    }
+}
 
-// Declare the service "foo" as dependency and as function argument
-cv.set("myOtherService", "service", ["myService"], function(myService, int) {
-    return int * myService();
-});
+cv.set(
+    InjectableType.FACTORY,
+    [],
+    MyFactory,
+    "myInjectableFactory1"
+);
 
-const myOtherService = cv.get("myOtherService");
-myOtherService(2); // => 24
+cv.set(
+    InjectableType.FACTORY,
+    [],
+    MyFactory,
+    "myInjectableFactory2"
+);
+
+cv.get("myInjectableFactory1").sayHello(); // Prints "Hello!"
 ```
 
-#### Factories
+### Injectable Types
 
-Factories are very similar to services but are treated as **constructors** instead of functions.
-Factories can be called with the `factory` method.
+Chevron comes with a handful of built-in injectable types:
+
+#### Plain
+
+A value that does not need to be constructed, and can be used as-is.
 
 ```typescript
-import {Chevron} from "chevronjs";
+import {Chevron, InjectableType} from "chevronjs";
 
 const cv = new Chevron();
+const result = 123;
 
-// Create new factory
-cv.set("myFactory", "factory", [], function() {
-    this.foo = 12;
-    this.bar = 17;
-});
+const testPlainName = "testPlainName";
+cv.set(InjectableType.PLAIN, [], result, testPlainName);
 
-const myFactory = cv.get("myFactory");
-myFactory.bar; // => 17
+cv.get(testPlainName); // returns 123
 ```
 
-Combined with a service:
+####  Factory
+ 
+A constructor function/class, that will be constructed with the given dependencies as arguments.
 
 ```typescript
-import {Chevron} from "chevronjs";
+import {Chevron, InjectableType} from "chevronjs";
 
 const cv = new Chevron();
+const result = 123;
 
-cv.set("myFactory", "factory", [], function() {
-    this.foo = 7;
-    this.bar = 17;
-});
+const testFactoryName = "testFactoryName";
 
-cv.set("myService", "service", ["myFactory"], function(myFactory, int) {
-    return int * myFactory.foo;
-});
+class TestFactoryClass {
+    // noinspection JSMethodCanBeStatic
+    public getVal() {
+        return result;
+    }
+}
 
-const myService = cv.get("myService");
-myService(3); // => 21
+cv.set(InjectableType.FACTORY, [], TestFactoryClass, testFactoryName);
+
+cv.get(testFactoryName).getVal(); // returns 123
 ```
 
-## API
-
-You can easily create your own type by using the Chevron API.
-To declare a new type, simply call add a typeName and constructorFunction for your new type on the type map of a chevron instance:
+####  Service
+ 
+A function that takes the given dependencies and content as arguments.
 
 ```typescript
-import {Chevron} from "chevronjs";
+import {Chevron, InjectableType} from "chevronjs";
 
 const cv = new Chevron();
+const result = 123;
 
-cv.$.set("myType", function(content, dependencies) {
-    console.log("Hello World");
+const testServiceName = "testServiceName";
+const testServiceFn = () => result;
+cv.set(InjectableType.SERVICE, [], testServiceFn, testServiceName);
 
-    return content;
-});
+cv.get(testServiceName)(); // returns 123
 ```
 
-You'll probably want to start by using a modified version of the default Service or Factory constructorFunction.
-After you created the new type, you can use it when setting a new entry:
+### API
+
+You can add your own injectable types to provide custom bootstrapping behaviour:
 
 ```typescript
-import {Chevron} from "chevronjs";
+import {Chevron, InjectableType} from "chevronjs";
 
 const cv = new Chevron();
 
-cv.set("myTypeModule", "myType", [], function() {
-    return "bar";
-});
+const MY_INJECTABLE_TYPE = "myType";
+cv.setType(MY_INJECTABLE_TYPE, (content, dependencies) => content * 2);
+
+const testInjectable = "testInjectable";
+const testVal = 123;
+cv.set(MY_INJECTABLE_TYPE, [], testVal, testInjectable);
+
+cv.get(testInjectable); // returns 246
 ```
