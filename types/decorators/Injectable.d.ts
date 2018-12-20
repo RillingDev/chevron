@@ -1,10 +1,8 @@
 import { Chevron } from "../Chevron";
 import { InjectableType } from "../injectableTypes/InjectableType";
 /**
- * Decorator function to be used with TypeScript decorators
+ * Decorator function to be used as TypeScript decorator
  * in order to declare a value to be an injectable which is added to the chevron instance.
- *
- * This is not exported with the main JS files as it only is useful with TypeScript.
  *
  * @param {Chevron} instance Chevron instance to use.
  * @param {string} type Type of the injectable.
@@ -13,7 +11,7 @@ import { InjectableType } from "../injectableTypes/InjectableType";
  * @example
  * const cv = new Chevron();
  *
- * @Injectable(cv, InjectableType.FACTORY, [])
+ * \@Injectable(cv, InjectableType.FACTORY, [])
  * class TestFactoryClass {
  *   public getVal() {
  *     return 123;
@@ -21,7 +19,7 @@ import { InjectableType } from "../injectableTypes/InjectableType";
  * }
  *
  * class ConsumerClass {
- *   @Autowired(cv, TestFactoryClass)
+ *   \@Autowired(cv, TestFactoryClass)
  *   private readonly injectedDependency: any;
  *
  *   public getVal() {
@@ -33,7 +31,7 @@ import { InjectableType } from "../injectableTypes/InjectableType";
  * const cv = new Chevron();
  *
  * const testFactoryName = "testFactoryName";
- * @Injectable(cv, InjectableType.FACTORY, [], testFactoryName)
+ * \@Injectable(cv, InjectableType.FACTORY, [], testFactoryName)
  * class TestFactoryClass {
  *   public getVal() {
  *     return 123;
@@ -41,7 +39,7 @@ import { InjectableType } from "../injectableTypes/InjectableType";
  * }
  *
  * class ConsumerClass {
- *   @Autowired(cv, testFactoryName)
+ *   \@Autowired(cv, testFactoryName)
  *   private readonly injectedDependency: any;
  *
  *   public getVal() {

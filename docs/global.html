@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Global - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Chevron.html">Chevron</a><ul class='methods'><li data-type='method'><a href="Chevron.html#get">get</a></li><li data-type='method'><a href="Chevron.html#has">has</a></li><li data-type='method'><a href="Chevron.html#hasType">hasType</a></li><li data-type='method'><a href="Chevron.html#set">set</a></li><li data-type='method'><a href="Chevron.html#setType">setType</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#Autowired">Autowired</a></li><li><a href="global.html#Injectable">Injectable</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Global</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+            
+
+            
+        
+        </div>
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="Autowired"><span class="type-signature"></span>Autowired<span class="signature">(instance, key)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line215">line 215</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Decorator function to be used as TypeScript decorator
+in order to wire an injectable into a class property.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>const cv = new Chevron();
+
+&lt;AT>Injectable(cv, InjectableType.FACTORY, [])
+class TestFactoryClass {
+  public getVal() {
+    return 123;
+  }
+}
+
+class ConsumerClass {
+  &amp;amp;Autowired(cv, TestFactoryClass)
+  private readonly injectedDependency: any;
+
+  public getVal() {
+    return this.injectedDependency.getVal();
+  }
+}</code></pre>
+
+    <pre class="prettyprint"><code>const cv = new Chevron();
+
+const testFactoryName = "testFactoryName";
+&amp;amp;Injectable(cv, InjectableType.FACTORY, [], testFactoryName)
+class TestFactoryClass {
+  public getVal() {
+    return 123;
+  }
+}
+
+class ConsumerClass {
+  &amp;amp;Autowired(cv, testFactoryName)
+  private readonly injectedDependency: any;
+
+  public getVal() {
+    return this.injectedDependency.getVal();
+  }
+}</code></pre>
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>instance</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Chevron.html">Chevron</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Chevron instance to use.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Key of the injectable.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="Injectable"><span class="type-signature"></span>Injectable<span class="signature">(instance, type, dependencies, key<span class="signature-attributes">nullable</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chevron.esm.js.html">chevron.esm.js</a>, <a href="chevron.esm.js.html#line266">line 266</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Decorator function to be used as TypeScript decorator
+in order to declare a value to be an injectable which is added to the chevron instance.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>const cv = new Chevron();
+
+&amp;amp;Injectable(cv, InjectableType.FACTORY, [])
+class TestFactoryClass {
+  public getVal() {
+    return 123;
+  }
+}
+
+class ConsumerClass {
+  &amp;amp;Autowired(cv, TestFactoryClass)
+  private readonly injectedDependency: any;
+
+  public getVal() {
+    return this.injectedDependency.getVal();
+  }
+}</code></pre>
+
+    <pre class="prettyprint"><code>const cv = new Chevron();
+
+const testFactoryName = "testFactoryName";
+&amp;amp;Injectable(cv, InjectableType.FACTORY, [], testFactoryName)
+class TestFactoryClass {
+  public getVal() {
+    return 123;
+  }
+}
+
+class ConsumerClass {
+  &amp;amp;Autowired(cv, testFactoryName)
+  private readonly injectedDependency: any;
+
+  public getVal() {
+    return this.injectedDependency.getVal();
+  }
+}</code></pre>
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>instance</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Chevron.html">Chevron</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Chevron instance to use.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Type of the injectable.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dependencies</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Array of dependency keys.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Custom key of the injectable. If none is given, the initializer will be used.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Dec 20 2018 16:05:29 GMT+0100 (Central European Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+
+</body>
+</html>

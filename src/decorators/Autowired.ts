@@ -1,10 +1,8 @@
 import { Chevron } from "../Chevron";
 
 /**
- * Decorator function to be used with TypeScript decorators
+ * Decorator function to be used as TypeScript decorator
  * in order to wire an injectable into a class property.
- *
- * This is not exported with the main JS files as it only is useful with TypeScript.
  *
  * @public
  * @param {Chevron} instance Chevron instance to use.
@@ -12,7 +10,7 @@ import { Chevron } from "../Chevron";
  * @example
  * const cv = new Chevron();
  *
- * @Injectable(cv, InjectableType.FACTORY, [])
+ * \@Injectable(cv, InjectableType.FACTORY, [])
  * class TestFactoryClass {
  *   public getVal() {
  *     return 123;
@@ -20,7 +18,7 @@ import { Chevron } from "../Chevron";
  * }
  *
  * class ConsumerClass {
- *   @Autowired(cv, TestFactoryClass)
+ *   \@Autowired(cv, TestFactoryClass)
  *   private readonly injectedDependency: any;
  *
  *   public getVal() {
@@ -32,7 +30,7 @@ import { Chevron } from "../Chevron";
  * const cv = new Chevron();
  *
  * const testFactoryName = "testFactoryName";
- * @Injectable(cv, InjectableType.FACTORY, [], testFactoryName)
+ * \@Injectable(cv, InjectableType.FACTORY, [], testFactoryName)
  * class TestFactoryClass {
  *   public getVal() {
  *     return 123;
@@ -40,7 +38,7 @@ import { Chevron } from "../Chevron";
  * }
  *
  * class ConsumerClass {
- *   @Autowired(cv, testFactoryName)
+ *   \@Autowired(cv, testFactoryName)
  *   private readonly injectedDependency: any;
  *
  *   public getVal() {
