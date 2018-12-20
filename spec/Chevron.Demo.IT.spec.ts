@@ -14,6 +14,7 @@ describe("Chevron Demo ITs", () => {
         /*
          * Classic API.
          */
+
         class MyFactory {
             public sayHello() {
                 console.log("Hello!");
@@ -39,6 +40,7 @@ describe("Chevron Demo ITs", () => {
         /*
          * Decorator API.
          */
+
         @Injectable(cv, InjectableType.FACTORY, [])
         class MyFactory {
             public sayHello() {

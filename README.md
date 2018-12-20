@@ -24,6 +24,7 @@ const cv = new Chevron(); // Create a new instance which acts as the container f
 /*
  * Classic API.
  */
+
 class MyFactory {
     public sayHello() {
         console.log("Hello!");
@@ -38,16 +39,17 @@ cv.set(
 
 cv.get(MyFactory).sayHello(); // Prints "Hello!"
 ```
+Chevron provides two [TypeScript Decorators](https://www.typescriptlang.org/docs/handbook/decorators.html) for its API.
+Keep in mind that decorators are an experimental TypeScript feature and might not be fully stabilized yet.
 ```typescript
-import {Chevron, InjectableType} from "chevronjs";
-import { Autowired } from "chevronjs/src/decorators/Autowired";
-import { Injectable } from "chevronjs/src/decorators/Injectable";
+import {Chevron, InjectableType, Autowired, Injectable} from "chevronjs";
 
 const cv = new Chevron();
 
 /*
  * Decorator API.
  */
+
 @Injectable(cv, InjectableType.FACTORY, [])
 class MyFactory {
     public sayHello() {
