@@ -1,6 +1,6 @@
 {
     "name": "chevronjs",
-    "version": "11.0.0-1",
+    "version": "11.0.0-2",
     "description": "A small TypeScript library for lazy dependency injection",
     "main": "dist/chevron.common.js",
     "module": "dist/chevron.esm.js",
