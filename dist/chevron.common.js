@@ -2,29 +2,7 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-// File is named "_index.ts" to avoid it being treated as a module index file.
-
-/**
- * Checks if a value is undefined or null.
- *
- * @memberof Is
- * @since 1.0.0
- * @param {any} val Value to check.
- * @returns {boolean} If the value is nil.
- * @example
- * isNil(null)
- * // => true
- *
- * isNil(undefined)
- * // => true
- *
- * isNil(0)
- * // => false
- *
- * isNil("")
- * // => false
- */
-const isNil = (val) => val == null;
+var lightdash = require('lightdash');
 
 /**
  * Built-in factory bootstrapper.
@@ -103,7 +81,7 @@ class Chevron {
         /*
          * Infer the key from the initializer only if no key was explicitly given.
          */
-        const effectiveKey = isNil(key) ? initializer : key;
+        const effectiveKey = lightdash.isNil(key) ? initializer : key;
         if (this.has(effectiveKey)) {
             throw new Error(`Key already exists: '${effectiveKey}'.`);
         }
@@ -144,7 +122,7 @@ class Chevron {
             throw new Error(`Injectable '${key}' does not exist.`);
         }
         const entry = this.injectables.get(key);
-        if (isNil(entry.content)) {
+        if (lightdash.isNil(entry.content)) {
             /*
              * Entry is not constructed, recursively bootstrap dependencies and the entry itself.
              */

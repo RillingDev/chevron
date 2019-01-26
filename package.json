@@ -10,7 +10,9 @@
             "module": "chevron",
             "file": "chevron"
         },
-        "external": []
+        "external": [
+            "lightdash"
+        ]
     },
     "scripts": {
         "start": "npm-run-all lint build test docs",
