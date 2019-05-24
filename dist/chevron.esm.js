@@ -170,4 +170,4 @@ const Injectable = (instance, type, dependencies, key) => (target) => {
     return target;
 };
 
-export { Chevron, Autowired, Injectable };
+export { Autowired, Chevron, Injectable };

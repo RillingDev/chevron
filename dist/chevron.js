@@ -195,8 +195,8 @@ var chevron = (function (exports) {
         return target;
     };
 
-    exports.Chevron = Chevron;
     exports.Autowired = Autowired;
+    exports.Chevron = Chevron;
     exports.Injectable = Injectable;
 
     return exports;
