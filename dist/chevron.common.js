@@ -2,7 +2,7 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var lightdash = require('lightdash');
+var lodash = require('lodash');
 
 /**
  * Built-in factory bootstrapper.
@@ -81,7 +81,7 @@ class Chevron {
         /*
          * Infer the key from the initializer only if no key was explicitly given.
          */
-        const effectiveKey = lightdash.isNil(key) ? initializer : key;
+        const effectiveKey = lodash.isNil(key) ? initializer : key;
         if (this.has(effectiveKey)) {
             throw new Error(`Key already exists: '${effectiveKey}'.`);
         }
@@ -122,7 +122,7 @@ class Chevron {
             throw new Error(`Injectable '${key}' does not exist.`);
         }
         const entry = this.injectables.get(key);
-        if (lightdash.isNil(entry.content)) {
+        if (lodash.isNil(entry.content)) {
             /*
              * Entry is not constructed, recursively bootstrap dependencies and the entry itself.
              */

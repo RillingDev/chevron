@@ -2,6 +2,8 @@
     "compilerOptions": {
         "baseUrl": "./",
         "moduleResolution": "node",
+        "declaration": true,
+        "declarationDir": "./dist/types",
         "module": "esnext",
         "target": "esnext",
         "newLine": "LF",
@@ -10,5 +12,8 @@
         "noImplicitAny": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true
-    }
+    },
+    "include": [
+        "./src"
+    ]
 }

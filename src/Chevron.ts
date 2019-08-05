@@ -1,4 +1,3 @@
-import { isNil } from "lightdash";
 import { dependencyKeyArr } from "./dependencyKeyArr";
 import { IEntry } from "./IEntry";
 import { factoryBootstrapper } from "./injectableTypes/factory";
@@ -6,6 +5,7 @@ import { InjectableType } from "./injectableTypes/InjectableType";
 import { plainBootstrapper } from "./injectableTypes/plain";
 import { serviceBootstrapper } from "./injectableTypes/service";
 import { typeBootstrapperFn } from "./injectableTypes/typeBootstrapperFn";
+import { isNil } from "lodash";
 
 class Chevron {
     private readonly types: Map<string, typeBootstrapperFn>;

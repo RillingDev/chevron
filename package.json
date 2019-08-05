@@ -4,25 +4,30 @@
     "description": "A small TypeScript library for lazy dependency injection",
     "main": "dist/chevron.common.js",
     "module": "dist/chevron.esm.js",
-    "types": "./types/main.d.ts",
+    "types": "./dist/types/main.d.ts",
     "settings": {
         "namespace": {
             "module": "chevron",
             "file": "chevron"
         },
         "external": [
-            "lightdash"
-        ]
+            "lightdash",
+            "lodash"
+        ],
+        "browser": {
+            "enabled": true,
+            "globals": {
+                "lodash": "_",
+                "lightdash": "l_"
+            }
+        }
     },
     "scripts": {
         "start": "npm-run-all lint build test docs",
         "build": "rollup -c ./tasks/rollup.config.js",
-        "build:iife": "rollup -c ./tasks/rollup.config.iife.js",
-        "build:iife-min": "rollup -c ./tasks/rollup.config.iife-min.js",
         "build:test": "rollup -c ./tasks/rollup.config.test.js",
-        "build:declarations": "tsc --build ./tasks/tsconfig.declarations.json",
         "watch": "rollup -c ./tasks/rollup.config.js --watch",
-        "dist": "npm-run-all --parallel build build:iife build:iife-min build:declarations",
+        "dist": "npm-run-all build test docs",
         "lint": "npm-run-all --parallel lint:ts",
         "lint:ts": "tslint ./src/**/*.ts ./spec/**/*.ts",
         "fix": "npm-run-all fix:ts fix:prettier",
@@ -49,21 +54,21 @@
     },
     "homepage": "https://github.com/FelixRilling/chevronjs#readme",
     "dependencies": {
-        "lightdash": "^10.2.2"
+        "@types/lodash": "^4.14.136",
+        "lightdash": "^11.0.0",
+        "lodash": "^4.17.15"
     },
     "devDependencies": {
-        "@types/jasmine": "^3.3.12",
+        "@types/jasmine": "^3.3.13",
         "docdash": "^1.1.1",
         "jasmine": "^3.4.0",
         "jsdoc": "^3.6.2",
         "npm-run-all": "^4.1.5",
-        "prettier": "^1.17.1",
-        "rollup": "^1.12.3",
-        "rollup-plugin-node-resolve": "^5.0.0",
-        "rollup-plugin-terser": "^4.0.4",
-        "rollup-plugin-typescript2": "^0.21.1",
-        "terser": "^3.17.0",
-        "tslint": "^5.16.0",
-        "typescript": "^3.4.5"
+        "prettier": "^1.18.2",
+        "rollup": "^1.16.7",
+        "rollup-plugin-node-resolve": "^5.2.0",
+        "rollup-plugin-typescript2": "^0.22.0",
+        "tslint": "^5.18.0",
+        "typescript": "^3.5.3"
     }
 }

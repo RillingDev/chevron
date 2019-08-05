@@ -1,4 +1,4 @@
-import { isNil } from 'lightdash';
+import { isNil } from 'lodash';
 
 /**
  * Built-in factory bootstrapper.
