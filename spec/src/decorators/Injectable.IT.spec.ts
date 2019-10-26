@@ -1,4 +1,3 @@
-/* tslint:disable:max-classes-per-file */
 import { Chevron } from "../../../src/Chevron";
 import { Autowired } from "../../../src/decorators/Autowired";
 import { Injectable } from "../../../src/decorators/Injectable";
@@ -12,9 +11,9 @@ describe("Injectable tests", () => {
         const testFactoryName = "testFactoryName";
 
         @Injectable(cv, InjectableType.FACTORY, [], testFactoryName)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         class TestFactoryClass {
-            // noinspection JSMethodCanBeStatic
-            public getVal() {
+            public getVal(): number {
                 return result;
             }
         }
@@ -29,8 +28,7 @@ describe("Injectable tests", () => {
 
         @Injectable(cv, InjectableType.FACTORY, [])
         class TestFactoryClass {
-            // noinspection JSUnusedGlobalSymbols,JSMethodCanBeStatic
-            public getVal() {
+            public getVal(): number {
                 return result;
             }
         }
@@ -39,7 +37,7 @@ describe("Injectable tests", () => {
             @Autowired(cv, TestFactoryClass)
             private readonly injectedDependency: any;
 
-            public getVal() {
+            public getVal(): number {
                 return this.injectedDependency.getVal();
             }
         }

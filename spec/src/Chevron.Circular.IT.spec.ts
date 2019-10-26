@@ -1,4 +1,3 @@
-/* tslint:disable:max-classes-per-file */
 import { Chevron } from "../../src/Chevron";
 import { InjectableType } from "../../src/injectableTypes/InjectableType";
 
@@ -10,7 +9,7 @@ describe("Chevron ITs", () => {
         const testFactoryName = "testFactoryName";
         const testServiceName = "testServiceName";
 
-        const testServiceFn = () => result;
+        const testServiceFn: () => number = () => result;
         cv.set(
             InjectableType.SERVICE,
             [testFactoryName],
@@ -21,12 +20,11 @@ describe("Chevron ITs", () => {
         class TestFactoryClass {
             private readonly numberService: () => number;
 
-            constructor(numberService: () => number) {
+            public constructor(numberService: () => number) {
                 this.numberService = numberService;
             }
 
-            // noinspection JSUnusedGlobalSymbols
-            public getVal() {
+            public getVal(): number {
                 return this.numberService();
             }
         }

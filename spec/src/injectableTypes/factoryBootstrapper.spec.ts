@@ -1,5 +1,4 @@
-/* tslint:disable:max-classes-per-file */
-import { dependencyArr } from "../../../src/dependencyArr";
+import { DependencyArr } from "../../../src/DependencyArr";
 import { factoryBootstrapper } from "../../../src/injectableTypes/factory";
 
 describe("factoryBootstrapper tests", () => {
@@ -9,11 +8,11 @@ describe("factoryBootstrapper tests", () => {
         class TestClass {
             private readonly val: number;
 
-            constructor() {
+            public constructor() {
                 this.val = result;
             }
 
-            public getVal() {
+            public getVal(): number {
                 return this.val;
             }
         }
@@ -27,18 +26,17 @@ describe("factoryBootstrapper tests", () => {
         class TestClass {
             private readonly val: number;
 
-            constructor(val: number) {
+            public constructor(val: number) {
                 this.val = val;
             }
 
-            // noinspection JSUnusedGlobalSymbols
-            public getVal() {
+            public getVal(): number {
                 return this.val;
             }
         }
 
         expect(
-            factoryBootstrapper(TestClass, <dependencyArr>[result]).getVal()
+            factoryBootstrapper(TestClass, <DependencyArr>[result]).getVal()
         ).toBe(result);
     });
 });

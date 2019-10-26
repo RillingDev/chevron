@@ -3,10 +3,8 @@
  *
  * @private
  */
-const serviceBootstrapper = (initializer, dependencies) => 
-// tslint:disable-next-line:only-arrow-functions
-function () {
-    return initializer(...dependencies, ...arguments);
+const serviceBootstrapper = (initializer, dependencies) => function (...args) {
+    return initializer(...dependencies, ...args);
 };
 export { serviceBootstrapper };
 //# sourceMappingURL=service.js.map

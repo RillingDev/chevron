@@ -1,9 +1,9 @@
-import { typeBootstrapperFn } from "./typeBootstrapperFn";
+import { TypeBootstrapperFn } from "./TypeBootstrapperFn";
 /**
  * Built-in factory bootstrapper.
  *
  * @private
  */
-declare const factoryBootstrapper: typeBootstrapperFn;
+declare const factoryBootstrapper: TypeBootstrapperFn;
 export { factoryBootstrapper };
 //# sourceMappingURL=factory.d.ts.map

@@ -1,11 +1,9 @@
-/* tslint:disable:max-classes-per-file */
 import { Chevron } from "../../src/Chevron";
 import { InjectableType } from "../../src/injectableTypes/InjectableType";
 import { Autowired } from "../../src/decorators/Autowired";
 import { Injectable } from "../../src/decorators/Injectable";
 
 describe("Chevron Demo ITs", () => {
-
     it("Usage#1", () => {
         const logSpy = spyOn(console, "log");
 
@@ -16,7 +14,7 @@ describe("Chevron Demo ITs", () => {
          */
 
         class MyFactory {
-            public sayHello() {
+            public sayHello(): void {
                 console.log("Hello!");
             }
         }
@@ -43,7 +41,7 @@ describe("Chevron Demo ITs", () => {
 
         @Injectable(cv, InjectableType.FACTORY, [])
         class MyFactory {
-            public sayHello() {
+            public sayHello(): void {
                 console.log("Hello!");
             }
         }
@@ -52,7 +50,7 @@ describe("Chevron Demo ITs", () => {
             @Autowired(cv, MyFactory)
             private readonly injectedMyFactory: any;
 
-            public run() {
+            public run(): void {
                 this.injectedMyFactory.sayHello();
             }
         }
@@ -68,18 +66,15 @@ describe("Chevron Demo ITs", () => {
         const cv = new Chevron(); // Create a new instance which acts as the container for the injectables
 
         class MyFactory {
-            public sayHello() {
+            public sayHello(): void {
                 console.log("Hello!");
             }
         }
 
-        cv.set(
-            InjectableType.FACTORY,
-            [],
-            MyFactory
-        );
+        cv.set(InjectableType.FACTORY, [], MyFactory);
 
-        function myService(myFactory: MyFactory) { // Dependency will be available in the service as an argument.
+        function myService(myFactory: MyFactory): void {
+            // Dependency will be available in the service as an argument.
             myFactory.sayHello();
         }
 
@@ -100,24 +95,14 @@ describe("Chevron Demo ITs", () => {
         const cv = new Chevron();
 
         class MyFactory {
-            public sayHello() {
+            public sayHello(): void {
                 console.log("Hello!");
             }
         }
 
-        cv.set(
-            InjectableType.FACTORY,
-            [],
-            MyFactory,
-            "myInjectableFactory1"
-        );
+        cv.set(InjectableType.FACTORY, [], MyFactory, "myInjectableFactory1");
 
-        cv.set(
-            InjectableType.FACTORY,
-            [],
-            MyFactory,
-            "myInjectableFactory2"
-        );
+        cv.set(InjectableType.FACTORY, [], MyFactory, "myInjectableFactory2");
 
         cv.get("myInjectableFactory1").sayHello(); // Prints "Hello!"
 

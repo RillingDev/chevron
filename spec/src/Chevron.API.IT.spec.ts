@@ -5,7 +5,7 @@ describe("Chevron API ITs", () => {
         const cv = new Chevron();
 
         const MY_INJECTABLE_TYPE = "myType";
-        cv.setType(MY_INJECTABLE_TYPE, (content, dependencies) => content * 2);
+        cv.setType(MY_INJECTABLE_TYPE, content => content * 2);
 
         const testInjectable = "testInjectable";
         const testVal = 123;

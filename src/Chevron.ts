@@ -1,15 +1,15 @@
-import { dependencyKeyArr } from "./dependencyKeyArr";
-import { IEntry } from "./IEntry";
+import { DependencyKeyArr } from "./DependencyKeyArr";
+import { Entry } from "./Entry";
 import { factoryBootstrapper } from "./injectableTypes/factory";
 import { InjectableType } from "./injectableTypes/InjectableType";
 import { plainBootstrapper } from "./injectableTypes/plain";
 import { serviceBootstrapper } from "./injectableTypes/service";
-import { typeBootstrapperFn } from "./injectableTypes/typeBootstrapperFn";
+import { TypeBootstrapperFn } from "./injectableTypes/TypeBootstrapperFn";
 import { isNil } from "lodash";
 
 class Chevron {
-    private readonly types: Map<string, typeBootstrapperFn>;
-    private readonly injectables: Map<any, IEntry>;
+    private readonly types: Map<string, TypeBootstrapperFn>;
+    private readonly injectables: Map<any, Entry>;
 
     /**
      * Main chevron class.
@@ -17,7 +17,7 @@ class Chevron {
      * @public
      * @class Chevron
      */
-    constructor() {
+    public constructor() {
         this.types = new Map();
         this.setType(InjectableType.PLAIN, plainBootstrapper);
         this.setType(InjectableType.SERVICE, serviceBootstrapper);
@@ -61,7 +61,7 @@ class Chevron {
      */
     public set(
         type: string,
-        dependencies: dependencyKeyArr,
+        dependencies: DependencyKeyArr,
         initializer: any,
         key?: any
     ): void {
@@ -104,7 +104,7 @@ class Chevron {
      * @param {string} name Name of the type.
      * @param {function} bootstrapperFn Bootstrap function for injectables of this type.
      */
-    public setType(name: string, bootstrapperFn: typeBootstrapperFn): void {
+    public setType(name: string, bootstrapperFn: TypeBootstrapperFn): void {
         this.types.set(name, bootstrapperFn);
     }
 
@@ -134,7 +134,7 @@ class Chevron {
      *
      * @private
      */
-    private bootstrap(key: any, accessStack: Set<string>, entry: IEntry): void {
+    private bootstrap(key: any, accessStack: Set<string>, entry: Entry): void {
         /*
          * Check if we already tried accessing this injectable before; if we did, assume circular dependencies.
          */

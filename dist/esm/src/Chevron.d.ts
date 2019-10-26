@@ -1,5 +1,5 @@
-import { dependencyKeyArr } from "./dependencyKeyArr";
-import { typeBootstrapperFn } from "./injectableTypes/typeBootstrapperFn";
+import { DependencyKeyArr } from "./DependencyKeyArr";
+import { TypeBootstrapperFn } from "./injectableTypes/TypeBootstrapperFn";
 declare class Chevron {
     private readonly types;
     private readonly injectables;
@@ -37,7 +37,7 @@ declare class Chevron {
      * @param {*?} key Custom key of the injectable. If none is given, the initializer will be used.
      * @throws Error when the key already exists, or the type is invalid.
      */
-    set(type: string, dependencies: dependencyKeyArr, initializer: any, key?: any): void;
+    set(type: string, dependencies: DependencyKeyArr, initializer: any, key?: any): void;
     /**
      * Checks if the chevron instance has a given injectable type.
      *
@@ -53,7 +53,7 @@ declare class Chevron {
      * @param {string} name Name of the type.
      * @param {function} bootstrapperFn Bootstrap function for injectables of this type.
      */
-    setType(name: string, bootstrapperFn: typeBootstrapperFn): void;
+    setType(name: string, bootstrapperFn: TypeBootstrapperFn): void;
     /**
      * Resolves an entry by its key, keeping track of the access stack.
      *

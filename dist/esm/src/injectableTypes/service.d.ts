@@ -1,9 +1,9 @@
-import { typeBootstrapperFn } from "./typeBootstrapperFn";
+import { TypeBootstrapperFn } from "./TypeBootstrapperFn";
 /**
  * Built-in service bootstrapper.
  *
  * @private
  */
-declare const serviceBootstrapper: typeBootstrapperFn;
+declare const serviceBootstrapper: TypeBootstrapperFn;
 export { serviceBootstrapper };
 //# sourceMappingURL=service.d.ts.map

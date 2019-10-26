@@ -1,4 +1,3 @@
-/* tslint:disable:max-classes-per-file */
 import { Chevron } from "../../src/Chevron";
 import { InjectableType } from "../../src/injectableTypes/InjectableType";
 
@@ -18,7 +17,7 @@ describe("Chevron ITs", () => {
         const result = 123;
 
         const testServiceName = "testServiceName";
-        const testServiceFn = () => result;
+        const testServiceFn: () => number = () => result;
         cv.set(InjectableType.SERVICE, [], testServiceFn, testServiceName);
 
         expect(cv.get(testServiceName)()).toBe(result);
@@ -31,8 +30,7 @@ describe("Chevron ITs", () => {
         const testFactoryName = "testFactoryName";
 
         class TestFactoryClass {
-            // noinspection JSMethodCanBeStatic
-            public getVal() {
+            public getVal(): number {
                 return result;
             }
         }
@@ -47,7 +45,7 @@ describe("Chevron ITs", () => {
         const result = 123;
 
         const testServiceName = "testServiceName";
-        const testServiceFn = () => result;
+        const testServiceFn: () => number = () => result;
         cv.set(InjectableType.SERVICE, [], testServiceFn, testServiceName);
 
         const testFactoryName = "testFactoryName";
@@ -55,12 +53,11 @@ describe("Chevron ITs", () => {
         class TestFactoryClass {
             private readonly numberService: () => number;
 
-            constructor(numberService: () => number) {
+            public constructor(numberService: () => number) {
                 this.numberService = numberService;
             }
 
-            // noinspection JSUnusedGlobalSymbols
-            public getVal() {
+            public getVal(): number {
                 return this.numberService();
             }
         }
@@ -80,14 +77,13 @@ describe("Chevron ITs", () => {
         const result = 123;
 
         const testService1Name = "testService1Name";
-        const testService1Fn = () => result;
+        const testService1Fn: () => number = () => result;
         cv.set(InjectableType.SERVICE, [], testService1Fn, testService1Name);
 
         const testFactoryName1 = "testFactoryName1";
 
         class TestFactoryClass1 {
-            // noinspection JSMethodCanBeStatic
-            public isAllowed() {
+            public isAllowed(): boolean {
                 return true;
             }
         }
@@ -95,7 +91,10 @@ describe("Chevron ITs", () => {
         cv.set(InjectableType.FACTORY, [], TestFactoryClass1, testFactoryName1);
 
         const testService2Name = "testService2Name";
-        const testService2Fn = (testService1: any, testFactory1: any) => {
+        const testService2Fn: (testService1: any, testFactory1: any) => any = (
+            testService1,
+            testFactory1
+        ) => {
             if (!testFactory1.isAllowed()) {
                 throw new Error("Oh no!");
             }
@@ -113,12 +112,11 @@ describe("Chevron ITs", () => {
         const TestFactoryClass2 = class {
             private readonly numberService: () => number;
 
-            constructor(numberService: () => number) {
+            public constructor(numberService: () => number) {
                 this.numberService = numberService;
             }
 
-            // noinspection JSUnusedGlobalSymbols
-            public getVal() {
+            public getVal(): number {
                 return this.numberService();
             }
         };
@@ -137,8 +135,7 @@ describe("Chevron ITs", () => {
         const result = 123;
 
         class TestFactoryClass {
-            // noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
-            public getVal() {
+            public getVal(): number {
                 return result;
             }
         }
@@ -153,8 +150,7 @@ describe("Chevron ITs", () => {
         const result = 123;
 
         class TestFactoryClass {
-            // noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
-            public getVal() {
+            public getVal(): number {
                 return result;
             }
         }

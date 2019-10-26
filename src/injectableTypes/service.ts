@@ -1,18 +1,17 @@
-import { dependencyArr } from "../dependencyArr";
-import { typeBootstrapperFn } from "./typeBootstrapperFn";
+import { DependencyArr } from "../DependencyArr";
+import { TypeBootstrapperFn } from "./TypeBootstrapperFn";
 
 /**
  * Built-in service bootstrapper.
  *
  * @private
  */
-const serviceBootstrapper: typeBootstrapperFn = <T>(
+const serviceBootstrapper: TypeBootstrapperFn = <T>(
     initializer: (...args: any[]) => T,
-    dependencies: dependencyArr
+    dependencies: DependencyArr
 ): (() => T) =>
-    // tslint:disable-next-line:only-arrow-functions
-    function() {
-        return initializer(...dependencies, ...arguments);
+    function(...args) {
+        return initializer(...dependencies, ...args);
     };
 
 export { serviceBootstrapper };
