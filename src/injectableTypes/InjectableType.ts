@@ -1,4 +1,4 @@
-const enum InjectableType {
+enum InjectableType {
     FACTORY = "factory",
     SERVICE = "service",
     PLAIN = "plain"

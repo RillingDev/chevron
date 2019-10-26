@@ -11,6 +11,12 @@ var lodash = require('lodash');
  */
 const factoryBootstrapper = (initializer, dependencies) => Reflect.construct(initializer, dependencies);
 
+(function (InjectableType) {
+    InjectableType["FACTORY"] = "factory";
+    InjectableType["SERVICE"] = "service";
+    InjectableType["PLAIN"] = "plain";
+})(exports.InjectableType || (exports.InjectableType = {}));
+
 /**
  * Built-in plain bootstrapper.
  *
@@ -38,9 +44,9 @@ class Chevron {
      */
     constructor() {
         this.types = new Map();
-        this.setType("plain" /* PLAIN */, plainBootstrapper);
-        this.setType("service" /* SERVICE */, serviceBootstrapper);
-        this.setType("factory" /* FACTORY */, factoryBootstrapper);
+        this.setType(exports.InjectableType.PLAIN, plainBootstrapper);
+        this.setType(exports.InjectableType.SERVICE, serviceBootstrapper);
+        this.setType(exports.InjectableType.FACTORY, factoryBootstrapper);
         this.injectables = new Map();
     }
     /**
@@ -177,3 +183,4 @@ const Injectable = (instance, type, dependencies, key) => (target) => {
 exports.Autowired = Autowired;
 exports.Chevron = Chevron;
 exports.Injectable = Injectable;
+//# sourceMappingURL=chevron.common.js.map
