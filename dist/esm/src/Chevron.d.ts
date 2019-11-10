@@ -1,6 +1,6 @@
 import { DependencyKeyArr } from "./DependencyKeyArr";
 import { TypeBootstrapperFn } from "./injectableTypes/TypeBootstrapperFn";
-declare class Chevron<TKey> {
+declare class Chevron<TKey, UInit> {
     private readonly types;
     private readonly injectables;
     /**

@@ -1,1 +1,1 @@
-{"version":3,"file":"plain.d.ts","sourceRoot":"","sources":["../../../../src/injectableTypes/plain.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,kBAAkB,EAAE,MAAM,sBAAsB,CAAC;AAE1D;;;;GAIG;AACH,QAAA,MAAM,iBAAiB,EAAE,kBACV,CAAC;AAEhB,OAAO,EAAE,iBAAiB,EAAE,CAAC"}
+{"version":3,"file":"plain.d.ts","sourceRoot":"","sources":["../../../../src/injectableTypes/plain.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,kBAAkB,EAAE,MAAM,sBAAsB,CAAC;AAE1D;;;;GAIG;AACH,QAAA,MAAM,iBAAiB,EAAE,kBAEA,CAAC;AAE1B,OAAO,EAAE,iBAAiB,EAAE,CAAC"}

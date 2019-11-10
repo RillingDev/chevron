@@ -7,9 +7,9 @@ import { serviceBootstrapper } from "./injectableTypes/service";
 import { TypeBootstrapperFn } from "./injectableTypes/TypeBootstrapperFn";
 import { isNil } from "lodash";
 
-class Chevron<TKey> {
+class Chevron<TKey,UInit> {
     private readonly types: Map<string, TypeBootstrapperFn>;
-    private readonly injectables: Map<TKey, Entry<TKey>>;
+    private readonly injectables: Map<TKey, Entry<TKey,UInit>>;
 
     /**
      * Main chevron class.
@@ -137,7 +137,7 @@ class Chevron<TKey> {
     private bootstrap(
         key: TKey,
         accessStack: Set<TKey>,
-        entry: Entry<TKey>
+        entry: Entry<TKey,UInit>
     ): void {
         /*
          * Check if we already tried accessing this injectable before; if we did, assume circular dependencies.

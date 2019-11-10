@@ -1,9 +1,9 @@
 import { DependencyKeyArr } from "./DependencyKeyArr";
 import { TypeBootstrapperFn } from "./injectableTypes/TypeBootstrapperFn";
-interface Entry<TKey> {
+interface Entry<TKey, UInit> {
     typeBootstrapper: TypeBootstrapperFn;
     dependencies: DependencyKeyArr<TKey>;
-    initializer: any;
+    initializer: UInit;
     content: any;
 }
 export { Entry };

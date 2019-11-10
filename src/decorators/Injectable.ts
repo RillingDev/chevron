@@ -11,8 +11,8 @@ import { InjectableType } from "../injectableTypes/InjectableType";
  * @param {string[]} dependencies Array of dependency keys.
  * @param {*?} key Custom key of the injectable. If none is given, the initializer will be used.
  */
-const Injectable = <TKey>(
-    instance: Chevron<TKey>,
+const Injectable = <TKey, UInit>(
+    instance: Chevron<TKey, UInit>,
     type: InjectableType,
     dependencies: DependencyKeyArr<TKey>,
     key?: TKey
