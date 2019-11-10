@@ -1,4 +1,3 @@
-import { DependencyArr } from "../../../src/DependencyArr";
 import { serviceBootstrapper } from "../../../src/injectableTypes/service";
 
 describe("serviceBootstrapper tests", () => {
@@ -13,8 +12,6 @@ describe("serviceBootstrapper tests", () => {
         const result = 123;
         const testFn: (val: number) => number = (val: number) => val;
 
-        expect(serviceBootstrapper(testFn, <DependencyArr>[result])()).toBe(
-            result
-        );
+        expect(serviceBootstrapper(testFn, [result])()).toBe(result);
     });
 });

@@ -10,7 +10,7 @@ import { Chevron } from "../Chevron";
  */
 const Autowired = <TKey>(instance: Chevron<TKey>, key: TKey) => (
     target: any,
-    propertyKey: string | symbol
+    propertyKey: PropertyKey
 ) => {
     target[propertyKey] = instance.get(key);
 };

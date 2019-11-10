@@ -1,4 +1,3 @@
-import { DependencyArr } from "../../../src/DependencyArr";
 import { factoryBootstrapper } from "../../../src/injectableTypes/factory";
 
 describe("factoryBootstrapper tests", () => {
@@ -35,8 +34,6 @@ describe("factoryBootstrapper tests", () => {
             }
         }
 
-        expect(
-            factoryBootstrapper(TestClass, <DependencyArr>[result]).getVal()
-        ).toBe(result);
+        expect(factoryBootstrapper(TestClass, [result]).getVal()).toBe(result);
     });
 });

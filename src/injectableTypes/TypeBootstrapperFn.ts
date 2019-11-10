@@ -1,8 +1,8 @@
 import { DependencyArr } from "../DependencyArr";
 
-type TypeBootstrapperFn = (
+type TypeBootstrapperFn = <TDependencyValue>(
     initializer: any,
-    dependencies: DependencyArr
+    dependencies: DependencyArr<TDependencyValue>
 ) => any;
 
 export { TypeBootstrapperFn };

@@ -7,6 +7,6 @@ import { Chevron } from "../Chevron";
  * @param {Chevron} instance Chevron instance to use.
  * @param {*} key Key of the injectable.
  */
-declare const Autowired: <TKey>(instance: Chevron<TKey>, key: TKey) => (target: any, propertyKey: string | symbol) => void;
+declare const Autowired: <TKey>(instance: Chevron<TKey>, key: TKey) => (target: any, propertyKey: string | number | symbol) => void;
 export { Autowired };
 //# sourceMappingURL=Autowired.d.ts.map

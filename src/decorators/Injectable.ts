@@ -15,7 +15,7 @@ const Injectable = <TKey>(
     instance: Chevron<TKey>,
     type: InjectableType,
     dependencies: DependencyKeyArr<TKey>,
-    key?: any
+    key?: TKey
 ) => (target: any) => {
     instance.set(type, dependencies, target, key);
     return target;

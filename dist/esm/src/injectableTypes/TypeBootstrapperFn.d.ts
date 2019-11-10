@@ -1,4 +1,4 @@
 import { DependencyArr } from "../DependencyArr";
-declare type TypeBootstrapperFn = (initializer: any, dependencies: DependencyArr) => any;
+declare type TypeBootstrapperFn = <TDependencyValue>(initializer: any, dependencies: DependencyArr<TDependencyValue>) => any;
 export { TypeBootstrapperFn };
 //# sourceMappingURL=TypeBootstrapperFn.d.ts.map

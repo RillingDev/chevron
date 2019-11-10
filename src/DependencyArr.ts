@@ -1,3 +1,3 @@
-type DependencyArr = any[];
+type DependencyArr<TValue> = TValue[];
 
 export { DependencyArr };

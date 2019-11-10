@@ -1,3 +1,3 @@
-declare type DependencyArr = any[];
+declare type DependencyArr<TValue> = TValue[];
 export { DependencyArr };
 //# sourceMappingURL=DependencyArr.d.ts.map

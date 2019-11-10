@@ -6,9 +6,9 @@ import { TypeBootstrapperFn } from "./TypeBootstrapperFn";
  *
  * @private
  */
-const factoryBootstrapper: TypeBootstrapperFn = <T>(
+const factoryBootstrapper: TypeBootstrapperFn = <T, UDependencyValue>(
     initializer: (...args: any[]) => T,
-    dependencies: DependencyArr
+    dependencies: DependencyArr<UDependencyValue>
 ): T => Reflect.construct(initializer, dependencies);
 
 export { factoryBootstrapper };

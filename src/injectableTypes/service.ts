@@ -6,9 +6,9 @@ import { TypeBootstrapperFn } from "./TypeBootstrapperFn";
  *
  * @private
  */
-const serviceBootstrapper: TypeBootstrapperFn = <T>(
+const serviceBootstrapper: TypeBootstrapperFn = <T, UDependencyValue>(
     initializer: (...args: any[]) => T,
-    dependencies: DependencyArr
+    dependencies: DependencyArr<UDependencyValue>
 ): (() => T) =>
     function(...args) {
         return initializer(...dependencies, ...args);
