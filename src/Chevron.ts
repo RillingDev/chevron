@@ -7,9 +7,9 @@ import { serviceBootstrapper } from "./injectableTypes/service";
 import { TypeBootstrapperFn } from "./injectableTypes/TypeBootstrapperFn";
 import { isNil } from "lodash";
 
-class Chevron {
+class Chevron<TKey> {
     private readonly types: Map<string, TypeBootstrapperFn>;
-    private readonly injectables: Map<any, Entry>;
+    private readonly injectables: Map<TKey, Entry<TKey>>;
 
     /**
      * Main chevron class.
@@ -34,7 +34,7 @@ class Chevron {
      * @returns {*} Bootstrapped content of the injectable.
      * @throws Error when the key cannot be found, or circular dependencies exist.
      */
-    public get(key: any): any {
+    public get(key: TKey): any {
         return this.resolveEntry(key, new Set());
     }
 
@@ -45,7 +45,7 @@ class Chevron {
      * @param {*} key Key of the injectable to check.
      * @returns {boolean} If the chevron instance has a given injectable.
      */
-    public has(key: any): boolean {
+    public has(key: TKey): boolean {
         return this.injectables.has(key);
     }
 
@@ -61,9 +61,9 @@ class Chevron {
      */
     public set(
         type: string,
-        dependencies: DependencyKeyArr,
+        dependencies: DependencyKeyArr<TKey>,
         initializer: any,
-        key?: any
+        key?: TKey
     ): void {
         if (!this.hasType(type)) {
             throw new Error(`Missing type '${type}'.`);
@@ -113,7 +113,7 @@ class Chevron {
      *
      * @private
      */
-    private resolveEntry(key: any, accessStack: Set<string>): any {
+    private resolveEntry(key: TKey, accessStack: Set<TKey>): any {
         if (!this.has(key)) {
             throw new Error(`Injectable '${key}' does not exist.`);
         }
@@ -134,7 +134,11 @@ class Chevron {
      *
      * @private
      */
-    private bootstrap(key: any, accessStack: Set<string>, entry: Entry): void {
+    private bootstrap(
+        key: TKey,
+        accessStack: Set<TKey>,
+        entry: Entry<TKey>
+    ): void {
         /*
          * Check if we already tried accessing this injectable before; if we did, assume circular dependencies.
          */

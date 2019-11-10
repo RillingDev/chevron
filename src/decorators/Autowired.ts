@@ -8,7 +8,7 @@ import { Chevron } from "../Chevron";
  * @param {Chevron} instance Chevron instance to use.
  * @param {*} key Key of the injectable.
  */
-const Autowired = (instance: Chevron, key: any) => (
+const Autowired = <TKey>(instance: Chevron<TKey>, key: TKey) => (
     target: any,
     propertyKey: string | symbol
 ) => {

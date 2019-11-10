@@ -1,6 +1,6 @@
 import { DependencyKeyArr } from "./DependencyKeyArr";
 import { TypeBootstrapperFn } from "./injectableTypes/TypeBootstrapperFn";
-declare class Chevron {
+declare class Chevron<TKey> {
     private readonly types;
     private readonly injectables;
     /**
@@ -18,7 +18,7 @@ declare class Chevron {
      * @returns {*} Bootstrapped content of the injectable.
      * @throws Error when the key cannot be found, or circular dependencies exist.
      */
-    get(key: any): any;
+    get(key: TKey): any;
     /**
      * Checks if the chevron instance has a given injectable.
      *
@@ -26,7 +26,7 @@ declare class Chevron {
      * @param {*} key Key of the injectable to check.
      * @returns {boolean} If the chevron instance has a given injectable.
      */
-    has(key: any): boolean;
+    has(key: TKey): boolean;
     /**
      * Sets a new injectable on the chevron instance.
      *
@@ -37,7 +37,7 @@ declare class Chevron {
      * @param {*?} key Custom key of the injectable. If none is given, the initializer will be used.
      * @throws Error when the key already exists, or the type is invalid.
      */
-    set(type: string, dependencies: DependencyKeyArr, initializer: any, key?: any): void;
+    set(type: string, dependencies: DependencyKeyArr<TKey>, initializer: any, key?: TKey): void;
     /**
      * Checks if the chevron instance has a given injectable type.
      *

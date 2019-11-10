@@ -1,3 +1,3 @@
-type DependencyKeyArr = any[];
+type DependencyKeyArr<TKey> = TKey[];
 
 export { DependencyKeyArr };

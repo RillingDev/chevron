@@ -1,4 +1,5 @@
 import { Chevron } from "../Chevron";
+import { DependencyKeyArr } from "../DependencyKeyArr";
 import { InjectableType } from "../injectableTypes/InjectableType";
 /**
  * Decorator function to be used as TypeScript decorator
@@ -9,6 +10,6 @@ import { InjectableType } from "../injectableTypes/InjectableType";
  * @param {string[]} dependencies Array of dependency keys.
  * @param {*?} key Custom key of the injectable. If none is given, the initializer will be used.
  */
-declare const Injectable: (instance: Chevron, type: InjectableType, dependencies: any[], key?: any) => (target: any) => any;
+declare const Injectable: <TKey>(instance: Chevron<TKey>, type: InjectableType, dependencies: DependencyKeyArr<TKey>, key?: any) => (target: any) => any;
 export { Injectable };
 //# sourceMappingURL=Injectable.d.ts.map

@@ -11,10 +11,10 @@ import { InjectableType } from "../injectableTypes/InjectableType";
  * @param {string[]} dependencies Array of dependency keys.
  * @param {*?} key Custom key of the injectable. If none is given, the initializer will be used.
  */
-const Injectable = (
-    instance: Chevron,
+const Injectable = <TKey>(
+    instance: Chevron<TKey>,
     type: InjectableType,
-    dependencies: DependencyKeyArr,
+    dependencies: DependencyKeyArr<TKey>,
     key?: any
 ) => (target: any) => {
     instance.set(type, dependencies, target, key);
