@@ -10,6 +10,6 @@ import { InjectableType } from "../injectableTypes/InjectableType";
  * @param {string[]} dependencies Array of dependency keys.
  * @param {*?} key Custom key of the injectable. If none is given, the initializer will be used.
  */
-declare const Injectable: <TKey, UInit>(instance: Chevron<TKey, UInit>, type: InjectableType, dependencies: DependencyKeyArr<TKey>, key?: TKey | undefined) => (target: any) => any;
+declare const Injectable: <TKey, UInit, VValue>(instance: Chevron<TKey, UInit, VValue>, type: InjectableType, dependencies: DependencyKeyArr<TKey>, key?: TKey | undefined) => (target: any) => any;
 export { Injectable };
 //# sourceMappingURL=Injectable.d.ts.map

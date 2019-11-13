@@ -7,9 +7,9 @@ import { serviceBootstrapper } from "./injectableTypes/service";
 import { TypeBootstrapperFn } from "./injectableTypes/TypeBootstrapperFn";
 import { isNil } from "lodash";
 
-class Chevron<TKey,UInit> {
+class Chevron<TKey = any, UValue = any, VInit = any> {
     private readonly types: Map<string, TypeBootstrapperFn>;
-    private readonly injectables: Map<TKey, Entry<TKey,UInit>>;
+    private readonly injectables: Map<TKey | VInit, Entry<TKey, UValue, VInit>>;
 
     /**
      * Main chevron class.
@@ -34,7 +34,7 @@ class Chevron<TKey,UInit> {
      * @returns {*} Bootstrapped content of the injectable.
      * @throws Error when the key cannot be found, or circular dependencies exist.
      */
-    public get(key: TKey): any {
+    public get(key: TKey): UValue {
         return this.resolveEntry(key, new Set());
     }
 
@@ -45,7 +45,7 @@ class Chevron<TKey,UInit> {
      * @param {*} key Key of the injectable to check.
      * @returns {boolean} If the chevron instance has a given injectable.
      */
-    public has(key: TKey): boolean {
+    public has(key: TKey | VInit): boolean {
         return this.injectables.has(key);
     }
 
@@ -62,7 +62,7 @@ class Chevron<TKey,UInit> {
     public set(
         type: string,
         dependencies: DependencyKeyArr<TKey>,
-        initializer: any,
+        initializer: VInit,
         key?: TKey
     ): void {
         if (!this.hasType(type)) {
@@ -113,7 +113,7 @@ class Chevron<TKey,UInit> {
      *
      * @private
      */
-    private resolveEntry(key: TKey, accessStack: Set<TKey>): any {
+    private resolveEntry(key: TKey, accessStack: Set<TKey>): UValue {
         if (!this.has(key)) {
             throw new Error(`Injectable '${key}' does not exist.`);
         }
@@ -126,7 +126,7 @@ class Chevron<TKey,UInit> {
             this.bootstrap(key, accessStack, entry);
         }
 
-        return entry.content;
+        return entry.content!;
     }
 
     /**
@@ -137,7 +137,7 @@ class Chevron<TKey,UInit> {
     private bootstrap(
         key: TKey,
         accessStack: Set<TKey>,
-        entry: Entry<TKey,UInit>
+        entry: Entry<TKey, UValue, VInit>
     ): void {
         /*
          * Check if we already tried accessing this injectable before; if we did, assume circular dependencies.
