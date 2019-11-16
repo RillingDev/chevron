@@ -1,10 +1,9 @@
-import { DependencyKeyArr } from "./DependencyKeyArr";
-import { TypeBootstrapperFn } from "./injectableTypes/TypeBootstrapperFn";
-interface Entry<TKey, UValue, VInit> {
-    typeBootstrapper: TypeBootstrapperFn;
-    dependencies: DependencyKeyArr<TKey>;
-    initializer: VInit;
-    content: UValue | null;
+import { bootstrapper } from "./bootstrap/bootstrapper";
+interface Entry<TValue, UInitializer, VDependency> {
+    bootstrapFn: bootstrapper<TValue, UInitializer, VDependency>;
+    dependencies: string[];
+    initializer: UInitializer;
+    value: TValue | null;
 }
 export { Entry };
 //# sourceMappingURL=Entry.d.ts.map

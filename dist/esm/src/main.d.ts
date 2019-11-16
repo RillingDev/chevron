@@ -1,6 +1,4 @@
 import { Chevron } from "./Chevron";
-import { Autowired } from "./decorators/Autowired";
-import { Injectable } from "./decorators/Injectable";
-import { InjectableType } from "./injectableTypes/InjectableType";
-export { Chevron, InjectableType, Autowired, Injectable };
+import { bootstrapper } from "./bootstrap/bootstrapper";
+export { Chevron, bootstrapper };
 //# sourceMappingURL=main.d.ts.map

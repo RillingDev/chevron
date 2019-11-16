@@ -1,15 +1,14 @@
-import { DependencyKeyArr } from "./DependencyKeyArr";
 import { Entry } from "./Entry";
-import { factoryBootstrapper } from "./injectableTypes/factory";
-import { InjectableType } from "./injectableTypes/InjectableType";
-import { plainBootstrapper } from "./injectableTypes/plain";
-import { serviceBootstrapper } from "./injectableTypes/service";
-import { TypeBootstrapperFn } from "./injectableTypes/TypeBootstrapperFn";
-import { isNil } from "lodash";
+import { isNil, isString } from "lodash";
+import { name as getName } from "lightdash";
+import { bootstrapper } from "./bootstrap/bootstrapper";
+import { functionBootstrapper } from "./bootstrap/functionBootstrapper";
 
-class Chevron<TKey = any, UValue = any, VInit = any> {
-    private readonly types: Map<string, TypeBootstrapperFn>;
-    private readonly injectables: Map<TKey | VInit, Entry<TKey, UValue, VInit>>;
+class Chevron<TValue = any, UInitializer = any> {
+    private readonly injectables: Map<
+        string,
+        Entry<TValue, UInitializer, TValue>
+    >;
 
     /**
      * Main chevron class.
@@ -18,11 +17,6 @@ class Chevron<TKey = any, UValue = any, VInit = any> {
      * @class Chevron
      */
     public constructor() {
-        this.types = new Map();
-        this.setType(InjectableType.PLAIN, plainBootstrapper);
-        this.setType(InjectableType.SERVICE, serviceBootstrapper);
-        this.setType(InjectableType.FACTORY, factoryBootstrapper);
-
         this.injectables = new Map();
     }
 
@@ -34,130 +28,99 @@ class Chevron<TKey = any, UValue = any, VInit = any> {
      * @returns {*} Bootstrapped content of the injectable.
      * @throws Error when the key cannot be found, or circular dependencies exist.
      */
-    public get(key: TKey): UValue {
-        return this.resolveEntry(key, new Set());
+    public get(name: UInitializer | string): TValue {
+        return this.resolveEntry(name, new Set());
     }
 
     /**
      * Checks if the chevron instance has a given injectable.
      *
      * @public
-     * @param {*} key Key of the injectable to check.
+     * @param {*} name Key of the injectable to check.
      * @returns {boolean} If the chevron instance has a given injectable.
      */
-    public has(key: TKey | VInit): boolean {
-        return this.injectables.has(key);
+    public has(name: UInitializer | string): boolean {
+        return this.injectables.has(isString(name) ? name : this.getKey(name));
     }
 
     /**
      * Sets a new injectable on the chevron instance.
      *
      * @public
-     * @param {string} type Type of the injectable.
-     * @param {string[]} dependencies Array of dependency keys.
      * @param {*} initializer Content of the injectable.
-     * @param {*?} key Custom key of the injectable. If none is given, the initializer will be used.
+     * @param {string[]} dependencies Array of dependency keys.
+     * @param {string} bootstrapFn Type of the injectable.
+     * @param {*?} name? Custom key of the injectable. If none is given, the initializer will be used.
      * @throws Error when the key already exists, or the type is invalid.
      */
-    public set(
-        type: string,
-        dependencies: DependencyKeyArr<TKey>,
-        initializer: VInit,
-        key?: TKey
+    public register(
+        initializer: UInitializer,
+        dependencies: string[] = [],
+        bootstrapFn: bootstrapper<
+            TValue,
+            UInitializer,
+            TValue
+        > = functionBootstrapper,
+        name: string | null = null
     ): void {
-        if (!this.hasType(type)) {
-            throw new Error(`Missing type '${type}'.`);
+        const key = !isNil(name) ? name : this.getKey(initializer);
+
+        if (this.injectables.has(key)) {
+            throw new Error(`Key already exists: '${key}'.`);
         }
 
-        /*
-         * Infer the key from the initializer only if no key was explicitly given.
-         */
-        const effectiveKey = isNil(key) ? initializer : key;
-
-        if (this.has(effectiveKey)) {
-            throw new Error(`Key already exists: '${effectiveKey}'.`);
-        }
-
-        this.injectables.set(effectiveKey, {
-            typeBootstrapper: this.types.get(type)!,
+        this.injectables.set(key, {
+            bootstrapFn: bootstrapFn,
             dependencies,
             initializer,
-            content: null
+            value: null
         });
     }
 
-    /**
-     * Checks if the chevron instance has a given injectable type.
-     *
-     * @public
-     * @param {string} name Name of the injectable type to check.
-     * @returns {boolean} If the chevron instance has a given injectable type.
-     */
-    public hasType(name: string): boolean {
-        return this.types.has(name);
-    }
-
-    /**
-     * Sets a type of injectables.
-     *
-     * @public
-     * @param {string} name Name of the type.
-     * @param {function} bootstrapperFn Bootstrap function for injectables of this type.
-     */
-    public setType(name: string, bootstrapperFn: TypeBootstrapperFn): void {
-        this.types.set(name, bootstrapperFn);
-    }
-
-    /**
-     * Resolves an entry by its key, keeping track of the access stack.
-     *
-     * @private
-     */
-    private resolveEntry(key: TKey, accessStack: Set<TKey>): UValue {
-        if (!this.has(key)) {
-            throw new Error(`Injectable '${key}' does not exist.`);
+    private resolveEntry(
+        name: string | UInitializer,
+        resolveStack: Set<string>
+    ): TValue {
+        const key = isString(name) ? name : this.getKey(name);
+        if (!this.injectables.has(key)) {
+            throw new Error(`Injectable '${name}' does not exist.`);
         }
 
         const entry = this.injectables.get(key)!;
-        if (isNil(entry.content)) {
+        if (isNil(entry.value)) {
             /*
-             * Entry is not constructed, recursively bootstrap dependencies and the entry itself.
+             * Start bootstrapping value.
              */
-            this.bootstrap(key, accessStack, entry);
-        }
+            if (resolveStack.has(key)) {
+                throw new Error(
+                    `Circular dependencies found: '${[
+                        ...resolveStack,
+                        key
+                    ].join("->")}'.`
+                );
+            }
+            resolveStack.add(key);
 
-        return entry.content!;
+            entry.value = entry.bootstrapFn(
+                entry.initializer,
+                entry.dependencies.map(dependencyName =>
+                    this.resolveEntry(dependencyName, resolveStack)
+                )
+            );
+
+            resolveStack.delete(key);
+        }
+        return entry.value;
     }
 
-    /**
-     * Bootstraps an entry, keeping track of the access stack.
-     *
-     * @private
-     */
-    private bootstrap(
-        key: TKey,
-        accessStack: Set<TKey>,
-        entry: Entry<TKey, UValue, VInit>
-    ): void {
-        /*
-         * Check if we already tried accessing this injectable before; if we did, assume circular dependencies.
-         */
-        if (accessStack.has(key)) {
-            throw new Error(
-                `Circular dependencies found: '${[...accessStack, key].join(
-                    "->"
-                )}'.`
+    private getKey(initializer: UInitializer): string {
+        const guessedName = getName(initializer);
+        if (isNil(guessedName)) {
+            throw new TypeError(
+                `Could not guess name of ${initializer}, please explicitly define one.`
             );
         }
-
-        accessStack.add(key);
-        entry.content = entry.typeBootstrapper(
-            entry.initializer,
-            entry.dependencies.map(dependencyName =>
-                this.resolveEntry(dependencyName, accessStack)
-            )
-        );
-        accessStack.delete(key);
+        return guessedName;
     }
 }
 

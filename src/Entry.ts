@@ -1,11 +1,10 @@
-import { DependencyKeyArr } from "./DependencyKeyArr";
-import { TypeBootstrapperFn } from "./injectableTypes/TypeBootstrapperFn";
+import { bootstrapper } from "./bootstrap/bootstrapper";
 
-interface Entry<TKey, UValue, VInit> {
-    typeBootstrapper: TypeBootstrapperFn;
-    dependencies: DependencyKeyArr<TKey>;
-    initializer: VInit;
-    content: UValue | null;
+interface Entry<TValue, UInitializer, VDependency> {
+    bootstrapFn: bootstrapper<TValue, UInitializer, VDependency>;
+    dependencies: string[];
+    initializer: UInitializer;
+    value: TValue | null;
 }
 
 export { Entry };
