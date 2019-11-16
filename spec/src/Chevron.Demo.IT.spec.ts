@@ -1,7 +1,7 @@
 import { Chevron } from "../../src/Chevron";
-import { InjectableType } from "../../src/injectableTypes/InjectableType";
 import { Autowired } from "../../src/decorators/Autowired";
 import { Injectable } from "../../src/decorators/Injectable";
+import { classBootstrapper, functionBootstrapper } from "../../src/main";
 
 describe("Chevron Demo ITs", () => {
     it("Usage#1", () => {
@@ -19,11 +19,7 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
-        cv.set(
-            InjectableType.FACTORY, // Type of the injectable.
-            [], // Dependencies this injectable uses, none in this case.
-            MyFactory // Content of the injectable. In this case, it will also be used as the key for accessing the injectable later.
-        );
+        cv.register(MyFactory, classBootstrapper, []);
 
         cv.get(MyFactory).sayHello(); // Prints "Hello!"
 
@@ -39,7 +35,7 @@ describe("Chevron Demo ITs", () => {
          * Decorator API.
          */
 
-        @Injectable(cv, InjectableType.FACTORY, [])
+        @Injectable(cv, classBootstrapper, [])
         class MyFactory {
             public sayHello(): void {
                 console.log("Hello!");
@@ -71,18 +67,16 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
-        cv.set(InjectableType.FACTORY, [], MyFactory);
+        cv.register(MyFactory, classBootstrapper, []);
 
-        function myService(myFactory: MyFactory): void {
+        const myService: (myFactory: MyFactory) => void = (
+            myFactory: MyFactory
+        ) => {
             // Dependency will be available in the service as an argument.
             myFactory.sayHello();
-        }
+        };
 
-        cv.set(
-            InjectableType.SERVICE,
-            [MyFactory], // Key of the dependency is listed here.
-            myService
-        );
+        cv.register(myService, functionBootstrapper, ["MyFactory"]);
 
         cv.get(myService)(); // Prints "Hello!"
 
@@ -100,9 +94,9 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
-        cv.set(InjectableType.FACTORY, [], MyFactory, "myInjectableFactory1");
+        cv.register(MyFactory, classBootstrapper, [], "myInjectableFactory1");
 
-        cv.set(InjectableType.FACTORY, [], MyFactory, "myInjectableFactory2");
+        cv.register(MyFactory, classBootstrapper, [], "myInjectableFactory2");
 
         cv.get("myInjectableFactory1").sayHello(); // Prints "Hello!"
 

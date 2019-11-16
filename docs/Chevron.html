@@ -27,7 +27,7 @@
 
 <nav >
     
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Chevron.html">Chevron</a><ul class='methods'><li data-type='method'><a href="Chevron.html#get">get</a></li><li data-type='method'><a href="Chevron.html#has">has</a></li><li data-type='method'><a href="Chevron.html#hasType">hasType</a></li><li data-type='method'><a href="Chevron.html#set">set</a></li><li data-type='method'><a href="Chevron.html#setType">setType</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#Autowired">Autowired</a></li><li><a href="global.html#Injectable">Injectable</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Chevron.html">Chevron</a><ul class='methods'><li data-type='method'><a href="Chevron.html#get">get</a></li><li data-type='method'><a href="Chevron.html#has">has</a></li><li data-type='method'><a href="Chevron.html#register">register</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#Autowired">Autowired</a></li><li><a href="global.html#Injectable">Injectable</a></li></ul>
 </nav>
 
 <div id="main">
@@ -71,7 +71,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line37">line 37</a>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line52">line 52</a>
     </li></ul></dd>
     
 
@@ -179,7 +179,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line58">line 58</a>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line69">line 69</a>
     </li></ul></dd>
     
 
@@ -337,7 +337,7 @@
 
     
 
-    <h4 class="name" id="has"><span class="type-signature"></span>has<span class="signature">(key)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="has"><span class="type-signature"></span>has<span class="signature">(name)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
 
     
 
@@ -349,7 +349,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line68">line 68</a>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line79">line 79</a>
     </li></ul></dd>
     
 
@@ -427,7 +427,7 @@
 
         <tr>
             
-                <td class="name"><code>key</code></td>
+                <td class="name"><code>name</code></td>
             
 
             <td class="type">
@@ -495,7 +495,7 @@
 
     
 
-    <h4 class="name" id="hasType"><span class="type-signature"></span>hasType<span class="signature">(name)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="register"><span class="type-signature"></span>register<span class="signature">(initializer, bootstrapFn, dependencies, name?<span class="signature-attributes">nullable</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -507,165 +507,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line106">line 106</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Checks if the chevron instance has a given injectable type.</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Name of the injectable type to check.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>If the chevron instance has a given injectable type.</p>
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="set"><span class="type-signature"></span>set<span class="signature">(type, dependencies, initializer, key<span class="signature-attributes">nullable</span>)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line81">line 81</a>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line92">line 92</a>
     </li></ul></dd>
     
 
@@ -745,7 +587,38 @@
 
         <tr>
             
-                <td class="name"><code>type</code></td>
+                <td class="name"><code>initializer</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Content of the injectable.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>bootstrapFn</code></td>
             
 
             <td class="type">
@@ -807,38 +680,7 @@
 
         <tr>
             
-                <td class="name"><code>initializer</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">*</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>Content of the injectable.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>key</code></td>
+                <td class="name"><code>name?</code></td>
             
 
             <td class="type">
@@ -902,165 +744,6 @@
 
 
         
-            
-
-    
-
-    <h4 class="name" id="setType"><span class="type-signature"></span>setType<span class="signature">(name, bootstrapperFn)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line116">line 116</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Sets a type of injectables.</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Name of the type.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>bootstrapperFn</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Bootstrap function for injectables of this type.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
     
 
     
@@ -1080,7 +763,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Wed Nov 13 2019 16:41:56 GMT+0100 (Central European Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Sat Nov 16 2019 19:17:28 GMT+0100 (Central European Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

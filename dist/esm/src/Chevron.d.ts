@@ -30,12 +30,12 @@ declare class Chevron<TValue = any, UInitializer = any> {
      *
      * @public
      * @param {*} initializer Content of the injectable.
-     * @param {*?} name? Custom key of the injectable. If none is given, the initializer will be used.
      * @param {string} bootstrapFn Type of the injectable.
      * @param {string[]} dependencies Array of dependency keys.
+     * @param {*?} name? Custom key of the injectable. If none is given, the initializer will be used.
      * @throws Error when the key already exists, or the type is invalid.
      */
-    register(initializer: UInitializer, name?: string | null, bootstrapFn?: bootstrapper<TValue, UInitializer, TValue>, dependencies?: string[]): void;
+    register(initializer: UInitializer, bootstrapFn?: bootstrapper<any, UInitializer, any>, dependencies?: string[], name?: string | null): void;
     private resolveEntry;
     private getKey;
 }

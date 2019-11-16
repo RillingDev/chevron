@@ -1,5 +1,5 @@
 import { Chevron } from "../../src/Chevron";
-import { InjectableType } from "../../src/injectableTypes/InjectableType";
+import { classBootstrapper, functionBootstrapper } from "../../src/main";
 
 describe("Chevron ITs", () => {
     it("Asserts that an error is thrown when resolving circular dependencies", () => {
@@ -10,10 +10,10 @@ describe("Chevron ITs", () => {
         const testServiceName = "testServiceName";
 
         const testServiceFn: () => number = () => result;
-        cv.set(
-            InjectableType.SERVICE,
-            [testFactoryName],
+        cv.register(
             testServiceFn,
+            functionBootstrapper,
+            [testFactoryName],
             testServiceName
         );
 
@@ -29,10 +29,10 @@ describe("Chevron ITs", () => {
             }
         }
 
-        cv.set(
-            InjectableType.FACTORY,
-            [testServiceName],
+        cv.register(
             TestFactoryClass,
+            classBootstrapper,
+            [testServiceName],
             testFactoryName
         );
 

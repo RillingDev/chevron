@@ -1,7 +1,7 @@
 import { Chevron } from "../../../src/Chevron";
 import { Autowired } from "../../../src/decorators/Autowired";
 import { Injectable } from "../../../src/decorators/Injectable";
-import { InjectableType } from "../../../src/injectableTypes/InjectableType";
+import { classBootstrapper } from "../../../src/main";
 
 describe("Injectable tests", () => {
     it("Asserts that @Injectable works", () => {
@@ -10,7 +10,7 @@ describe("Injectable tests", () => {
 
         const testFactoryName = "testFactoryName";
 
-        @Injectable(cv, InjectableType.FACTORY, [], testFactoryName)
+        @Injectable(cv, classBootstrapper, [], testFactoryName)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         class TestFactoryClass {
             public getVal(): number {
@@ -26,7 +26,7 @@ describe("Injectable tests", () => {
 
         const result = 123;
 
-        @Injectable(cv, InjectableType.FACTORY, [])
+        @Injectable(cv, classBootstrapper, [])
         class TestFactoryClass {
             public getVal(): number {
                 return result;

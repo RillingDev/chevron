@@ -6,8 +6,8 @@
  * @param {Chevron} instance Chevron instance to use.
  * @param {*} key Key of the injectable.
  */
-const Autowired = (instance, key) => (target, propertyKey) => {
-    target[propertyKey] = instance.get(key);
+const Autowired = (instance, name) => (target, propertyKey) => {
+    target[propertyKey] = instance.get(name);
 };
 export { Autowired };
 //# sourceMappingURL=Autowired.js.map

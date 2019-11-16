@@ -1,13 +1,17 @@
 import { Chevron } from "../../src/Chevron";
-import { InjectableType } from "../../src/injectableTypes/InjectableType";
+import {
+    classBootstrapper,
+    functionBootstrapper,
+    identityBootstrapper
+} from "../../src/main";
 
-describe("Chevron ITs", () => {
+describe("Chevron IT", () => {
     it("Asserts that plains construct", () => {
         const cv = new Chevron();
         const result = 123;
 
         const testPlainName = "testPlainName";
-        cv.set(InjectableType.PLAIN, [], result, testPlainName);
+        cv.register(result, identityBootstrapper, [], testPlainName);
 
         expect(cv.get(testPlainName)).toBe(result);
     });
@@ -18,7 +22,7 @@ describe("Chevron ITs", () => {
 
         const testServiceName = "testServiceName";
         const testServiceFn: () => number = () => result;
-        cv.set(InjectableType.SERVICE, [], testServiceFn, testServiceName);
+        cv.register(testServiceFn, functionBootstrapper, [], testServiceName);
 
         expect(cv.get(testServiceName)()).toBe(result);
     });
@@ -35,7 +39,7 @@ describe("Chevron ITs", () => {
             }
         }
 
-        cv.set(InjectableType.FACTORY, [], TestFactoryClass, testFactoryName);
+        cv.register(TestFactoryClass, classBootstrapper, [], testFactoryName);
 
         expect(cv.get(testFactoryName).getVal()).toBe(result);
     });
@@ -46,26 +50,26 @@ describe("Chevron ITs", () => {
 
         const testServiceName = "testServiceName";
         const testServiceFn: () => number = () => result;
-        cv.set(InjectableType.SERVICE, [], testServiceFn, testServiceName);
+        cv.register(testServiceFn, functionBootstrapper, [], testServiceName);
 
         const testFactoryName = "testFactoryName";
 
         class TestFactoryClass {
-            private readonly numberService: () => number;
+            private readonly numberGenerator: () => number;
 
             public constructor(numberService: () => number) {
-                this.numberService = numberService;
+                this.numberGenerator = numberService;
             }
 
             public getVal(): number {
-                return this.numberService();
+                return this.numberGenerator();
             }
         }
 
-        cv.set(
-            InjectableType.FACTORY,
-            [testServiceName],
+        cv.register(
             TestFactoryClass,
+            classBootstrapper,
+            [testServiceName],
             testFactoryName
         );
 
@@ -78,7 +82,7 @@ describe("Chevron ITs", () => {
 
         const testService1Name = "testService1Name";
         const testService1Fn: () => number = () => result;
-        cv.set(InjectableType.SERVICE, [], testService1Fn, testService1Name);
+        cv.register(testService1Fn, functionBootstrapper, [], testService1Name);
 
         const testFactoryName1 = "testFactoryName1";
 
@@ -88,7 +92,7 @@ describe("Chevron ITs", () => {
             }
         }
 
-        cv.set(InjectableType.FACTORY, [], TestFactoryClass1, testFactoryName1);
+        cv.register(TestFactoryClass1, classBootstrapper, [], testFactoryName1);
 
         const testService2Name = "testService2Name";
         const testService2Fn: (testService1: any, testFactory1: any) => any = (
@@ -101,10 +105,10 @@ describe("Chevron ITs", () => {
 
             return testService1();
         };
-        cv.set(
-            InjectableType.SERVICE,
-            [testService1Name, testFactoryName1],
+        cv.register(
             testService2Fn,
+            functionBootstrapper,
+            [testService1Name, testFactoryName1],
             testService2Name
         );
 
@@ -120,31 +124,15 @@ describe("Chevron ITs", () => {
                 return this.numberService();
             }
         };
-        cv.set(
-            InjectableType.FACTORY,
-            [testService2Name],
+        cv.register(
             TestFactoryClass2,
+            classBootstrapper,
+            [testService2Name],
             testFactoryName2
         );
 
         expect(cv.get(testFactoryName2).getVal()).toBe(result);
     });
-
-    it("Asserts that non-string keys construct", () => {
-        const cv = new Chevron();
-        const result = 123;
-
-        class TestFactoryClass {
-            public getVal(): number {
-                return result;
-            }
-        }
-
-        cv.set(InjectableType.FACTORY, [], TestFactoryClass, TestFactoryClass);
-
-        expect(cv.get(TestFactoryClass).getVal()).toBe(result);
-    });
-
     it("Asserts that the key can be inferred from the initializer", () => {
         const cv = new Chevron();
         const result = 123;
@@ -155,7 +143,7 @@ describe("Chevron ITs", () => {
             }
         }
 
-        cv.set(InjectableType.FACTORY, [], TestFactoryClass);
+        cv.register(TestFactoryClass, classBootstrapper, [], undefined);
 
         expect(cv.get(TestFactoryClass).getVal()).toBe(result);
     });

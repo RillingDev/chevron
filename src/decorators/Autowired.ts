@@ -8,11 +8,11 @@ import { Chevron } from "../Chevron";
  * @param {Chevron} instance Chevron instance to use.
  * @param {*} key Key of the injectable.
  */
-const Autowired = <TKey, UInit, VValue>(
-    instance: Chevron<TKey, UInit, VValue>,
-    key: TKey
+const Autowired = <TValue, UInitializer>(
+    instance: Chevron<TValue, UInitializer>,
+    name: UInitializer | string
 ) => (target: any, propertyKey: PropertyKey) => {
-    target[propertyKey] = instance.get(key);
+    target[propertyKey] = instance.get(name);
 };
 
 export { Autowired };

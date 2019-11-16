@@ -1,1 +1,1 @@
-{"version":3,"file":"Autowired.d.ts","sourceRoot":"","sources":["../../../../src/decorators/Autowired.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,YAAY,CAAC;AAErC;;;;;;;GAOG;AACH,QAAA,MAAM,SAAS,0IAKd,CAAC;AAEF,OAAO,EAAE,SAAS,EAAE,CAAC"}
+{"version":3,"file":"Autowired.d.ts","sourceRoot":"","sources":["../../../../src/decorators/Autowired.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,YAAY,CAAC;AAErC;;;;;;;GAOG;AACH,QAAA,MAAM,SAAS,8JAKd,CAAC;AAEF,OAAO,EAAE,SAAS,EAAE,CAAC"}

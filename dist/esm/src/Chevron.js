@@ -1,6 +1,6 @@
 import { isNil, isString } from "lodash";
 import { name as getName } from "lightdash";
-import { functionBootstrapper } from "./bootstrap/functionBootstrapper";
+import { identityBootstrapper } from "./bootstrap/identityBootstrapper";
 class Chevron {
     /**
      * Main chevron class.
@@ -37,12 +37,12 @@ class Chevron {
      *
      * @public
      * @param {*} initializer Content of the injectable.
-     * @param {*?} name? Custom key of the injectable. If none is given, the initializer will be used.
      * @param {string} bootstrapFn Type of the injectable.
      * @param {string[]} dependencies Array of dependency keys.
+     * @param {*?} name? Custom key of the injectable. If none is given, the initializer will be used.
      * @throws Error when the key already exists, or the type is invalid.
      */
-    register(initializer, name = null, bootstrapFn = functionBootstrapper, dependencies = []) {
+    register(initializer, bootstrapFn = identityBootstrapper, dependencies = [], name = null) {
         const key = !isNil(name) ? name : this.getKey(initializer);
         if (this.injectables.has(key)) {
             throw new Error(`Key already exists: '${key}'.`);

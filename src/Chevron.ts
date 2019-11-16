@@ -2,7 +2,7 @@ import { Entry } from "./Entry";
 import { isNil, isString } from "lodash";
 import { name as getName } from "lightdash";
 import { bootstrapper } from "./bootstrap/bootstrapper";
-import { functionBootstrapper } from "./bootstrap/functionBootstrapper";
+import { identityBootstrapper } from "./bootstrap/identityBootstrapper";
 
 class Chevron<TValue = any, UInitializer = any> {
     private readonly injectables: Map<
@@ -48,19 +48,19 @@ class Chevron<TValue = any, UInitializer = any> {
      *
      * @public
      * @param {*} initializer Content of the injectable.
-     * @param {string[]} dependencies Array of dependency keys.
      * @param {string} bootstrapFn Type of the injectable.
+     * @param {string[]} dependencies Array of dependency keys.
      * @param {*?} name? Custom key of the injectable. If none is given, the initializer will be used.
      * @throws Error when the key already exists, or the type is invalid.
      */
     public register(
         initializer: UInitializer,
-        dependencies: string[] = [],
         bootstrapFn: bootstrapper<
-            TValue,
+            any,
             UInitializer,
-            TValue
-        > = functionBootstrapper,
+            any
+        > = identityBootstrapper,
+        dependencies: string[] = [],
         name: string | null = null
     ): void {
         const key = !isNil(name) ? name : this.getKey(initializer);

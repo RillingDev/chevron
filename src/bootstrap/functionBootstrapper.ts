@@ -3,14 +3,14 @@ import { isFunction } from "lodash";
 const functionBootstrapper = <TValue, UInitializer, VDependency>(
     initializer: UInitializer,
     dependencies: VDependency[]
-): TValue => {
+) => (...args: any[]) => {
     if (!isFunction(initializer)) {
         throw new TypeError(
             "Non-functions cannot be bootstrapped by this bootstrapper."
         );
     }
 
-    return initializer(...dependencies);
+    return initializer(...dependencies, ...args);
 };
 
 export { functionBootstrapper };

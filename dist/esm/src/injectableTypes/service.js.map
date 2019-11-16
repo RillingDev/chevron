@@ -1,1 +1,0 @@
-{"version":3,"file":"service.js","sourceRoot":"","sources":["../../../../src/injectableTypes/service.ts"],"names":[],"mappings":"AAGA;;;;GAIG;AACH,MAAM,mBAAmB,GAAuB,CAC5C,WAAwC,EACxC,YAA6C,EAC9B,EAAE,CACjB,UAAS,GAAG,IAAI;IACZ,OAAO,WAAW,CAAC,GAAG,YAAY,EAAE,GAAG,IAAI,CAAC,CAAC;AACjD,CAAC,CAAC;AAEN,OAAO,EAAE,mBAAmB,EAAE,CAAC"}
