@@ -30,16 +30,16 @@ const createCircularDependencyError = (
     );
 };
 
-interface ResolvedInstance<TValue, UInitializer> {
+interface ResolvedInstance<TValue, UInitializer, VContext> {
     entryName: string;
-    entry: Entry<TValue, UInitializer, TValue>;
+    entry: Entry<TValue, UInitializer, TValue, VContext>;
     instanceName: string | null;
 }
 
-class Chevron<TValue = any, UInitializer = any> {
+class Chevron<TValue = any, UInitializer = any, VContext = any> {
     private readonly injectables: Map<
         string,
-        Entry<TValue, UInitializer, TValue>
+        Entry<TValue, UInitializer, TValue, VContext>
     >;
 
     public constructor() {
@@ -55,7 +55,7 @@ class Chevron<TValue = any, UInitializer = any> {
         > = Bootstrappers.IDENTITY,
         dependencies: string[] = [],
         name: string | null = null,
-        scopeFn: scoper<any, UInitializer, any> = Scopes.SINGLETON
+        scopeFn: scoper<any, UInitializer, any, VContext> = Scopes.SINGLETON
     ): void {
         const entryName = isString(name) ? name : guessName(initializer);
 
@@ -72,20 +72,13 @@ class Chevron<TValue = any, UInitializer = any> {
         });
     }
 
-    public getInjectableInstance(
-        name: UInitializer | string,
-        context: any = null
-    ): TValue {
-        return this.getBootstrappedInjectableInstance(name, context, new Set());
-    }
-
     public hasInjectable(name: UInitializer | string): boolean {
         return this.injectables.has(getInjectableName(name));
     }
 
     public hasInjectableInstance(
         name: UInitializer | string,
-        context: any = null
+        context: VContext | null = null
     ): boolean {
         const { entry, instanceName } = this.resolveInjectableInstance(
             name,
@@ -95,10 +88,17 @@ class Chevron<TValue = any, UInitializer = any> {
         return instanceName != null && entry.instances.has(instanceName);
     }
 
+    public getInjectableInstance(
+        name: UInitializer | string,
+        context: VContext | null = null
+    ): TValue {
+        return this.getBootstrappedInjectableInstance(name, context, new Set());
+    }
+
     private resolveInjectableInstance(
         name: string | UInitializer,
-        context: any
-    ): ResolvedInstance<TValue, UInitializer> {
+        context: VContext | null
+    ): ResolvedInstance<TValue, UInitializer, VContext> {
         const entryName = getInjectableName(name);
 
         if (!this.injectables.has(entryName)) {

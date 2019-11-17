@@ -101,15 +101,15 @@ class Chevron {
             instances: new Map()
         });
     }
-    getInjectableInstance(name, context = null) {
-        return this.getBootstrappedInjectableInstance(name, context, new Set());
-    }
     hasInjectable(name) {
         return this.injectables.has(getInjectableName(name));
     }
     hasInjectableInstance(name, context = null) {
         const { entry, instanceName } = this.resolveInjectableInstance(name, context);
         return instanceName != null && entry.instances.has(instanceName);
+    }
+    getInjectableInstance(name, context = null) {
+        return this.getBootstrappedInjectableInstance(name, context, new Set());
     }
     resolveInjectableInstance(name, context) {
         const entryName = getInjectableName(name);
