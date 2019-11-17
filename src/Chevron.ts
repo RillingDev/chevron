@@ -6,6 +6,36 @@ import { Entry } from "./Entry";
 import { scoper } from "./scope/scoper";
 import { Scopes } from "./scope/Scopes";
 
+const guessName = (initializer: any): string => {
+    const guessedName = getName(initializer);
+    if (isNil(guessedName)) {
+        throw new TypeError(
+            `Could not guess name of ${initializer}, please explicitly define one.`
+        );
+    }
+    return guessedName;
+};
+
+const getInjectableName = (name: any): string =>
+    isString(name) ? name : guessName(name);
+
+const createCircularDependencyError = (
+    entryName: string,
+    resolveStack: Set<string>
+): Error => {
+    return new Error(
+        `Circular dependencies found: '${[...resolveStack, entryName].join(
+            "->"
+        )}'.`
+    );
+};
+
+interface ResolvedInstance<TValue, UInitializer> {
+    entryName: string;
+    entry: Entry<TValue, UInitializer, TValue>;
+    instanceName: string | null;
+}
+
 class Chevron<TValue = any, UInitializer = any> {
     private readonly injectables: Map<
         string,
@@ -14,19 +44,6 @@ class Chevron<TValue = any, UInitializer = any> {
 
     public constructor() {
         this.injectables = new Map();
-    }
-
-    public getInjectableInstance(
-        name: UInitializer | string,
-        context: any = null
-    ): TValue {
-        return this.resolveEntry(name, context, new Set());
-    }
-
-    public hasInjectable(name: UInitializer | string): boolean {
-        return this.injectables.has(
-            isString(name) ? name : this.getEntryName(name)
-        );
     }
 
     public registerInjectable(
@@ -40,7 +57,7 @@ class Chevron<TValue = any, UInitializer = any> {
         name: string | null = null,
         scopeFn: scoper<any, UInitializer, any> = Scopes.SINGLETON
     ): void {
-        const entryName = !isNil(name) ? name : this.getEntryName(initializer);
+        const entryName = isString(name) ? name : guessName(initializer);
 
         if (this.injectables.has(entryName)) {
             throw new Error(`Name already exists: '${entryName}'.`);
@@ -55,18 +72,54 @@ class Chevron<TValue = any, UInitializer = any> {
         });
     }
 
-    private resolveEntry(
-        name: string | UInitializer,
-        context: any,
-        resolveStack: Set<string>
+    public getInjectableInstance(
+        name: UInitializer | string,
+        context: any = null
     ): TValue {
-        const entryName = isString(name) ? name : this.getEntryName(name);
+        return this.getBootstrappedInjectableInstance(name, context, new Set());
+    }
+
+    public hasInjectable(name: UInitializer | string): boolean {
+        return this.injectables.has(getInjectableName(name));
+    }
+
+    public hasInjectableInstance(
+        name: UInitializer | string,
+        context: any = null
+    ): boolean {
+        const { entry, instanceName } = this.resolveInjectableInstance(
+            name,
+            context
+        );
+
+        return instanceName != null && entry.instances.has(instanceName);
+    }
+
+    private resolveInjectableInstance(
+        name: string | UInitializer,
+        context: any
+    ): ResolvedInstance<TValue, UInitializer> {
+        const entryName = getInjectableName(name);
+
         if (!this.injectables.has(entryName)) {
             throw new Error(`Injectable '${name}' does not exist.`);
         }
 
         const entry = this.injectables.get(entryName)!;
         const instanceName = entry.scopeFn(entryName, entry, context);
+        return { entryName, entry, instanceName };
+    }
+
+    private getBootstrappedInjectableInstance(
+        name: string | UInitializer,
+        context: any,
+        resolveStack: Set<string>
+    ): TValue {
+        const {
+            entryName,
+            entry,
+            instanceName
+        } = this.resolveInjectableInstance(name, context);
 
         if (instanceName != null && entry.instances.has(instanceName)) {
             return entry.instances.get(instanceName)!;
@@ -76,19 +129,18 @@ class Chevron<TValue = any, UInitializer = any> {
          * Start bootstrapping value.
          */
         if (resolveStack.has(entryName)) {
-            throw new Error(
-                `Circular dependencies found: '${[
-                    ...resolveStack,
-                    entryName
-                ].join("->")}'.`
-            );
+            throw createCircularDependencyError(entryName, resolveStack);
         }
         resolveStack.add(entryName);
 
         const instance = entry.bootstrapFn(
             entry.initializer,
             entry.dependencies.map(dependencyName =>
-                this.resolveEntry(dependencyName, context, resolveStack)
+                this.getBootstrappedInjectableInstance(
+                    dependencyName,
+                    context,
+                    resolveStack
+                )
             )
         );
         if (instanceName != null) {
@@ -98,16 +150,6 @@ class Chevron<TValue = any, UInitializer = any> {
         resolveStack.delete(entryName);
 
         return instance;
-    }
-
-    private getEntryName(initializer: UInitializer): string {
-        const guessedName = getName(initializer);
-        if (isNil(guessedName)) {
-            throw new TypeError(
-                `Could not guess name of ${initializer}, please explicitly define one.`
-            );
-        }
-        return guessedName;
     }
 }
 
