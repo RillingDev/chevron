@@ -103,10 +103,10 @@ var chevron = (function (exports, lodash) {
                 throw new Error(`Name already exists: '${injectableEntryName}'.`);
             }
             this.injectables.set(injectableEntryName, {
+                initializer,
                 bootstrapping,
                 scope,
-                dependencies,
-                initializer,
+                dependencies: dependencies.map(getInjectableName),
                 instances: new Map()
             });
         }

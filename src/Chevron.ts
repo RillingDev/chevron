@@ -52,7 +52,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
 
     public registerInjectable(
         initializer: UInitializer,
-        dependencies: string[],
+        dependencies: any[],
         options: InjectableOptions<TValue, UInitializer, VContext> = {}
     ): void {
         const { bootstrapping, scope, name } = defaults(options, {
@@ -70,10 +70,10 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         }
 
         this.injectables.set(injectableEntryName, {
+            initializer,
             bootstrapping,
             scope,
-            dependencies,
-            initializer,
+            dependencies: dependencies.map(getInjectableName),
             instances: new Map()
         });
     }
