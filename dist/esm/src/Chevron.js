@@ -96,27 +96,35 @@ class Chevron {
         if (!this.hasInjectable(name)) {
             return false;
         }
-        const { injectableEntry, instanceName } = this.resolveInjectableInstance(name, context);
+        const { injectableEntry, instanceName } = this.resolveInjectableInstance(getInjectableName(name), context);
         return (instanceName != null && injectableEntry.instances.has(instanceName));
     }
+    /**
+     * Retrieves an instantiated injectable, recursively instantiating dependencies if they were not instantiated before.
+     *
+     * @param name Either a raw string name or a nameable value that should be retrieved. See {@link #registerInjectable} for details.
+     * @param context Context to be used for instance checks. See {@link Scope} for details.
+     * @return instantiated injectable for the given name.
+     * @throws TypeError when no name can be determined for the provided nameable.
+     * @throws Error when a dependency cannot be found.
+     * @throws Error when recursive dependencies are detected.
+     */
     getInjectableInstance(name, context = null) {
-        return this.getBootstrappedInjectableInstance(name, context, new Set());
+        return this.getBootstrappedInjectableInstance(getInjectableName(name), context, new Set());
     }
-    resolveInjectableInstance(name, context) {
-        const injectableEntryName = getInjectableName(name);
+    resolveInjectableInstance(injectableEntryName, context) {
         if (!this.injectables.has(injectableEntryName)) {
             throw new Error(`Injectable '${name}' does not exist.`);
         }
         const injectableEntry = this.injectables.get(injectableEntryName);
         const instanceName = injectableEntry.scope(context, injectableEntryName, injectableEntry);
         return {
-            injectableEntryName: injectableEntryName,
             injectableEntry,
             instanceName
         };
     }
-    getBootstrappedInjectableInstance(name, context, resolveStack) {
-        const { injectableEntryName, injectableEntry, instanceName } = this.resolveInjectableInstance(name, context);
+    getBootstrappedInjectableInstance(injectableEntryName, context, resolveStack) {
+        const { injectableEntry, instanceName } = this.resolveInjectableInstance(injectableEntryName, context);
         if (instanceName != null &&
             injectableEntry.instances.has(instanceName)) {
             return injectableEntry.instances.get(instanceName);

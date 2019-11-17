@@ -57,6 +57,16 @@ declare class Chevron<TValue = any, UInitializer = any, VContext = any> {
      * @throws TypeError when no name can be determined for the provided nameable.
      */
     hasInjectableInstance(name: UInitializer | string, context?: VContext | null): boolean;
+    /**
+     * Retrieves an instantiated injectable, recursively instantiating dependencies if they were not instantiated before.
+     *
+     * @param name Either a raw string name or a nameable value that should be retrieved. See {@link #registerInjectable} for details.
+     * @param context Context to be used for instance checks. See {@link Scope} for details.
+     * @return instantiated injectable for the given name.
+     * @throws TypeError when no name can be determined for the provided nameable.
+     * @throws Error when a dependency cannot be found.
+     * @throws Error when recursive dependencies are detected.
+     */
     getInjectableInstance(name: UInitializer | string, context?: VContext | null): TValue;
     private resolveInjectableInstance;
     private getBootstrappedInjectableInstance;

@@ -34,7 +34,6 @@ const createCircularDependencyError = (
 };
 
 interface ResolvedInstance<TValue, UInitializer, VContext> {
-    injectableEntryName: string;
     injectableEntry: InjectableEntry<TValue, UInitializer, TValue, VContext>;
     instanceName: string | null;
 }
@@ -144,26 +143,38 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         const {
             injectableEntry,
             instanceName
-        } = this.resolveInjectableInstance(name, context);
+        } = this.resolveInjectableInstance(getInjectableName(name), context);
 
         return (
             instanceName != null && injectableEntry.instances.has(instanceName)
         );
     }
 
+    /**
+     * Retrieves an instantiated injectable, recursively instantiating dependencies if they were not instantiated before.
+     *
+     * @param name Either a raw string name or a nameable value that should be retrieved. See {@link #registerInjectable} for details.
+     * @param context Context to be used for instance checks. See {@link Scope} for details.
+     * @return instantiated injectable for the given name.
+     * @throws TypeError when no name can be determined for the provided nameable.
+     * @throws Error when a dependency cannot be found.
+     * @throws Error when recursive dependencies are detected.
+     */
     public getInjectableInstance(
         name: UInitializer | string,
         context: VContext | null = null
     ): TValue {
-        return this.getBootstrappedInjectableInstance(name, context, new Set());
+        return this.getBootstrappedInjectableInstance(
+            getInjectableName(name),
+            context,
+            new Set()
+        );
     }
 
     private resolveInjectableInstance(
-        name: string | UInitializer,
+        injectableEntryName: string,
         context: VContext | null
     ): ResolvedInstance<TValue, UInitializer, VContext> {
-        const injectableEntryName = getInjectableName(name);
-
         if (!this.injectables.has(injectableEntryName)) {
             throw new Error(`Injectable '${name}' does not exist.`);
         }
@@ -175,22 +186,20 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
             injectableEntry
         );
         return {
-            injectableEntryName: injectableEntryName,
             injectableEntry,
             instanceName
         };
     }
 
     private getBootstrappedInjectableInstance(
-        name: string | UInitializer,
+        injectableEntryName: string,
         context: any,
         resolveStack: Set<string>
     ): TValue {
         const {
-            injectableEntryName,
             injectableEntry,
             instanceName
-        } = this.resolveInjectableInstance(name, context);
+        } = this.resolveInjectableInstance(injectableEntryName, context);
 
         if (
             instanceName != null &&
