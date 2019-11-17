@@ -66,7 +66,7 @@ const DefaultBootstrappings = {
     IDENTITY: identityBootstrapping
 };
 
-const singletonScope = (name) => `SINGLETON_${name}`;
+const singletonScope = (context, injectableEntryName) => `SINGLETON_${injectableEntryName}`;
 const prototypeScope = () => null;
 const DefaultScopes = {
     SINGLETON: singletonScope,
@@ -129,7 +129,7 @@ class Chevron {
             throw new Error(`Injectable '${name}' does not exist.`);
         }
         const injectableEntry = this.injectables.get(injectableEntryName);
-        const instanceName = injectableEntry.scope(injectableEntryName, injectableEntry, context);
+        const instanceName = injectableEntry.scope(context, injectableEntryName, injectableEntry);
         return {
             injectableEntryName: injectableEntryName,
             injectableEntry,
@@ -149,7 +149,8 @@ class Chevron {
             throw createCircularDependencyError(injectableEntryName, resolveStack);
         }
         resolveStack.add(injectableEntryName);
-        const instance = injectableEntry.bootstrapping(injectableEntry.initializer, injectableEntry.dependencies.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, context, resolveStack)));
+        const bootstrappedDependencies = injectableEntry.dependencies.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, context, resolveStack));
+        const instance = injectableEntry.bootstrapping(injectableEntry.initializer, bootstrappedDependencies, injectableEntryName, injectableEntry);
         if (instanceName != null) {
             injectableEntry.instances.set(instanceName, instance);
         }

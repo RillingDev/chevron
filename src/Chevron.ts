@@ -115,9 +115,9 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
 
         const injectableEntry = this.injectables.get(injectableEntryName)!;
         const instanceName = injectableEntry.scope(
+            context,
             injectableEntryName,
-            injectableEntry,
-            context
+            injectableEntry
         );
         return {
             injectableEntryName: injectableEntryName,
@@ -155,15 +155,19 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         }
         resolveStack.add(injectableEntryName);
 
-        const instance = injectableEntry.bootstrapping(
-            injectableEntry.initializer,
-            injectableEntry.dependencies.map(dependencyName =>
+        const bootstrappedDependencies = injectableEntry.dependencies.map(
+            dependencyName =>
                 this.getBootstrappedInjectableInstance(
                     dependencyName,
                     context,
                     resolveStack
                 )
-            )
+        );
+        const instance = injectableEntry.bootstrapping(
+            injectableEntry.initializer,
+            bootstrappedDependencies,
+            injectableEntryName,
+            injectableEntry
         );
         if (instanceName != null) {
             injectableEntry.instances.set(instanceName, instance);

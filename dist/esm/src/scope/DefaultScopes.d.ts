@@ -1,5 +1,5 @@
 declare const DefaultScopes: {
-    SINGLETON: (name: string) => string;
+    SINGLETON: (context: any, injectableEntryName: string) => string;
     PROTOTYPE: () => null;
 };
 export { DefaultScopes };

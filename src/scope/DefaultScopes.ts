@@ -1,4 +1,5 @@
-const singletonScope = (name: string): string => `SINGLETON_${name}`;
+const singletonScope = (context: any, injectableEntryName: string): string =>
+    `SINGLETON_${injectableEntryName}`;
 
 const prototypeScope = (): null => null;
 
