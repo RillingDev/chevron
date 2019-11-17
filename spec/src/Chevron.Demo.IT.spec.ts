@@ -19,9 +19,9 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
-        cv.register(MyFactory, Bootstrappers.CLASS, []);
+        cv.registerInjectable(MyFactory, Bootstrappers.CLASS, []);
 
-        cv.get(MyFactory).sayHello(); // Prints "Hello!"
+        cv.getInjectableInstance(MyFactory).sayHello(); // Prints "Hello!"
 
         expect(logSpy).toHaveBeenCalledWith("Hello!");
     });
@@ -67,7 +67,7 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
-        cv.register(MyFactory, Bootstrappers.CLASS, []);
+        cv.registerInjectable(MyFactory, Bootstrappers.CLASS, []);
 
         const myService: (myFactory: MyFactory) => void = (
             myFactory: MyFactory
@@ -76,9 +76,9 @@ describe("Chevron Demo ITs", () => {
             myFactory.sayHello();
         };
 
-        cv.register(myService, Bootstrappers.FUNCTION, ["MyFactory"]);
+        cv.registerInjectable(myService, Bootstrappers.FUNCTION, ["MyFactory"]);
 
-        cv.get(myService)(); // Prints "Hello!"
+        cv.getInjectableInstance(myService)(); // Prints "Hello!"
 
         expect(logSpy).toHaveBeenCalledWith("Hello!");
     });
@@ -94,21 +94,21 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
-        cv.register(
+        cv.registerInjectable(
             MyFactory,
             Bootstrappers.CLASS,
             [],
             "myInjectableFactory1"
         );
 
-        cv.register(
+        cv.registerInjectable(
             MyFactory,
             Bootstrappers.CLASS,
             [],
             "myInjectableFactory2"
         );
 
-        cv.get("myInjectableFactory1").sayHello(); // Prints "Hello!"
+        cv.getInjectableInstance("myInjectableFactory1").sayHello(); // Prints "Hello!"
 
         expect(logSpy).toHaveBeenCalledWith("Hello!");
     });

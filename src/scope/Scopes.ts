@@ -1,7 +1,10 @@
-const singletonScoper = (name: string) => `SINGLETON_${name}`;
+const singletonScoper = (name: string): string => `SINGLETON_${name}`;
+
+const prototypeScoper = (): null => null;
 
 const Scopes = {
-    SINGLETON: singletonScoper
+    SINGLETON: singletonScoper,
+    PROTOTYPE: prototypeScoper
 };
 
 export { Scopes };

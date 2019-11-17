@@ -11,7 +11,13 @@ const Injectable = <TValue = any, UInitializer = any>(
     name: string | null = null,
     scopeFn: scoper<any, UInitializer, any> = Scopes.SINGLETON
 ) => (target: any) => {
-    instance.register(target, bootstrapFn, dependencies, name, scopeFn);
+    instance.registerInjectable(
+        target,
+        bootstrapFn,
+        dependencies,
+        name,
+        scopeFn
+    );
     return target;
 };
 

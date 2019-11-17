@@ -16,15 +16,20 @@ class Chevron<TValue = any, UInitializer = any> {
         this.injectables = new Map();
     }
 
-    public get(name: UInitializer | string, context: any = null): TValue {
+    public getInjectableInstance(
+        name: UInitializer | string,
+        context: any = null
+    ): TValue {
         return this.resolveEntry(name, context, new Set());
     }
 
-    public has(name: UInitializer | string): boolean {
-        return this.injectables.has(isString(name) ? name : this.getKey(name));
+    public hasInjectable(name: UInitializer | string): boolean {
+        return this.injectables.has(
+            isString(name) ? name : this.getEntryName(name)
+        );
     }
 
-    public register(
+    public registerInjectable(
         initializer: UInitializer,
         bootstrapFn: bootstrapper<
             any,
@@ -35,13 +40,13 @@ class Chevron<TValue = any, UInitializer = any> {
         name: string | null = null,
         scopeFn: scoper<any, UInitializer, any> = Scopes.SINGLETON
     ): void {
-        const key = !isNil(name) ? name : this.getKey(initializer);
+        const entryName = !isNil(name) ? name : this.getEntryName(initializer);
 
-        if (this.injectables.has(key)) {
-            throw new Error(`Key already exists: '${key}'.`);
+        if (this.injectables.has(entryName)) {
+            throw new Error(`Name already exists: '${entryName}'.`);
         }
 
-        this.injectables.set(key, {
+        this.injectables.set(entryName, {
             bootstrapFn,
             scopeFn,
             dependencies,
@@ -55,41 +60,47 @@ class Chevron<TValue = any, UInitializer = any> {
         context: any,
         resolveStack: Set<string>
     ): TValue {
-        const entryName = isString(name) ? name : this.getKey(name);
+        const entryName = isString(name) ? name : this.getEntryName(name);
         if (!this.injectables.has(entryName)) {
             throw new Error(`Injectable '${name}' does not exist.`);
         }
 
         const entry = this.injectables.get(entryName)!;
         const instanceName = entry.scopeFn(entryName, entry, context);
-        if (!entry.instances.has(instanceName)) {
-            /*
-             * Start bootstrapping value.
-             */
-            if (resolveStack.has(entryName)) {
-                throw new Error(
-                    `Circular dependencies found: '${[
-                        ...resolveStack,
-                        entryName
-                    ].join("->")}'.`
-                );
-            }
-            resolveStack.add(entryName);
 
-            const instance = entry.bootstrapFn(
-                entry.initializer,
-                entry.dependencies.map(dependencyName =>
-                    this.resolveEntry(dependencyName, context, resolveStack)
-                )
-            );
-            entry.instances.set(instanceName, instance);
-
-            resolveStack.delete(entryName);
+        if (instanceName != null && entry.instances.has(instanceName)) {
+            return entry.instances.get(instanceName)!;
         }
-        return entry.instances.get(instanceName)!;
+
+        /*
+         * Start bootstrapping value.
+         */
+        if (resolveStack.has(entryName)) {
+            throw new Error(
+                `Circular dependencies found: '${[
+                    ...resolveStack,
+                    entryName
+                ].join("->")}'.`
+            );
+        }
+        resolveStack.add(entryName);
+
+        const instance = entry.bootstrapFn(
+            entry.initializer,
+            entry.dependencies.map(dependencyName =>
+                this.resolveEntry(dependencyName, context, resolveStack)
+            )
+        );
+        if (instanceName != null) {
+            entry.instances.set(instanceName, instance);
+        }
+
+        resolveStack.delete(entryName);
+
+        return instance;
     }
 
-    private getKey(initializer: UInitializer): string {
+    private getEntryName(initializer: UInitializer): string {
         const guessedName = getName(initializer);
         if (isNil(guessedName)) {
             throw new TypeError(

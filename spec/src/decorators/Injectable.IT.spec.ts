@@ -18,7 +18,7 @@ describe("Injectable tests", () => {
             }
         }
 
-        expect(cv.get(testFactoryName).getVal()).toBe(result);
+        expect(cv.getInjectableInstance(testFactoryName).getVal()).toBe(result);
     });
 
     it("Asserts that @Injectable can infer the name", () => {

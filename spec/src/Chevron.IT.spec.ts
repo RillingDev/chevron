@@ -7,9 +7,14 @@ describe("Chevron IT", () => {
         const result = 123;
 
         const testPlainName = "testPlainName";
-        cv.register(result, Bootstrappers.IDENTITY, [], testPlainName);
+        cv.registerInjectable(
+            result,
+            Bootstrappers.IDENTITY,
+            [],
+            testPlainName
+        );
 
-        expect(cv.get(testPlainName)).toBe(result);
+        expect(cv.getInjectableInstance(testPlainName)).toBe(result);
     });
 
     it("Asserts that services construct", () => {
@@ -18,14 +23,14 @@ describe("Chevron IT", () => {
 
         const testServiceName = "testServiceName";
         const testServiceFn: () => number = () => result;
-        cv.register(
+        cv.registerInjectable(
             testServiceFn,
             Bootstrappers.FUNCTION,
             [],
             testServiceName
         );
 
-        expect(cv.get(testServiceName)()).toBe(result);
+        expect(cv.getInjectableInstance(testServiceName)()).toBe(result);
     });
 
     it("Asserts that factories construct", () => {
@@ -40,14 +45,14 @@ describe("Chevron IT", () => {
             }
         }
 
-        cv.register(
+        cv.registerInjectable(
             TestFactoryClass,
             Bootstrappers.CLASS,
             [],
             testFactoryName
         );
 
-        expect(cv.get(testFactoryName).getVal()).toBe(result);
+        expect(cv.getInjectableInstance(testFactoryName).getVal()).toBe(result);
     });
 
     it("Asserts that single layer dependencies are resolved", () => {
@@ -56,7 +61,7 @@ describe("Chevron IT", () => {
 
         const testServiceName = "testServiceName";
         const testServiceFn: () => number = () => result;
-        cv.register(
+        cv.registerInjectable(
             testServiceFn,
             Bootstrappers.FUNCTION,
             [],
@@ -77,14 +82,14 @@ describe("Chevron IT", () => {
             }
         }
 
-        cv.register(
+        cv.registerInjectable(
             TestFactoryClass,
             Bootstrappers.CLASS,
             [testServiceName],
             testFactoryName
         );
 
-        expect(cv.get(testFactoryName).getVal()).toBe(result);
+        expect(cv.getInjectableInstance(testFactoryName).getVal()).toBe(result);
     });
 
     it("Asserts that multi layer dependencies are resolved", () => {
@@ -93,7 +98,7 @@ describe("Chevron IT", () => {
 
         const testService1Name = "testService1Name";
         const testService1Fn: () => number = () => result;
-        cv.register(
+        cv.registerInjectable(
             testService1Fn,
             Bootstrappers.FUNCTION,
             [],
@@ -108,7 +113,7 @@ describe("Chevron IT", () => {
             }
         }
 
-        cv.register(
+        cv.registerInjectable(
             TestFactoryClass1,
             Bootstrappers.CLASS,
             [],
@@ -126,7 +131,7 @@ describe("Chevron IT", () => {
 
             return testService1();
         };
-        cv.register(
+        cv.registerInjectable(
             testService2Fn,
             Bootstrappers.FUNCTION,
             [testService1Name, testFactoryName1],
@@ -145,14 +150,16 @@ describe("Chevron IT", () => {
                 return this.numberService();
             }
         };
-        cv.register(
+        cv.registerInjectable(
             TestFactoryClass2,
             Bootstrappers.CLASS,
             [testService2Name],
             testFactoryName2
         );
 
-        expect(cv.get(testFactoryName2).getVal()).toBe(result);
+        expect(cv.getInjectableInstance(testFactoryName2).getVal()).toBe(
+            result
+        );
     });
     it("Asserts that the key can be inferred from the initializer", () => {
         const cv = new Chevron();
@@ -164,13 +171,15 @@ describe("Chevron IT", () => {
             }
         }
 
-        cv.register(
+        cv.registerInjectable(
             TestFactoryClass,
             Bootstrappers.CLASS,
             [],
             undefined
         );
 
-        expect(cv.get(TestFactoryClass).getVal()).toBe(result);
+        expect(cv.getInjectableInstance(TestFactoryClass).getVal()).toBe(
+            result
+        );
     });
 });

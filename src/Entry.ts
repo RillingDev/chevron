@@ -6,7 +6,7 @@ interface Entry<TValue, UInitializer, VDependency> {
     scopeFn: scoper<TValue, UInitializer, VDependency>;
     dependencies: string[];
     initializer: UInitializer;
-    instances: Map<string, TValue>
+    instances: Map<string, TValue>;
 }
 
 export { Entry };

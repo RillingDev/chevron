@@ -16,7 +16,7 @@ describe("Autowired tests", () => {
             }
         }
 
-        cv.register(
+        cv.registerInjectable(
             TestFactoryClass,
             Bootstrappers.CLASS,
             [],

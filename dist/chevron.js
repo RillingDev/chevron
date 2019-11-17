@@ -64,26 +64,28 @@ var chevron = (function (exports, lodash) {
     };
 
     const singletonScoper = (name) => `SINGLETON_${name}`;
+    const prototypeScoper = () => null;
     const Scopes = {
-        SINGLETON: singletonScoper
+        SINGLETON: singletonScoper,
+        PROTOTYPE: prototypeScoper
     };
 
     class Chevron {
         constructor() {
             this.injectables = new Map();
         }
-        get(name, context = null) {
+        getInjectableInstance(name, context = null) {
             return this.resolveEntry(name, context, new Set());
         }
-        has(name) {
-            return this.injectables.has(lodash.isString(name) ? name : this.getKey(name));
+        hasInjectable(name) {
+            return this.injectables.has(lodash.isString(name) ? name : this.getEntryName(name));
         }
-        register(initializer, bootstrapFn = Bootstrappers.IDENTITY, dependencies = [], name = null, scopeFn = Scopes.SINGLETON) {
-            const key = !lodash.isNil(name) ? name : this.getKey(initializer);
-            if (this.injectables.has(key)) {
-                throw new Error(`Key already exists: '${key}'.`);
+        registerInjectable(initializer, bootstrapFn = Bootstrappers.IDENTITY, dependencies = [], name = null, scopeFn = Scopes.SINGLETON) {
+            const entryName = !lodash.isNil(name) ? name : this.getEntryName(initializer);
+            if (this.injectables.has(entryName)) {
+                throw new Error(`Name already exists: '${entryName}'.`);
             }
-            this.injectables.set(key, {
+            this.injectables.set(entryName, {
                 bootstrapFn,
                 scopeFn,
                 dependencies,
@@ -92,30 +94,33 @@ var chevron = (function (exports, lodash) {
             });
         }
         resolveEntry(name, context, resolveStack) {
-            const entryName = lodash.isString(name) ? name : this.getKey(name);
+            const entryName = lodash.isString(name) ? name : this.getEntryName(name);
             if (!this.injectables.has(entryName)) {
                 throw new Error(`Injectable '${name}' does not exist.`);
             }
             const entry = this.injectables.get(entryName);
             const instanceName = entry.scopeFn(entryName, entry, context);
-            if (!entry.instances.has(instanceName)) {
-                /*
-                 * Start bootstrapping value.
-                 */
-                if (resolveStack.has(entryName)) {
-                    throw new Error(`Circular dependencies found: '${[
-                    ...resolveStack,
-                    entryName
-                ].join("->")}'.`);
-                }
-                resolveStack.add(entryName);
-                const instance = entry.bootstrapFn(entry.initializer, entry.dependencies.map(dependencyName => this.resolveEntry(dependencyName, context, resolveStack)));
-                entry.instances.set(instanceName, instance);
-                resolveStack.delete(entryName);
+            if (instanceName != null && entry.instances.has(instanceName)) {
+                return entry.instances.get(instanceName);
             }
-            return entry.instances.get(instanceName);
+            /*
+             * Start bootstrapping value.
+             */
+            if (resolveStack.has(entryName)) {
+                throw new Error(`Circular dependencies found: '${[
+                ...resolveStack,
+                entryName
+            ].join("->")}'.`);
+            }
+            resolveStack.add(entryName);
+            const instance = entry.bootstrapFn(entry.initializer, entry.dependencies.map(dependencyName => this.resolveEntry(dependencyName, context, resolveStack)));
+            if (instanceName != null) {
+                entry.instances.set(instanceName, instance);
+            }
+            resolveStack.delete(entryName);
+            return instance;
         }
-        getKey(initializer) {
+        getEntryName(initializer) {
             const guessedName = name(initializer);
             if (lodash.isNil(guessedName)) {
                 throw new TypeError(`Could not guess name of ${initializer}, please explicitly define one.`);
@@ -125,12 +130,12 @@ var chevron = (function (exports, lodash) {
     }
 
     const Injectable = (instance, bootstrapFn = Bootstrappers.IDENTITY, dependencies = [], name = null, scopeFn = Scopes.SINGLETON) => (target) => {
-        instance.register(target, bootstrapFn, dependencies, name, scopeFn);
+        instance.registerInjectable(target, bootstrapFn, dependencies, name, scopeFn);
         return target;
     };
 
     const Autowired = (instance, name, context = null) => (target, propertyKey) => {
-        target[propertyKey] = instance.get(name, context);
+        target[propertyKey] = instance.getInjectableInstance(name, context);
     };
 
     exports.Autowired = Autowired;
