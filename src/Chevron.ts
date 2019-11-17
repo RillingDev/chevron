@@ -9,50 +9,18 @@ class Chevron<TValue = any, UInitializer = any> {
         string,
         Entry<TValue, UInitializer, TValue>
     >;
-
-    /**
-     * Main chevron class.
-     *
-     * @public
-     * @class Chevron
-     */
     public constructor() {
         this.injectables = new Map();
     }
 
-    /**
-     * Gets a bootstrapped injectable from the chevron instance.
-     *
-     * @public
-     * @param {*} key Key of the injectable to get.
-     * @returns {*} Bootstrapped content of the injectable.
-     * @throws Error when the key cannot be found, or circular dependencies exist.
-     */
     public get(name: UInitializer | string): TValue {
         return this.resolveEntry(name, new Set());
     }
 
-    /**
-     * Checks if the chevron instance has a given injectable.
-     *
-     * @public
-     * @param {*} name Key of the injectable to check.
-     * @returns {boolean} If the chevron instance has a given injectable.
-     */
     public has(name: UInitializer | string): boolean {
         return this.injectables.has(isString(name) ? name : this.getKey(name));
     }
 
-    /**
-     * Sets a new injectable on the chevron instance.
-     *
-     * @public
-     * @param {*} initializer Content of the injectable.
-     * @param {string} bootstrapFn Type of the injectable.
-     * @param {string[]} dependencies Array of dependency keys.
-     * @param {*?} name? Custom key of the injectable. If none is given, the initializer will be used.
-     * @throws Error when the key already exists, or the type is invalid.
-     */
     public register(
         initializer: UInitializer,
         bootstrapFn: bootstrapper<
