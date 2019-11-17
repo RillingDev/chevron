@@ -1,14 +1,21 @@
-import { Entry } from "./Entry";
 import { isNil, isString } from "lodash";
 import { name as getName } from "lightdash";
 import { bootstrapper } from "./bootstrap/bootstrapper";
-import { identityBootstrapper } from "./bootstrap/identityBootstrapper";
+import { DefaultBootstrappers } from "./bootstrap/DefaultBootstrappers";
+
+interface Entry<TValue, UInitializer, VDependency> {
+    bootstrapFn: bootstrapper<TValue, UInitializer, VDependency>;
+    dependencies: string[];
+    initializer: UInitializer;
+    value: TValue | null;
+}
 
 class Chevron<TValue = any, UInitializer = any> {
     private readonly injectables: Map<
         string,
         Entry<TValue, UInitializer, TValue>
     >;
+
     public constructor() {
         this.injectables = new Map();
     }
@@ -27,7 +34,7 @@ class Chevron<TValue = any, UInitializer = any> {
             any,
             UInitializer,
             any
-        > = identityBootstrapper,
+        > = DefaultBootstrappers.IDENTITY,
         dependencies: string[] = [],
         name: string | null = null
     ): void {

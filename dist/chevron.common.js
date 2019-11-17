@@ -46,50 +46,37 @@ const name = (value) => {
     return null;
 };
 
+const createNonFunctionInitializerError = () => new TypeError("Non-functions cannot be bootstrapped by this bootstrapper.");
+const classBootstrapper = (initializer, dependencies) => {
+    if (!lodash.isFunction(initializer)) {
+        throw createNonFunctionInitializerError();
+    }
+    return Reflect.construct(initializer, dependencies);
+};
+const functionBootstrapper = (initializer, dependencies) => (...args) => {
+    if (!lodash.isFunction(initializer)) {
+        throw createNonFunctionInitializerError();
+    }
+    return initializer(...dependencies, ...args);
+};
 const identityBootstrapper = (initializer) => initializer;
+const DefaultBootstrappers = {
+    CLASS: classBootstrapper,
+    FUNCTION: functionBootstrapper,
+    IDENTITY: identityBootstrapper
+};
 
 class Chevron {
-    /**
-     * Main chevron class.
-     *
-     * @public
-     * @class Chevron
-     */
     constructor() {
         this.injectables = new Map();
     }
-    /**
-     * Gets a bootstrapped injectable from the chevron instance.
-     *
-     * @public
-     * @param {*} key Key of the injectable to get.
-     * @returns {*} Bootstrapped content of the injectable.
-     * @throws Error when the key cannot be found, or circular dependencies exist.
-     */
     get(name) {
         return this.resolveEntry(name, new Set());
     }
-    /**
-     * Checks if the chevron instance has a given injectable.
-     *
-     * @public
-     * @param {*} name Key of the injectable to check.
-     * @returns {boolean} If the chevron instance has a given injectable.
-     */
     has(name) {
         return this.injectables.has(lodash.isString(name) ? name : this.getKey(name));
     }
-    /**
-     * Sets a new injectable on the chevron instance.
-     *
-     * @public
-     * @param {*} initializer Content of the injectable.
-     * @param {string} bootstrapFn Type of the injectable.
-     * @param {string[]} dependencies Array of dependency keys.
-     * @param {*?} name? Custom key of the injectable. If none is given, the initializer will be used.
-     * @throws Error when the key already exists, or the type is invalid.
-     */
-    register(initializer, bootstrapFn = identityBootstrapper, dependencies = [], name = null) {
+    register(initializer, bootstrapFn = DefaultBootstrappers.IDENTITY, dependencies = [], name = null) {
         const key = !lodash.isNil(name) ? name : this.getKey(initializer);
         if (this.injectables.has(key)) {
             throw new Error(`Key already exists: '${key}'.`);
@@ -132,48 +119,17 @@ class Chevron {
     }
 }
 
-const classBootstrapper = (initializer, dependencies) => {
-    if (!lodash.isFunction(initializer)) {
-        throw new TypeError("Non-functions cannot be bootstrapped by this bootstrapper.");
-    }
-    return Reflect.construct(initializer, dependencies);
-};
-
-const functionBootstrapper = (initializer, dependencies) => (...args) => {
-    if (!lodash.isFunction(initializer)) {
-        throw new TypeError("Non-functions cannot be bootstrapped by this bootstrapper.");
-    }
-    return initializer(...dependencies, ...args);
-};
-
-/**
- * Decorator function to be used as TypeScript decorator
- * in order to declare a value to be an injectable which is added to the chevron instance.
- *
- * @param {Chevron} instance Chevron instance to use.
- * @param {string[]} dependencies Array of dependency keys.
- */
-const Injectable = (instance, bootstrapFn = identityBootstrapper, dependencies = [], name = null) => (target) => {
+const Injectable = (instance, bootstrapFn = DefaultBootstrappers.IDENTITY, dependencies = [], name = null) => (target) => {
     instance.register(target, bootstrapFn, dependencies, name);
     return target;
 };
 
-/**
- * Decorator function to be used as TypeScript decorator
- * in order to wire an injectable into a class property.
- *
- * @public
- * @param {Chevron} instance Chevron instance to use.
- * @param {*} key Key of the injectable.
- */
 const Autowired = (instance, name) => (target, propertyKey) => {
     target[propertyKey] = instance.get(name);
 };
 
 exports.Autowired = Autowired;
 exports.Chevron = Chevron;
+exports.DefaultBootstrappers = DefaultBootstrappers;
 exports.Injectable = Injectable;
-exports.classBootstrapper = classBootstrapper;
-exports.functionBootstrapper = functionBootstrapper;
-exports.identityBootstrapper = identityBootstrapper;
 //# sourceMappingURL=chevron.common.js.map

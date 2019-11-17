@@ -1,10 +1,14 @@
 import { Chevron } from "../Chevron";
 import { bootstrapper } from "../bootstrap/bootstrapper";
-import { identityBootstrapper } from "../bootstrap/identityBootstrapper";
+import { DefaultBootstrappers } from "../bootstrap/DefaultBootstrappers";
 
 const Injectable = <TValue = any, UInitializer = any>(
     instance: Chevron<TValue, UInitializer>,
-    bootstrapFn: bootstrapper<any, UInitializer, any> = identityBootstrapper,
+    bootstrapFn: bootstrapper<
+        any,
+        UInitializer,
+        any
+    > = DefaultBootstrappers.IDENTITY,
     dependencies: string[] = [],
     name: string | null = null
 ) => (target: any) => {

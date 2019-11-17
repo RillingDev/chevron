@@ -1,5 +1,5 @@
 import { Chevron } from "../../src/Chevron";
-import { classBootstrapper, functionBootstrapper } from "../../src/main";
+import { DefaultBootstrappers } from "../../src/bootstrap/DefaultBootstrappers";
 
 describe("Chevron ITs", () => {
     it("Asserts that an error is thrown when resolving circular dependencies", () => {
@@ -12,7 +12,7 @@ describe("Chevron ITs", () => {
         const testServiceFn: () => number = () => result;
         cv.register(
             testServiceFn,
-            functionBootstrapper,
+            DefaultBootstrappers.FUNCTION,
             [testFactoryName],
             testServiceName
         );
@@ -31,7 +31,7 @@ describe("Chevron ITs", () => {
 
         cv.register(
             TestFactoryClass,
-            classBootstrapper,
+            DefaultBootstrappers.CLASS,
             [testServiceName],
             testFactoryName
         );

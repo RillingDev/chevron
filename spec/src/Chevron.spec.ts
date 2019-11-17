@@ -1,5 +1,5 @@
 import { Chevron } from "../../src/Chevron";
-import { functionBootstrapper } from "../../src/main";
+import { DefaultBootstrappers } from "../../src/bootstrap/DefaultBootstrappers";
 
 describe("Chevron tests", () => {
     it("Asserts that Chevron#get throws an exception for missing injectables", () => {
@@ -10,10 +10,10 @@ describe("Chevron tests", () => {
         const cv = new Chevron();
 
         const key = "foo";
-        cv.register(123, functionBootstrapper, [], key);
+        cv.register(123, DefaultBootstrappers.FUNCTION, [], key);
 
         expect(() =>
-            cv.register(321, functionBootstrapper, [], key)
+            cv.register(321, DefaultBootstrappers.FUNCTION, [], key)
         ).toThrowError(/Key already exists.+/);
     });
 });

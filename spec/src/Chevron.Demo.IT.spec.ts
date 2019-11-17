@@ -1,7 +1,7 @@
 import { Chevron } from "../../src/Chevron";
 import { Autowired } from "../../src/decorators/Autowired";
 import { Injectable } from "../../src/decorators/Injectable";
-import { classBootstrapper, functionBootstrapper } from "../../src/main";
+import { DefaultBootstrappers } from "../../src/bootstrap/DefaultBootstrappers";
 
 describe("Chevron Demo ITs", () => {
     it("Usage#1", () => {
@@ -19,7 +19,7 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
-        cv.register(MyFactory, classBootstrapper, []);
+        cv.register(MyFactory, DefaultBootstrappers.CLASS, []);
 
         cv.get(MyFactory).sayHello(); // Prints "Hello!"
 
@@ -35,7 +35,7 @@ describe("Chevron Demo ITs", () => {
          * Decorator API.
          */
 
-        @Injectable(cv, classBootstrapper, [])
+        @Injectable(cv, DefaultBootstrappers.CLASS, [])
         class MyFactory {
             public sayHello(): void {
                 console.log("Hello!");
@@ -67,7 +67,7 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
-        cv.register(MyFactory, classBootstrapper, []);
+        cv.register(MyFactory, DefaultBootstrappers.CLASS, []);
 
         const myService: (myFactory: MyFactory) => void = (
             myFactory: MyFactory
@@ -76,7 +76,7 @@ describe("Chevron Demo ITs", () => {
             myFactory.sayHello();
         };
 
-        cv.register(myService, functionBootstrapper, ["MyFactory"]);
+        cv.register(myService, DefaultBootstrappers.FUNCTION, ["MyFactory"]);
 
         cv.get(myService)(); // Prints "Hello!"
 
@@ -94,9 +94,19 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
-        cv.register(MyFactory, classBootstrapper, [], "myInjectableFactory1");
+        cv.register(
+            MyFactory,
+            DefaultBootstrappers.CLASS,
+            [],
+            "myInjectableFactory1"
+        );
 
-        cv.register(MyFactory, classBootstrapper, [], "myInjectableFactory2");
+        cv.register(
+            MyFactory,
+            DefaultBootstrappers.CLASS,
+            [],
+            "myInjectableFactory2"
+        );
 
         cv.get("myInjectableFactory1").sayHello(); // Prints "Hello!"
 
