@@ -1,5 +1,5 @@
 import { Chevron } from "../../src/Chevron";
-import { Bootstrappers } from "../../src/bootstrap/Bootstrappers";
+import { DefaultBootstrappings } from "../../src/bootstrap/DefaultBootstrappings";
 
 describe("Chevron IT", () => {
     it("Asserts that plains construct", () => {
@@ -9,7 +9,7 @@ describe("Chevron IT", () => {
         const testPlainName = "testPlainName";
         cv.registerInjectable(
             result,
-            Bootstrappers.IDENTITY,
+            DefaultBootstrappings.IDENTITY,
             [],
             testPlainName
         );
@@ -25,7 +25,7 @@ describe("Chevron IT", () => {
         const testServiceFn: () => number = () => result;
         cv.registerInjectable(
             testServiceFn,
-            Bootstrappers.FUNCTION,
+            DefaultBootstrappings.FUNCTION,
             [],
             testServiceName
         );
@@ -47,7 +47,7 @@ describe("Chevron IT", () => {
 
         cv.registerInjectable(
             TestFactoryClass,
-            Bootstrappers.CLASS,
+            DefaultBootstrappings.CLASS,
             [],
             testFactoryName
         );
@@ -63,7 +63,7 @@ describe("Chevron IT", () => {
         const testServiceFn: () => number = () => result;
         cv.registerInjectable(
             testServiceFn,
-            Bootstrappers.FUNCTION,
+            DefaultBootstrappings.FUNCTION,
             [],
             testServiceName
         );
@@ -84,7 +84,7 @@ describe("Chevron IT", () => {
 
         cv.registerInjectable(
             TestFactoryClass,
-            Bootstrappers.CLASS,
+            DefaultBootstrappings.CLASS,
             [testServiceName],
             testFactoryName
         );
@@ -100,7 +100,7 @@ describe("Chevron IT", () => {
         const testService1Fn: () => number = () => result;
         cv.registerInjectable(
             testService1Fn,
-            Bootstrappers.FUNCTION,
+            DefaultBootstrappings.FUNCTION,
             [],
             testService1Name
         );
@@ -115,7 +115,7 @@ describe("Chevron IT", () => {
 
         cv.registerInjectable(
             TestFactoryClass1,
-            Bootstrappers.CLASS,
+            DefaultBootstrappings.CLASS,
             [],
             testFactoryName1
         );
@@ -133,7 +133,7 @@ describe("Chevron IT", () => {
         };
         cv.registerInjectable(
             testService2Fn,
-            Bootstrappers.FUNCTION,
+            DefaultBootstrappings.FUNCTION,
             [testService1Name, testFactoryName1],
             testService2Name
         );
@@ -152,7 +152,7 @@ describe("Chevron IT", () => {
         };
         cv.registerInjectable(
             TestFactoryClass2,
-            Bootstrappers.CLASS,
+            DefaultBootstrappings.CLASS,
             [testService2Name],
             testFactoryName2
         );
@@ -173,7 +173,7 @@ describe("Chevron IT", () => {
 
         cv.registerInjectable(
             TestFactoryClass,
-            Bootstrappers.CLASS,
+            DefaultBootstrappings.CLASS,
             [],
             undefined
         );

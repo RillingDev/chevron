@@ -1,7 +1,7 @@
 import { Chevron } from "../../src/Chevron";
 import { Autowired } from "../../src/decorators/Autowired";
 import { Injectable } from "../../src/decorators/Injectable";
-import { Bootstrappers } from "../../src/bootstrap/Bootstrappers";
+import { DefaultBootstrappings } from "../../src/bootstrap/DefaultBootstrappings";
 
 describe("Chevron Demo ITs", () => {
     it("Usage#1", () => {
@@ -19,7 +19,7 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
-        cv.registerInjectable(MyFactory, Bootstrappers.CLASS, []);
+        cv.registerInjectable(MyFactory, DefaultBootstrappings.CLASS, []);
 
         cv.getInjectableInstance(MyFactory).sayHello(); // Prints "Hello!"
 
@@ -35,7 +35,7 @@ describe("Chevron Demo ITs", () => {
          * Decorator API.
          */
 
-        @Injectable(cv, Bootstrappers.CLASS, [])
+        @Injectable(cv, DefaultBootstrappings.CLASS, [])
         class MyFactory {
             public sayHello(): void {
                 console.log("Hello!");
@@ -67,7 +67,7 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
-        cv.registerInjectable(MyFactory, Bootstrappers.CLASS, []);
+        cv.registerInjectable(MyFactory, DefaultBootstrappings.CLASS, []);
 
         const myService: (myFactory: MyFactory) => void = (
             myFactory: MyFactory
@@ -76,7 +76,9 @@ describe("Chevron Demo ITs", () => {
             myFactory.sayHello();
         };
 
-        cv.registerInjectable(myService, Bootstrappers.FUNCTION, ["MyFactory"]);
+        cv.registerInjectable(myService, DefaultBootstrappings.FUNCTION, [
+            "MyFactory"
+        ]);
 
         cv.getInjectableInstance(myService)(); // Prints "Hello!"
 
@@ -96,14 +98,14 @@ describe("Chevron Demo ITs", () => {
 
         cv.registerInjectable(
             MyFactory,
-            Bootstrappers.CLASS,
+            DefaultBootstrappings.CLASS,
             [],
             "myInjectableFactory1"
         );
 
         cv.registerInjectable(
             MyFactory,
-            Bootstrappers.CLASS,
+            DefaultBootstrappings.CLASS,
             [],
             "myInjectableFactory2"
         );

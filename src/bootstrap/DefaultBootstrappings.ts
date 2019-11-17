@@ -3,7 +3,7 @@ import { isFunction } from "lodash";
 const createNonFunctionInitializerError = (): TypeError =>
     new TypeError("Non-functions cannot be bootstrapped by this bootstrapper.");
 
-const classBootstrapper = <TValue, UInitializer, VDependency>(
+const classBootstrapping = <TValue, UInitializer, VDependency>(
     initializer: UInitializer,
     dependencies: VDependency[]
 ): TValue => {
@@ -14,7 +14,7 @@ const classBootstrapper = <TValue, UInitializer, VDependency>(
     return Reflect.construct(initializer, dependencies);
 };
 
-const functionBootstrapper = <TValue, UInitializer, VDependency>(
+const functionBootstrapping = <TValue, UInitializer, VDependency>(
     initializer: UInitializer,
     dependencies: VDependency[]
 ) => (...args: any[]) => {
@@ -25,14 +25,14 @@ const functionBootstrapper = <TValue, UInitializer, VDependency>(
     return initializer(...dependencies, ...args);
 };
 
-const identityBootstrapper = <TInitializer>(
+const identityBootstrapping = <TInitializer>(
     initializer: TInitializer
 ): TInitializer => initializer;
 
-const Bootstrappers = {
-    CLASS: classBootstrapper,
-    FUNCTION: functionBootstrapper,
-    IDENTITY: identityBootstrapper
+const DefaultBootstrappings = {
+    CLASS: classBootstrapping,
+    FUNCTION: functionBootstrapping,
+    IDENTITY: identityBootstrapping
 };
 
-export { Bootstrappers };
+export { DefaultBootstrappings };

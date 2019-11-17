@@ -1,9 +1,9 @@
 import { Chevron } from "./Chevron";
-import { bootstrapper } from "./bootstrap/bootstrapper";
+import { Bootstrapping } from "./bootstrap/Bootstrapping";
 import { Injectable } from "./decorators/Injectable";
 import { Autowired } from "./decorators/Autowired";
-import { Bootstrappers } from "./bootstrap/Bootstrappers";
-import { Scopes } from "./scope/Scopes";
-import { scoper } from "./scope/scoper";
-export { Chevron, bootstrapper, Bootstrappers, scoper, Scopes, Autowired, Injectable };
+import { DefaultBootstrappings } from "./bootstrap/DefaultBootstrappings";
+import { DefaultScopes } from "./scope/DefaultScopes";
+import { Scope } from "./scope/Scope";
+export { Chevron, Bootstrapping, DefaultBootstrappings, Scope, DefaultScopes, Autowired, Injectable };
 //# sourceMappingURL=main.d.ts.map

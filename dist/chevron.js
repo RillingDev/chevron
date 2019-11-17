@@ -44,30 +44,30 @@ var chevron = (function (exports, lodash) {
     };
 
     const createNonFunctionInitializerError = () => new TypeError("Non-functions cannot be bootstrapped by this bootstrapper.");
-    const classBootstrapper = (initializer, dependencies) => {
+    const classBootstrapping = (initializer, dependencies) => {
         if (!lodash.isFunction(initializer)) {
             throw createNonFunctionInitializerError();
         }
         return Reflect.construct(initializer, dependencies);
     };
-    const functionBootstrapper = (initializer, dependencies) => (...args) => {
+    const functionBootstrapping = (initializer, dependencies) => (...args) => {
         if (!lodash.isFunction(initializer)) {
             throw createNonFunctionInitializerError();
         }
         return initializer(...dependencies, ...args);
     };
-    const identityBootstrapper = (initializer) => initializer;
-    const Bootstrappers = {
-        CLASS: classBootstrapper,
-        FUNCTION: functionBootstrapper,
-        IDENTITY: identityBootstrapper
+    const identityBootstrapping = (initializer) => initializer;
+    const DefaultBootstrappings = {
+        CLASS: classBootstrapping,
+        FUNCTION: functionBootstrapping,
+        IDENTITY: identityBootstrapping
     };
 
-    const singletonScoper = (name) => `SINGLETON_${name}`;
-    const prototypeScoper = () => null;
-    const Scopes = {
-        SINGLETON: singletonScoper,
-        PROTOTYPE: prototypeScoper
+    const singletonScope = (name) => `SINGLETON_${name}`;
+    const prototypeScope = () => null;
+    const DefaultScopes = {
+        SINGLETON: singletonScope,
+        PROTOTYPE: prototypeScope
     };
 
     const guessName = (initializer) => {
@@ -81,18 +81,25 @@ var chevron = (function (exports, lodash) {
     const createCircularDependencyError = (entryName, resolveStack) => {
         return new Error(`Circular dependencies found: '${[...resolveStack, entryName].join("->")}'.`);
     };
+    /**
+     * Injectable container class.
+     *
+     * @class
+     */
     class Chevron {
         constructor() {
             this.injectables = new Map();
         }
-        registerInjectable(initializer, bootstrapFn = Bootstrappers.IDENTITY, dependencies = [], name = null, scopeFn = Scopes.SINGLETON) {
-            const entryName = lodash.isString(name) ? name : guessName(initializer);
-            if (this.injectables.has(entryName)) {
-                throw new Error(`Name already exists: '${entryName}'.`);
+        registerInjectable(initializer, bootstrapping = DefaultBootstrappings.IDENTITY, dependencies = [], name = null, scope = DefaultScopes.SINGLETON) {
+            const injectableEntryName = lodash.isString(name)
+                ? name
+                : guessName(initializer);
+            if (this.injectables.has(injectableEntryName)) {
+                throw new Error(`Name already exists: '${injectableEntryName}'.`);
             }
-            this.injectables.set(entryName, {
-                bootstrapFn,
-                scopeFn,
+            this.injectables.set(injectableEntryName, {
+                bootstrap: bootstrapping,
+                scopeFn: scope,
                 dependencies,
                 initializer,
                 instances: new Map()
@@ -102,25 +109,30 @@ var chevron = (function (exports, lodash) {
             return this.injectables.has(getInjectableName(name));
         }
         hasInjectableInstance(name, context = null) {
-            const { entry, instanceName } = this.resolveInjectableInstance(name, context);
-            return instanceName != null && entry.instances.has(instanceName);
+            const { injectableEntry, instanceName } = this.resolveInjectableInstance(name, context);
+            return (instanceName != null && injectableEntry.instances.has(instanceName));
         }
         getInjectableInstance(name, context = null) {
             return this.getBootstrappedInjectableInstance(name, context, new Set());
         }
         resolveInjectableInstance(name, context) {
-            const entryName = getInjectableName(name);
-            if (!this.injectables.has(entryName)) {
+            const injectableEntryName = getInjectableName(name);
+            if (!this.injectables.has(injectableEntryName)) {
                 throw new Error(`Injectable '${name}' does not exist.`);
             }
-            const entry = this.injectables.get(entryName);
-            const instanceName = entry.scopeFn(entryName, entry, context);
-            return { entryName, entry, instanceName };
+            const injectableEntry = this.injectables.get(injectableEntryName);
+            const instanceName = injectableEntry.scopeFn(injectableEntryName, injectableEntry, context);
+            return {
+                entryName: injectableEntryName,
+                injectableEntry,
+                instanceName
+            };
         }
         getBootstrappedInjectableInstance(name, context, resolveStack) {
-            const { entryName, entry, instanceName } = this.resolveInjectableInstance(name, context);
-            if (instanceName != null && entry.instances.has(instanceName)) {
-                return entry.instances.get(instanceName);
+            const { entryName, injectableEntry, instanceName } = this.resolveInjectableInstance(name, context);
+            if (instanceName != null &&
+                injectableEntry.instances.has(instanceName)) {
+                return injectableEntry.instances.get(instanceName);
             }
             /*
              * Start bootstrapping value.
@@ -129,17 +141,17 @@ var chevron = (function (exports, lodash) {
                 throw createCircularDependencyError(entryName, resolveStack);
             }
             resolveStack.add(entryName);
-            const instance = entry.bootstrapFn(entry.initializer, entry.dependencies.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, context, resolveStack)));
+            const instance = injectableEntry.bootstrap(injectableEntry.initializer, injectableEntry.dependencies.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, context, resolveStack)));
             if (instanceName != null) {
-                entry.instances.set(instanceName, instance);
+                injectableEntry.instances.set(instanceName, instance);
             }
             resolveStack.delete(entryName);
             return instance;
         }
     }
 
-    const Injectable = (instance, bootstrapFn = Bootstrappers.IDENTITY, dependencies = [], name = null, scopeFn = Scopes.SINGLETON) => (target) => {
-        instance.registerInjectable(target, bootstrapFn, dependencies, name, scopeFn);
+    const Injectable = (instance, bootstrapping = DefaultBootstrappings.IDENTITY, dependencies = [], name = null, scope = DefaultScopes.SINGLETON) => (target) => {
+        instance.registerInjectable(target, bootstrapping, dependencies, name, scope);
         return target;
     };
 
@@ -148,10 +160,10 @@ var chevron = (function (exports, lodash) {
     };
 
     exports.Autowired = Autowired;
-    exports.Bootstrappers = Bootstrappers;
     exports.Chevron = Chevron;
+    exports.DefaultBootstrappings = DefaultBootstrappings;
+    exports.DefaultScopes = DefaultScopes;
     exports.Injectable = Injectable;
-    exports.Scopes = Scopes;
 
     return exports;
 

@@ -1,1 +1,0 @@
-{"version":3,"file":"Scopes.js","sourceRoot":"","sources":["../../../../src/scope/Scopes.ts"],"names":[],"mappings":"AAAA,MAAM,eAAe,GAAG,CAAC,IAAY,EAAU,EAAE,CAAC,aAAa,IAAI,EAAE,CAAC;AAEtE,MAAM,eAAe,GAAG,GAAS,EAAE,CAAC,IAAI,CAAC;AAEzC,MAAM,MAAM,GAAG;IACX,SAAS,EAAE,eAAe;IAC1B,SAAS,EAAE,eAAe;CAC7B,CAAC;AAEF,OAAO,EAAE,MAAM,EAAE,CAAC"}

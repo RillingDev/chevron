@@ -1,22 +1,26 @@
 import { Chevron } from "../Chevron";
-import { bootstrapper } from "../bootstrap/bootstrapper";
-import { Bootstrappers } from "../bootstrap/Bootstrappers";
-import { scoper } from "../scope/scoper";
-import { Scopes } from "../scope/Scopes";
+import { Bootstrapping } from "../bootstrap/Bootstrapping";
+import { DefaultBootstrappings } from "../bootstrap/DefaultBootstrappings";
+import { Scope } from "../scope/Scope";
+import { DefaultScopes } from "../scope/DefaultScopes";
 
 const Injectable = <TValue = any, UInitializer = any, VContext = any>(
     instance: Chevron<TValue, UInitializer>,
-    bootstrapFn: bootstrapper<any, UInitializer, any> = Bootstrappers.IDENTITY,
+    bootstrapping: Bootstrapping<
+        any,
+        UInitializer,
+        any
+    > = DefaultBootstrappings.IDENTITY,
     dependencies: string[] = [],
     name: string | null = null,
-    scopeFn: scoper<any, UInitializer, any, VContext> = Scopes.SINGLETON
+    scope: Scope<any, UInitializer, any, VContext> = DefaultScopes.SINGLETON
 ) => (target: any) => {
     instance.registerInjectable(
         target,
-        bootstrapFn,
+        bootstrapping,
         dependencies,
         name,
-        scopeFn
+        scope
     );
     return target;
 };
