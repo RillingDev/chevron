@@ -10,10 +10,16 @@ describe("Chevron tests", () => {
         const cv = new Chevron();
 
         const key = "foo";
-        cv.registerInjectable(123, DefaultBootstrappings.FUNCTION, [], key);
+        cv.registerInjectable(123, [], {
+            bootstrapping: DefaultBootstrappings.FUNCTION,
+            name: key
+        });
 
         expect(() =>
-            cv.registerInjectable(321, DefaultBootstrappings.FUNCTION, [], key)
+            cv.registerInjectable(321, [], {
+                bootstrapping: DefaultBootstrappings.FUNCTION,
+                name: key
+            })
         ).toThrowError(/Name already exists.+/);
     });
 });

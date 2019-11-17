@@ -1,4 +1,4 @@
-import { isNil, isString } from "lodash";
+import { defaults, isNil, isString } from "lodash";
 import { name as getName } from "lightdash";
 import { DefaultBootstrappings } from "./bootstrap/DefaultBootstrappings";
 import { DefaultScopes } from "./scope/DefaultScopes";
@@ -22,16 +22,21 @@ class Chevron {
     constructor() {
         this.injectables = new Map();
     }
-    registerInjectable(initializer, bootstrapping = DefaultBootstrappings.IDENTITY, dependencies = [], name = null, scope = DefaultScopes.SINGLETON) {
-        const injectableEntryName = isString(name)
+    registerInjectable(initializer, dependencies, options = {}) {
+        const { bootstrapping, scope, name } = defaults(options, {
+            bootstrapping: DefaultBootstrappings.IDENTITY,
+            scope: DefaultScopes.SINGLETON,
+            name: null
+        });
+        const injectableEntryName = !isNil(name)
             ? name
             : guessName(initializer);
         if (this.injectables.has(injectableEntryName)) {
             throw new Error(`Name already exists: '${injectableEntryName}'.`);
         }
         this.injectables.set(injectableEntryName, {
-            bootstrap: bootstrapping,
-            scopeFn: scope,
+            bootstrapping,
+            scope,
             dependencies,
             initializer,
             instances: new Map()
@@ -53,15 +58,15 @@ class Chevron {
             throw new Error(`Injectable '${name}' does not exist.`);
         }
         const injectableEntry = this.injectables.get(injectableEntryName);
-        const instanceName = injectableEntry.scopeFn(injectableEntryName, injectableEntry, context);
+        const instanceName = injectableEntry.scope(injectableEntryName, injectableEntry, context);
         return {
-            entryName: injectableEntryName,
+            injectableEntryName: injectableEntryName,
             injectableEntry,
             instanceName
         };
     }
     getBootstrappedInjectableInstance(name, context, resolveStack) {
-        const { entryName, injectableEntry, instanceName } = this.resolveInjectableInstance(name, context);
+        const { injectableEntryName, injectableEntry, instanceName } = this.resolveInjectableInstance(name, context);
         if (instanceName != null &&
             injectableEntry.instances.has(instanceName)) {
             return injectableEntry.instances.get(instanceName);
@@ -69,15 +74,15 @@ class Chevron {
         /*
          * Start bootstrapping value.
          */
-        if (resolveStack.has(entryName)) {
-            throw createCircularDependencyError(entryName, resolveStack);
+        if (resolveStack.has(injectableEntryName)) {
+            throw createCircularDependencyError(injectableEntryName, resolveStack);
         }
-        resolveStack.add(entryName);
-        const instance = injectableEntry.bootstrap(injectableEntry.initializer, injectableEntry.dependencies.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, context, resolveStack)));
+        resolveStack.add(injectableEntryName);
+        const instance = injectableEntry.bootstrapping(injectableEntry.initializer, injectableEntry.dependencies.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, context, resolveStack)));
         if (instanceName != null) {
             injectableEntry.instances.set(instanceName, instance);
         }
-        resolveStack.delete(entryName);
+        resolveStack.delete(injectableEntryName);
         return instance;
     }
 }

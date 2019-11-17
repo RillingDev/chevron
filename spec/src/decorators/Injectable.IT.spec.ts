@@ -10,7 +10,10 @@ describe("Injectable tests", () => {
 
         const testFactoryName = "testFactoryName";
 
-        @Injectable(cv, DefaultBootstrappings.CLASS, [], testFactoryName)
+        @Injectable(cv, [], {
+            bootstrapping: DefaultBootstrappings.CLASS,
+            name: testFactoryName
+        })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         class TestFactoryClass {
             public getVal(): number {
@@ -26,7 +29,9 @@ describe("Injectable tests", () => {
 
         const result = 123;
 
-        @Injectable(cv, DefaultBootstrappings.CLASS, [])
+        @Injectable(cv, [], {
+            bootstrapping: DefaultBootstrappings.CLASS
+        })
         class TestFactoryClass {
             public getVal(): number {
                 return result;

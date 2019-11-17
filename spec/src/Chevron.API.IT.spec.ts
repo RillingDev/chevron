@@ -6,12 +6,10 @@ describe("Chevron API ITs", () => {
 
         const testInjectable = "testInjectable";
         const testVal = 123;
-        cv.registerInjectable(
-            testVal,
-            content => content * 2,
-            [],
-            testInjectable
-        );
+        cv.registerInjectable(testVal, [], {
+            bootstrapping: content => content * 2,
+            name: testInjectable
+        });
 
         expect(cv.getInjectableInstance(testInjectable)).toBe(246);
     });

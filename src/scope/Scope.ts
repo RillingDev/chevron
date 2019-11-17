@@ -1,4 +1,4 @@
-import { InjectableEntry } from "../InjectableEntry";
+import { InjectableEntry } from "../injectable/InjectableEntry";
 
 type Scope<TValue, UInitializer, VDependency, WContext> = (
     name: string,

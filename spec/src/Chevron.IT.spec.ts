@@ -7,12 +7,10 @@ describe("Chevron IT", () => {
         const result = 123;
 
         const testPlainName = "testPlainName";
-        cv.registerInjectable(
-            result,
-            DefaultBootstrappings.IDENTITY,
-            [],
-            testPlainName
-        );
+        cv.registerInjectable(result, [], {
+            bootstrapping: DefaultBootstrappings.IDENTITY,
+            name: testPlainName
+        });
 
         expect(cv.getInjectableInstance(testPlainName)).toBe(result);
     });
@@ -23,12 +21,10 @@ describe("Chevron IT", () => {
 
         const testServiceName = "testServiceName";
         const testServiceFn: () => number = () => result;
-        cv.registerInjectable(
-            testServiceFn,
-            DefaultBootstrappings.FUNCTION,
-            [],
-            testServiceName
-        );
+        cv.registerInjectable(testServiceFn, [], {
+            bootstrapping: DefaultBootstrappings.FUNCTION,
+            name: testServiceName
+        });
 
         expect(cv.getInjectableInstance(testServiceName)()).toBe(result);
     });
@@ -45,12 +41,10 @@ describe("Chevron IT", () => {
             }
         }
 
-        cv.registerInjectable(
-            TestFactoryClass,
-            DefaultBootstrappings.CLASS,
-            [],
-            testFactoryName
-        );
+        cv.registerInjectable(TestFactoryClass, [], {
+            bootstrapping: DefaultBootstrappings.CLASS,
+            name: testFactoryName
+        });
 
         expect(cv.getInjectableInstance(testFactoryName).getVal()).toBe(result);
     });
@@ -61,12 +55,10 @@ describe("Chevron IT", () => {
 
         const testServiceName = "testServiceName";
         const testServiceFn: () => number = () => result;
-        cv.registerInjectable(
-            testServiceFn,
-            DefaultBootstrappings.FUNCTION,
-            [],
-            testServiceName
-        );
+        cv.registerInjectable(testServiceFn, [], {
+            bootstrapping: DefaultBootstrappings.FUNCTION,
+            name: testServiceName
+        });
 
         const testFactoryName = "testFactoryName";
 
@@ -82,12 +74,10 @@ describe("Chevron IT", () => {
             }
         }
 
-        cv.registerInjectable(
-            TestFactoryClass,
-            DefaultBootstrappings.CLASS,
-            [testServiceName],
-            testFactoryName
-        );
+        cv.registerInjectable(TestFactoryClass, [testServiceName], {
+            bootstrapping: DefaultBootstrappings.CLASS,
+            name: testFactoryName
+        });
 
         expect(cv.getInjectableInstance(testFactoryName).getVal()).toBe(result);
     });
@@ -98,12 +88,10 @@ describe("Chevron IT", () => {
 
         const testService1Name = "testService1Name";
         const testService1Fn: () => number = () => result;
-        cv.registerInjectable(
-            testService1Fn,
-            DefaultBootstrappings.FUNCTION,
-            [],
-            testService1Name
-        );
+        cv.registerInjectable(testService1Fn, [], {
+            bootstrapping: DefaultBootstrappings.FUNCTION,
+            name: testService1Name
+        });
 
         const testFactoryName1 = "testFactoryName1";
 
@@ -113,12 +101,10 @@ describe("Chevron IT", () => {
             }
         }
 
-        cv.registerInjectable(
-            TestFactoryClass1,
-            DefaultBootstrappings.CLASS,
-            [],
-            testFactoryName1
-        );
+        cv.registerInjectable(TestFactoryClass1, [], {
+            bootstrapping: DefaultBootstrappings.CLASS,
+            name: testFactoryName1
+        });
 
         const testService2Name = "testService2Name";
         const testService2Fn: (testService1: any, testFactory1: any) => any = (
@@ -133,9 +119,11 @@ describe("Chevron IT", () => {
         };
         cv.registerInjectable(
             testService2Fn,
-            DefaultBootstrappings.FUNCTION,
             [testService1Name, testFactoryName1],
-            testService2Name
+            {
+                bootstrapping: DefaultBootstrappings.FUNCTION,
+                name: testService2Name
+            }
         );
 
         const testFactoryName2 = "testFactoryName2";
@@ -150,12 +138,10 @@ describe("Chevron IT", () => {
                 return this.numberService();
             }
         };
-        cv.registerInjectable(
-            TestFactoryClass2,
-            DefaultBootstrappings.CLASS,
-            [testService2Name],
-            testFactoryName2
-        );
+        cv.registerInjectable(TestFactoryClass2, [testService2Name], {
+            bootstrapping: DefaultBootstrappings.CLASS,
+            name: testFactoryName2
+        });
 
         expect(cv.getInjectableInstance(testFactoryName2).getVal()).toBe(
             result
@@ -171,12 +157,9 @@ describe("Chevron IT", () => {
             }
         }
 
-        cv.registerInjectable(
-            TestFactoryClass,
-            DefaultBootstrappings.CLASS,
-            [],
-            undefined
-        );
+        cv.registerInjectable(TestFactoryClass, [], {
+            bootstrapping: DefaultBootstrappings.CLASS
+        });
 
         expect(cv.getInjectableInstance(TestFactoryClass).getVal()).toBe(
             result

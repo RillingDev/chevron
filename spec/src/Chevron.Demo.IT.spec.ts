@@ -19,7 +19,9 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
-        cv.registerInjectable(MyFactory, DefaultBootstrappings.CLASS, []);
+        cv.registerInjectable(MyFactory, [], {
+            bootstrapping: DefaultBootstrappings.CLASS
+        });
 
         cv.getInjectableInstance(MyFactory).sayHello(); // Prints "Hello!"
 
@@ -35,7 +37,7 @@ describe("Chevron Demo ITs", () => {
          * Decorator API.
          */
 
-        @Injectable(cv, DefaultBootstrappings.CLASS, [])
+        @Injectable(cv, [], { bootstrapping: DefaultBootstrappings.CLASS })
         class MyFactory {
             public sayHello(): void {
                 console.log("Hello!");
@@ -67,7 +69,9 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
-        cv.registerInjectable(MyFactory, DefaultBootstrappings.CLASS, []);
+        cv.registerInjectable(MyFactory, [], {
+            bootstrapping: DefaultBootstrappings.CLASS
+        });
 
         const myService: (myFactory: MyFactory) => void = (
             myFactory: MyFactory
@@ -76,9 +80,9 @@ describe("Chevron Demo ITs", () => {
             myFactory.sayHello();
         };
 
-        cv.registerInjectable(myService, DefaultBootstrappings.FUNCTION, [
-            "MyFactory"
-        ]);
+        cv.registerInjectable(myService, ["MyFactory"], {
+            bootstrapping: DefaultBootstrappings.FUNCTION
+        });
 
         cv.getInjectableInstance(myService)(); // Prints "Hello!"
 
@@ -98,17 +102,18 @@ describe("Chevron Demo ITs", () => {
 
         cv.registerInjectable(
             MyFactory,
-            DefaultBootstrappings.CLASS,
             [],
-            "myInjectableFactory1"
+
+            {
+                bootstrapping: DefaultBootstrappings.CLASS,
+                name: "myInjectableFactory1"
+            }
         );
 
-        cv.registerInjectable(
-            MyFactory,
-            DefaultBootstrappings.CLASS,
-            [],
-            "myInjectableFactory2"
-        );
+        cv.registerInjectable(MyFactory, [], {
+            bootstrapping: DefaultBootstrappings.CLASS,
+            name: "myInjectableFactory2"
+        });
 
         cv.getInjectableInstance("myInjectableFactory1").sayHello(); // Prints "Hello!"
 

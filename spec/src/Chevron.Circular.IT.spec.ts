@@ -10,12 +10,10 @@ describe("Chevron ITs", () => {
         const testServiceName = "testServiceName";
 
         const testServiceFn: () => number = () => result;
-        cv.registerInjectable(
-            testServiceFn,
-            DefaultBootstrappings.FUNCTION,
-            [testFactoryName],
-            testServiceName
-        );
+        cv.registerInjectable(testServiceFn, [testFactoryName], {
+            bootstrapping: DefaultBootstrappings.FUNCTION,
+            name: testServiceName
+        });
 
         class TestFactoryClass {
             private readonly numberService: () => number;
@@ -29,12 +27,10 @@ describe("Chevron ITs", () => {
             }
         }
 
-        cv.registerInjectable(
-            TestFactoryClass,
-            DefaultBootstrappings.CLASS,
-            [testServiceName],
-            testFactoryName
-        );
+        cv.registerInjectable(TestFactoryClass, [testServiceName], {
+            bootstrapping: DefaultBootstrappings.CLASS,
+            name: testFactoryName
+        });
 
         expect(() => cv.getInjectableInstance(testFactoryName)).toThrowError(
             /Circular dependencies found.+/

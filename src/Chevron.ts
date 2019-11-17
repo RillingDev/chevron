@@ -1,9 +1,8 @@
-import { isNil, isString } from "lodash";
+import { defaults, isNil, isString } from "lodash";
 import { name as getName } from "lightdash";
-import { Bootstrapping } from "./bootstrap/Bootstrapping";
+import { InjectableEntry } from "./injectable/InjectableEntry";
+import { InjectableOptions } from "./injectable/InjectableOptions";
 import { DefaultBootstrappings } from "./bootstrap/DefaultBootstrappings";
-import { InjectableEntry } from "./InjectableEntry";
-import { Scope } from "./scope/Scope";
 import { DefaultScopes } from "./scope/DefaultScopes";
 
 const guessName = (initializer: any): string => {
@@ -31,7 +30,7 @@ const createCircularDependencyError = (
 };
 
 interface ResolvedInstance<TValue, UInitializer, VContext> {
-    entryName: string;
+    injectableEntryName: string;
     injectableEntry: InjectableEntry<TValue, UInitializer, TValue, VContext>;
     instanceName: string | null;
 }
@@ -53,16 +52,16 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
 
     public registerInjectable(
         initializer: UInitializer,
-        bootstrapping: Bootstrapping<
-            any,
-            UInitializer,
-            any
-        > = DefaultBootstrappings.IDENTITY,
-        dependencies: string[] = [],
-        name: string | null = null,
-        scope: Scope<any, UInitializer, any, VContext> = DefaultScopes.SINGLETON
+        dependencies: string[],
+        options: InjectableOptions<TValue, UInitializer, VContext> = {}
     ): void {
-        const injectableEntryName = isString(name)
+        const { bootstrapping, scope, name } = defaults(options, {
+            bootstrapping: DefaultBootstrappings.IDENTITY,
+            scope: DefaultScopes.SINGLETON,
+            name: null
+        });
+
+        const injectableEntryName = !isNil(name)
             ? name
             : guessName(initializer);
 
@@ -71,8 +70,8 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         }
 
         this.injectables.set(injectableEntryName, {
-            bootstrap: bootstrapping,
-            scopeFn: scope,
+            bootstrapping,
+            scope,
             dependencies,
             initializer,
             instances: new Map()
@@ -115,13 +114,13 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         }
 
         const injectableEntry = this.injectables.get(injectableEntryName)!;
-        const instanceName = injectableEntry.scopeFn(
+        const instanceName = injectableEntry.scope(
             injectableEntryName,
             injectableEntry,
             context
         );
         return {
-            entryName: injectableEntryName,
+            injectableEntryName: injectableEntryName,
             injectableEntry,
             instanceName
         };
@@ -133,7 +132,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         resolveStack: Set<string>
     ): TValue {
         const {
-            entryName,
+            injectableEntryName,
             injectableEntry,
             instanceName
         } = this.resolveInjectableInstance(name, context);
@@ -148,12 +147,15 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         /*
          * Start bootstrapping value.
          */
-        if (resolveStack.has(entryName)) {
-            throw createCircularDependencyError(entryName, resolveStack);
+        if (resolveStack.has(injectableEntryName)) {
+            throw createCircularDependencyError(
+                injectableEntryName,
+                resolveStack
+            );
         }
-        resolveStack.add(entryName);
+        resolveStack.add(injectableEntryName);
 
-        const instance = injectableEntry.bootstrap(
+        const instance = injectableEntry.bootstrapping(
             injectableEntry.initializer,
             injectableEntry.dependencies.map(dependencyName =>
                 this.getBootstrappedInjectableInstance(
@@ -167,7 +169,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
             injectableEntry.instances.set(instanceName, instance);
         }
 
-        resolveStack.delete(entryName);
+        resolveStack.delete(injectableEntryName);
 
         return instance;
     }

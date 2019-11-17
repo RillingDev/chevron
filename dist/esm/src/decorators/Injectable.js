@@ -1,7 +1,5 @@
-import { DefaultBootstrappings } from "../bootstrap/DefaultBootstrappings";
-import { DefaultScopes } from "../scope/DefaultScopes";
-const Injectable = (instance, bootstrapping = DefaultBootstrappings.IDENTITY, dependencies = [], name = null, scope = DefaultScopes.SINGLETON) => (target) => {
-    instance.registerInjectable(target, bootstrapping, dependencies, name, scope);
+const Injectable = (instance, dependencies, options = {}) => (target) => {
+    instance.registerInjectable(target, dependencies, options);
     return target;
 };
 export { Injectable };
