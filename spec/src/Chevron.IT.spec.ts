@@ -1,5 +1,5 @@
 import { Chevron } from "../../src/Chevron";
-import { DefaultBootstrappers } from "../../src/bootstrap/DefaultBootstrappers";
+import { Bootstrappers } from "../../src/bootstrap/Bootstrappers";
 
 describe("Chevron IT", () => {
     it("Asserts that plains construct", () => {
@@ -7,7 +7,7 @@ describe("Chevron IT", () => {
         const result = 123;
 
         const testPlainName = "testPlainName";
-        cv.register(result, DefaultBootstrappers.IDENTITY, [], testPlainName);
+        cv.register(result, Bootstrappers.IDENTITY, [], testPlainName);
 
         expect(cv.get(testPlainName)).toBe(result);
     });
@@ -20,7 +20,7 @@ describe("Chevron IT", () => {
         const testServiceFn: () => number = () => result;
         cv.register(
             testServiceFn,
-            DefaultBootstrappers.FUNCTION,
+            Bootstrappers.FUNCTION,
             [],
             testServiceName
         );
@@ -42,7 +42,7 @@ describe("Chevron IT", () => {
 
         cv.register(
             TestFactoryClass,
-            DefaultBootstrappers.CLASS,
+            Bootstrappers.CLASS,
             [],
             testFactoryName
         );
@@ -58,7 +58,7 @@ describe("Chevron IT", () => {
         const testServiceFn: () => number = () => result;
         cv.register(
             testServiceFn,
-            DefaultBootstrappers.FUNCTION,
+            Bootstrappers.FUNCTION,
             [],
             testServiceName
         );
@@ -79,7 +79,7 @@ describe("Chevron IT", () => {
 
         cv.register(
             TestFactoryClass,
-            DefaultBootstrappers.CLASS,
+            Bootstrappers.CLASS,
             [testServiceName],
             testFactoryName
         );
@@ -95,7 +95,7 @@ describe("Chevron IT", () => {
         const testService1Fn: () => number = () => result;
         cv.register(
             testService1Fn,
-            DefaultBootstrappers.FUNCTION,
+            Bootstrappers.FUNCTION,
             [],
             testService1Name
         );
@@ -110,7 +110,7 @@ describe("Chevron IT", () => {
 
         cv.register(
             TestFactoryClass1,
-            DefaultBootstrappers.CLASS,
+            Bootstrappers.CLASS,
             [],
             testFactoryName1
         );
@@ -128,7 +128,7 @@ describe("Chevron IT", () => {
         };
         cv.register(
             testService2Fn,
-            DefaultBootstrappers.FUNCTION,
+            Bootstrappers.FUNCTION,
             [testService1Name, testFactoryName1],
             testService2Name
         );
@@ -147,7 +147,7 @@ describe("Chevron IT", () => {
         };
         cv.register(
             TestFactoryClass2,
-            DefaultBootstrappers.CLASS,
+            Bootstrappers.CLASS,
             [testService2Name],
             testFactoryName2
         );
@@ -166,7 +166,7 @@ describe("Chevron IT", () => {
 
         cv.register(
             TestFactoryClass,
-            DefaultBootstrappers.CLASS,
+            Bootstrappers.CLASS,
             [],
             undefined
         );

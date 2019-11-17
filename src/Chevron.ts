@@ -1,14 +1,10 @@
 import { isNil, isString } from "lodash";
 import { name as getName } from "lightdash";
 import { bootstrapper } from "./bootstrap/bootstrapper";
-import { DefaultBootstrappers } from "./bootstrap/DefaultBootstrappers";
-
-interface Entry<TValue, UInitializer, VDependency> {
-    bootstrapFn: bootstrapper<TValue, UInitializer, VDependency>;
-    dependencies: string[];
-    initializer: UInitializer;
-    value: TValue | null;
-}
+import { Bootstrappers } from "./bootstrap/Bootstrappers";
+import { Entry } from "./Entry";
+import { scoper } from "./scope/scoper";
+import { Scopes } from "./scope/Scopes";
 
 class Chevron<TValue = any, UInitializer = any> {
     private readonly injectables: Map<
@@ -20,8 +16,8 @@ class Chevron<TValue = any, UInitializer = any> {
         this.injectables = new Map();
     }
 
-    public get(name: UInitializer | string): TValue {
-        return this.resolveEntry(name, new Set());
+    public get(name: UInitializer | string, context: any = null): TValue {
+        return this.resolveEntry(name, context, new Set());
     }
 
     public has(name: UInitializer | string): boolean {
@@ -34,9 +30,10 @@ class Chevron<TValue = any, UInitializer = any> {
             any,
             UInitializer,
             any
-        > = DefaultBootstrappers.IDENTITY,
+        > = Bootstrappers.IDENTITY,
         dependencies: string[] = [],
-        name: string | null = null
+        name: string | null = null,
+        scopeFn: scoper<any, UInitializer, any> = Scopes.SINGLETON
     ): void {
         const key = !isNil(name) ? name : this.getKey(initializer);
 
@@ -45,47 +42,51 @@ class Chevron<TValue = any, UInitializer = any> {
         }
 
         this.injectables.set(key, {
-            bootstrapFn: bootstrapFn,
+            bootstrapFn,
+            scopeFn,
             dependencies,
             initializer,
-            value: null
+            instances: new Map()
         });
     }
 
     private resolveEntry(
         name: string | UInitializer,
+        context: any,
         resolveStack: Set<string>
     ): TValue {
-        const key = isString(name) ? name : this.getKey(name);
-        if (!this.injectables.has(key)) {
+        const entryName = isString(name) ? name : this.getKey(name);
+        if (!this.injectables.has(entryName)) {
             throw new Error(`Injectable '${name}' does not exist.`);
         }
 
-        const entry = this.injectables.get(key)!;
-        if (isNil(entry.value)) {
+        const entry = this.injectables.get(entryName)!;
+        const instanceName = entry.scopeFn(entryName, entry, context);
+        if (!entry.instances.has(instanceName)) {
             /*
              * Start bootstrapping value.
              */
-            if (resolveStack.has(key)) {
+            if (resolveStack.has(entryName)) {
                 throw new Error(
                     `Circular dependencies found: '${[
                         ...resolveStack,
-                        key
+                        entryName
                     ].join("->")}'.`
                 );
             }
-            resolveStack.add(key);
+            resolveStack.add(entryName);
 
-            entry.value = entry.bootstrapFn(
+            const instance = entry.bootstrapFn(
                 entry.initializer,
                 entry.dependencies.map(dependencyName =>
-                    this.resolveEntry(dependencyName, resolveStack)
+                    this.resolveEntry(dependencyName, context, resolveStack)
                 )
             );
+            entry.instances.set(instanceName, instance);
 
-            resolveStack.delete(key);
+            resolveStack.delete(entryName);
         }
-        return entry.value;
+        return entry.instances.get(instanceName)!;
     }
 
     private getKey(initializer: UInitializer): string {

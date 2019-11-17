@@ -1,7 +1,7 @@
 import { Chevron } from "../../src/Chevron";
 import { Autowired } from "../../src/decorators/Autowired";
 import { Injectable } from "../../src/decorators/Injectable";
-import { DefaultBootstrappers } from "../../src/bootstrap/DefaultBootstrappers";
+import { Bootstrappers } from "../../src/bootstrap/Bootstrappers";
 
 describe("Chevron Demo ITs", () => {
     it("Usage#1", () => {
@@ -19,7 +19,7 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
-        cv.register(MyFactory, DefaultBootstrappers.CLASS, []);
+        cv.register(MyFactory, Bootstrappers.CLASS, []);
 
         cv.get(MyFactory).sayHello(); // Prints "Hello!"
 
@@ -35,7 +35,7 @@ describe("Chevron Demo ITs", () => {
          * Decorator API.
          */
 
-        @Injectable(cv, DefaultBootstrappers.CLASS, [])
+        @Injectable(cv, Bootstrappers.CLASS, [])
         class MyFactory {
             public sayHello(): void {
                 console.log("Hello!");
@@ -67,7 +67,7 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
-        cv.register(MyFactory, DefaultBootstrappers.CLASS, []);
+        cv.register(MyFactory, Bootstrappers.CLASS, []);
 
         const myService: (myFactory: MyFactory) => void = (
             myFactory: MyFactory
@@ -76,7 +76,7 @@ describe("Chevron Demo ITs", () => {
             myFactory.sayHello();
         };
 
-        cv.register(myService, DefaultBootstrappers.FUNCTION, ["MyFactory"]);
+        cv.register(myService, Bootstrappers.FUNCTION, ["MyFactory"]);
 
         cv.get(myService)(); // Prints "Hello!"
 
@@ -96,14 +96,14 @@ describe("Chevron Demo ITs", () => {
 
         cv.register(
             MyFactory,
-            DefaultBootstrappers.CLASS,
+            Bootstrappers.CLASS,
             [],
             "myInjectableFactory1"
         );
 
         cv.register(
             MyFactory,
-            DefaultBootstrappers.CLASS,
+            Bootstrappers.CLASS,
             [],
             "myInjectableFactory2"
         );

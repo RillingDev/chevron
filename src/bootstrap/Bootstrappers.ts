@@ -29,10 +29,10 @@ const identityBootstrapper = <TInitializer>(
     initializer: TInitializer
 ): TInitializer => initializer;
 
-const DefaultBootstrappers = {
+const Bootstrappers = {
     CLASS: classBootstrapper,
     FUNCTION: functionBootstrapper,
     IDENTITY: identityBootstrapper
 };
 
-export { DefaultBootstrappers };
+export { Bootstrappers };
