@@ -1,6 +1,11 @@
 import { Bootstrapping } from "../bootstrap/Bootstrapping";
 import { Scope } from "../scope/Scope";
 
+/**
+ * Internal representation of a registered injectable.
+ *
+ * @private
+ */
 interface InjectableEntry<TValue, UInitializer, VDependency, WContext> {
     initializer: UInitializer;
     dependencies: string[];

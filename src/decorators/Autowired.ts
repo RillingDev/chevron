@@ -8,7 +8,7 @@ import { Chevron } from "../Chevron";
  *
  * @public
  * @param instance {@link Chevron} instance to retrieve the injectable from.
- * @param name Either a raw string name or a nameable value that should be retrieved. See {@link #registerInjectable} for details.
+ * @param name Either a raw string name or a nameable value that should be retrieved. See {@link Chevron#registerInjectable} for details.
  * @param context Context to be used for instance checks. See {@link Scope} for details.
  * @throws TypeError when no name can be determined for the provided nameable.
  * @throws Error when the injectable or a dependency cannot be found.
