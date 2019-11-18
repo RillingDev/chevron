@@ -27,7 +27,7 @@
 
 <nav >
     
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Chevron.html">Chevron</a><ul class='methods'><li data-type='method'><a href="Chevron.html#getInjectableInstance">getInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#hasInjectable">hasInjectable</a></li><li data-type='method'><a href="Chevron.html#hasInjectableInstance">hasInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#registerInjectable">registerInjectable</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#Autowired">Autowired</a></li><li><a href="global.html#Injectable">Injectable</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Chevron.html">Chevron</a><ul class='methods'><li data-type='method'><a href="Chevron.html#getInjectableInstance">getInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#hasInjectable">hasInjectable</a></li><li data-type='method'><a href="Chevron.html#hasInjectableInstance">hasInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#registerInjectable">registerInjectable</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html##Scope">#Scope</a></li><li><a href="global.html#Autowired">Autowired</a></li><li><a href="global.html#classBootstrapping">classBootstrapping</a></li><li><a href="global.html#DefaultBootstrappings">DefaultBootstrappings</a></li><li><a href="global.html#DefaultScopes">DefaultScopes</a></li><li><a href="global.html#functionBootstrapping">functionBootstrapping</a></li><li><a href="global.html#identityBootstrapping">identityBootstrapping</a></li><li><a href="global.html#Injectable">Injectable</a></li><li><a href="global.html#singletonScope">singletonScope</a></li></ul>
 </nav>
 
 <div id="main">
@@ -115,9 +115,226 @@
     
 
     
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="DefaultBootstrappings"><span class="type-signature">(constant) </span>DefaultBootstrappings<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line95">line 95</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Pseudo-enum of built-in Bootstrappings.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="DefaultScopes"><span class="type-signature">(constant) </span>DefaultScopes<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line118">line 118</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Pseudo-enum of built-in Scopes.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+    
 
     
         <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="Scope"><span class="type-signature"></span>#Scope<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line112">line 112</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Scope which forces instantiation of a new instance every time the injectable is requested.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         
             
@@ -136,7 +353,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line291">line 291</a>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line338">line 338</a>
     </li></ul></dd>
     
 
@@ -341,6 +558,295 @@ and sets the value on the field/property for this decorator. See <a href="Chevro
 
     
 
+    <h4 class="name" id="classBootstrapping"><span class="type-signature"></span>classBootstrapping<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line63">line 63</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Bootstrapping which constructs the initializer with the dependencies as parameters.
+Note that this bootstrapping only makes sense for class initializers.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+    <div class="param-desc">
+    
+        <p>TypeError when used with a non-function initializer.</p>
+    
+    </div>
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="functionBootstrapping"><span class="type-signature"></span>functionBootstrapping<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line76">line 76</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Bootstrapping which returns a function executing the initializer with the dependencies as parameters.
+Note that this bootstrapping only makes sense for function initializers.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+    <div class="param-desc">
+    
+        <p>TypeError when used with a non-function initializer.</p>
+    
+    </div>
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="identityBootstrapping"><span class="type-signature"></span>identityBootstrapping<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line89">line 89</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Bootstrapping which immediately returns the initializer.
+This is useful for injectables which do not require any other initialization.
+Note that by using this bootstrapping, no usage of dependencies for this value is possible.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
     <h4 class="name" id="Injectable"><span class="type-signature"></span>Injectable<span class="signature">(instance, dependencies, options)</span><span class="type-signature"></span></h4>
 
     
@@ -353,7 +859,7 @@ and sets the value on the field/property for this decorator. See <a href="Chevro
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line272">line 272</a>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line319">line 319</a>
     </li></ul></dd>
     
 
@@ -527,6 +1033,93 @@ and sets the value on the field/property for this decorator. See <a href="Chevro
 
 
         
+            
+
+    
+
+    <h4 class="name" id="singletonScope"><span class="type-signature"></span>singletonScope<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line106">line 106</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Scope which forces usage of a single instance for every request.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
     
 
     
@@ -546,7 +1139,7 @@ and sets the value on the field/property for this decorator. See <a href="Chevro
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Mon Nov 18 2019 11:23:59 GMT+0100 (Central European Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Mon Nov 18 2019 12:58:37 GMT+0100 (Central European Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
