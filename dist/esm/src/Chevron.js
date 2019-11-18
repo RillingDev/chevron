@@ -2,28 +2,42 @@ import { defaults, isNil } from "lodash";
 import { name as getName } from "lightdash";
 import { DefaultBootstrappings } from "./bootstrap/DefaultBootstrappings";
 import { DefaultScopes } from "./scope/DefaultScopes";
-const guessName = (initializer) => {
-    const guessedName = getName(initializer);
+/**
+ * Tries to guess the string name of a nameable value. if none can be determined, an error is thrown.
+ * See {@link getName} for details.
+ *
+ * @private
+ * @param value Value to to guess a name for.
+ * @return Name of the value.
+ * @throws TypeError when to name can be guessed.
+ */
+const guessName = (value) => {
+    const guessedName = getName(value);
     if (isNil(guessedName)) {
-        throw new TypeError(`Could not guess name of ${initializer}, please explicitly define one.`);
+        throw new TypeError(`Could not guess name of ${value}, please explicitly define one.`);
     }
     return guessedName;
-};
-const createCircularDependencyError = (entryName, resolveStack) => {
-    return new Error(`Circular dependencies found: '${[...resolveStack, entryName].join("->")}'.`);
 };
 /**
  * Injectable container class.
  *
+ * @public
  * @class
  */
 class Chevron {
+    /**
+     * Creates a new, empty container.
+     *
+     * @public
+     * @constructor
+     */
     constructor() {
         this.injectables = new Map();
     }
     /**
      * Registers a new injectable on this container.
      *
+     * @public
      * @param initializer Initial value of this injectable. This can be any value, but usually  a class or a different kind of function.
      *      During retrieval, the initial value might be transformed by the bootstrapper (see {@link Bootstrapping} for details).
      *      If no name is provided in the options (see description of the options parameter, section "name"),
@@ -75,6 +89,7 @@ class Chevron {
      * Checks if an injectable with the name provided is registered for this container, regardless if its instantiated or not.
      * To check if an injectable is registered and instantiated, see {@link #hasInjectableInstance}.
      *
+     * @public
      * @param name Either a raw string name or a nameable value that should be checked for. See {@link #registerInjectable} for details.
      * @return if an injectable with the name provided is registered on this container.
      * @throws TypeError when no name can be determined for the provided nameable.
@@ -86,6 +101,7 @@ class Chevron {
      * Checks if an injectable with the name provided is registered and instantiated for this container.
      * To check if an injectable is registered without checking for instantiation, see {@link #hasInjectable}.
      *
+     * @public
      * @param name Either a raw string name or a nameable value that should be checked for. See {@link #registerInjectable} for details.
      * @param context Context to be used for instance checks. See {@link Scope} for details.
      * @return if an injectable with the name provided is registered and instantiated on this container.
@@ -101,16 +117,26 @@ class Chevron {
     /**
      * Retrieves an instantiated injectable, recursively instantiating dependencies if they were not instantiated before.
      *
+     * @public
      * @param name Either a raw string name or a nameable value that should be retrieved. See {@link #registerInjectable} for details.
      * @param context Context to be used for instance checks. See {@link Scope} for details.
      * @return instantiated injectable for the given name.
      * @throws TypeError when no name can be determined for the provided nameable.
-     * @throws Error when a dependency cannot be found.
+     * @throws Error when the injectable or a dependency cannot be found.
      * @throws Error when recursive dependencies are detected.
      */
     getInjectableInstance(name, context = null) {
         return this.getBootstrappedInjectableInstance(guessName(name), context, new Set());
     }
+    /**
+     * Resolves an injectable by name, providing information about the injectable entry, its name and scope value.
+     *
+     * @private
+     * @param injectableEntryName Raw string name of the injectable.
+     * @param context Context to be used for instance checks. See {@link Scope} for details.
+     * @return data object containing the injectable entry, its name and scope value.
+     * @throws Error if no injectable for the name is found.
+     */
     resolveInjectableInstance(injectableEntryName, context) {
         if (!this.injectables.has(injectableEntryName)) {
             throw new Error(`Injectable '${injectableEntryName}' does not exist.`);
@@ -122,6 +148,18 @@ class Chevron {
             instanceName
         };
     }
+    /**
+     * Retrieves an instantiated injectable, recursively instantiating dependencies if they were not instantiated before.
+     *
+     * @private
+     * @param injectableEntryName Raw string name of the injectable.
+     * @param context Context to be used for instance checks. See {@link Scope} for details.
+     * @param resolveStack Stack of previously requested instantiations. used to detect circular dependencies.
+     * @return instantiated injectable for the given name.
+     * @throws Error if no injectable for the name is found.
+     * @throws Error when a dependency cannot be found.
+     * @throws Error when recursive dependencies are detected.
+     */
     getBootstrappedInjectableInstance(injectableEntryName, context, resolveStack) {
         const { injectableEntry, instanceName } = this.resolveInjectableInstance(injectableEntryName, context);
         if (instanceName != null &&
@@ -132,7 +170,10 @@ class Chevron {
          * Start bootstrapping value.
          */
         if (resolveStack.has(injectableEntryName)) {
-            throw createCircularDependencyError(injectableEntryName, resolveStack);
+            throw new Error(`Circular dependencies found: '${[
+                ...resolveStack,
+                injectableEntryName
+            ].join("->")}'.`);
         }
         resolveStack.add(injectableEntryName);
         const bootstrappedDependencies = injectableEntry.dependencies.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, context, resolveStack));

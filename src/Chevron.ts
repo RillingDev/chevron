@@ -9,27 +9,30 @@ import { Scope } from "./scope/Scope";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Bootstrapping } from "./bootstrap/Bootstrapping";
 
-const guessName = (initializer: any): string => {
-    const guessedName = getName(initializer);
+/**
+ * Tries to guess the string name of a nameable value. if none can be determined, an error is thrown.
+ * See {@link getName} for details.
+ *
+ * @private
+ * @param value Value to to guess a name for.
+ * @return Name of the value.
+ * @throws TypeError when to name can be guessed.
+ */
+const guessName = (value: any): string => {
+    const guessedName = getName(value);
     if (isNil(guessedName)) {
         throw new TypeError(
-            `Could not guess name of ${initializer}, please explicitly define one.`
+            `Could not guess name of ${value}, please explicitly define one.`
         );
     }
     return guessedName;
 };
 
-const createCircularDependencyError = (
-    entryName: string,
-    resolveStack: Set<string>
-): Error => {
-    return new Error(
-        `Circular dependencies found: '${[...resolveStack, entryName].join(
-            "->"
-        )}'.`
-    );
-};
-
+/**
+ * Helper interface for {@link Chevron#resolveInjectableInstance} lookups.
+ *
+ * @private
+ */
 interface ResolvedInstance<TValue, UInitializer, VContext> {
     injectableEntry: InjectableEntry<TValue, UInitializer, TValue, VContext>;
     instanceName: string | null;
@@ -38,6 +41,7 @@ interface ResolvedInstance<TValue, UInitializer, VContext> {
 /**
  * Injectable container class.
  *
+ * @public
  * @class
  */
 class Chevron<TValue = any, UInitializer = any, VContext = any> {
@@ -46,6 +50,12 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         InjectableEntry<TValue, UInitializer, TValue, VContext>
     >;
 
+    /**
+     * Creates a new, empty container.
+     *
+     * @public
+     * @constructor
+     */
     public constructor() {
         this.injectables = new Map();
     }
@@ -53,6 +63,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
     /**
      * Registers a new injectable on this container.
      *
+     * @public
      * @param initializer Initial value of this injectable. This can be any value, but usually  a class or a different kind of function.
      *      During retrieval, the initial value might be transformed by the bootstrapper (see {@link Bootstrapping} for details).
      *      If no name is provided in the options (see description of the options parameter, section "name"),
@@ -114,6 +125,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
      * Checks if an injectable with the name provided is registered for this container, regardless if its instantiated or not.
      * To check if an injectable is registered and instantiated, see {@link #hasInjectableInstance}.
      *
+     * @public
      * @param name Either a raw string name or a nameable value that should be checked for. See {@link #registerInjectable} for details.
      * @return if an injectable with the name provided is registered on this container.
      * @throws TypeError when no name can be determined for the provided nameable.
@@ -126,6 +138,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
      * Checks if an injectable with the name provided is registered and instantiated for this container.
      * To check if an injectable is registered without checking for instantiation, see {@link #hasInjectable}.
      *
+     * @public
      * @param name Either a raw string name or a nameable value that should be checked for. See {@link #registerInjectable} for details.
      * @param context Context to be used for instance checks. See {@link Scope} for details.
      * @return if an injectable with the name provided is registered and instantiated on this container.
@@ -152,11 +165,12 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
     /**
      * Retrieves an instantiated injectable, recursively instantiating dependencies if they were not instantiated before.
      *
+     * @public
      * @param name Either a raw string name or a nameable value that should be retrieved. See {@link #registerInjectable} for details.
      * @param context Context to be used for instance checks. See {@link Scope} for details.
      * @return instantiated injectable for the given name.
      * @throws TypeError when no name can be determined for the provided nameable.
-     * @throws Error when a dependency cannot be found.
+     * @throws Error when the injectable or a dependency cannot be found.
      * @throws Error when recursive dependencies are detected.
      */
     public getInjectableInstance(
@@ -170,6 +184,15 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         );
     }
 
+    /**
+     * Resolves an injectable by name, providing information about the injectable entry, its name and scope value.
+     *
+     * @private
+     * @param injectableEntryName Raw string name of the injectable.
+     * @param context Context to be used for instance checks. See {@link Scope} for details.
+     * @return data object containing the injectable entry, its name and scope value.
+     * @throws Error if no injectable for the name is found.
+     */
     private resolveInjectableInstance(
         injectableEntryName: string,
         context: VContext | null
@@ -192,6 +215,18 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         };
     }
 
+    /**
+     * Retrieves an instantiated injectable, recursively instantiating dependencies if they were not instantiated before.
+     *
+     * @private
+     * @param injectableEntryName Raw string name of the injectable.
+     * @param context Context to be used for instance checks. See {@link Scope} for details.
+     * @param resolveStack Stack of previously requested instantiations. used to detect circular dependencies.
+     * @return instantiated injectable for the given name.
+     * @throws Error if no injectable for the name is found.
+     * @throws Error when a dependency cannot be found.
+     * @throws Error when recursive dependencies are detected.
+     */
     private getBootstrappedInjectableInstance(
         injectableEntryName: string,
         context: any,
@@ -213,9 +248,11 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
          * Start bootstrapping value.
          */
         if (resolveStack.has(injectableEntryName)) {
-            throw createCircularDependencyError(
-                injectableEntryName,
-                resolveStack
+            throw new Error(
+                `Circular dependencies found: '${[
+                    ...resolveStack,
+                    injectableEntryName
+                ].join("->")}'.`
             );
         }
         resolveStack.add(injectableEntryName);
