@@ -1,4 +1,4 @@
-import { defaults, isNil, isString } from "lodash";
+import { defaults, isNil } from "lodash";
 import { name as getName } from "lightdash";
 import { DefaultBootstrappings } from "./bootstrap/DefaultBootstrappings";
 import { DefaultScopes } from "./scope/DefaultScopes";
@@ -9,7 +9,6 @@ const guessName = (initializer) => {
     }
     return guessedName;
 };
-const getInjectableName = (name) => isString(name) ? name : guessName(name);
 const createCircularDependencyError = (entryName, resolveStack) => {
     return new Error(`Circular dependencies found: '${[...resolveStack, entryName].join("->")}'.`);
 };
@@ -68,7 +67,7 @@ class Chevron {
             initializer,
             bootstrapping,
             scope,
-            dependencies: dependencies.map(getInjectableName),
+            dependencies: dependencies.map(dependencyName => guessName(dependencyName)),
             instances: new Map()
         });
     }
@@ -81,7 +80,7 @@ class Chevron {
      * @throws TypeError when no name can be determined for the provided nameable.
      */
     hasInjectable(name) {
-        return this.injectables.has(getInjectableName(name));
+        return this.injectables.has(guessName(name));
     }
     /**
      * Checks if an injectable with the name provided is registered and instantiated for this container.
@@ -96,7 +95,7 @@ class Chevron {
         if (!this.hasInjectable(name)) {
             return false;
         }
-        const { injectableEntry, instanceName } = this.resolveInjectableInstance(getInjectableName(name), context);
+        const { injectableEntry, instanceName } = this.resolveInjectableInstance(guessName(name), context);
         return (instanceName != null && injectableEntry.instances.has(instanceName));
     }
     /**
@@ -110,11 +109,11 @@ class Chevron {
      * @throws Error when recursive dependencies are detected.
      */
     getInjectableInstance(name, context = null) {
-        return this.getBootstrappedInjectableInstance(getInjectableName(name), context, new Set());
+        return this.getBootstrappedInjectableInstance(guessName(name), context, new Set());
     }
     resolveInjectableInstance(injectableEntryName, context) {
         if (!this.injectables.has(injectableEntryName)) {
-            throw new Error(`Injectable '${name}' does not exist.`);
+            throw new Error(`Injectable '${injectableEntryName}' does not exist.`);
         }
         const injectableEntry = this.injectables.get(injectableEntryName);
         const instanceName = injectableEntry.scope(context, injectableEntryName, injectableEntry);

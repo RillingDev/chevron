@@ -1,4 +1,4 @@
-import { defaults, isNil, isString } from "lodash";
+import { defaults, isNil } from "lodash";
 import { name as getName } from "lightdash";
 import { InjectableEntry } from "./injectable/InjectableEntry";
 import { InjectableOptions } from "./injectable/InjectableOptions";
@@ -18,9 +18,6 @@ const guessName = (initializer: any): string => {
     }
     return guessedName;
 };
-
-const getInjectableName = (name: any): string =>
-    isString(name) ? name : guessName(name);
 
 const createCircularDependencyError = (
     entryName: string,
@@ -106,7 +103,9 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
             initializer,
             bootstrapping,
             scope,
-            dependencies: dependencies.map(getInjectableName),
+            dependencies: dependencies.map(dependencyName =>
+                guessName(dependencyName)
+            ),
             instances: new Map()
         });
     }
@@ -120,7 +119,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
      * @throws TypeError when no name can be determined for the provided nameable.
      */
     public hasInjectable(name: UInitializer | string): boolean {
-        return this.injectables.has(getInjectableName(name));
+        return this.injectables.has(guessName(name));
     }
 
     /**
@@ -143,7 +142,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         const {
             injectableEntry,
             instanceName
-        } = this.resolveInjectableInstance(getInjectableName(name), context);
+        } = this.resolveInjectableInstance(guessName(name), context);
 
         return (
             instanceName != null && injectableEntry.instances.has(instanceName)
@@ -165,7 +164,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         context: VContext | null = null
     ): TValue {
         return this.getBootstrappedInjectableInstance(
-            getInjectableName(name),
+            guessName(name),
             context,
             new Set()
         );
@@ -176,7 +175,9 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         context: VContext | null
     ): ResolvedInstance<TValue, UInitializer, VContext> {
         if (!this.injectables.has(injectableEntryName)) {
-            throw new Error(`Injectable '${name}' does not exist.`);
+            throw new Error(
+                `Injectable '${injectableEntryName}' does not exist.`
+            );
         }
 
         const injectableEntry = this.injectables.get(injectableEntryName)!;
