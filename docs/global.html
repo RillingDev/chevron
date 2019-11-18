@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Global - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Chevron.html">Chevron</a><ul class='methods'><li data-type='method'><a href="Chevron.html#getInjectableInstance">getInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#hasInjectable">hasInjectable</a></li><li data-type='method'><a href="Chevron.html#hasInjectableInstance">hasInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#registerInjectable">registerInjectable</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#Autowired">Autowired</a></li><li><a href="global.html#Injectable">Injectable</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Global</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+            
+
+            
+        
+        </div>
+    
+
+    
+
+    
+
+    
+    
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="Autowired"><span class="type-signature"></span>Autowired<span class="signature">(instance, name, context)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line291">line 291</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Retrieves an instantiated injectable, recursively instantiating dependencies if they were not instantiated before,
+and sets the value on the field/property for this decorator. See <a href="Chevron.html#getInjectableInstance">Chevron#getInjectableInstance</a> for details.</p>
+<p>Decorator function for use with TypeScript. Use this decorator on a object property or class field.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>instance</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p><a href="Chevron.html">Chevron</a> instance to retrieve the injectable from.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Either a raw string name or a nameable value that should be retrieved. See #registerInjectable for details.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>null</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Context to be used for instance checks. See Scope for details.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+<ul>
+        <li>
+
+    <div class="param-desc">
+    
+        <p>TypeError when no name can be determined for the provided nameable.</p>
+    
+    </div>
+
+</li>
+    
+        <li>
+
+    <div class="param-desc">
+    
+        <p>Error when the injectable or a dependency cannot be found.</p>
+    
+    </div>
+
+</li>
+    
+        <li>
+
+    <div class="param-desc">
+    
+        <p>Error when recursive dependencies are detected.</p>
+    
+    </div>
+
+</li>
+    </ul>
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="Injectable"><span class="type-signature"></span>Injectable<span class="signature">(instance, dependencies, options)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line272">line 272</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Registers a new injectable on a container. See <a href="Chevron.html#registerInjectable">Chevron#registerInjectable</a> for details.</p>
+<p>Decorator function for use with TypeScript. Use this decorator on a variable or function/class expression.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>instance</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><a href="Chevron.html">Chevron</a> instance to register the injectable on.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dependencies</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Definitions of this injectables dependencies. See <a href="Chevron.html#registerInjectable">Chevron#registerInjectable</a> for details.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Options for this injectable. See <a href="Chevron.html#registerInjectable">Chevron#registerInjectable</a> for details.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+<ul>
+        <li>
+
+    <div class="param-desc">
+    
+        <p>Error when an injectable with the requested name is already registered.</p>
+    
+    </div>
+
+</li>
+    
+        <li>
+
+    <div class="param-desc">
+    
+        <p>TypeError when no name can be determined for this injectable or any of its dependencies.</p>
+    
+    </div>
+
+</li>
+    </ul>
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Mon Nov 18 2019 11:10:36 GMT+0100 (Central European Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>
