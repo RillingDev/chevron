@@ -1,122 +1,124 @@
-import { Chevron } from "../../src/Chevron";
-import { Autowired } from "../../src/decorators/Autowired";
-import { Injectable } from "../../src/decorators/Injectable";
-import { DefaultBootstrappings } from "../../src/bootstrap/DefaultBootstrappings";
+import { Autowired, Chevron, DefaultBootstrappings, Injectable } from "../../src/main";
 
 describe("Chevron Demo ITs", () => {
-    it("Usage#1", () => {
-        const logSpy = spyOn(console, "log");
+    it("creates instance", () => {
+        // Create a new instance
+        const chevron = new Chevron();
 
-        const cv = new Chevron(); // Create a new instance which acts as the container for the injectables
+        expect(chevron).toBeInstanceOf(Chevron);
+    });
 
-        /*
-         * Classic API.
-         */
+    it("registers injectables", () => {
+        const chevron = new Chevron();
 
-        class MyFactory {
-            public sayHello(): void {
-                console.log("Hello!");
+        const myFunction = () => {
+            console.log("Hello world!");
+        };
+        // Register the myFunction variable as a plain injectable.
+        chevron.registerInjectable(myFunction, []);
+
+        expect(chevron.hasInjectable("myFunction")).toBeTrue();
+        expect(chevron.hasInjectable(myFunction)).toBeTrue();
+    });
+
+    it("retrieves injectables", () => {
+        const chevron = new Chevron();
+
+        const myFunction = () => {
+            console.log("Hello world!");
+        };
+        chevron.registerInjectable(myFunction, []);
+
+        // Retrieve injectable (could also be done using `chevron.getInjectableInstance("myFunction")`.
+        const myFunctionInstance = chevron.getInjectableInstance(myFunction);
+
+        expect(myFunctionInstance).toBe(myFunction);
+    });
+
+    it("supports dependencies", () => {
+        const chevron = new Chevron();
+
+        type mathFnType = (a: number) => number;
+
+        const doublingFn: mathFnType = (a: number) => a * 2;
+        chevron.registerInjectable(doublingFn, []);
+
+        const MyClass = class {
+            public constructor(private readonly doublingFnAsDep: mathFnType) {
             }
-        }
 
-        cv.registerInjectable(MyFactory, [], {
+            public getDouble(n: number) {
+                return this.doublingFnAsDep(n);
+            }
+        };
+        // Register injectable with dependency.
+        // We could also use `["doublingFn"]`.
+        // We want MyClass to be instantiated by constructing it through DefaultBootstrappings.CLASS.
+        chevron.registerInjectable(MyClass, [doublingFn], {
             bootstrapping: DefaultBootstrappings.CLASS
         });
 
-        cv.getInjectableInstance(MyFactory).sayHello(); // Prints "Hello!"
+        // When retrieving, all dependencies will be resolved first.
+        const myClassInstance = chevron.getInjectableInstance(MyClass);
 
-        expect(logSpy).toHaveBeenCalledWith("Hello!");
+        expect(myClassInstance).toBeInstanceOf(MyClass);
+        expect(myClassInstance.getDouble(2)).toBe(4);
     });
 
-    it("Usage#2", () => {
-        const logSpy = spyOn(console, "log");
+    it("supports scopes", () => {
+        const chevron = new Chevron();
 
-        const cv = new Chevron();
-
-        /*
-         * Decorator API.
-         */
-
-        @Injectable(cv, [], { bootstrapping: DefaultBootstrappings.CLASS })
-        class MyFactory {
-            public sayHello(): void {
-                console.log("Hello!");
-            }
+        interface SessionContext {
+            sessionId: string;
         }
 
-        class ConsumerClass {
-            @Autowired(cv, MyFactory)
-            private readonly injectedMyFactory: any;
-
-            public run(): void {
-                this.injectedMyFactory.sayHello();
-            }
-        }
-
-        new ConsumerClass().run(); // Prints "Hello!"
-
-        expect(logSpy).toHaveBeenCalledWith("Hello!");
-    });
-
-    it("Dependencies#1", () => {
-        const logSpy = spyOn(console, "log");
-
-        const cv = new Chevron(); // Create a new instance which acts as the container for the injectables
-
-        class MyFactory {
-            public sayHello(): void {
-                console.log("Hello!");
-            }
-        }
-
-        cv.registerInjectable(MyFactory, [], {
-            bootstrapping: DefaultBootstrappings.CLASS
-        });
-
-        const myService: (myFactory: MyFactory) => void = (
-            myFactory: MyFactory
-        ) => {
-            // Dependency will be available in the service as an argument.
-            myFactory.sayHello();
+        const MySession = class {
         };
 
-        cv.registerInjectable(myService, ["MyFactory"], {
-            bootstrapping: DefaultBootstrappings.FUNCTION
+        // Define custom scope function to create scopes based on the property `sessionId` of the context.
+        chevron.registerInjectable(MySession, [], {
+            bootstrapping: DefaultBootstrappings.CLASS,
+            scope: (context: SessionContext) => context.sessionId
         });
 
-        cv.getInjectableInstance(myService)(); // Prints "Hello!"
+        // Injectable retrieval can pass optional context data to influence scoping.
+        const mySessionInstanceFoo = chevron.getInjectableInstance(MySession, {
+            sessionId: "123"
+        });
+        const mySessionInstanceBar = chevron.getInjectableInstance(MySession, {
+            sessionId: "987"
+        });
+        const mySessionInstanceBarAgain = chevron.getInjectableInstance(
+            MySession,
+            { sessionId: "987" }
+        );
 
-        expect(logSpy).toHaveBeenCalledWith("Hello!");
+        expect(mySessionInstanceFoo).toBeInstanceOf(MySession);
+        expect(mySessionInstanceBar).toBeInstanceOf(MySession);
+        expect(mySessionInstanceFoo).not.toBe(mySessionInstanceBar);
+        expect(mySessionInstanceBar).toBe(mySessionInstanceBarAgain);
     });
 
-    it("Keys#1", () => {
-        const logSpy = spyOn(console, "log");
+    it("supports decorators", () => {
+        const chevron = new Chevron();
 
-        const cv = new Chevron();
-
-        class MyFactory {
-            public sayHello(): void {
-                console.log("Hello!");
+        @Injectable(chevron, [], { bootstrapping: DefaultBootstrappings.CLASS })
+        class Foo {
+            public getFoo() {
+                return "foo";
             }
         }
 
-        cv.registerInjectable(
-            MyFactory,
-            [],
+        class FooBar {
+            @Autowired(chevron, Foo)
+            private foo: Foo | undefined;
 
-            {
-                bootstrapping: DefaultBootstrappings.CLASS,
-                name: "myInjectableFactory1"
+            public getFooBar() {
+                return this.foo!.getFoo() + "bar";
             }
-        );
+        }
 
-        cv.registerInjectable(MyFactory, [], {
-            bootstrapping: DefaultBootstrappings.CLASS,
-            name: "myInjectableFactory2"
-        });
-
-        cv.getInjectableInstance("myInjectableFactory1").sayHello(); // Prints "Hello!"
-
-        expect(logSpy).toHaveBeenCalledWith("Hello!");
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        expect(new FooBar().getFooBar()).toEqual("foobar");
     });
 });
