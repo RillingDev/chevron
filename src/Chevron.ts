@@ -1,4 +1,4 @@
-import { defaults, isNil } from "lodash";
+import { isNil } from "lodash";
 import { name as getName } from "lightdash";
 import { InjectableEntry } from "./injectable/InjectableEntry";
 import { InjectableOptions } from "./injectable/InjectableOptions";
@@ -8,10 +8,11 @@ import { DefaultScopes } from "./scope/DefaultScopes";
 import { Scope } from "./scope/Scope";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Bootstrapping } from "./bootstrap/Bootstrapping";
+import { Nameable } from "./Nameable";
 
 /**
  * Tries to guess the string name of a nameable value. if none can be determined, an error is thrown.
- * See {@link getName} for details.
+ * See {@link Nameable} and {@link getName} for details.
  *
  * @private
  * @param value Value to to guess a name for.
@@ -22,7 +23,9 @@ const guessName = (value: any): string => {
     const guessedName = getName(value);
     if (isNil(guessedName)) {
         throw new TypeError(
-            `Could not guess name of ${value}, please explicitly define one.`
+            `Could not guess name of ${String(
+                value
+            )}, please explicitly define one.`
         );
     }
     return guessedName;
@@ -94,15 +97,14 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         initializer: UInitializer,
         options: InjectableOptions<TValue, UInitializer, VContext> = {}
     ): void {
-        const { bootstrapping, scope, name,dependencies } = defaults(options, {
-            bootstrapping: DefaultBootstrappings.IDENTITY,
-            scope: DefaultScopes.SINGLETON,
-            name: null,
-            dependencies: []
-        });
+        const bootstrapping =
+            options.bootstrapping ?? DefaultBootstrappings.IDENTITY;
+        const scope = options.scope ?? DefaultScopes.SINGLETON;
+        const name = options.name ?? null;
+        const dependencies = options.dependencies ?? [];
 
         const injectableEntryName = !isNil(name)
-            ? name
+            ? guessName(name)
             : guessName(initializer);
 
         if (this.injectables.has(injectableEntryName)) {
@@ -249,7 +251,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         if (resolveStack.has(injectableEntryName)) {
             throw new Error(
                 `Circular dependencies found: '${[
-                    ...resolveStack,
+                    ...Array.from(resolveStack),
                     injectableEntryName
                 ].join("->")}'.`
             );

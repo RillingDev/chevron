@@ -119,7 +119,7 @@ var chevron = (function (exports, lodash) {
 
     /**
      * Tries to guess the string name of a nameable value. if none can be determined, an error is thrown.
-     * See {@link getName} for details.
+     * See {@link Nameable} and {@link getName} for details.
      *
      * @private
      * @param value Value to to guess a name for.
@@ -129,7 +129,7 @@ var chevron = (function (exports, lodash) {
     const guessName = (value) => {
         const guessedName = name(value);
         if (lodash.isNil(guessedName)) {
-            throw new TypeError(`Could not guess name of ${value}, please explicitly define one.`);
+            throw new TypeError(`Could not guess name of ${String(value)}, please explicitly define one.`);
         }
         return guessedName;
     };
@@ -180,14 +180,13 @@ var chevron = (function (exports, lodash) {
          * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
          */
         registerInjectable(initializer, options = {}) {
-            const { bootstrapping, scope, name, dependencies } = lodash.defaults(options, {
-                bootstrapping: DefaultBootstrappings.IDENTITY,
-                scope: DefaultScopes.SINGLETON,
-                name: null,
-                dependencies: []
-            });
+            var _a, _b, _c, _d;
+            const bootstrapping = (_a = options.bootstrapping, (_a !== null && _a !== void 0 ? _a : DefaultBootstrappings.IDENTITY));
+            const scope = (_b = options.scope, (_b !== null && _b !== void 0 ? _b : DefaultScopes.SINGLETON));
+            const name = (_c = options.name, (_c !== null && _c !== void 0 ? _c : null));
+            const dependencies = (_d = options.dependencies, (_d !== null && _d !== void 0 ? _d : []));
             const injectableEntryName = !lodash.isNil(name)
-                ? name
+                ? guessName(name)
                 : guessName(initializer);
             if (this.injectables.has(injectableEntryName)) {
                 throw new Error(`Name already exists: '${injectableEntryName}'.`);
@@ -286,7 +285,7 @@ var chevron = (function (exports, lodash) {
              */
             if (resolveStack.has(injectableEntryName)) {
                 throw new Error(`Circular dependencies found: '${[
-                ...resolveStack,
+                ...Array.from(resolveStack),
                 injectableEntryName
             ].join("->")}'.`);
             }
