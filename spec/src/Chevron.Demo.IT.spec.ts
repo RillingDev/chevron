@@ -1,4 +1,4 @@
-import { Autowired, Chevron, DefaultBootstrappings, Injectable } from "../../src/main";
+import { Chevron, DefaultBootstrappings, Injectable } from "../../src/main";
 
 describe("Chevron Demo ITs", () => {
     it("creates instance", () => {
@@ -44,8 +44,7 @@ describe("Chevron Demo ITs", () => {
         chevron.registerInjectable(doublingFn, []);
 
         const MyClass = class {
-            public constructor(private readonly doublingFnAsDep: mathFnType) {
-            }
+            public constructor(private readonly doublingFnAsDep: mathFnType) {}
 
             public getDouble(n: number) {
                 return this.doublingFnAsDep(n);
@@ -72,8 +71,7 @@ describe("Chevron Demo ITs", () => {
             sessionId: string;
         }
 
-        const MySession = class {
-        };
+        const MySession = class {};
 
         // Define custom scope function to create scopes based on the property `sessionId` of the context.
         chevron.registerInjectable(MySession, [], {
@@ -109,16 +107,20 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
+        @Injectable(chevron, [Foo], {
+            bootstrapping: DefaultBootstrappings.CLASS
+        })
         class FooBar {
-            @Autowired(chevron, Foo)
-            private foo: Foo | undefined;
+            constructor(private foo: Foo) {}
 
             public getFooBar() {
-                return this.foo!.getFoo() + "bar";
+                return this.foo.getFoo() + "bar";
             }
         }
 
         // eslint-disable-next-line @typescript-eslint/unbound-method
-        expect(new FooBar().getFooBar()).toEqual("foobar");
+        expect(chevron.getInjectableInstance(FooBar).getFooBar()).toEqual(
+            "foobar"
+        );
     });
 });

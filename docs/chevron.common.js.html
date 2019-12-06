@@ -1,4 +1,48 @@
-'use strict';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>chevron.common.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Chevron.html">Chevron</a><ul class='methods'><li data-type='method'><a href="Chevron.html#getInjectableInstance">getInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#hasInjectable">hasInjectable</a></li><li data-type='method'><a href="Chevron.html#hasInjectableInstance">hasInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#registerInjectable">registerInjectable</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html##Scope">#Scope</a></li><li><a href="global.html#classBootstrapping">classBootstrapping</a></li><li><a href="global.html#DefaultBootstrappings">DefaultBootstrappings</a></li><li><a href="global.html#DefaultScopes">DefaultScopes</a></li><li><a href="global.html#functionBootstrapping">functionBootstrapping</a></li><li><a href="global.html#identityBootstrapping">identityBootstrapping</a></li><li><a href="global.html#Injectable">Injectable</a></li><li><a href="global.html#singletonScope">singletonScope</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">chevron.common.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
@@ -36,11 +80,11 @@ const name = (value) => {
         return value;
     }
     // eslint-disable-next-line no-extra-parens
-    if (lodash.isObject(value) && lodash.isString(value.name)) {
+    if (lodash.isObject(value) &amp;&amp; lodash.isString(value.name)) {
         // eslint-disable-next-line no-extra-parens
         return value.name;
     }
-    if (lodash.isSymbol(value) && lodash.isString(value.description)) {
+    if (lodash.isSymbol(value) &amp;&amp; lodash.isString(value.description)) {
         return value.description;
     }
     return null;
@@ -163,23 +207,23 @@ class Chevron {
      * @param dependencies Definitions of this injectables dependencies. Values can be either plain strings ("MyOtherService"),
      *      or a value which is nameable. For details on nameable values see {@link getName}.
      * @param options Options for this injectable. The following options exist:
-     *      <ul>
-     *          <li>name:
+     *      &lt;ul>
+     *          &lt;li>name:
      *                  Name for this injectable. If this is not provided, the name will be determined based on the initializer.
      *                  (see description of the initializer parameter)
-     *          </li>
-     *          <li>bootstrapping:
+     *          &lt;/li>
+     *          &lt;li>bootstrapping:
      *                  Bootstrapping strategy to use when instantiating this injectable (see {@link Bootstrapping} for details).
      *                  By default, {@link DefaultBootstrappings.IDENTITY} is used. If your injectable is a class or factory function,
      *                  consider using {@link DefaultBootstrappings.CLASS} or {@link DefaultBootstrappings.FUNCTION} instead respectively,
      *                  or provide your own.
-     *          </li>
-     *          <li>scope:
+     *          &lt;/li>
+     *          &lt;li>scope:
      *                  Scoping strategy to use when retrieving instances (see {@link Scope} for details).
      *                  By default, {@link DefaultScopes.SINGLETON} is used. For different use cases,
      *                  see {@link DefaultScopes.PROTOTYPE} or provide your own.
-     *          </li>
-     *      </ul>
+     *          &lt;/li>
+     *      &lt;/ul>
      * @throws Error when an injectable with the requested name is already registered.
      * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
      */
@@ -230,7 +274,7 @@ class Chevron {
             return false;
         }
         const { injectableEntry, instanceName } = this.resolveInjectableInstance(guessName(name), context);
-        return (instanceName != null && injectableEntry.instances.has(instanceName));
+        return (instanceName != null &amp;&amp; injectableEntry.instances.has(instanceName));
     }
     /**
      * Retrieves an instantiated injectable, recursively instantiating dependencies if they were not instantiated before.
@@ -280,7 +324,7 @@ class Chevron {
      */
     getBootstrappedInjectableInstance(injectableEntryName, context, resolveStack) {
         const { injectableEntry, instanceName } = this.resolveInjectableInstance(injectableEntryName, context);
-        if (instanceName != null &&
+        if (instanceName != null &amp;&amp;
             injectableEntry.instances.has(instanceName)) {
             return injectableEntry.instances.get(instanceName);
         }
@@ -326,3 +370,28 @@ exports.DefaultBootstrappings = DefaultBootstrappings;
 exports.DefaultScopes = DefaultScopes;
 exports.Injectable = Injectable;
 //# sourceMappingURL=chevron.common.js.map
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Fri Dec 06 2019 19:24:57 GMT+0100 (Central European Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>
