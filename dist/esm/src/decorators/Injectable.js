@@ -10,8 +10,8 @@
  * @throws Error when an injectable with the requested name is already registered.
  * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
  */
-const Injectable = (instance, dependencies, options = {}) => (target) => {
-    instance.registerInjectable(target, dependencies, options);
+const Injectable = (instance, options = {}) => (target) => {
+    instance.registerInjectable(target, options);
     return target;
 };
 export { Injectable };

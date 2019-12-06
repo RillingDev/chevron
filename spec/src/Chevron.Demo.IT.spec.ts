@@ -15,7 +15,7 @@ describe("Chevron Demo ITs", () => {
             console.log("Hello world!");
         };
         // Register the myFunction variable as a plain injectable.
-        chevron.registerInjectable(myFunction, []);
+        chevron.registerInjectable(myFunction);
 
         expect(chevron.hasInjectable("myFunction")).toBeTrue();
         expect(chevron.hasInjectable(myFunction)).toBeTrue();
@@ -27,7 +27,7 @@ describe("Chevron Demo ITs", () => {
         const myFunction = () => {
             console.log("Hello world!");
         };
-        chevron.registerInjectable(myFunction, []);
+        chevron.registerInjectable(myFunction);
 
         // Retrieve injectable (could also be done using `chevron.getInjectableInstance("myFunction")`.
         const myFunctionInstance = chevron.getInjectableInstance(myFunction);
@@ -41,7 +41,7 @@ describe("Chevron Demo ITs", () => {
         type mathFnType = (a: number) => number;
 
         const doublingFn: mathFnType = (a: number) => a * 2;
-        chevron.registerInjectable(doublingFn, []);
+        chevron.registerInjectable(doublingFn);
 
         const MyClass = class {
             public constructor(private readonly doublingFnAsDep: mathFnType) {}
@@ -53,7 +53,8 @@ describe("Chevron Demo ITs", () => {
         // Register injectable with dependency.
         // We could also use `["doublingFn"]`.
         // We want MyClass to be instantiated by constructing it through DefaultBootstrappings.CLASS.
-        chevron.registerInjectable(MyClass, [doublingFn], {
+        chevron.registerInjectable(MyClass, {
+            dependencies: [doublingFn],
             bootstrapping: DefaultBootstrappings.CLASS
         });
 
@@ -74,7 +75,7 @@ describe("Chevron Demo ITs", () => {
         const MySession = class {};
 
         // Define custom scope function to create scopes based on the property `sessionId` of the context.
-        chevron.registerInjectable(MySession, [], {
+        chevron.registerInjectable(MySession, {
             bootstrapping: DefaultBootstrappings.CLASS,
             scope: (context: SessionContext) => context.sessionId
         });
@@ -100,18 +101,19 @@ describe("Chevron Demo ITs", () => {
     it("supports decorators", () => {
         const chevron = new Chevron();
 
-        @Injectable(chevron, [], { bootstrapping: DefaultBootstrappings.CLASS })
+        @Injectable(chevron, { bootstrapping: DefaultBootstrappings.CLASS })
         class Foo {
             public getFoo() {
                 return "foo";
             }
         }
 
-        @Injectable(chevron, [Foo], {
+        @Injectable(chevron, {
+            dependencies: [Foo],
             bootstrapping: DefaultBootstrappings.CLASS
         })
         class FooBar {
-            constructor(private foo: Foo) {}
+            constructor(private readonly foo: Foo) {}
 
             public getFooBar() {
                 return this.foo.getFoo() + "bar";

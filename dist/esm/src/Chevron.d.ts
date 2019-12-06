@@ -22,7 +22,6 @@ declare class Chevron<TValue = any, UInitializer = any, VContext = any> {
      *      During retrieval, the initial value might be transformed by the bootstrapper (see {@link Bootstrapping} for details).
      *      If no name is provided in the options (see description of the options parameter, section "name"),
      *      a name will be determined from the initializer through {@link getName}.
-     * @param dependencies Definitions of this injectables dependencies. Values can be either plain strings ("MyOtherService"),
      *      or a value which is nameable. For details on nameable values see {@link getName}.
      * @param options Options for this injectable. The following options exist:
      *      <ul>
@@ -45,7 +44,7 @@ declare class Chevron<TValue = any, UInitializer = any, VContext = any> {
      * @throws Error when an injectable with the requested name is already registered.
      * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
      */
-    registerInjectable(initializer: UInitializer, dependencies: any[], options?: InjectableOptions<TValue, UInitializer, VContext>): void;
+    registerInjectable(initializer: UInitializer, options?: InjectableOptions<TValue, UInitializer, VContext>): void;
     /**
      * Checks if an injectable with the name provided is registered for this container, regardless if its instantiated or not.
      * To check if an injectable is registered and instantiated, see {@link #hasInjectableInstance}.

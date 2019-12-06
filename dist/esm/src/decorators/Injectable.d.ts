@@ -12,6 +12,6 @@ import { InjectableOptions } from "../injectable/InjectableOptions";
  * @throws Error when an injectable with the requested name is already registered.
  * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
  */
-declare const Injectable: <TValue = any, UInitializer = any, VContext = any>(instance: Chevron<TValue, UInitializer, any>, dependencies: any[], options?: InjectableOptions<TValue, UInitializer, VContext>) => (target: any) => any;
+declare const Injectable: <TValue = any, UInitializer = any, VContext = any>(instance: Chevron<TValue, UInitializer, any>, options?: InjectableOptions<TValue, UInitializer, VContext>) => (target: any) => any;
 export { Injectable };
 //# sourceMappingURL=Injectable.d.ts.map

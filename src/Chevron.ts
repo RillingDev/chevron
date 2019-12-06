@@ -68,7 +68,6 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
      *      During retrieval, the initial value might be transformed by the bootstrapper (see {@link Bootstrapping} for details).
      *      If no name is provided in the options (see description of the options parameter, section "name"),
      *      a name will be determined from the initializer through {@link getName}.
-     * @param dependencies Definitions of this injectables dependencies. Values can be either plain strings ("MyOtherService"),
      *      or a value which is nameable. For details on nameable values see {@link getName}.
      * @param options Options for this injectable. The following options exist:
      *      <ul>
@@ -93,13 +92,13 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
      */
     public registerInjectable(
         initializer: UInitializer,
-        dependencies: any[],
         options: InjectableOptions<TValue, UInitializer, VContext> = {}
     ): void {
-        const { bootstrapping, scope, name } = defaults(options, {
+        const { bootstrapping, scope, name,dependencies } = defaults(options, {
             bootstrapping: DefaultBootstrappings.IDENTITY,
             scope: DefaultScopes.SINGLETON,
-            name: null
+            name: null,
+            dependencies: []
         });
 
         const injectableEntryName = !isNil(name)

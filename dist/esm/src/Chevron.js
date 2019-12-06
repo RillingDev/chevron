@@ -42,7 +42,6 @@ class Chevron {
      *      During retrieval, the initial value might be transformed by the bootstrapper (see {@link Bootstrapping} for details).
      *      If no name is provided in the options (see description of the options parameter, section "name"),
      *      a name will be determined from the initializer through {@link getName}.
-     * @param dependencies Definitions of this injectables dependencies. Values can be either plain strings ("MyOtherService"),
      *      or a value which is nameable. For details on nameable values see {@link getName}.
      * @param options Options for this injectable. The following options exist:
      *      <ul>
@@ -65,11 +64,12 @@ class Chevron {
      * @throws Error when an injectable with the requested name is already registered.
      * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
      */
-    registerInjectable(initializer, dependencies, options = {}) {
-        const { bootstrapping, scope, name } = defaults(options, {
+    registerInjectable(initializer, options = {}) {
+        const { bootstrapping, scope, name, dependencies } = defaults(options, {
             bootstrapping: DefaultBootstrappings.IDENTITY,
             scope: DefaultScopes.SINGLETON,
-            name: null
+            name: null,
+            dependencies: []
         });
         const injectableEntryName = !isNil(name)
             ? name
