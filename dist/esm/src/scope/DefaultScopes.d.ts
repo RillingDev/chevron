@@ -4,7 +4,7 @@
  * @public
  */
 declare const DefaultScopes: {
-    SINGLETON: (context: any, injectableEntryName: string) => string;
+    SINGLETON: () => string;
     PROTOTYPE: () => null;
 };
 export { DefaultScopes };

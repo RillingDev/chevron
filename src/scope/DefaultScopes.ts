@@ -6,8 +6,7 @@ import { Scope } from "./Scope";
  *
  * @public
  */
-const singletonScope = (context: any, injectableEntryName: string): string =>
-    `SINGLETON_${injectableEntryName}`;
+const singletonScope = (): string => "__SINGLETON__";
 
 /**
  * {@link Scope} which forces instantiation of a new instance every time the injectable is requested.

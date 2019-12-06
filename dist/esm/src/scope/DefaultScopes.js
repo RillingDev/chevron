@@ -3,7 +3,7 @@
  *
  * @public
  */
-const singletonScope = (context, injectableEntryName) => `SINGLETON_${injectableEntryName}`;
+const singletonScope = () => "__SINGLETON__";
 /**
  * {@link Scope} which forces instantiation of a new instance every time the injectable is requested.
  *
