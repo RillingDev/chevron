@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { Chevron, DefaultBootstrappings, Injectable } from "../../src/main";
 
 describe("Chevron Demo ITs", () => {
@@ -35,6 +36,46 @@ describe("Chevron Demo ITs", () => {
         expect(myFunctionInstance).toBe(myFunction);
     });
 
+    it("supports different bootstrappings", () => {
+        const chevron = new Chevron();
+
+        const MyClass = class {
+            private readonly modifier: number;
+
+            public constructor() {
+                this.modifier = 2;
+            }
+
+            public getDouble(n: number) {
+                return n * this.modifier;
+            }
+        };
+        chevron.registerInjectable(MyClass, {
+            // Use the "CLASS" Bootstrapping to instantiate the value as class
+            bootstrapping: DefaultBootstrappings.CLASS
+        });
+
+        const myFunctionInstance = chevron.getInjectableInstance(MyClass);
+
+        expect(myFunctionInstance).toBeInstanceOf(MyClass);
+    });
+
+    it("supports custom names", () => {
+        const chevron = new Chevron();
+
+        const myFunction = () => {
+            console.log("Hello world!");
+        };
+        chevron.registerInjectable(myFunction, {
+            // A custom name can either be a string or another nameable value like a function.
+            name: "myCoolName"
+        });
+
+        const myFunctionInstance = chevron.getInjectableInstance("myCoolName");
+
+        expect(myFunctionInstance).toBe(myFunction);
+    });
+
     it("supports dependencies", () => {
         const chevron = new Chevron();
 
@@ -50,9 +91,12 @@ describe("Chevron Demo ITs", () => {
                 return this.doublingFnAsDep(n);
             }
         };
-        // Register injectable with dependency.
-        // We could also use `["doublingFn"]`.
-        // We want MyClass to be instantiated by constructing it through DefaultBootstrappings.CLASS.
+
+        /*
+         * Register injectable with dependency - we could also use `["doublingFn"]`.
+         * We want MyClass to be instantiated by constructing it through the CLASS bootstrapping,
+         * where we will have the dependencies as constructor parameters.
+         */
         chevron.registerInjectable(MyClass, {
             dependencies: [doublingFn],
             bootstrapping: DefaultBootstrappings.CLASS
@@ -74,9 +118,9 @@ describe("Chevron Demo ITs", () => {
 
         const MySession = class {};
 
-        // Define custom scope function to create scopes based on the property `sessionId` of the context.
         chevron.registerInjectable(MySession, {
             bootstrapping: DefaultBootstrappings.CLASS,
+            // Define a custom scope to create scopes based on the property `sessionId` of the context.
             scope: (context: SessionContext) => context.sessionId
         });
 
@@ -101,6 +145,7 @@ describe("Chevron Demo ITs", () => {
     it("supports decorators", () => {
         const chevron = new Chevron();
 
+        // Same as chevron.registerInjectable(Foo, { bootstrapping: DefaultBootstrappings.CLASS });
         @Injectable(chevron, { bootstrapping: DefaultBootstrappings.CLASS })
         class Foo {
             public getFoo() {
@@ -113,7 +158,7 @@ describe("Chevron Demo ITs", () => {
             bootstrapping: DefaultBootstrappings.CLASS
         })
         class FooBar {
-            constructor(private readonly foo: Foo) {}
+            public constructor(private readonly foo: Foo) {}
 
             public getFooBar() {
                 return this.foo.getFoo() + "bar";
