@@ -19,7 +19,7 @@ Basic usage:
 ```typescript
 import { Chevron } from "chevronjs";
 
-// Create a new instance
+// Create a new chevron instance
 const chevron = new Chevron();
 
 const myFunction = () => {
