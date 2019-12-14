@@ -4,7 +4,7 @@
 
 ## Introduction
 
-Chevron is a small TypeScript library for lazy dependency injection inspired by the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module) and [Spring's DI System](https://www.baeldung.com/inversion-control-and-dependency-injection-in-spring).
+Chevron is a TypeScript library for lazy dependency injection inspired by the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module) and [Spring's DI System](https://www.baeldung.com/inversion-control-and-dependency-injection-in-spring).
 
 [Docs](https://felixrilling.github.io/chevron/)
 
@@ -14,59 +14,101 @@ Chevron is a small TypeScript library for lazy dependency injection inspired by 
 npm install chevronjs
 ```
 
-Chevron can be used in two ways, either the classic programmatic API, calling Chevron#set and Chevron#get to set and get injectables, or by using the typescript decorators `@Injectable` and `@Autowired` on the given values.
+Basic usage:
 
 ```typescript
-import {Chevron, InjectableType} from "chevronjs";
+import { Chevron } from "chevronjs";
 
-const cv = new Chevron(); // Create a new instance which acts as the container for the injectables
+// Create a new instance
+const chevron = new Chevron();
 
-/*
- * Classic API.
- */
+const myFunction = () => {
+    console.log("Hello world!");
+};
 
-class MyFactory {
-    public sayHello() {
-        console.log("Hello!");
-    }
-}
+// Register the myFunction variable as a plain injectable.
+chevron.registerInjectable(myFunction);
 
-cv.set(
-    InjectableType.FACTORY, // Type of the injectable.
-    [], // Dependencies this injectable uses, none in this case.
-    MyFactory // Content of the injectable. In this case, it will also be used as the key for accessing the injectable later.
-);
-
-cv.get(MyFactory).sayHello(); // Prints "Hello!"
+// Retrieve injectable (could also be done using `chevron.getInjectableInstance("myFunction")`.
+const myFunctionInstance = chevron.getInjectableInstance(myFunction);
 ```
-Chevron provides two [TypeScript Decorators](https://www.typescriptlang.org/docs/handbook/decorators.html) for its API.
-Keep in mind that decorators are an experimental TypeScript feature and might not be fully stabilized yet.
+
+Custom names can be set like this:
+
 ```typescript
-import {Chevron, InjectableType, Autowired, Injectable} from "chevronjs";
+import { Chevron } from "chevronjs";
 
-const cv = new Chevron();
+const chevron = new Chevron();
 
-/*
- * Decorator API.
- */
+const myFunction = () => {
+    console.log("Hello world!");
+};
+chevron.registerInjectable(myFunction, {
+    // A custom name can either be a string or another nameable value like a function.
+    name: "myCoolName"
+});
 
-@Injectable(cv, InjectableType.FACTORY, [])
-class MyFactory {
-    public sayHello() {
-        console.log("Hello!");
+const myFunctionInstance = chevron.getInjectableInstance("myCoolName");
+```
+
+### Bootstrapping
+
+A core feature is bootstrapping, which describes the process how injectable instances are instantiated. The default bootstrapping is `DefaultBootstrappings.IDENTITY` which means that values are not modified during instantiation. When dealing with dependencies though (Chapter "Dependencies"), it is essential to have a bootstrapping process which allows usage of those dependencies: `DefaultBootstrappings.CLASS` allows class-like injectables to receive their dependencies as constructor parameters and `DefaultBootstrappings.FUNCTION` allows injectables that are plain functions to simply receive them as arguments.
+
+```typescript
+import { Chevron, DefaultBootstrappings } from "chevronjs";
+
+const chevron = new Chevron();
+
+const MyClass = class {
+    private readonly modifier: number;
+
+    public constructor() {
+        this.modifier = 2;
     }
-}
 
-class ConsumerClass {
-    @Autowired(cv, MyFactory)
-    private readonly injectedMyFactory: any;
-
-    public run() {
-        this.injectedMyFactory.sayHello();
+    public getDouble(n: number) {
+        return n * this.modifier;
     }
-}
+};
+chevron.registerInjectable(MyClass, {
+    // Use the "CLASS" Bootstrapping to instantiate the value as class
+    bootstrapping: DefaultBootstrappings.CLASS
+});
 
-new ConsumerClass().run(); // Prints "Hello!"
+const myClassInstance = chevron.getInjectableInstance(MyClass);
+```
+
+```typescript
+import { Chevron, DefaultBootstrappings } from "chevronjs";
+
+const chevron = new Chevron();
+
+const multiply = (val: number) => val * 2;
+
+const myFunction = () => multiply;
+chevron.registerInjectable(myFunction, {
+    // Use the "FUNCTION" Bootstrapping to instantiate the value as a function
+    bootstrapping: DefaultBootstrappings.FUNCTION
+});
+
+const myFunctionInstance = chevron.getInjectableInstance(myFunction);
+```
+
+Bootstrapping can also be used to modify values during instantiation:
+
+```typescript
+import { Chevron, DefaultBootstrappings } from "chevronjs";
+
+const chevron = new Chevron();
+
+const myInjectable = 16;
+chevron.registerInjectable(myInjectable, {
+    bootstrapping: (val: number) => val * 2,
+    name: "val"
+});
+
+const myFunctionInstance = chevron.getInjectableInstance("val");
 ```
 
 ### Dependencies
@@ -74,145 +116,125 @@ new ConsumerClass().run(); // Prints "Hello!"
 When an injectable relies on others in order to be constructed, you can declare those as its dependencies:
 
 ```typescript
-import {Chevron, InjectableType} from "chevronjs";
+import { Chevron, DefaultBootstrappings } from "chevronjs";
 
-const cv = new Chevron(); // Create a new instance which acts as the container for the injectables
+const chevron = new Chevron();
 
-class MyFactory {
-    public sayHello() {
-        console.log("Hello!");
+type mathFnType = (a: number) => number;
+const doublingFn: mathFnType = (a: number) => a * 2;
+
+chevron.registerInjectable(doublingFn);
+
+const MyClass = class {
+    public constructor(private readonly doublingFnAsDep: mathFnType) {}
+
+    public getDouble(n: number) {
+        return this.doublingFnAsDep(n);
+    }
+};
+
+/*
+ * Register injectable with dependency - we could also use `["doublingFn"]`.
+ * We want MyClass to be instantiated by constructing it through the CLASS bootstrapping,
+ * where we will have the dependencies as constructor parameters.
+ */
+chevron.registerInjectable(MyClass, {
+    dependencies: [doublingFn],
+    bootstrapping: DefaultBootstrappings.CLASS
+});
+
+// When retrieving, all dependencies will be resolved first.
+const myClassInstance = chevron.getInjectableInstance(MyClass);
+```
+
+All dependencies and sub-dependencies will be resolved and instantiated if needed when retrieving an injectable that needs to be instantiated.
+
+### Scopes
+
+Injectables can have scopes defining when new instances are created and reused; By default, `DefaultScopes.SINGLETON` is used, meaning only a single instance of each injectable will be created, which will be reused for every retrieval. There is also `DefaultScopes.PROTOTYPE` which is the opposite, creating a new instance for every single request.
+
+```typescript
+import { Chevron, DefaultBootstrappings, DefaultScopes } from "./src/main";
+
+const chevron = new Chevron();
+
+interface SessionContext {
+    sessionId: string;
+}
+
+const MyClass = class {};
+
+chevron.registerInjectable(MyClass, {
+    bootstrapping: DefaultBootstrappings.CLASS,
+    scope: DefaultScopes.PROTOTYPE
+});
+
+const myClassInstance1 = chevron.getInjectableInstance(MyClass);
+const myClassInstance2 = chevron.getInjectableInstance(MyClass);
+```
+
+Scopes can be also be used to provide for example session based instances:
+
+```typescript
+import { Chevron, DefaultBootstrappings } from "./src/main";
+
+const chevron = new Chevron();
+
+interface SessionContext {
+    sessionId: string;
+}
+
+const MySession = class {};
+
+chevron.registerInjectable(MySession, {
+    bootstrapping: DefaultBootstrappings.CLASS,
+    // Define a custom scope to create scopes based on the property `sessionId` of the context.
+    scope: (context: SessionContext) => context.sessionId
+});
+
+// Injectable retrieval can pass optional context data to influence scoping.
+const mySessionInstanceFoo = chevron.getInjectableInstance(MySession, {
+    sessionId: "123"
+});
+const mySessionInstanceBar = chevron.getInjectableInstance(MySession, {
+    sessionId: "987"
+});
+const mySessionInstanceBarAgain = chevron.getInjectableInstance(MySession, {
+    sessionId: "987"
+});
+```
+
+Note that if a scope function returns `null`, a new instance that will not be re-used will be created.
+
+## TypeScript Decorators
+
+Chevron provides also provides [TypeScript Decorators](https://www.typescriptlang.org/docs/handbook/decorators.html) for its API.
+Keep in mind that decorators are an experimental TypeScript feature and might not be fully stabilized yet.
+
+```typescript
+import { Chevron, DefaultBootstrappings, Injectable } from "./src/main";
+
+const chevron = new Chevron();
+
+// Same as chevron.registerInjectable(Foo, { bootstrapping: DefaultBootstrappings.CLASS });
+@Injectable(chevron, { bootstrapping: DefaultBootstrappings.CLASS })
+class Foo {
+    public getFoo() {
+        return "foo";
     }
 }
 
-cv.set(
-    InjectableType.FACTORY,
-    [],
-    MyFactory
-);
+@Injectable(chevron, {
+    dependencies: [Foo],
+    bootstrapping: DefaultBootstrappings.CLASS
+})
+class FooBar {
+    public constructor(private readonly foo: Foo) {}
 
-function myService(myFactory: MyFactory) { // Dependency will be available in the service as an argument.
-    myFactory.sayHello();
-}
-
-cv.set(
-    InjectableType.SERVICE,
-    [MyFactory], // Key of the dependency is listed here.
-    myService
-);
-
-cv.get(myService)(); // Prints "Hello!"
-```
-
-Upon construction of the injectable, all dependencies will be accessed, and constructed of they are not already.
-
-### Keys
-
-By default, Chevron will try to use the content of an injectable as its key, but if that is not what you want (if you want the same class in two injectables for example) you can provide an explicit key:
-
-```typescript
-import {Chevron, InjectableType} from "chevronjs";
-
-const cv = new Chevron();
-
-class MyFactory {
-    public sayHello() {
-        console.log("Hello!");
+    public getFooBar() {
+        return this.foo.getFoo() + "bar";
     }
 }
 
-cv.set(
-    InjectableType.FACTORY,
-    [],
-    MyFactory,
-    "myInjectableFactory1"
-);
-
-cv.set(
-    InjectableType.FACTORY,
-    [],
-    MyFactory,
-    "myInjectableFactory2"
-);
-
-cv.get("myInjectableFactory1").sayHello(); // Prints "Hello!"
-```
-
-### Injectable Types
-
-Chevron comes with a handful of built-in injectable types:
-
-#### Plain
-
-A value that does not need to be constructed, and can be used as-is.
-
-```typescript
-import {Chevron, InjectableType} from "chevronjs";
-
-const cv = new Chevron();
-const result = 123;
-
-const testPlainName = "testPlainName";
-cv.set(InjectableType.PLAIN, [], result, testPlainName);
-
-cv.get(testPlainName); // returns 123
-```
-
-####  Factory
- 
-A constructor function/class, that will be constructed with the given dependencies as arguments.
-
-```typescript
-import {Chevron, InjectableType} from "chevronjs";
-
-const cv = new Chevron();
-const result = 123;
-
-const testFactoryName = "testFactoryName";
-
-class TestFactoryClass {
-    // noinspection JSMethodCanBeStatic
-    public getVal() {
-        return result;
-    }
-}
-
-cv.set(InjectableType.FACTORY, [], TestFactoryClass, testFactoryName);
-
-cv.get(testFactoryName).getVal(); // returns 123
-```
-
-####  Service
- 
-A function that takes the given dependencies and content as arguments.
-
-```typescript
-import {Chevron, InjectableType} from "chevronjs";
-
-const cv = new Chevron();
-const result = 123;
-
-const testServiceName = "testServiceName";
-const testServiceFn = () => result;
-cv.set(InjectableType.SERVICE, [], testServiceFn, testServiceName);
-
-cv.get(testServiceName)(); // returns 123
-```
-
-### API
-
-You can add your own injectable types to provide custom bootstrapping behaviour:
-
-```typescript
-import {Chevron, InjectableType} from "chevronjs";
-
-const cv = new Chevron();
-
-const MY_INJECTABLE_TYPE = "myType";
-cv.setType(MY_INJECTABLE_TYPE, (content, dependencies) => content * 2);
-
-const testInjectable = "testInjectable";
-const testVal = 123;
-cv.set(MY_INJECTABLE_TYPE, [], testVal, testInjectable);
-
-cv.get(testInjectable); // returns 246
+const fooBarInstance = chevron.getInjectableInstance(FooBar);
 ```

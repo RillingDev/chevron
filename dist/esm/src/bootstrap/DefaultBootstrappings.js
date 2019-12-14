@@ -26,11 +26,11 @@ const classBootstrapping = (initializer, dependencies) => {
  * @public
  * @throws TypeError when used with a non-function initializer.
  */
-const functionBootstrapping = (initializer, dependencies) => (...args) => {
+const functionBootstrapping = (initializer, dependencies) => {
     if (!isFunction(initializer)) {
         throw createNonFunctionInitializerError();
     }
-    return initializer(...dependencies, ...args);
+    return initializer(...dependencies);
 };
 /**
  * {@link Bootstrapping} which immediately returns the initializer.

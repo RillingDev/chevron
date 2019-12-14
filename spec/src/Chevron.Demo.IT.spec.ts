@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { Chevron, DefaultBootstrappings, Injectable } from "../../src/main";
+import {
+    Chevron,
+    DefaultBootstrappings,
+    DefaultScopes,
+    Injectable
+} from "../../src/main";
 
 describe("Chevron Demo ITs", () => {
     it("creates instance", () => {
@@ -36,7 +41,23 @@ describe("Chevron Demo ITs", () => {
         expect(myFunctionInstance).toBe(myFunction);
     });
 
-    it("supports different bootstrappings", () => {
+    it("supports custom names", () => {
+        const chevron = new Chevron();
+
+        const myFunction = () => {
+            console.log("Hello world!");
+        };
+        chevron.registerInjectable(myFunction, {
+            // A custom name can either be a string or another nameable value like a function.
+            name: "myCoolName"
+        });
+
+        const myFunctionInstance = chevron.getInjectableInstance("myCoolName");
+
+        expect(myFunctionInstance).toBe(myFunction);
+    });
+
+    it("supports bootstrappings: class", () => {
         const chevron = new Chevron();
 
         const MyClass = class {
@@ -55,33 +76,47 @@ describe("Chevron Demo ITs", () => {
             bootstrapping: DefaultBootstrappings.CLASS
         });
 
-        const myFunctionInstance = chevron.getInjectableInstance(MyClass);
+        const myClassInstance = chevron.getInjectableInstance(MyClass);
 
-        expect(myFunctionInstance).toBeInstanceOf(MyClass);
+        expect(myClassInstance).toBeInstanceOf(MyClass);
     });
 
-    it("supports custom names", () => {
+    it("supports bootstrappings: function", () => {
         const chevron = new Chevron();
 
-        const myFunction = () => {
-            console.log("Hello world!");
-        };
+        const multiply = (val: number) => val * 2;
+
+        const myFunction = () => multiply;
         chevron.registerInjectable(myFunction, {
-            // A custom name can either be a string or another nameable value like a function.
-            name: "myCoolName"
+            // Use the "FUNCTION" Bootstrapping to instantiate the value as a function
+            bootstrapping: DefaultBootstrappings.FUNCTION
         });
 
-        const myFunctionInstance = chevron.getInjectableInstance("myCoolName");
+        const myFunctionInstance = chevron.getInjectableInstance(myFunction);
 
-        expect(myFunctionInstance).toBe(myFunction);
+        expect(myFunctionInstance).toEqual(multiply);
+    });
+
+    it("supports bootstrappings: custom", () => {
+        const chevron = new Chevron();
+
+        const myInjectable = 16;
+        chevron.registerInjectable(myInjectable, {
+            bootstrapping: (val: number) => val * 2,
+            name: "val"
+        });
+
+        const myFunctionInstance = chevron.getInjectableInstance("val");
+
+        expect(myFunctionInstance).toEqual(32);
     });
 
     it("supports dependencies", () => {
         const chevron = new Chevron();
 
         type mathFnType = (a: number) => number;
-
         const doublingFn: mathFnType = (a: number) => a * 2;
+
         chevron.registerInjectable(doublingFn);
 
         const MyClass = class {
@@ -109,7 +144,27 @@ describe("Chevron Demo ITs", () => {
         expect(myClassInstance.getDouble(2)).toBe(4);
     });
 
-    it("supports scopes", () => {
+    it("supports scopes: prototype", () => {
+        const chevron = new Chevron();
+
+        interface SessionContext {
+            sessionId: string;
+        }
+
+        const MyClass = class {};
+
+        chevron.registerInjectable(MyClass, {
+            bootstrapping: DefaultBootstrappings.CLASS,
+            scope: DefaultScopes.PROTOTYPE
+        });
+
+        const myClassInstance1 = chevron.getInjectableInstance(MyClass);
+        const myClassInstance2 = chevron.getInjectableInstance(MyClass);
+
+        expect(myClassInstance1).not.toBe(myClassInstance2);
+    });
+
+    it("supports scopes: custom", () => {
         const chevron = new Chevron();
 
         interface SessionContext {
@@ -165,9 +220,8 @@ describe("Chevron Demo ITs", () => {
             }
         }
 
+        const fooBarInstance = chevron.getInjectableInstance(FooBar);
         // eslint-disable-next-line @typescript-eslint/unbound-method
-        expect(chevron.getInjectableInstance(FooBar).getFooBar()).toEqual(
-            "foobar"
-        );
+        expect(fooBarInstance.getFooBar()).toEqual("foobar");
     });
 });

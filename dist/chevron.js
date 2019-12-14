@@ -70,11 +70,11 @@ var chevron = (function (exports, lodash) {
      * @public
      * @throws TypeError when used with a non-function initializer.
      */
-    const functionBootstrapping = (initializer, dependencies) => (...args) => {
+    const functionBootstrapping = (initializer, dependencies) => {
         if (!lodash.isFunction(initializer)) {
             throw createNonFunctionInitializerError();
         }
-        return initializer(...dependencies, ...args);
+        return initializer(...dependencies);
     };
     /**
      * {@link Bootstrapping} which immediately returns the initializer.
