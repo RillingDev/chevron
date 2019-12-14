@@ -41,12 +41,12 @@ const classBootstrapping = <TValue, UInitializer, VDependency>(
 const functionBootstrapping = <TValue, UInitializer, VDependency>(
     initializer: UInitializer,
     dependencies: VDependency[]
-) => (...args: any[]) => {
+) => {
     if (!isFunction(initializer)) {
         throw createNonFunctionInitializerError();
     }
 
-    return initializer(...dependencies, ...args);
+    return initializer(...dependencies);
 };
 
 /**
