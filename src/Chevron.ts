@@ -24,12 +24,31 @@ const guessName = (value: any): string => {
     const guessedName = getName(value);
     if (isNil(guessedName)) {
         throw new TypeError(
-            `Could not guess name of ${String(
+            `Could not guess name of '${String(
                 value
-            )}, please explicitly define one.`
+            )}', please explicitly define one.`
         );
     }
     return guessedName;
+};
+
+/**
+ * Creates an error circular injectable dependencies.
+ *
+ * @private
+ * @param resolveStack Resolve stack.
+ * @param injectableEntryName Current injectable name that caused the error.
+ * @return Created error
+ */
+const createCircularDependencyError = (
+    resolveStack: Set<string>,
+    injectableEntryName: string
+): Error => {
+    const resolveStackFull = [...Array.from(resolveStack), injectableEntryName];
+    const stackVisualization = resolveStackFull
+        .map(name => `'${name}'`)
+        .join(" -> ");
+    return new Error(`Circular dependencies found: ${stackVisualization}.`);
 };
 
 /**
@@ -250,11 +269,9 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
          * Start bootstrapping value.
          */
         if (resolveStack.has(injectableEntryName)) {
-            throw new Error(
-                `Circular dependencies found: '${[
-                    ...Array.from(resolveStack),
-                    injectableEntryName
-                ].join("->")}'.`
+            throw createCircularDependencyError(
+                resolveStack,
+                injectableEntryName
             );
         }
         resolveStack.add(injectableEntryName);
