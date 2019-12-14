@@ -8,7 +8,6 @@ import { InjectableOptions } from "../injectable/InjectableOptions";
  *
  * @public
  * @param instance {@link Chevron} instance to register the injectable on.
- * @param dependencies Definitions of this injectables dependencies. See {@link Chevron#registerInjectable} for details.
  * @param options Options for this injectable. See {@link Chevron#registerInjectable} for details.
  * @throws Error when an injectable with the requested name is already registered.
  * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
@@ -16,7 +15,7 @@ import { InjectableOptions } from "../injectable/InjectableOptions";
 const Injectable = <TValue = any, UInitializer = any, VContext = any>(
     instance: Chevron<TValue, UInitializer>,
     options: InjectableOptions<TValue, UInitializer, VContext> = {}
-) => (target: any) => {
+) => (target: UInitializer): UInitializer => {
     instance.registerInjectable(target, options);
     return target;
 };

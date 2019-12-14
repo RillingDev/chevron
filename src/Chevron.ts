@@ -8,6 +8,7 @@ import { DefaultScopes } from "./scope/DefaultScopes";
 import { Scope } from "./scope/Scope";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Bootstrapping } from "./bootstrap/Bootstrapping";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Nameable } from "./Nameable";
 
 /**

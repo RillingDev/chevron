@@ -5,7 +5,7 @@
  */
 declare const DefaultBootstrappings: {
     CLASS: <TValue, UInitializer, VDependency>(initializer: UInitializer, dependencies: VDependency[]) => TValue;
-    FUNCTION: <TValue_1, UInitializer_1, VDependency_1>(initializer: UInitializer_1, dependencies: VDependency_1[]) => any;
+    FUNCTION: <TValue_1, UInitializer_1, VDependency_1>(initializer: UInitializer_1, dependencies: VDependency_1[]) => TValue_1;
     IDENTITY: <TInitializer>(initializer: TInitializer) => TInitializer;
 };
 export { DefaultBootstrappings };
