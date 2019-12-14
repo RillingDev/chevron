@@ -220,7 +220,7 @@ describe("Chevron Demo", () => {
             }
 
             const fooBarInstance = chevron.getInjectableInstance(FooBar);
-            // eslint-disable-next-line @typescript-eslint/unbound-method
+
             expect(fooBarInstance.getFooBar()).toEqual("foobar");
         });
     });

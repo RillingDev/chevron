@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-import { Chevron } from "../../src/main";
+import { Chevron, DefaultBootstrappings } from "../../src/main";
 
 describe("Chevron", () => {
     describe("constructor", () => {
@@ -23,6 +23,23 @@ describe("Chevron", () => {
             expect(chevron.hasInjectable("myFunction")).toBeTrue();
             expect(chevron.hasInjectable(myFunction)).toBeTrue();
         });
+
+        it("throws for no guessable name", () => {
+            const chevron = new Chevron();
+            expect(() => chevron.registerInjectable(1)).toThrowError(
+                "Could not guess name of '1', please explicitly define one."
+            );
+        });
+
+        it("throws for duplicate name", () => {
+            const chevron = new Chevron();
+
+            chevron.registerInjectable(() => 1, { name: "foo" });
+
+            expect(() =>
+                chevron.registerInjectable(() => 1, { name: "foo" })
+            ).toThrowError("Name already exists: 'foo'.");
+        });
     });
 
     describe("getInjectableInstance", () => {
@@ -39,6 +56,111 @@ describe("Chevron", () => {
             );
 
             expect(myFunctionInstance).toBe(myFunction);
+        });
+
+        it("throws for no injectable with name", () => {
+            const chevron = new Chevron();
+
+            expect(() => chevron.getInjectableInstance("foo")).toThrowError(
+                "Injectable 'foo' does not exist."
+            );
+        });
+
+        it("bootstraps", () => {
+            const chevron = new Chevron();
+
+            class MyClass {}
+
+            chevron.registerInjectable(MyClass, {
+                bootstrapping: DefaultBootstrappings.CLASS
+            });
+
+            const injectableInstance = chevron.getInjectableInstance(MyClass);
+
+            expect(injectableInstance).toBeInstanceOf(MyClass);
+        });
+
+        it("recursively resolves dependencies", () => {
+            const chevron = new Chevron();
+
+            class SeedData {
+                public getSeedValue() {
+                    return 123;
+                }
+            }
+
+            chevron.registerInjectable(SeedData, {
+                bootstrapping: DefaultBootstrappings.CLASS
+            });
+
+            class SeedController {
+                public constructor(private readonly seed: SeedData) {}
+
+                public getPrintableSeed() {
+                    return String(this.seed.getSeedValue());
+                }
+            }
+
+            chevron.registerInjectable(SeedController, {
+                dependencies: [SeedData],
+                bootstrapping: DefaultBootstrappings.CLASS
+            });
+
+            class AppController {
+                public constructor(
+                    private readonly seedController: SeedController
+                ) {}
+
+                public getFormattedSeed() {
+                    return `Seed: '${this.seedController.getPrintableSeed()}'.`;
+                }
+            }
+
+            chevron.registerInjectable(AppController, {
+                dependencies: [SeedController],
+                bootstrapping: DefaultBootstrappings.CLASS
+            });
+
+            const appControllerInstance: AppController = chevron.getInjectableInstance(
+                AppController
+            );
+
+            expect(appControllerInstance.getFormattedSeed()).toBe(
+                "Seed: '123'."
+            );
+        });
+
+        it("throws for circular dependencies", () => {
+            const chevron = new Chevron();
+
+            class SeedData {}
+
+            chevron.registerInjectable(SeedData, {
+                bootstrapping: DefaultBootstrappings.CLASS,
+                dependencies: ["SeedController"]
+            });
+
+            class SeedController {
+                public constructor(private readonly seed: SeedData) {}
+            }
+
+            chevron.registerInjectable(SeedController, {
+                dependencies: [SeedData],
+                bootstrapping: DefaultBootstrappings.CLASS
+            });
+
+            class AppController {}
+
+            chevron.registerInjectable(AppController, {
+                dependencies: [SeedController],
+                bootstrapping: DefaultBootstrappings.CLASS
+            });
+
+            expect(() =>
+                chevron.getInjectableInstance(AppController)
+            ).toThrowError(
+                "Circular dependencies found: 'AppController' -> 'SeedController' -> 'SeedData' -> 'SeedController'."
+            );
         });
     });
 });

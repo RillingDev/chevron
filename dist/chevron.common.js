@@ -132,9 +132,24 @@ const DefaultScopes = {
 const guessName = (value) => {
     const guessedName = name(value);
     if (lodash.isNil(guessedName)) {
-        throw new TypeError(`Could not guess name of ${String(value)}, please explicitly define one.`);
+        throw new TypeError(`Could not guess name of '${String(value)}', please explicitly define one.`);
     }
     return guessedName;
+};
+/**
+ * Creates an error circular injectable dependencies.
+ *
+ * @private
+ * @param resolveStack Resolve stack.
+ * @param injectableEntryName Current injectable name that caused the error.
+ * @return Created error
+ */
+const createCircularDependencyError = (resolveStack, injectableEntryName) => {
+    const resolveStackFull = [...Array.from(resolveStack), injectableEntryName];
+    const stackVisualization = resolveStackFull
+        .map(name => `'${name}'`)
+        .join(" -> ");
+    return new Error(`Circular dependencies found: ${stackVisualization}.`);
 };
 /**
  * Injectable container class.
@@ -287,10 +302,7 @@ class Chevron {
          * Start bootstrapping value.
          */
         if (resolveStack.has(injectableEntryName)) {
-            throw new Error(`Circular dependencies found: '${[
-                ...Array.from(resolveStack),
-                injectableEntryName
-            ].join("->")}'.`);
+            throw createCircularDependencyError(resolveStack, injectableEntryName);
         }
         resolveStack.add(injectableEntryName);
         const bootstrappedDependencies = injectableEntry.dependencies.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, context, resolveStack));
