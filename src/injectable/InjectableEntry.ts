@@ -8,7 +8,7 @@ import { Scope } from "../scope/Scope";
  */
 interface InjectableEntry<TValue, UInitializer, VDependency, WContext> {
     initializer: UInitializer;
-    dependencies: string[];
+    dependencyNames: string[];
     instances: Map<string, TValue>;
     bootstrapping: Bootstrapping<TValue, UInitializer, VDependency, WContext>;
     scope: Scope<TValue, UInitializer, VDependency, WContext>;

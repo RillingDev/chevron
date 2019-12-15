@@ -129,7 +129,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
             initializer,
             bootstrapping,
             scope,
-            dependencies: dependencies.map(dependencyName =>
+            dependencyNames: dependencies.map(dependencyName =>
                 guessName(dependencyName)
             ),
             instances: new Map()
@@ -270,7 +270,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         }
         resolveStack.add(injectableEntryName);
 
-        const bootstrappedDependencies = injectableEntry.dependencies.map(
+        const bootstrappedDependencies = injectableEntry.dependencyNames.map(
             dependencyName =>
                 this.getBootstrappedInjectableInstance(
                     dependencyName,
