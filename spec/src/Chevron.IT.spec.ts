@@ -20,7 +20,6 @@ describe("Chevron", () => {
             };
             chevron.registerInjectable(myFunction);
 
-            expect(chevron.hasInjectable("myFunction")).toBeTrue();
             expect(chevron.hasInjectable(myFunction)).toBeTrue();
         });
 
@@ -161,6 +160,78 @@ describe("Chevron", () => {
             ).toThrowError(
                 "Circular dependencies found: 'AppController' -> 'SeedController' -> 'SeedData' -> 'SeedController'."
             );
+        });
+    });
+
+    describe("hasInjectable", () => {
+        it("returns true if an injectable with that name is registered", () => {
+            const chevron = new Chevron();
+
+            const myFunction = () => {
+                console.log("Hello world!");
+            };
+            chevron.registerInjectable(myFunction);
+
+            expect(chevron.hasInjectable(myFunction)).toBeTrue();
+        });
+
+        it("returns false if no injectable with that name is registered", () => {
+            const chevron = new Chevron();
+
+            const myFunction = () => {
+                console.log("Hello world!");
+            };
+
+            expect(chevron.hasInjectable(myFunction)).toBeFalse();
+        });
+    });
+
+    describe("hasInjectableInstance", () => {
+        it("returns false if no injectable with that name is registered", () => {
+            const chevron = new Chevron();
+
+            const myFunction = () => {
+                console.log("Hello world!");
+            };
+
+            expect(chevron.hasInjectableInstance(myFunction)).toBeFalse();
+        });
+
+        it("returns false if no instance for this injectable exists", () => {
+            const chevron = new Chevron();
+
+            const myFunction = () => {
+                console.log("Hello world!");
+            };
+            chevron.registerInjectable(myFunction);
+
+            expect(chevron.hasInjectableInstance(myFunction)).toBeFalse();
+        });
+
+        it("returns true if an instance for this injectable exists", () => {
+            const chevron = new Chevron();
+
+            const myFunction = () => {
+                console.log("Hello world!");
+            };
+            chevron.registerInjectable(myFunction);
+            chevron.getInjectableInstance(myFunction);
+
+            expect(chevron.hasInjectableInstance(myFunction)).toBeTrue();
+        });
+
+        it("returns false if no instance in this scope for this injectable exists", () => {
+            const chevron = new Chevron();
+
+            const myFunction = () => {
+                console.log("Hello world!");
+            };
+            chevron.registerInjectable(myFunction, {
+                scope: () => Math.random().toString()
+            });
+            chevron.getInjectableInstance(myFunction);
+
+            expect(chevron.hasInjectableInstance(myFunction)).toBeFalse();
         });
     });
 });

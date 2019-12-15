@@ -210,7 +210,7 @@ var chevron = (function (exports, lodash) {
                 initializer,
                 bootstrapping,
                 scope,
-                dependencies: dependencies.map(dependencyName => guessName(dependencyName)),
+                dependencyNames: dependencies.map(dependencyName => guessName(dependencyName)),
                 instances: new Map()
             });
         }
@@ -302,7 +302,7 @@ var chevron = (function (exports, lodash) {
                 throw createCircularDependencyError(resolveStack, injectableEntryName);
             }
             resolveStack.add(injectableEntryName);
-            const bootstrappedDependencies = injectableEntry.dependencies.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, context, resolveStack));
+            const bootstrappedDependencies = injectableEntry.dependencyNames.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, context, resolveStack));
             const instance = injectableEntry.bootstrapping(injectableEntry.initializer, bootstrappedDependencies, injectableEntryName, injectableEntry);
             if (instanceName != null) {
                 injectableEntry.instances.set(instanceName, instance);
