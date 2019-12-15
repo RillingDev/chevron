@@ -1,1 +1,0 @@
-//# sourceMappingURL=Nameable.js.map

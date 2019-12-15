@@ -1,6 +1,4 @@
 import { isFunction } from "lodash";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Bootstrapping } from "./Bootstrapping";
 
 /**
  * Helper method for creating type errors for non-function initializers.

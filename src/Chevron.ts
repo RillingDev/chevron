@@ -4,12 +4,6 @@ import { InjectableEntry } from "./injectable/InjectableEntry";
 import { InjectableOptions } from "./injectable/InjectableOptions";
 import { DefaultBootstrappings } from "./bootstrap/DefaultBootstrappings";
 import { DefaultScopes } from "./scope/DefaultScopes";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Scope } from "./scope/Scope";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Bootstrapping } from "./bootstrap/Bootstrapping";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Nameable } from "./Nameable";
 
 /**
  * Tries to guess the string name of a nameable value. if none can be determined, an error is thrown.

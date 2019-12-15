@@ -1,6 +1,4 @@
 import { InjectableEntry } from "../injectable/InjectableEntry";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { DefaultBootstrappings } from "./DefaultBootstrappings";
 
 /**
  * Function interface for a bootstrapping function.

@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Scope } from "./Scope";
-
 /**
  * {@link Scope} which forces usage of a single instance for every request.
  *

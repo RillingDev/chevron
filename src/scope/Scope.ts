@@ -1,6 +1,4 @@
 import { InjectableEntry } from "../injectable/InjectableEntry";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { DefaultScopes } from "./DefaultScopes";
 
 /**
  * Function interface for a scope function.
