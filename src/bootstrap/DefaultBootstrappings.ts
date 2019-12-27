@@ -18,15 +18,16 @@ const createNonFunctionInitializerError = (): TypeError =>
  * @public
  * @throws TypeError when used with a non-function initializer.
  */
-const classBootstrapping = <TValue, UInitializer, VDependency>(
+const classBootstrapping = <TValue, UInitializer, VDependency, WContext>(
     initializer: UInitializer,
-    dependencies: VDependency[]
+    dependencies: VDependency[],
+    context: WContext
 ): TValue => {
     if (!isFunction(initializer)) {
         throw createNonFunctionInitializerError();
     }
 
-    return Reflect.construct(initializer, dependencies);
+    return Reflect.construct(initializer, [...dependencies, context]);
 };
 
 /**
@@ -36,15 +37,16 @@ const classBootstrapping = <TValue, UInitializer, VDependency>(
  * @public
  * @throws TypeError when used with a non-function initializer.
  */
-const functionBootstrapping = <TValue, UInitializer, VDependency>(
+const functionBootstrapping = <TValue, UInitializer, VDependency, WContext>(
     initializer: UInitializer,
-    dependencies: VDependency[]
+    dependencies: VDependency[],
+    context: WContext
 ): TValue => {
     if (!isFunction(initializer)) {
         throw createNonFunctionInitializerError();
     }
 
-    return initializer(...dependencies);
+    return initializer(...dependencies, context);
 };
 
 /**

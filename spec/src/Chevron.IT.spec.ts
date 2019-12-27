@@ -79,6 +79,36 @@ describe("Chevron", () => {
             expect(injectableInstance).toBeInstanceOf(MyClass);
         });
 
+        it("bootstraps with context", () => {
+            const chevron = new Chevron();
+
+            class Foo {}
+            chevron.registerInjectable(Foo, {
+                bootstrapping: DefaultBootstrappings.CLASS
+            });
+
+            type Context = number;
+
+            class MyClass {
+                public constructor(
+                    ignored: Foo,
+                    public readonly context: Context
+                ) {}
+            }
+
+            chevron.registerInjectable(MyClass, {
+                bootstrapping: DefaultBootstrappings.CLASS,
+                dependencies: [Foo]
+            });
+
+            const injectableInstance = chevron.getInjectableInstance(
+                MyClass,
+                123
+            );
+
+            expect(injectableInstance.context).toBe(123);
+        });
+
         it("recursively resolves dependencies", () => {
             const chevron = new Chevron();
 

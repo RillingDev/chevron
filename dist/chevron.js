@@ -57,11 +57,11 @@ var chevron = (function (exports, lodash) {
      * @public
      * @throws TypeError when used with a non-function initializer.
      */
-    const classBootstrapping = (initializer, dependencies) => {
+    const classBootstrapping = (initializer, dependencies, context) => {
         if (!lodash.isFunction(initializer)) {
             throw createNonFunctionInitializerError();
         }
-        return Reflect.construct(initializer, dependencies);
+        return Reflect.construct(initializer, [...dependencies, context]);
     };
     /**
      * {@link Bootstrapping} which returns a function executing the initializer with the dependencies as parameters.
@@ -70,11 +70,11 @@ var chevron = (function (exports, lodash) {
      * @public
      * @throws TypeError when used with a non-function initializer.
      */
-    const functionBootstrapping = (initializer, dependencies) => {
+    const functionBootstrapping = (initializer, dependencies, context) => {
         if (!lodash.isFunction(initializer)) {
             throw createNonFunctionInitializerError();
         }
-        return initializer(...dependencies);
+        return initializer(...dependencies, context);
     };
     /**
      * {@link Bootstrapping} which immediately returns the initializer.
