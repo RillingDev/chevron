@@ -217,7 +217,7 @@ import { Chevron, DefaultBootstrappings, Injectable } from "./src/main";
 const chevron = new Chevron();
 
 // Same as chevron.registerInjectable(Foo, { bootstrapping: DefaultBootstrappings.CLASS });
-@Injectable(chevron, { bootstrapping: DefaultBootstrappings.CLASS })
+@Injectable(chevron)
 class Foo {
     public getFoo() {
         return "foo";
@@ -225,8 +225,7 @@ class Foo {
 }
 
 @Injectable(chevron, {
-    dependencies: [Foo],
-    bootstrapping: DefaultBootstrappings.CLASS
+    dependencies: [Foo]
 })
 class FooBar {
     public constructor(private readonly foo: Foo) {}

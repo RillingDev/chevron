@@ -5,6 +5,9 @@ import { InjectableOptions } from "../injectable/InjectableOptions";
  *
  * Decorator function for use with TypeScript. Use this decorator on a variable or function/class expression.
  *
+ * Note that, as decorators only work for classes and class related constructs,
+ * the bootstrapping defaults to {@link DefaultBootstrappings.CLASS}
+ *
  * @public
  * @param instance {@link Chevron} instance to register the injectable on.
  * @param options Options for this injectable. See {@link Chevron#registerInjectable} for details.
