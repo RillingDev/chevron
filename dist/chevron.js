@@ -303,7 +303,7 @@ var chevron = (function (exports, lodash) {
             }
             resolveStack.add(injectableEntryName);
             const bootstrappedDependencies = injectableEntry.dependencyNames.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, context, resolveStack));
-            const instance = injectableEntry.bootstrapping(injectableEntry.initializer, bootstrappedDependencies, injectableEntryName, injectableEntry);
+            const instance = injectableEntry.bootstrapping(injectableEntry.initializer, bootstrappedDependencies, context, injectableEntryName, injectableEntry);
             if (instanceName != null) {
                 injectableEntry.instances.set(instanceName, instance);
             }

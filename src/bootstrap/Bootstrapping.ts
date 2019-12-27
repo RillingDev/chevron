@@ -13,6 +13,7 @@ import { InjectableEntry } from "../injectable/InjectableEntry";
 type Bootstrapping<TValue, UInitializer, VDependency, WContext> = (
     initializer: UInitializer,
     dependencies: VDependency[],
+    context: WContext | null,
     injectableEntryName: string,
     injectableEntry: InjectableEntry<
         TValue,

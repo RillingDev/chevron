@@ -281,6 +281,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         const instance = injectableEntry.bootstrapping(
             injectableEntry.initializer,
             bootstrappedDependencies,
+            context,
             injectableEntryName,
             injectableEntry
         );

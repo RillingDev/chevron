@@ -9,6 +9,6 @@ import { InjectableEntry } from "../injectable/InjectableEntry";
  *
  * @public
  */
-declare type Bootstrapping<TValue, UInitializer, VDependency, WContext> = (initializer: UInitializer, dependencies: VDependency[], injectableEntryName: string, injectableEntry: InjectableEntry<TValue, UInitializer, VDependency, WContext>) => TValue;
+declare type Bootstrapping<TValue, UInitializer, VDependency, WContext> = (initializer: UInitializer, dependencies: VDependency[], context: WContext | null, injectableEntryName: string, injectableEntry: InjectableEntry<TValue, UInitializer, VDependency, WContext>) => TValue;
 export { Bootstrapping };
 //# sourceMappingURL=Bootstrapping.d.ts.map
