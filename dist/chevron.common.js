@@ -305,7 +305,8 @@ class Chevron {
             throw createCircularDependencyError(resolveStack, injectableEntryName);
         }
         resolveStack.add(injectableEntryName);
-        const bootstrappedDependencies = injectableEntry.dependencyNames.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, context, resolveStack));
+        const bootstrappedDependencies = injectableEntry.dependencyNames.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, null, // Do not delegate context
+        resolveStack));
         const instance = injectableEntry.bootstrapping(injectableEntry.initializer, bootstrappedDependencies, context, injectableEntryName, injectableEntry);
         if (instanceName != null) {
             injectableEntry.instances.set(instanceName, instance);

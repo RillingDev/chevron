@@ -274,7 +274,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
             dependencyName =>
                 this.getBootstrappedInjectableInstance(
                     dependencyName,
-                    context,
+                    null, // Do not delegate context
                     resolveStack
                 )
         );
