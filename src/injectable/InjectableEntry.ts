@@ -6,12 +6,12 @@ import { Scope } from "../scope/Scope";
  *
  * @private
  */
-interface InjectableEntry<TValue, UInitializer, VDependency, WContext> {
+interface InjectableEntry<TInstance, UInitializer, VDependency, WContext> {
     initializer: UInitializer;
     dependencyNames: string[];
-    instances: Map<string, TValue>;
-    bootstrapping: Bootstrapping<TValue, UInitializer, VDependency, WContext>;
-    scope: Scope<TValue, UInitializer, VDependency, WContext>;
+    instances: Map<string, TInstance>;
+    bootstrapping: Bootstrapping<TInstance, UInitializer, VDependency, WContext>;
+    scope: Scope<TInstance, UInitializer, VDependency, WContext>;
 }
 
 export { InjectableEntry };

@@ -17,9 +17,9 @@ import { DefaultBootstrappings } from "../bootstrap/DefaultBootstrappings";
  * @throws Error when an injectable with the requested name is already registered.
  * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
  */
-const Injectable = <TValue = any, UInitializer = any, VContext = any>(
-    instance: Chevron<TValue, UInitializer>,
-    options: InjectableOptions<TValue, UInitializer, VContext> = {}
+const Injectable = <TInstance = any, UInitializer = any, VContext = any>(
+    instance: Chevron<TInstance, UInitializer>,
+    options: InjectableOptions<TInstance, UInitializer, VContext> = {}
 ) => (target: UInitializer): UInitializer => {
     if (isNil(options?.bootstrapping)) {
         options.bootstrapping = DefaultBootstrappings.CLASS;

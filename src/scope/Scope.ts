@@ -13,11 +13,11 @@ import { InjectableEntry } from "../injectable/InjectableEntry";
  *
  * @public
  */
-type Scope<TValue, UInitializer, VDependency, WContext> = (
+type Scope<TInstance, UInitializer, VDependency, WContext> = (
     context: WContext | null,
     injectableEntryName: string,
     injectableEntry: InjectableEntry<
-        TValue,
+        TInstance,
         UInitializer,
         VDependency,
         WContext

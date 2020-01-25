@@ -10,17 +10,17 @@ import { InjectableEntry } from "../injectable/InjectableEntry";
  *
  * @public
  */
-type Bootstrapping<TValue, UInitializer, VDependency, WContext> = (
+type Bootstrapping<TInstance, UInitializer, VDependency, WContext> = (
     initializer: UInitializer,
     dependencies: VDependency[],
     context: WContext | null,
     injectableEntryName: string,
     injectableEntry: InjectableEntry<
-        TValue,
+        TInstance,
         UInitializer,
         VDependency,
         WContext
     >
-) => TValue;
+) => TInstance;
 
 export { Bootstrapping };

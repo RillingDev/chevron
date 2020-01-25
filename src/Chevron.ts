@@ -50,8 +50,8 @@ const createCircularDependencyError = (
  *
  * @private
  */
-interface ResolvedInstance<TValue, UInitializer, VContext> {
-    injectableEntry: InjectableEntry<TValue, UInitializer, TValue, VContext>;
+interface ResolvedInstance<TInstance, UInitializer, VContext> {
+    injectableEntry: InjectableEntry<TInstance, UInitializer, TInstance, VContext>;
     instanceName: string | null;
 }
 
@@ -61,17 +61,16 @@ interface ResolvedInstance<TValue, UInitializer, VContext> {
  * @public
  * @class
  */
-class Chevron<TValue = any, UInitializer = any, VContext = any> {
+class Chevron<TInstance = any, UInitializer = any, VContext = any> {
     private readonly injectables: Map<
         string,
-        InjectableEntry<TValue, UInitializer, TValue, VContext>
+        InjectableEntry<TInstance, UInitializer, TInstance, VContext>
     >;
 
     /**
      * Creates a new, empty container.
      *
      * @public
-     * @constructor
      */
     public constructor() {
         this.injectables = new Map();
@@ -109,7 +108,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
      */
     public registerInjectable(
         initializer: UInitializer,
-        options: InjectableOptions<TValue, UInitializer, VContext> = {}
+        options: InjectableOptions<TInstance, UInitializer, VContext> = {}
     ): void {
         const bootstrapping =
             options.bootstrapping ?? DefaultBootstrappings.IDENTITY;
@@ -191,7 +190,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
     public getInjectableInstance(
         name: UInitializer | string,
         context: VContext | null = null
-    ): TValue {
+    ): TInstance {
         return this.getBootstrappedInjectableInstance(
             guessName(name),
             context,
@@ -211,7 +210,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
     private resolveInjectableInstance(
         injectableEntryName: string,
         context: VContext | null
-    ): ResolvedInstance<TValue, UInitializer, VContext> {
+    ): ResolvedInstance<TInstance, UInitializer, VContext> {
         if (!this.injectables.has(injectableEntryName)) {
             throw new Error(
                 `Injectable '${injectableEntryName}' does not exist.`
@@ -246,7 +245,7 @@ class Chevron<TValue = any, UInitializer = any, VContext = any> {
         injectableEntryName: string,
         context: any,
         resolveStack: Set<string>
-    ): TValue {
+    ): TInstance {
         const {
             injectableEntry,
             instanceName

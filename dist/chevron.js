@@ -32,9 +32,7 @@ var chevron = (function (exports, lodash) {
         if (lodash.isString(value)) {
             return value;
         }
-        // eslint-disable-next-line no-extra-parens
         if (lodash.isObject(value) && lodash.isString(value.name)) {
-            // eslint-disable-next-line no-extra-parens
             return value.name;
         }
         if (lodash.isSymbol(value) && lodash.isString(value.description)) {
@@ -319,7 +317,7 @@ var chevron = (function (exports, lodash) {
      * Decorator function for use with TypeScript. Use this decorator on a variable or function/class expression.
      *
      * Note that, as decorators only work for classes and class related constructs,
-     * the bootstrapping defaults to {@link DefaultBootstrappings.CLASS}
+     * the bootstrapping defaults to {@link DefaultBootstrappings.CLASS}.
      *
      * @public
      * @param instance {@link Chevron} instance to register the injectable on.
