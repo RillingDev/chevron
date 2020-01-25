@@ -46,13 +46,13 @@
     "homepage": "https://github.com/FelixRilling/chevronjs#readme",
     "dependencies": {
         "@types/lodash": "^4.14.149",
-        "lightdash": "^11.0.0",
+        "lightdash": "^11.1.2",
         "lodash": "^4.17.15"
     },
     "devDependencies": {
-        "@types/jasmine": "^3.5.0",
-        "@typescript-eslint/eslint-plugin": "^2.13.0",
-        "@typescript-eslint/parser": "^2.13.0",
+        "@types/jasmine": "^3.5.1",
+        "@typescript-eslint/eslint-plugin": "^2.17.0",
+        "@typescript-eslint/parser": "^2.17.0",
         "docdash": "^1.1.1",
         "eslint": "^6.8.0",
         "eslint-config-prettier": "^6.9.0",
@@ -62,8 +62,8 @@
         "npm-run-all": "^4.1.5",
         "prettier": "^1.19.1",
         "rimraf": "^3.0.0",
-        "rollup": "^1.27.14",
+        "rollup": "^1.29.1",
         "rollup-plugin-node-resolve": "^5.2.0",
-        "typescript": "^3.7.4"
+        "typescript": "^3.7.5"
     }
 }
