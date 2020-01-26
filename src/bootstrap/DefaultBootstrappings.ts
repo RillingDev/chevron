@@ -1,15 +1,5 @@
-import { isFunction } from "lodash";
-
-/**
- * Helper method for creating type errors for non-function initializers.
- *
- * @private
- * @return Type error.
- */
-const createNonFunctionInitializerError = (): TypeError =>
-    new TypeError(
-        "Non-functions cannot be bootstrapped by this bootstrapping."
-    );
+import { InjectableFunctionInitializer } from "./InjectableFunctionInitializer";
+import { InjectableClassInitializer } from "./InjectableClassInitializer";
 
 /**
  * {@link Bootstrapping} which constructs the initializer with the dependencies as parameters.
@@ -18,17 +8,10 @@ const createNonFunctionInitializerError = (): TypeError =>
  * @public
  * @throws TypeError when used with a non-function initializer.
  */
-const classBootstrapping = <TInstance, UInitializer, VDependency, WContext>(
-    initializer: UInitializer,
-    dependencies: VDependency[],
-    context: WContext
-): TInstance => {
-    if (!isFunction(initializer)) {
-        throw createNonFunctionInitializerError();
-    }
-
-    return Reflect.construct(initializer, [...dependencies, context]);
-};
+const classBootstrapping = <TInstance, VDependency>(
+    initializer: InjectableClassInitializer<TInstance, VDependency>,
+    dependencies: VDependency[]
+): TInstance => Reflect.construct(initializer, dependencies);
 
 /**
  * {@link Bootstrapping} which returns a function executing the initializer with the dependencies as parameters.
@@ -37,17 +20,10 @@ const classBootstrapping = <TInstance, UInitializer, VDependency, WContext>(
  * @public
  * @throws TypeError when used with a non-function initializer.
  */
-const functionBootstrapping = <TInstance, UInitializer, VDependency, WContext>(
-    initializer: UInitializer,
-    dependencies: VDependency[],
-    context: WContext
-): TInstance => {
-    if (!isFunction(initializer)) {
-        throw createNonFunctionInitializerError();
-    }
-
-    return initializer(...dependencies, context);
-};
+const functionBootstrapping = <TInstance, VDependency>(
+    initializer: InjectableFunctionInitializer<TInstance, VDependency>,
+    dependencies: VDependency[]
+): TInstance => initializer(...dependencies);
 
 /**
  * {@link Bootstrapping} which immediately returns the initializer.

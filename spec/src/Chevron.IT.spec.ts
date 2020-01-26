@@ -82,23 +82,15 @@ describe("Chevron", () => {
         it("bootstraps with context", () => {
             const chevron = new Chevron();
 
-            class Foo {}
-            chevron.registerInjectable(Foo, {
-                bootstrapping: DefaultBootstrappings.CLASS
-            });
-
             type Context = number;
 
             class MyClass {
-                public constructor(
-                    ignored: Foo,
-                    public readonly context: Context
-                ) {}
+                public constructor(public readonly context: Context) {}
             }
 
             chevron.registerInjectable(MyClass, {
-                bootstrapping: DefaultBootstrappings.CLASS,
-                dependencies: [Foo]
+                bootstrapping: (initializer, dependencies, context) =>
+                    DefaultBootstrappings.CLASS(initializer, [context])
             });
 
             const injectableInstance = chevron.getInjectableInstance(

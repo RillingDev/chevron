@@ -10,7 +10,12 @@ interface InjectableEntry<TInstance, UInitializer, VDependency, WContext> {
     initializer: UInitializer;
     dependencyNames: string[];
     instances: Map<string, TInstance>;
-    bootstrapping: Bootstrapping<TInstance, UInitializer, VDependency, WContext>;
+    bootstrapping: Bootstrapping<
+        TInstance,
+        UInitializer,
+        VDependency,
+        WContext
+    >;
     scope: Scope<TInstance, UInitializer, VDependency, WContext>;
 }
 

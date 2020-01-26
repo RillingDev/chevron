@@ -51,7 +51,12 @@ const createCircularDependencyError = (
  * @private
  */
 interface ResolvedInstance<TInstance, UInitializer, VContext> {
-    injectableEntry: InjectableEntry<TInstance, UInitializer, TInstance, VContext>;
+    injectableEntry: InjectableEntry<
+        TInstance,
+        UInitializer,
+        TInstance,
+        VContext
+    >;
     instanceName: string | null;
 }
 
