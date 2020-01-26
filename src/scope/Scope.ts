@@ -1,5 +1,3 @@
-import { InjectableEntry } from "../injectable/InjectableEntry";
-
 /**
  * Function interface for a scope function.
  * Scoping takes place when attempting to retrieve an instance, deciding if an existing instance should be reused, and if, which one.
@@ -14,14 +12,8 @@ import { InjectableEntry } from "../injectable/InjectableEntry";
  * @public
  */
 type Scope<TInstance, UInitializer, VDependency, WContext> = (
-    context: WContext | null,
-    injectableEntryName: string,
-    injectableEntry: InjectableEntry<
-        TInstance,
-        UInitializer,
-        VDependency,
-        WContext
-    >
+    context: WContext,
+    injectableEntryName: string
 ) => string | null;
 
 export { Scope };

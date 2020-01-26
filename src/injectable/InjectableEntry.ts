@@ -14,9 +14,9 @@ interface InjectableEntry<TInstance, UInitializer, VDependency, WContext> {
         TInstance,
         UInitializer,
         VDependency,
-        WContext
+        WContext | null
     >;
-    scope: Scope<TInstance, UInitializer, VDependency, WContext>;
+    scope: Scope<TInstance, UInitializer, VDependency, WContext | null>;
 }
 
 export { InjectableEntry };

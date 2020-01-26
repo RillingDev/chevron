@@ -225,8 +225,7 @@ class Chevron<TInstance = any, UInitializer = any, VContext = any> {
         const injectableEntry = this.injectables.get(injectableEntryName)!;
         const instanceName = injectableEntry.scope(
             context,
-            injectableEntryName,
-            injectableEntry
+            injectableEntryName
         );
         return {
             injectableEntry,
@@ -286,8 +285,7 @@ class Chevron<TInstance = any, UInitializer = any, VContext = any> {
             injectableEntry.initializer,
             bootstrappedDependencies,
             context,
-            injectableEntryName,
-            injectableEntry
+            injectableEntryName
         );
         if (instanceName != null) {
             injectableEntry.instances.set(instanceName, instance);
