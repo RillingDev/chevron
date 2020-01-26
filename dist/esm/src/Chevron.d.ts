@@ -5,13 +5,12 @@ import { InjectableOptions } from "./injectable/InjectableOptions";
  * @public
  * @class
  */
-declare class Chevron<TValue = any, UInitializer = any, VContext = any> {
+declare class Chevron<TInstance = any, UInitializer = any, VContext = any> {
     private readonly injectables;
     /**
      * Creates a new, empty container.
      *
      * @public
-     * @constructor
      */
     constructor();
     /**
@@ -44,7 +43,7 @@ declare class Chevron<TValue = any, UInitializer = any, VContext = any> {
      * @throws Error when an injectable with the requested name is already registered.
      * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
      */
-    registerInjectable(initializer: UInitializer, options?: InjectableOptions<TValue, UInitializer, VContext>): void;
+    registerInjectable(initializer: UInitializer, options?: InjectableOptions<TInstance, UInitializer, VContext | null>): void;
     /**
      * Checks if an injectable with the name provided is registered for this container, regardless if its instantiated or not.
      * To check if an injectable is registered and instantiated, see {@link #hasInjectableInstance}.
@@ -77,7 +76,7 @@ declare class Chevron<TValue = any, UInitializer = any, VContext = any> {
      * @throws Error when the injectable or a dependency cannot be found.
      * @throws Error when recursive dependencies are detected.
      */
-    getInjectableInstance(name: UInitializer | string, context?: VContext | null): TValue;
+    getInjectableInstance(name: UInitializer | string, context?: VContext | null): TInstance;
     /**
      * Resolves an injectable by name, providing information about the injectable entry, its name and scope value.
      *

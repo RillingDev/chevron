@@ -1,11 +1,3 @@
-import { isFunction } from "lodash";
-/**
- * Helper method for creating type errors for non-function initializers.
- *
- * @private
- * @return Type error.
- */
-const createNonFunctionInitializerError = () => new TypeError("Non-functions cannot be bootstrapped by this bootstrapping.");
 /**
  * {@link Bootstrapping} which constructs the initializer with the dependencies as parameters.
  * Note that this bootstrapping only makes sense for class initializers.
@@ -13,12 +5,7 @@ const createNonFunctionInitializerError = () => new TypeError("Non-functions can
  * @public
  * @throws TypeError when used with a non-function initializer.
  */
-const classBootstrapping = (initializer, dependencies, context) => {
-    if (!isFunction(initializer)) {
-        throw createNonFunctionInitializerError();
-    }
-    return Reflect.construct(initializer, [...dependencies, context]);
-};
+const classBootstrapping = (initializer, dependencies) => Reflect.construct(initializer, dependencies);
 /**
  * {@link Bootstrapping} which returns a function executing the initializer with the dependencies as parameters.
  * Note that this bootstrapping only makes sense for function initializers.
@@ -26,12 +13,7 @@ const classBootstrapping = (initializer, dependencies, context) => {
  * @public
  * @throws TypeError when used with a non-function initializer.
  */
-const functionBootstrapping = (initializer, dependencies, context) => {
-    if (!isFunction(initializer)) {
-        throw createNonFunctionInitializerError();
-    }
-    return initializer(...dependencies, context);
-};
+const functionBootstrapping = (initializer, dependencies) => initializer(...dependencies);
 /**
  * {@link Bootstrapping} which immediately returns the initializer.
  * This is useful for injectables which do not require any other initialization.

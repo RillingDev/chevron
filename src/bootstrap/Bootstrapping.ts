@@ -11,7 +11,7 @@
 type Bootstrapping<TInstance, UInitializer, VDependency, WContext> = (
     initializer: UInitializer,
     dependencies: VDependency[],
-    context: WContext | null,
+    context: WContext,
     injectableEntryName: string
 ) => TInstance;
 

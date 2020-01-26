@@ -24,9 +24,9 @@ type Nameable = NameableObject | string | symbol;
  */
 interface InjectableOptions<TInstance, UInitializer, VContext> {
     name?: Nameable;
-    bootstrapping?: Bootstrapping<any, UInitializer, any, VContext | null>;
-    scope?: Scope<any, UInitializer, any, VContext | null>;
     dependencies?: Nameable[];
+    bootstrapping?: Bootstrapping<any, UInitializer, any, VContext>;
+    scope?: Scope<any, UInitializer, any, VContext>;
 }
 
 export { InjectableOptions };

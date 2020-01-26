@@ -69,7 +69,7 @@ interface ResolvedInstance<TInstance, UInitializer, VContext> {
 class Chevron<TInstance = any, UInitializer = any, VContext = any> {
     private readonly injectables: Map<
         string,
-        InjectableEntry<TInstance, UInitializer, TInstance, VContext>
+        InjectableEntry<TInstance, UInitializer, TInstance, VContext | null>
     >;
 
     /**
@@ -113,7 +113,11 @@ class Chevron<TInstance = any, UInitializer = any, VContext = any> {
      */
     public registerInjectable(
         initializer: UInitializer,
-        options: InjectableOptions<TInstance, UInitializer, VContext> = {}
+        options: InjectableOptions<
+            TInstance,
+            UInitializer,
+            VContext | null
+        > = {}
     ): void {
         const bootstrapping =
             options.bootstrapping ?? DefaultBootstrappings.IDENTITY;
@@ -215,7 +219,7 @@ class Chevron<TInstance = any, UInitializer = any, VContext = any> {
     private resolveInjectableInstance(
         injectableEntryName: string,
         context: VContext | null
-    ): ResolvedInstance<TInstance, UInitializer, VContext> {
+    ): ResolvedInstance<TInstance, UInitializer, VContext | null> {
         if (!this.injectables.has(injectableEntryName)) {
             throw new Error(
                 `Injectable '${injectableEntryName}' does not exist.`
@@ -247,7 +251,7 @@ class Chevron<TInstance = any, UInitializer = any, VContext = any> {
      */
     private getBootstrappedInjectableInstance(
         injectableEntryName: string,
-        context: any,
+        context: VContext | null,
         resolveStack: Set<string>
     ): TInstance {
         const {

@@ -19,11 +19,11 @@ declare type Nameable = NameableObject | string | symbol;
  *
  * @public
  */
-interface InjectableOptions<TValue, UInitializer, VContext> {
+interface InjectableOptions<TInstance, UInitializer, VContext> {
     name?: Nameable;
+    dependencies?: Nameable[];
     bootstrapping?: Bootstrapping<any, UInitializer, any, VContext>;
     scope?: Scope<any, UInitializer, any, VContext>;
-    dependencies?: Nameable[];
 }
 export { InjectableOptions };
 //# sourceMappingURL=InjectableOptions.d.ts.map

@@ -44,7 +44,6 @@ class Chevron {
      * Creates a new, empty container.
      *
      * @public
-     * @constructor
      */
     constructor() {
         this.injectables = new Map();
@@ -156,7 +155,7 @@ class Chevron {
             throw new Error(`Injectable '${injectableEntryName}' does not exist.`);
         }
         const injectableEntry = this.injectables.get(injectableEntryName);
-        const instanceName = injectableEntry.scope(context, injectableEntryName, injectableEntry);
+        const instanceName = injectableEntry.scope(context, injectableEntryName);
         return {
             injectableEntry,
             instanceName
@@ -189,7 +188,7 @@ class Chevron {
         resolveStack.add(injectableEntryName);
         const bootstrappedDependencies = injectableEntry.dependencyNames.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, null, // Do not delegate context
         resolveStack));
-        const instance = injectableEntry.bootstrapping(injectableEntry.initializer, bootstrappedDependencies, context, injectableEntryName, injectableEntry);
+        const instance = injectableEntry.bootstrapping(injectableEntry.initializer, bootstrappedDependencies, context, injectableEntryName);
         if (instanceName != null) {
             injectableEntry.instances.set(instanceName, instance);
         }

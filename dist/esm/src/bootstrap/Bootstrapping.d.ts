@@ -1,4 +1,3 @@
-import { InjectableEntry } from "../injectable/InjectableEntry";
 /**
  * Function interface for a bootstrapping function.
  * Bootstrapping takes place when creating an injectable instance from its initializer,
@@ -9,6 +8,6 @@ import { InjectableEntry } from "../injectable/InjectableEntry";
  *
  * @public
  */
-declare type Bootstrapping<TValue, UInitializer, VDependency, WContext> = (initializer: UInitializer, dependencies: VDependency[], context: WContext | null, injectableEntryName: string, injectableEntry: InjectableEntry<TValue, UInitializer, VDependency, WContext>) => TValue;
+declare type Bootstrapping<TInstance, UInitializer, VDependency, WContext> = (initializer: UInitializer, dependencies: VDependency[], context: WContext, injectableEntryName: string) => TInstance;
 export { Bootstrapping };
 //# sourceMappingURL=Bootstrapping.d.ts.map

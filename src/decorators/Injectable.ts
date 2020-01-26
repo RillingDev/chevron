@@ -22,12 +22,12 @@ const Injectable = <TInstance = any, UDependency = any, VContext = any>(
     instance: Chevron<
         TInstance,
         InjectableClassInitializer<TInstance, UDependency>,
-        VContext
+        VContext | null
     >,
     options: InjectableOptions<
         TInstance,
         InjectableClassInitializer<TInstance, UDependency>,
-        VContext
+        VContext | null
     > = {}
 ) => (
     target: InjectableClassInitializer<TInstance, UDependency>

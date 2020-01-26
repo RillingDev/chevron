@@ -9,14 +9,14 @@ import { Scope } from "../scope/Scope";
 interface InjectableEntry<TInstance, UInitializer, VDependency, WContext> {
     initializer: UInitializer;
     dependencyNames: string[];
-    instances: Map<string, TInstance>;
     bootstrapping: Bootstrapping<
         TInstance,
         UInitializer,
         VDependency,
-        WContext | null
+        WContext
     >;
-    scope: Scope<TInstance, UInitializer, VDependency, WContext | null>;
+    scope: Scope<TInstance, UInitializer, VDependency, WContext>;
+    instances: Map<string, TInstance>;
 }
 
 export { InjectableEntry };

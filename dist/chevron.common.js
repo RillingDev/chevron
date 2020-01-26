@@ -45,25 +45,13 @@ const name = (value) => {
 };
 
 /**
- * Helper method for creating type errors for non-function initializers.
- *
- * @private
- * @return Type error.
- */
-const createNonFunctionInitializerError = () => new TypeError("Non-functions cannot be bootstrapped by this bootstrapping.");
-/**
  * {@link Bootstrapping} which constructs the initializer with the dependencies as parameters.
  * Note that this bootstrapping only makes sense for class initializers.
  *
  * @public
  * @throws TypeError when used with a non-function initializer.
  */
-const classBootstrapping = (initializer, dependencies, context) => {
-    if (!lodash.isFunction(initializer)) {
-        throw createNonFunctionInitializerError();
-    }
-    return Reflect.construct(initializer, [...dependencies, context]);
-};
+const classBootstrapping = (initializer, dependencies) => Reflect.construct(initializer, dependencies);
 /**
  * {@link Bootstrapping} which returns a function executing the initializer with the dependencies as parameters.
  * Note that this bootstrapping only makes sense for function initializers.
@@ -71,12 +59,7 @@ const classBootstrapping = (initializer, dependencies, context) => {
  * @public
  * @throws TypeError when used with a non-function initializer.
  */
-const functionBootstrapping = (initializer, dependencies, context) => {
-    if (!lodash.isFunction(initializer)) {
-        throw createNonFunctionInitializerError();
-    }
-    return initializer(...dependencies, context);
-};
+const functionBootstrapping = (initializer, dependencies) => initializer(...dependencies);
 /**
  * {@link Bootstrapping} which immediately returns the initializer.
  * This is useful for injectables which do not require any other initialization.
@@ -160,7 +143,6 @@ class Chevron {
      * Creates a new, empty container.
      *
      * @public
-     * @constructor
      */
     constructor() {
         this.injectables = new Map();
@@ -272,7 +254,7 @@ class Chevron {
             throw new Error(`Injectable '${injectableEntryName}' does not exist.`);
         }
         const injectableEntry = this.injectables.get(injectableEntryName);
-        const instanceName = injectableEntry.scope(context, injectableEntryName, injectableEntry);
+        const instanceName = injectableEntry.scope(context, injectableEntryName);
         return {
             injectableEntry,
             instanceName
@@ -305,7 +287,7 @@ class Chevron {
         resolveStack.add(injectableEntryName);
         const bootstrappedDependencies = injectableEntry.dependencyNames.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, null, // Do not delegate context
         resolveStack));
-        const instance = injectableEntry.bootstrapping(injectableEntry.initializer, bootstrappedDependencies, context, injectableEntryName, injectableEntry);
+        const instance = injectableEntry.bootstrapping(injectableEntry.initializer, bootstrappedDependencies, context, injectableEntryName);
         if (instanceName != null) {
             injectableEntry.instances.set(instanceName, instance);
         }
