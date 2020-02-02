@@ -15,6 +15,6 @@ import { InjectableClassInitializer } from "../bootstrap/InjectableClassInitiali
  * @throws Error when an injectable with the requested name is already registered.
  * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
  */
-declare const Injectable: <TInstance = any, UDependency = any, VContext = any>(instance: Chevron<TInstance, InjectableClassInitializer<TInstance, UDependency>, VContext | null>, options?: InjectableOptions<TInstance, InjectableClassInitializer<TInstance, UDependency>, VContext | null>) => (target: InjectableClassInitializer<TInstance, UDependency>) => InjectableClassInitializer<TInstance, UDependency>;
+declare const Injectable: <TInstance = any, VContext = any>(instance: Chevron<TInstance, InjectableClassInitializer<TInstance, TInstance>, VContext | null>, options?: InjectableOptions<TInstance, InjectableClassInitializer<TInstance, TInstance>, VContext | null>) => (target: InjectableClassInitializer<TInstance, TInstance>) => InjectableClassInitializer<TInstance, TInstance>;
 export { Injectable };
 //# sourceMappingURL=Injectable.d.ts.map

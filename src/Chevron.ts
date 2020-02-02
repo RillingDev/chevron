@@ -51,12 +51,7 @@ const createCircularDependencyError = (
  * @private
  */
 interface ResolvedInstance<TInstance, UInitializer, VContext> {
-    injectableEntry: InjectableEntry<
-        TInstance,
-        UInitializer,
-        TInstance,
-        VContext
-    >;
+    injectableEntry: InjectableEntry<TInstance, UInitializer, VContext>;
     instanceName: string | null;
 }
 
@@ -69,7 +64,7 @@ interface ResolvedInstance<TInstance, UInitializer, VContext> {
 class Chevron<TInstance = any, UInitializer = any, VContext = any> {
     private readonly injectables: Map<
         string,
-        InjectableEntry<TInstance, UInitializer, TInstance, VContext | null>
+        InjectableEntry<TInstance, UInitializer, VContext | null>
     >;
 
     /**

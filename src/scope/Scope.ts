@@ -11,7 +11,7 @@
  *
  * @public
  */
-type Scope<TInstance, UInitializer, VDependency, WContext> = (
+type Scope<WContext> = (
     context: WContext,
     injectableEntryName: string
 ) => string | null;

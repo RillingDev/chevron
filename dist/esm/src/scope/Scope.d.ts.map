@@ -1,1 +1,1 @@
-{"version":3,"file":"Scope.d.ts","sourceRoot":"","sources":["../../../../src/scope/Scope.ts"],"names":[],"mappings":"AAAA;;;;;;;;;;;;GAYG;AACH,aAAK,KAAK,CAAC,SAAS,EAAE,YAAY,EAAE,WAAW,EAAE,QAAQ,IAAI,CACzD,OAAO,EAAE,QAAQ,EACjB,mBAAmB,EAAE,MAAM,KAC1B,MAAM,GAAG,IAAI,CAAC;AAEnB,OAAO,EAAE,KAAK,EAAE,CAAC"}
+{"version":3,"file":"Scope.d.ts","sourceRoot":"","sources":["../../../../src/scope/Scope.ts"],"names":[],"mappings":"AAAA;;;;;;;;;;;;GAYG;AACH,aAAK,KAAK,CAAC,QAAQ,IAAI,CACnB,OAAO,EAAE,QAAQ,EACjB,mBAAmB,EAAE,MAAM,KAC1B,MAAM,GAAG,IAAI,CAAC;AAEnB,OAAO,EAAE,KAAK,EAAE,CAAC"}

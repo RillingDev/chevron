@@ -18,20 +18,20 @@ import { InjectableClassInitializer } from "../bootstrap/InjectableClassInitiali
  * @throws Error when an injectable with the requested name is already registered.
  * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
  */
-const Injectable = <TInstance = any, UDependency = any, VContext = any>(
+const Injectable = <TInstance = any, VContext = any>(
     instance: Chevron<
         TInstance,
-        InjectableClassInitializer<TInstance, UDependency>,
+        InjectableClassInitializer<TInstance, TInstance>,
         VContext | null
     >,
     options: InjectableOptions<
         TInstance,
-        InjectableClassInitializer<TInstance, UDependency>,
+        InjectableClassInitializer<TInstance, TInstance>,
         VContext | null
     > = {}
 ) => (
-    target: InjectableClassInitializer<TInstance, UDependency>
-): InjectableClassInitializer<TInstance, UDependency> => {
+    target: InjectableClassInitializer<TInstance, TInstance>
+): InjectableClassInitializer<TInstance, TInstance> => {
     if (isNil(options?.bootstrapping)) {
         options.bootstrapping = DefaultBootstrappings.CLASS;
     }

@@ -11,6 +11,6 @@
  *
  * @public
  */
-declare type Scope<TInstance, UInitializer, VDependency, WContext> = (context: WContext, injectableEntryName: string) => string | null;
+declare type Scope<WContext> = (context: WContext, injectableEntryName: string) => string | null;
 export { Scope };
 //# sourceMappingURL=Scope.d.ts.map
