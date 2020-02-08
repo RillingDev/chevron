@@ -4,8 +4,13 @@
 
 ## Introduction
 
-Chevron is a TypeScript library for lazy dependency injection inspired by the [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module) and [Spring's DI System](https://www.baeldung.com/inversion-control-and-dependency-injection-in-spring).
-
+Chevron is a TypeScript library for lazy dependency injection inspired by the
+[AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module)
+and [Spring's DI System](https://www.baeldung.com/inversion-control-and-dependency-injection-in-spring).
+Unlike similar libraries like [InversifyJS](https://github.com/inversify/InversifyJS),
+[Ana](https://github.com/manole-ts/ana) and others, Chevron does not depend on reflection
+or compile time tooling; The trade-off by not using those is that less type
+validation and Quality of Life features are possible.
 [Docs](https://felixrilling.github.io/chevron/)
 
 ## Usage
@@ -17,7 +22,7 @@ npm install chevronjs
 Basic usage:
 
 ```typescript
-import {Chevron} from "chevronjs";
+import { Chevron } from "chevronjs";
 
 // Create a new chevron instance.
 const chevron = new Chevron();
@@ -25,22 +30,22 @@ const chevron = new Chevron();
 type LoggingNoop = () => void;
 
 const myFunction: LoggingNoop = () => {
-console.log("Hello world!");
+    console.log("Hello world!");
 };
 
 // Register the myFunction variable as a plain injectable.
 chevron.registerInjectable(myFunction);
 
 // Retrieve injectable (could also be done using `chevron.getInjectableInstance("myFunction")`.
-const myFunctionInstance = chevron.getInjectableInstance<
-LoggingNoop
->(myFunction);
+const myFunctionInstance = chevron.getInjectableInstance<LoggingNoop>(
+    myFunction
+);
 ```
 
 Custom names can be set like this:
 
 ```typescript
-import {Chevron} from "chevronjs";
+import { Chevron } from "chevronjs";
 
 const chevron = new Chevron();
 
@@ -54,9 +59,9 @@ chevron.registerInjectable(myFunction, {
     name: "myCoolName"
 });
 
-const myFunctionInstance = chevron.getInjectableInstance<
-    LoggingNoop
->("myCoolName");
+const myFunctionInstance = chevron.getInjectableInstance<LoggingNoop>(
+    "myCoolName"
+);
 ```
 
 ### Bootstrapping
@@ -85,15 +90,13 @@ chevron.registerInjectable(MyClass, {
     bootstrapping: DefaultBootstrappings.CLASS()
 });
 
-const myClassInstance = chevron.getInjectableInstance<MyClass>(
-    MyClass
-);
+const myClassInstance = chevron.getInjectableInstance<MyClass>(MyClass);
 ```
 
 ```typescript
 import { Chevron, DefaultBootstrappings } from "chevronjs";
 
- const chevron = new Chevron();
+const chevron = new Chevron();
 
 type MathUnaryOperation = (val: number) => number;
 const multiply: MathUnaryOperation = (val: number) => val * 2;
@@ -104,9 +107,9 @@ chevron.registerInjectable(myFunction, {
     bootstrapping: DefaultBootstrappings.FUNCTION()
 });
 
-const myFunctionInstance = chevron.getInjectableInstance<
-    MathUnaryOperation
->(myFunction);
+const myFunctionInstance = chevron.getInjectableInstance<MathUnaryOperation>(
+    myFunction
+);
 ```
 
 Bootstrapping can also be used to modify values during instantiation:
@@ -114,7 +117,7 @@ Bootstrapping can also be used to modify values during instantiation:
 ```typescript
 import { Chevron, DefaultBootstrappings } from "chevronjs";
 
- const chevron = new Chevron();
+const chevron = new Chevron();
 
 const myInjectable = 16;
 chevron.registerInjectable(myInjectable, {
@@ -122,9 +125,7 @@ chevron.registerInjectable(myInjectable, {
     name: "val"
 });
 
-const myFunctionInstance = chevron.getInjectableInstance<number>(
-    "val"
-);
+const myFunctionInstance = chevron.getInjectableInstance<number>("val");
 ```
 
 ### Dependencies
@@ -134,7 +135,7 @@ When an injectable relies on others in order to be constructed, you can declare 
 ```typescript
 import { Chevron, DefaultBootstrappings } from "chevronjs";
 
- const chevron = new Chevron();
+const chevron = new Chevron();
 
 type MatchFn = (a: number) => number;
 const doublingFn: MatchFn = (a: number) => a * 2;
@@ -160,9 +161,7 @@ chevron.registerInjectable(MyClass, {
 });
 
 // When retrieving, all dependencies will be resolved first.
-const myClassInstance = chevron.getInjectableInstance<MyClass>(
-    MyClass
-);
+const myClassInstance = chevron.getInjectableInstance<MyClass>(MyClass);
 ```
 
 All dependencies and sub-dependencies will be resolved and instantiated if needed when retrieving an injectable that needs to be instantiated.
@@ -183,12 +182,8 @@ chevron.registerInjectable(MyClass, {
     scope: DefaultScopes.PROTOTYPE()
 });
 
-const myClassInstance1 = chevron.getInjectableInstance<MyClass>(
-    MyClass
-);
-const myClassInstance2 = chevron.getInjectableInstance<MyClass>(
-    MyClass
-);
+const myClassInstance1 = chevron.getInjectableInstance<MyClass>(MyClass);
+const myClassInstance2 = chevron.getInjectableInstance<MyClass>(MyClass);
 ```
 
 Scopes can be also be used to provide for example session based instances:
@@ -216,19 +211,22 @@ chevron.registerInjectable(MySession, {
 });
 
 // Injectable retrieval can pass optional context data to influence scoping.
-const mySessionInstanceFoo = chevron.getInjectableInstance<
-    MySession
->(MySession, {
-    sessionId: "123"
-});
-const mySessionInstanceBar = chevron.getInjectableInstance<
-    MySession
->(MySession, {
-    sessionId: "987"
-});
-const mySessionInstanceBarAgain = chevron.getInjectableInstance<
-    MySession
->(MySession, { sessionId: "987" });
+const mySessionInstanceFoo = chevron.getInjectableInstance<MySession>(
+    MySession,
+    {
+        sessionId: "123"
+    }
+);
+const mySessionInstanceBar = chevron.getInjectableInstance<MySession>(
+    MySession,
+    {
+        sessionId: "987"
+    }
+);
+const mySessionInstanceBarAgain = chevron.getInjectableInstance<MySession>(
+    MySession,
+    { sessionId: "987" }
+);
 ```
 
 Note that if a scope function returns `null`, a new instance that will not be re-used will be created.
@@ -241,7 +239,7 @@ Keep in mind that decorators are an experimental TypeScript feature and might no
 ```typescript
 import { Chevron, DefaultBootstrappings, Injectable } from "./src/main";
 
- const chevron = new Chevron();
+const chevron = new Chevron();
 
 // Same as chevron.registerInjectable(Foo, { bootstrapping: DefaultBootstrappings.CLASS() });
 @Injectable(chevron)
@@ -262,7 +260,5 @@ class FooBar {
     }
 }
 
-const fooBarInstance = chevron.getInjectableInstance<FooBar>(
-    FooBar
-);
+const fooBarInstance = chevron.getInjectableInstance<FooBar>(FooBar);
 ```
