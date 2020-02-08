@@ -271,16 +271,16 @@ class Chevron {
             injectableEntry.instances.has(instanceName)) {
             return injectableEntry.instances.get(instanceName);
         }
-        /*
-         * Start bootstrapping value.
-         */
+        // Start bootstrapping value.
         if (resolveStack.has(injectableEntryName)) {
             throw createCircularDependencyError(resolveStack, injectableEntryName);
         }
         resolveStack.add(injectableEntryName);
+        // Collect all dependencies, bootstrapping those which are not already in the process.
         const bootstrappedDependencies = injectableEntry.dependencyNames.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, null, // Do not delegate context
         resolveStack));
         const instance = injectableEntry.bootstrapping(injectableEntry.initializer, bootstrappedDependencies, context, injectableEntryName);
+        // A name of "null" means that the instance should not be cached, skip saving it.
         if (instanceName != null) {
             injectableEntry.instances.set(instanceName, instance);
         }
