@@ -1,9 +1,9 @@
-import { isNil } from "lodash";
 import { name as getName } from "lightdash";
 import { InjectableEntry } from "./injectable/InjectableEntry";
 import { InjectableOptions } from "./injectable/InjectableOptions";
 import { DefaultBootstrappings } from "./bootstrap/DefaultBootstrappings";
 import { DefaultScopes } from "./scope/DefaultScopes";
+import { Nameable } from "./injectable/Nameable";
 
 /**
  * Tries to guess the string name of a nameable value. if none can be determined, an error is thrown.
@@ -16,7 +16,7 @@ import { DefaultScopes } from "./scope/DefaultScopes";
  */
 const guessName = (value: any): string => {
     const guessedName = getName(value);
-    if (isNil(guessedName)) {
+    if (guessedName == null) {
         throw new TypeError(
             `Could not guess name of '${String(
                 value
@@ -50,8 +50,13 @@ const createCircularDependencyError = (
  *
  * @private
  */
-interface ResolvedInstance<TInstance, UInitializer, VContext> {
-    injectableEntry: InjectableEntry<TInstance, UInitializer, VContext>;
+interface ResolvedInstance<TInstance, UInitializer, VDependency, WContext> {
+    injectableEntry: InjectableEntry<
+        TInstance,
+        UInitializer,
+        VDependency,
+        WContext
+    >;
     instanceName: string | null;
 }
 
@@ -61,10 +66,10 @@ interface ResolvedInstance<TInstance, UInitializer, VContext> {
  * @public
  * @class
  */
-class Chevron<TInstance = any, UInitializer = any, VContext = any> {
+class Chevron<TContext> {
     private readonly injectables: Map<
         string,
-        InjectableEntry<TInstance, UInitializer, VContext | null>
+        InjectableEntry<any, any, any, TContext | null>
     >;
 
     /**
@@ -106,23 +111,30 @@ class Chevron<TInstance = any, UInitializer = any, VContext = any> {
      * @throws Error when an injectable with the requested name is already registered.
      * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
      */
-    public registerInjectable(
+    public registerInjectable<TInstance, UInitializer>(
         initializer: UInitializer,
         options: InjectableOptions<
             TInstance,
             UInitializer,
-            VContext | null
+            any,
+            TContext | null
         > = {}
     ): void {
         const bootstrapping =
-            options.bootstrapping ?? DefaultBootstrappings.IDENTITY;
-        const scope = options.scope ?? DefaultScopes.SINGLETON;
+            options.bootstrapping ??
+            DefaultBootstrappings.IDENTITY<
+                UInitializer,
+                UInitializer,
+                any,
+                TContext | null
+            >();
+        const scope =
+            options.scope ?? DefaultScopes.SINGLETON<TContext | null>();
         const name = options.name ?? null;
         const dependencies = options.dependencies ?? [];
 
-        const injectableEntryName = !isNil(name)
-            ? guessName(name)
-            : guessName(initializer);
+        const injectableEntryName =
+            name != null ? guessName(name) : guessName(initializer);
 
         if (this.injectables.has(injectableEntryName)) {
             throw new Error(`Name already exists: '${injectableEntryName}'.`);
@@ -148,7 +160,7 @@ class Chevron<TInstance = any, UInitializer = any, VContext = any> {
      * @return if an injectable with the name provided is registered on this container.
      * @throws TypeError when no name can be determined for the provided nameable.
      */
-    public hasInjectable(name: UInitializer | string): boolean {
+    public hasInjectable(name: Nameable): boolean {
         return this.injectables.has(guessName(name));
     }
 
@@ -163,8 +175,8 @@ class Chevron<TInstance = any, UInitializer = any, VContext = any> {
      * @throws TypeError when no name can be determined for the provided nameable.
      */
     public hasInjectableInstance(
-        name: UInitializer | string,
-        context: VContext | null = null
+        name: Nameable,
+        context: TContext | null = null
     ): boolean {
         if (!this.hasInjectable(name)) {
             return false;
@@ -191,9 +203,9 @@ class Chevron<TInstance = any, UInitializer = any, VContext = any> {
      * @throws Error when the injectable or a dependency cannot be found.
      * @throws Error when recursive dependencies are detected.
      */
-    public getInjectableInstance(
-        name: UInitializer | string,
-        context: VContext | null = null
+    public getInjectableInstance<TInstance>(
+        name: Nameable,
+        context: TContext | null = null
     ): TInstance {
         return this.getBootstrappedInjectableInstance(
             guessName(name),
@@ -211,10 +223,10 @@ class Chevron<TInstance = any, UInitializer = any, VContext = any> {
      * @return data object containing the injectable entry, its name and scope value.
      * @throws Error if no injectable for the name is found.
      */
-    private resolveInjectableInstance(
+    private resolveInjectableInstance<TInstance, UInitializer>(
         injectableEntryName: string,
-        context: VContext | null
-    ): ResolvedInstance<TInstance, UInitializer, VContext | null> {
+        context: TContext | null
+    ): ResolvedInstance<TInstance, UInitializer, any, TContext | null> {
         if (!this.injectables.has(injectableEntryName)) {
             throw new Error(
                 `Injectable '${injectableEntryName}' does not exist.`
@@ -244,9 +256,9 @@ class Chevron<TInstance = any, UInitializer = any, VContext = any> {
      * @throws Error when a dependency cannot be found.
      * @throws Error when recursive dependencies are detected.
      */
-    private getBootstrappedInjectableInstance(
+    private getBootstrappedInjectableInstance<TInstance>(
         injectableEntryName: string,
-        context: VContext | null,
+        context: TContext | null,
         resolveStack: Set<string>
     ): TInstance {
         const {
@@ -258,7 +270,7 @@ class Chevron<TInstance = any, UInitializer = any, VContext = any> {
             instanceName != null &&
             injectableEntry.instances.has(instanceName)
         ) {
-            return injectableEntry.instances.get(instanceName)!;
+            return <TInstance>injectableEntry.instances.get(instanceName)!;
         }
 
         /*
@@ -292,7 +304,7 @@ class Chevron<TInstance = any, UInitializer = any, VContext = any> {
 
         resolveStack.delete(injectableEntryName);
 
-        return instance;
+        return <TInstance>instance;
     }
 }
 

@@ -5,10 +5,10 @@ import { Scope } from "../scope/Scope";
  *
  * @private
  */
-interface InjectableEntry<TInstance, UInitializer, WContext> {
+interface InjectableEntry<TInstance, UInitializer, VDependency, WContext> {
     initializer: UInitializer;
     dependencyNames: string[];
-    bootstrapping: Bootstrapping<TInstance, UInitializer, TInstance, WContext>;
+    bootstrapping: Bootstrapping<TInstance, UInitializer, VDependency, WContext>;
     scope: Scope<WContext>;
     instances: Map<string, TInstance>;
 }

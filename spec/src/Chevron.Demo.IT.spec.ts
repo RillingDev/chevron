@@ -12,7 +12,9 @@ describe("Chevron Demo", () => {
             // Create a new chevron instance.
             const chevron = new Chevron();
 
-            const myFunction = () => {
+            type LoggingNoop = () => void;
+
+            const myFunction: LoggingNoop = () => {
                 console.log("Hello world!");
             };
 
@@ -20,9 +22,9 @@ describe("Chevron Demo", () => {
             chevron.registerInjectable(myFunction);
 
             // Retrieve injectable (could also be done using `chevron.getInjectableInstance("myFunction")`.
-            const myFunctionInstance = chevron.getInjectableInstance(
-                myFunction
-            );
+            const myFunctionInstance = chevron.getInjectableInstance<
+                LoggingNoop
+            >(myFunction);
 
             expect(myFunctionInstance).toBe(myFunction);
         });
@@ -30,7 +32,9 @@ describe("Chevron Demo", () => {
         it("supports custom names", () => {
             const chevron = new Chevron();
 
-            const myFunction = () => {
+            type LoggingNoop = () => void;
+
+            const myFunction: LoggingNoop = () => {
                 console.log("Hello world!");
             };
             chevron.registerInjectable(myFunction, {
@@ -38,9 +42,9 @@ describe("Chevron Demo", () => {
                 name: "myCoolName"
             });
 
-            const myFunctionInstance = chevron.getInjectableInstance(
-                "myCoolName"
-            );
+            const myFunctionInstance = chevron.getInjectableInstance<
+                LoggingNoop
+            >("myCoolName");
 
             expect(myFunctionInstance).toBe(myFunction);
         });
@@ -49,7 +53,7 @@ describe("Chevron Demo", () => {
         it("supports bootstrappings: class", () => {
             const chevron = new Chevron();
 
-            const MyClass = class {
+            class MyClass {
                 private readonly modifier: number;
 
                 public constructor() {
@@ -59,13 +63,16 @@ describe("Chevron Demo", () => {
                 public getDouble(n: number) {
                     return n * this.modifier;
                 }
-            };
+            }
+
             chevron.registerInjectable(MyClass, {
                 // Use the "CLASS" Bootstrapping to instantiate the value as class
-                bootstrapping: DefaultBootstrappings.CLASS
+                bootstrapping: DefaultBootstrappings.CLASS()
             });
 
-            const myClassInstance = chevron.getInjectableInstance(MyClass);
+            const myClassInstance = chevron.getInjectableInstance<MyClass>(
+                MyClass
+            );
 
             expect(myClassInstance).toBeInstanceOf(MyClass);
         });
@@ -73,17 +80,18 @@ describe("Chevron Demo", () => {
         it("supports bootstrappings: function", () => {
             const chevron = new Chevron();
 
-            const multiply = (val: number) => val * 2;
+            type MathUnaryOperation = (val: number) => number;
+            const multiply: MathUnaryOperation = (val: number) => val * 2;
 
             const myFunction = () => multiply;
             chevron.registerInjectable(myFunction, {
                 // Use the "FUNCTION" Bootstrapping to instantiate the value as a function
-                bootstrapping: DefaultBootstrappings.FUNCTION
+                bootstrapping: DefaultBootstrappings.FUNCTION()
             });
 
-            const myFunctionInstance = chevron.getInjectableInstance(
-                myFunction
-            );
+            const myFunctionInstance = chevron.getInjectableInstance<
+                MathUnaryOperation
+            >(myFunction);
 
             expect(myFunctionInstance).toEqual(multiply);
         });
@@ -97,7 +105,9 @@ describe("Chevron Demo", () => {
                 name: "val"
             });
 
-            const myFunctionInstance = chevron.getInjectableInstance("val");
+            const myFunctionInstance = chevron.getInjectableInstance<number>(
+                "val"
+            );
 
             expect(myFunctionInstance).toEqual(32);
         });
@@ -111,13 +121,13 @@ describe("Chevron Demo", () => {
 
             chevron.registerInjectable(doublingFn);
 
-            const MyClass = class {
+            class MyClass {
                 public constructor(private readonly doublingFnAsDep: MatchFn) {}
 
                 public getDouble(n: number) {
                     return this.doublingFnAsDep(n);
                 }
-            };
+            }
 
             /*
              * Register injectable with dependency - we could also use `["doublingFn"]`.
@@ -126,11 +136,13 @@ describe("Chevron Demo", () => {
              */
             chevron.registerInjectable(MyClass, {
                 dependencies: [doublingFn],
-                bootstrapping: DefaultBootstrappings.CLASS
+                bootstrapping: DefaultBootstrappings.CLASS()
             });
 
             // When retrieving, all dependencies will be resolved first.
-            const myClassInstance = chevron.getInjectableInstance(MyClass);
+            const myClassInstance = chevron.getInjectableInstance<MyClass>(
+                MyClass
+            );
 
             expect(myClassInstance).toBeInstanceOf(MyClass);
             expect(myClassInstance.getDouble(2)).toBe(4);
@@ -140,51 +152,57 @@ describe("Chevron Demo", () => {
         it("supports scopes: prototype", () => {
             const chevron = new Chevron();
 
-            const MyClass = class {};
+            class MyClass {}
 
             chevron.registerInjectable(MyClass, {
-                bootstrapping: DefaultBootstrappings.CLASS,
-                scope: DefaultScopes.PROTOTYPE
+                bootstrapping: DefaultBootstrappings.CLASS(),
+                scope: DefaultScopes.PROTOTYPE()
             });
 
-            const myClassInstance1 = chevron.getInjectableInstance(MyClass);
-            const myClassInstance2 = chevron.getInjectableInstance(MyClass);
+            const myClassInstance1 = chevron.getInjectableInstance<MyClass>(
+                MyClass
+            );
+            const myClassInstance2 = chevron.getInjectableInstance<MyClass>(
+                MyClass
+            );
 
             expect(myClassInstance1).not.toBe(myClassInstance2);
         });
 
         it("supports scopes: custom", () => {
-            const chevron = new Chevron();
-
             interface SessionContext {
                 sessionId: string;
             }
 
-            const MySession = class {};
+            const chevron = new Chevron<SessionContext>();
+
+            class MySession {}
 
             chevron.registerInjectable(MySession, {
-                bootstrapping: DefaultBootstrappings.CLASS,
+                bootstrapping: DefaultBootstrappings.CLASS(),
                 // Define a custom scope to create scopes based on the property `sessionId` of the context.
-                scope: (context: SessionContext) => context.sessionId
+                scope: (context: SessionContext | null) => {
+                    if (context == null) {
+                        return "DEFAULT";
+                    }
+                    return context.sessionId;
+                }
             });
 
             // Injectable retrieval can pass optional context data to influence scoping.
-            const mySessionInstanceFoo = chevron.getInjectableInstance(
-                MySession,
-                {
-                    sessionId: "123"
-                }
-            );
-            const mySessionInstanceBar = chevron.getInjectableInstance(
-                MySession,
-                {
-                    sessionId: "987"
-                }
-            );
-            const mySessionInstanceBarAgain = chevron.getInjectableInstance(
-                MySession,
-                { sessionId: "987" }
-            );
+            const mySessionInstanceFoo = chevron.getInjectableInstance<
+                MySession
+            >(MySession, {
+                sessionId: "123"
+            });
+            const mySessionInstanceBar = chevron.getInjectableInstance<
+                MySession
+            >(MySession, {
+                sessionId: "987"
+            });
+            const mySessionInstanceBarAgain = chevron.getInjectableInstance<
+                MySession
+            >(MySession, { sessionId: "987" });
 
             expect(mySessionInstanceFoo).toBeInstanceOf(MySession);
             expect(mySessionInstanceBar).toBeInstanceOf(MySession);
@@ -197,7 +215,7 @@ describe("Chevron Demo", () => {
         it("supports decorators", () => {
             const chevron = new Chevron();
 
-            // Same as chevron.registerInjectable(Foo, { bootstrapping: DefaultBootstrappings.CLASS });
+            // Same as chevron.registerInjectable(Foo, { bootstrapping: DefaultBootstrappings.CLASS() });
             @Injectable(chevron)
             class Foo {
                 public getFoo() {
@@ -216,7 +234,9 @@ describe("Chevron Demo", () => {
                 }
             }
 
-            const fooBarInstance = chevron.getInjectableInstance(FooBar);
+            const fooBarInstance = chevron.getInjectableInstance<FooBar>(
+                FooBar
+            );
 
             expect(fooBarInstance.getFooBar()).toEqual("foobar");
         });

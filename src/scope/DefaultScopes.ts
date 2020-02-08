@@ -1,16 +1,19 @@
 /**
- * {@link Scope} which forces usage of a single instance for every request.
+ * Creates a {@link Scope} which forces usage of a single instance for every request.
  *
  * @public
  */
-const singletonScope = (): string => "__SINGLETON__";
+import { Scope } from "./Scope";
+
+const singletonScopeFactory = <TScope>(): Scope<TScope> => (): string =>
+    "__SINGLETON__";
 
 /**
- * {@link Scope} which forces instantiation of a new instance every time the injectable is requested.
+ * Creates a {@link Scope} which forces instantiation of a new instance every time the injectable is requested.
  *
  * @public
  */
-const prototypeScope = (): null => null;
+const prototypeScopeFactory = <TScope>(): Scope<TScope> => (): null => null;
 
 /**
  * Pseudo-enum of built-in {@link Scope}s.
@@ -18,8 +21,8 @@ const prototypeScope = (): null => null;
  * @public
  */
 const DefaultScopes = {
-    SINGLETON: singletonScope,
-    PROTOTYPE: prototypeScope
+    SINGLETON: singletonScopeFactory,
+    PROTOTYPE: prototypeScopeFactory
 };
 
 export { DefaultScopes };

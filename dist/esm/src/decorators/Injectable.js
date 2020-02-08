@@ -1,4 +1,3 @@
-import { isNil } from "lodash";
 import { DefaultBootstrappings } from "../bootstrap/DefaultBootstrappings";
 /**
  * Registers a new injectable on a container. See {@link Chevron#registerInjectable} for details.
@@ -16,8 +15,8 @@ import { DefaultBootstrappings } from "../bootstrap/DefaultBootstrappings";
  */
 const Injectable = (instance, options = {}) => (target) => {
     var _a;
-    if (isNil((_a = options) === null || _a === void 0 ? void 0 : _a.bootstrapping)) {
-        options.bootstrapping = DefaultBootstrappings.CLASS;
+    if (((_a = options) === null || _a === void 0 ? void 0 : _a.bootstrapping) == null) {
+        options.bootstrapping = DefaultBootstrappings.CLASS();
     }
     instance.registerInjectable(target, options);
     return target;

@@ -1,4 +1,3 @@
-import { isNil } from "lodash";
 import { name as getName } from "lightdash";
 import { DefaultBootstrappings } from "./bootstrap/DefaultBootstrappings";
 import { DefaultScopes } from "./scope/DefaultScopes";
@@ -13,7 +12,7 @@ import { DefaultScopes } from "./scope/DefaultScopes";
  */
 const guessName = (value) => {
     const guessedName = getName(value);
-    if (isNil(guessedName)) {
+    if (guessedName == null) {
         throw new TypeError(`Could not guess name of '${String(value)}', please explicitly define one.`);
     }
     return guessedName;
@@ -80,13 +79,11 @@ class Chevron {
      */
     registerInjectable(initializer, options = {}) {
         var _a, _b, _c, _d;
-        const bootstrapping = (_a = options.bootstrapping, (_a !== null && _a !== void 0 ? _a : DefaultBootstrappings.IDENTITY));
-        const scope = (_b = options.scope, (_b !== null && _b !== void 0 ? _b : DefaultScopes.SINGLETON));
+        const bootstrapping = (_a = options.bootstrapping, (_a !== null && _a !== void 0 ? _a : DefaultBootstrappings.IDENTITY()));
+        const scope = (_b = options.scope, (_b !== null && _b !== void 0 ? _b : DefaultScopes.SINGLETON()));
         const name = (_c = options.name, (_c !== null && _c !== void 0 ? _c : null));
         const dependencies = (_d = options.dependencies, (_d !== null && _d !== void 0 ? _d : []));
-        const injectableEntryName = !isNil(name)
-            ? guessName(name)
-            : guessName(initializer);
+        const injectableEntryName = name != null ? guessName(name) : guessName(initializer);
         if (this.injectables.has(injectableEntryName)) {
             throw new Error(`Name already exists: '${injectableEntryName}'.`);
         }

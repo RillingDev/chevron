@@ -27,7 +27,7 @@
 
 <nav >
     
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Chevron.html">Chevron</a><ul class='methods'><li data-type='method'><a href="Chevron.html#getInjectableInstance">getInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#hasInjectable">hasInjectable</a></li><li data-type='method'><a href="Chevron.html#hasInjectableInstance">hasInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#registerInjectable">registerInjectable</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html##Scope">#Scope</a></li><li><a href="global.html#classBootstrapping">classBootstrapping</a></li><li><a href="global.html#DefaultBootstrappings">DefaultBootstrappings</a></li><li><a href="global.html#DefaultScopes">DefaultScopes</a></li><li><a href="global.html#functionBootstrapping">functionBootstrapping</a></li><li><a href="global.html#identityBootstrapping">identityBootstrapping</a></li><li><a href="global.html#Injectable">Injectable</a></li><li><a href="global.html#singletonScope">singletonScope</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Chevron.html">Chevron</a><ul class='methods'><li data-type='method'><a href="Chevron.html#getInjectableInstance">getInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#hasInjectable">hasInjectable</a></li><li data-type='method'><a href="Chevron.html#hasInjectableInstance">hasInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#registerInjectable">registerInjectable</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html##ScopeFactory">#ScopeFactory</a></li><li><a href="global.html#classBootstrappingFactory">classBootstrappingFactory</a></li><li><a href="global.html#DefaultBootstrappings">DefaultBootstrappings</a></li><li><a href="global.html#DefaultScopes">DefaultScopes</a></li><li><a href="global.html#functionBootstrappingFactory">functionBootstrappingFactory</a></li><li><a href="global.html#identityBootstrappingFactory">identityBootstrappingFactory</a></li><li><a href="global.html#Injectable">Injectable</a></li></ul>
 </nav>
 
 <div id="main">
@@ -89,60 +89,55 @@ const name = (value) => {
 };
 
 /**
- * {@link Bootstrapping} which constructs the initializer with the dependencies as parameters.
+ * Creates a {@link Bootstrapping} which constructs the initializer with the dependencies as parameters.
  * Note that this bootstrapping only makes sense for class initializers.
  *
  * @public
  * @throws TypeError when used with a non-function initializer.
  */
-const classBootstrapping = (initializer, dependencies) => Reflect.construct(initializer, dependencies);
+const classBootstrappingFactory = () => (initializer, dependencies) => Reflect.construct(initializer, dependencies);
 /**
- * {@link Bootstrapping} which returns a function executing the initializer with the dependencies as parameters.
+ * Creates a {@link Bootstrapping} which returns a function executing the initializer with the dependencies as parameters.
  * Note that this bootstrapping only makes sense for function initializers.
  *
  * @public
  * @throws TypeError when used with a non-function initializer.
  */
-const functionBootstrapping = (initializer, dependencies) => initializer(...dependencies);
+const functionBootstrappingFactory = () => (initializer, dependencies) => initializer(...dependencies);
 /**
- * {@link Bootstrapping} which immediately returns the initializer.
+ * Creates a {@link Bootstrapping} which immediately returns the initializer.
  * This is useful for injectables which do not require any other initialization.
  * Note that by using this bootstrapping, no usage of dependencies for this value is possible.
  *
  * @public
  */
-const identityBootstrapping = (initializer) => initializer;
+const identityBootstrappingFactory = () => (initializer) => initializer;
 /**
  * Pseudo-enum of built-in {@link Bootstrapping}s.
  *
  * @public
  */
 const DefaultBootstrappings = {
-    CLASS: classBootstrapping,
-    FUNCTION: functionBootstrapping,
-    IDENTITY: identityBootstrapping
+    CLASS: classBootstrappingFactory,
+    FUNCTION: functionBootstrappingFactory,
+    IDENTITY: identityBootstrappingFactory
 };
 
+const singletonScopeFactory = () => () => "__SINGLETON__";
 /**
- * {@link Scope} which forces usage of a single instance for every request.
+ * Creates a {@link Scope} which forces instantiation of a new instance every time the injectable is requested.
  *
  * @public
  */
-const singletonScope = () => "__SINGLETON__";
-/**
- * {@link Scope} which forces instantiation of a new instance every time the injectable is requested.
- *
- * @public
- */
-const prototypeScope = () => null;
+const prototypeScopeFactory = () => () => null;
 /**
  * Pseudo-enum of built-in {@link Scope}s.
  *
  * @public
  */
 const DefaultScopes = {
-    SINGLETON: singletonScope,
-    PROTOTYPE: prototypeScope
+    SINGLETON: singletonScopeFactory,
+    PROTOTYPE: prototypeScopeFactory
 };
 
 /**
@@ -156,7 +151,7 @@ const DefaultScopes = {
  */
 const guessName = (value) => {
     const guessedName = name(value);
-    if (lodash.isNil(guessedName)) {
+    if (guessedName == null) {
         throw new TypeError(`Could not guess name of '${String(value)}', please explicitly define one.`);
     }
     return guessedName;
@@ -223,13 +218,11 @@ class Chevron {
      */
     registerInjectable(initializer, options = {}) {
         var _a, _b, _c, _d;
-        const bootstrapping = (_a = options.bootstrapping, (_a !== null &amp;&amp; _a !== void 0 ? _a : DefaultBootstrappings.IDENTITY));
-        const scope = (_b = options.scope, (_b !== null &amp;&amp; _b !== void 0 ? _b : DefaultScopes.SINGLETON));
+        const bootstrapping = (_a = options.bootstrapping, (_a !== null &amp;&amp; _a !== void 0 ? _a : DefaultBootstrappings.IDENTITY()));
+        const scope = (_b = options.scope, (_b !== null &amp;&amp; _b !== void 0 ? _b : DefaultScopes.SINGLETON()));
         const name = (_c = options.name, (_c !== null &amp;&amp; _c !== void 0 ? _c : null));
         const dependencies = (_d = options.dependencies, (_d !== null &amp;&amp; _d !== void 0 ? _d : []));
-        const injectableEntryName = !lodash.isNil(name)
-            ? guessName(name)
-            : guessName(initializer);
+        const injectableEntryName = name != null ? guessName(name) : guessName(initializer);
         if (this.injectables.has(injectableEntryName)) {
             throw new Error(`Name already exists: '${injectableEntryName}'.`);
         }
@@ -356,8 +349,8 @@ class Chevron {
  */
 const Injectable = (instance, options = {}) => (target) => {
     var _a;
-    if (lodash.isNil((_a = options) === null || _a === void 0 ? void 0 : _a.bootstrapping)) {
-        options.bootstrapping = DefaultBootstrappings.CLASS;
+    if (((_a = options) === null || _a === void 0 ? void 0 : _a.bootstrapping) == null) {
+        options.bootstrapping = DefaultBootstrappings.CLASS();
     }
     instance.registerInjectable(target, options);
     return target;
@@ -382,7 +375,7 @@ exports.Injectable = Injectable;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Sun Jan 26 2020 12:51:00 GMT+0100 (Central European Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Sat Feb 08 2020 12:06:29 GMT+0100 (Central European Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

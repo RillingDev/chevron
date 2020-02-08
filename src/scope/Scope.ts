@@ -11,8 +11,8 @@
  *
  * @public
  */
-type Scope<WContext> = (
-    context: WContext,
+type Scope<TContext> = (
+    context: TContext,
     injectableEntryName: string
 ) => string | null;
 

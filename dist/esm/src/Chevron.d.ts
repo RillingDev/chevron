@@ -1,11 +1,12 @@
 import { InjectableOptions } from "./injectable/InjectableOptions";
+import { Nameable } from "./injectable/Nameable";
 /**
  * Injectable container class.
  *
  * @public
  * @class
  */
-declare class Chevron<TInstance = any, UInitializer = any, VContext = any> {
+declare class Chevron<TContext> {
     private readonly injectables;
     /**
      * Creates a new, empty container.
@@ -43,7 +44,7 @@ declare class Chevron<TInstance = any, UInitializer = any, VContext = any> {
      * @throws Error when an injectable with the requested name is already registered.
      * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
      */
-    registerInjectable(initializer: UInitializer, options?: InjectableOptions<TInstance, UInitializer, VContext | null>): void;
+    registerInjectable<TInstance, UInitializer>(initializer: UInitializer, options?: InjectableOptions<TInstance, UInitializer, any, TContext | null>): void;
     /**
      * Checks if an injectable with the name provided is registered for this container, regardless if its instantiated or not.
      * To check if an injectable is registered and instantiated, see {@link #hasInjectableInstance}.
@@ -53,7 +54,7 @@ declare class Chevron<TInstance = any, UInitializer = any, VContext = any> {
      * @return if an injectable with the name provided is registered on this container.
      * @throws TypeError when no name can be determined for the provided nameable.
      */
-    hasInjectable(name: UInitializer | string): boolean;
+    hasInjectable(name: Nameable): boolean;
     /**
      * Checks if an injectable with the name provided is registered and instantiated for this container.
      * To check if an injectable is registered without checking for instantiation, see {@link #hasInjectable}.
@@ -64,7 +65,7 @@ declare class Chevron<TInstance = any, UInitializer = any, VContext = any> {
      * @return if an injectable with the name provided is registered and instantiated on this container.
      * @throws TypeError when no name can be determined for the provided nameable.
      */
-    hasInjectableInstance(name: UInitializer | string, context?: VContext | null): boolean;
+    hasInjectableInstance(name: Nameable, context?: TContext | null): boolean;
     /**
      * Retrieves an instantiated injectable, recursively instantiating dependencies if they were not instantiated before.
      *
@@ -76,7 +77,7 @@ declare class Chevron<TInstance = any, UInitializer = any, VContext = any> {
      * @throws Error when the injectable or a dependency cannot be found.
      * @throws Error when recursive dependencies are detected.
      */
-    getInjectableInstance(name: UInitializer | string, context?: VContext | null): TInstance;
+    getInjectableInstance<TInstance>(name: Nameable, context?: TContext | null): TInstance;
     /**
      * Resolves an injectable by name, providing information about the injectable entry, its name and scope value.
      *

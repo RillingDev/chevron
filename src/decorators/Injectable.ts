@@ -1,6 +1,5 @@
 import { Chevron } from "../Chevron";
 import { InjectableOptions } from "../injectable/InjectableOptions";
-import { isNil } from "lodash";
 import { DefaultBootstrappings } from "../bootstrap/DefaultBootstrappings";
 import { InjectableClassInitializer } from "../bootstrap/InjectableClassInitializer";
 
@@ -18,22 +17,24 @@ import { InjectableClassInitializer } from "../bootstrap/InjectableClassInitiali
  * @throws Error when an injectable with the requested name is already registered.
  * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
  */
-const Injectable = <TInstance = any, VContext = any>(
-    instance: Chevron<
-        TInstance,
-        InjectableClassInitializer<TInstance, TInstance>,
-        VContext | null
-    >,
+const Injectable = <TContext, UInstance = any>(
+    instance: Chevron<TContext | null>,
     options: InjectableOptions<
-        TInstance,
-        InjectableClassInitializer<TInstance, TInstance>,
-        VContext | null
+        UInstance,
+        InjectableClassInitializer<UInstance, any>,
+        any,
+        TContext | null
     > = {}
 ) => (
-    target: InjectableClassInitializer<TInstance, TInstance>
-): InjectableClassInitializer<TInstance, TInstance> => {
-    if (isNil(options?.bootstrapping)) {
-        options.bootstrapping = DefaultBootstrappings.CLASS;
+    target: InjectableClassInitializer<UInstance, any>
+): InjectableClassInitializer<UInstance, any> => {
+    if (options?.bootstrapping == null) {
+        options.bootstrapping = DefaultBootstrappings.CLASS<
+            UInstance,
+            InjectableClassInitializer<UInstance, any>,
+            any,
+            TContext | null
+        >();
     }
     instance.registerInjectable(target, options);
     return target;

@@ -45,60 +45,55 @@ const name = (value) => {
 };
 
 /**
- * {@link Bootstrapping} which constructs the initializer with the dependencies as parameters.
+ * Creates a {@link Bootstrapping} which constructs the initializer with the dependencies as parameters.
  * Note that this bootstrapping only makes sense for class initializers.
  *
  * @public
  * @throws TypeError when used with a non-function initializer.
  */
-const classBootstrapping = (initializer, dependencies) => Reflect.construct(initializer, dependencies);
+const classBootstrappingFactory = () => (initializer, dependencies) => Reflect.construct(initializer, dependencies);
 /**
- * {@link Bootstrapping} which returns a function executing the initializer with the dependencies as parameters.
+ * Creates a {@link Bootstrapping} which returns a function executing the initializer with the dependencies as parameters.
  * Note that this bootstrapping only makes sense for function initializers.
  *
  * @public
  * @throws TypeError when used with a non-function initializer.
  */
-const functionBootstrapping = (initializer, dependencies) => initializer(...dependencies);
+const functionBootstrappingFactory = () => (initializer, dependencies) => initializer(...dependencies);
 /**
- * {@link Bootstrapping} which immediately returns the initializer.
+ * Creates a {@link Bootstrapping} which immediately returns the initializer.
  * This is useful for injectables which do not require any other initialization.
  * Note that by using this bootstrapping, no usage of dependencies for this value is possible.
  *
  * @public
  */
-const identityBootstrapping = (initializer) => initializer;
+const identityBootstrappingFactory = () => (initializer) => initializer;
 /**
  * Pseudo-enum of built-in {@link Bootstrapping}s.
  *
  * @public
  */
 const DefaultBootstrappings = {
-    CLASS: classBootstrapping,
-    FUNCTION: functionBootstrapping,
-    IDENTITY: identityBootstrapping
+    CLASS: classBootstrappingFactory,
+    FUNCTION: functionBootstrappingFactory,
+    IDENTITY: identityBootstrappingFactory
 };
 
+const singletonScopeFactory = () => () => "__SINGLETON__";
 /**
- * {@link Scope} which forces usage of a single instance for every request.
+ * Creates a {@link Scope} which forces instantiation of a new instance every time the injectable is requested.
  *
  * @public
  */
-const singletonScope = () => "__SINGLETON__";
-/**
- * {@link Scope} which forces instantiation of a new instance every time the injectable is requested.
- *
- * @public
- */
-const prototypeScope = () => null;
+const prototypeScopeFactory = () => () => null;
 /**
  * Pseudo-enum of built-in {@link Scope}s.
  *
  * @public
  */
 const DefaultScopes = {
-    SINGLETON: singletonScope,
-    PROTOTYPE: prototypeScope
+    SINGLETON: singletonScopeFactory,
+    PROTOTYPE: prototypeScopeFactory
 };
 
 /**
@@ -112,7 +107,7 @@ const DefaultScopes = {
  */
 const guessName = (value) => {
     const guessedName = name(value);
-    if (lodash.isNil(guessedName)) {
+    if (guessedName == null) {
         throw new TypeError(`Could not guess name of '${String(value)}', please explicitly define one.`);
     }
     return guessedName;
@@ -179,13 +174,11 @@ class Chevron {
      */
     registerInjectable(initializer, options = {}) {
         var _a, _b, _c, _d;
-        const bootstrapping = (_a = options.bootstrapping, (_a !== null && _a !== void 0 ? _a : DefaultBootstrappings.IDENTITY));
-        const scope = (_b = options.scope, (_b !== null && _b !== void 0 ? _b : DefaultScopes.SINGLETON));
+        const bootstrapping = (_a = options.bootstrapping, (_a !== null && _a !== void 0 ? _a : DefaultBootstrappings.IDENTITY()));
+        const scope = (_b = options.scope, (_b !== null && _b !== void 0 ? _b : DefaultScopes.SINGLETON()));
         const name = (_c = options.name, (_c !== null && _c !== void 0 ? _c : null));
         const dependencies = (_d = options.dependencies, (_d !== null && _d !== void 0 ? _d : []));
-        const injectableEntryName = !lodash.isNil(name)
-            ? guessName(name)
-            : guessName(initializer);
+        const injectableEntryName = name != null ? guessName(name) : guessName(initializer);
         if (this.injectables.has(injectableEntryName)) {
             throw new Error(`Name already exists: '${injectableEntryName}'.`);
         }
@@ -312,8 +305,8 @@ class Chevron {
  */
 const Injectable = (instance, options = {}) => (target) => {
     var _a;
-    if (lodash.isNil((_a = options) === null || _a === void 0 ? void 0 : _a.bootstrapping)) {
-        options.bootstrapping = DefaultBootstrappings.CLASS;
+    if (((_a = options) === null || _a === void 0 ? void 0 : _a.bootstrapping) == null) {
+        options.bootstrapping = DefaultBootstrappings.CLASS();
     }
     instance.registerInjectable(target, options);
     return target;

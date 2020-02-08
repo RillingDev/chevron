@@ -27,7 +27,7 @@
 
 <nav >
     
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Chevron.html">Chevron</a><ul class='methods'><li data-type='method'><a href="Chevron.html#getInjectableInstance">getInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#hasInjectable">hasInjectable</a></li><li data-type='method'><a href="Chevron.html#hasInjectableInstance">hasInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#registerInjectable">registerInjectable</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html##Scope">#Scope</a></li><li><a href="global.html#classBootstrapping">classBootstrapping</a></li><li><a href="global.html#DefaultBootstrappings">DefaultBootstrappings</a></li><li><a href="global.html#DefaultScopes">DefaultScopes</a></li><li><a href="global.html#functionBootstrapping">functionBootstrapping</a></li><li><a href="global.html#identityBootstrapping">identityBootstrapping</a></li><li><a href="global.html#Injectable">Injectable</a></li><li><a href="global.html#singletonScope">singletonScope</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Chevron.html">Chevron</a><ul class='methods'><li data-type='method'><a href="Chevron.html#getInjectableInstance">getInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#hasInjectable">hasInjectable</a></li><li data-type='method'><a href="Chevron.html#hasInjectableInstance">hasInjectableInstance</a></li><li data-type='method'><a href="Chevron.html#registerInjectable">registerInjectable</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html##ScopeFactory">#ScopeFactory</a></li><li><a href="global.html#classBootstrappingFactory">classBootstrappingFactory</a></li><li><a href="global.html#DefaultBootstrappings">DefaultBootstrappings</a></li><li><a href="global.html#DefaultScopes">DefaultScopes</a></li><li><a href="global.html#functionBootstrappingFactory">functionBootstrappingFactory</a></li><li><a href="global.html#identityBootstrappingFactory">identityBootstrappingFactory</a></li><li><a href="global.html#Injectable">Injectable</a></li></ul>
 </nav>
 
 <div id="main">
@@ -193,7 +193,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line99">line 99</a>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line94">line 94</a>
     </li></ul></dd>
     
 
@@ -254,7 +254,7 @@
 
     
 
-    <h4 class="name" id="Scope"><span class="type-signature"></span>#Scope<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ScopeFactory"><span class="type-signature"></span>#ScopeFactory<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
@@ -266,7 +266,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line93">line 93</a>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line88">line 88</a>
     </li></ul></dd>
     
 
@@ -306,7 +306,7 @@
 
 
 <div class="description">
-    <p>Scope which forces instantiation of a new instance every time the injectable is requested.</p>
+    <p>Creates a Scope which forces instantiation of a new instance every time the injectable is requested.</p>
 </div>
 
 
@@ -341,7 +341,7 @@
 
     
 
-    <h4 class="name" id="classBootstrapping"><span class="type-signature"></span>classBootstrapping<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="classBootstrappingFactory"><span class="type-signature"></span>classBootstrappingFactory<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
@@ -393,7 +393,7 @@
 
 
 <div class="description">
-    <p>Bootstrapping which constructs the initializer with the dependencies as parameters.
+    <p>Creates a Bootstrapping which constructs the initializer with the dependencies as parameters.
 Note that this bootstrapping only makes sense for class initializers.</p>
 </div>
 
@@ -441,7 +441,7 @@ Note that this bootstrapping only makes sense for class initializers.</p>
 
     
 
-    <h4 class="name" id="functionBootstrapping"><span class="type-signature"></span>functionBootstrapping<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="functionBootstrappingFactory"><span class="type-signature"></span>functionBootstrappingFactory<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
@@ -493,7 +493,7 @@ Note that this bootstrapping only makes sense for class initializers.</p>
 
 
 <div class="description">
-    <p>Bootstrapping which returns a function executing the initializer with the dependencies as parameters.
+    <p>Creates a Bootstrapping which returns a function executing the initializer with the dependencies as parameters.
 Note that this bootstrapping only makes sense for function initializers.</p>
 </div>
 
@@ -541,7 +541,7 @@ Note that this bootstrapping only makes sense for function initializers.</p>
 
     
 
-    <h4 class="name" id="identityBootstrapping"><span class="type-signature"></span>identityBootstrapping<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="identityBootstrappingFactory"><span class="type-signature"></span>identityBootstrappingFactory<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
@@ -593,7 +593,7 @@ Note that this bootstrapping only makes sense for function initializers.</p>
 
 
 <div class="description">
-    <p>Bootstrapping which immediately returns the initializer.
+    <p>Creates a Bootstrapping which immediately returns the initializer.
 This is useful for injectables which do not require any other initialization.
 Note that by using this bootstrapping, no usage of dependencies for this value is possible.</p>
 </div>
@@ -642,7 +642,7 @@ Note that by using this bootstrapping, no usage of dependencies for this value i
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line313">line 313</a>
+        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line306">line 306</a>
     </li></ul></dd>
     
 
@@ -800,93 +800,6 @@ the bootstrapping defaults to DefaultBootstrappings.CLASS.</p>
 
 
         
-            
-
-    
-
-    <h4 class="name" id="singletonScope"><span class="type-signature"></span>singletonScope<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chevron.common.js.html">chevron.common.js</a>, <a href="chevron.common.js.html#line87">line 87</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Scope which forces usage of a single instance for every request.</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
     
 
     
@@ -906,7 +819,7 @@ the bootstrapping defaults to DefaultBootstrappings.CLASS.</p>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Sun Jan 26 2020 12:51:00 GMT+0100 (Central European Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Sat Feb 08 2020 12:06:29 GMT+0100 (Central European Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

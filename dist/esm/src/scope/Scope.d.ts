@@ -11,6 +11,6 @@
  *
  * @public
  */
-declare type Scope<WContext> = (context: WContext, injectableEntryName: string) => string | null;
+declare type Scope<TContext> = (context: TContext, injectableEntryName: string) => string | null;
 export { Scope };
 //# sourceMappingURL=Scope.d.ts.map

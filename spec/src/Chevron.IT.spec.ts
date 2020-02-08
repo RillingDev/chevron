@@ -71,7 +71,7 @@ describe("Chevron", () => {
             class MyClass {}
 
             chevron.registerInjectable(MyClass, {
-                bootstrapping: DefaultBootstrappings.CLASS
+                bootstrapping: DefaultBootstrappings.CLASS()
             });
 
             const injectableInstance = chevron.getInjectableInstance(MyClass);
@@ -80,9 +80,8 @@ describe("Chevron", () => {
         });
 
         it("bootstraps with context", () => {
-            const chevron = new Chevron();
-
             type Context = number;
+            const chevron = new Chevron<Context>();
 
             class MyClass {
                 public constructor(public readonly context: Context) {}
@@ -90,10 +89,10 @@ describe("Chevron", () => {
 
             chevron.registerInjectable(MyClass, {
                 bootstrapping: (initializer, dependencies, context) =>
-                    DefaultBootstrappings.CLASS(initializer, [context])
+                    Reflect.construct(initializer, [context])
             });
 
-            const injectableInstance = chevron.getInjectableInstance(
+            const injectableInstance = chevron.getInjectableInstance<MyClass>(
                 MyClass,
                 123
             );
@@ -111,7 +110,7 @@ describe("Chevron", () => {
             }
 
             chevron.registerInjectable(SeedData, {
-                bootstrapping: DefaultBootstrappings.CLASS
+                bootstrapping: DefaultBootstrappings.CLASS()
             });
 
             class SeedController {
@@ -124,7 +123,7 @@ describe("Chevron", () => {
 
             chevron.registerInjectable(SeedController, {
                 dependencies: [SeedData],
-                bootstrapping: DefaultBootstrappings.CLASS
+                bootstrapping: DefaultBootstrappings.CLASS()
             });
 
             class AppController {
@@ -139,7 +138,7 @@ describe("Chevron", () => {
 
             chevron.registerInjectable(AppController, {
                 dependencies: [SeedController],
-                bootstrapping: DefaultBootstrappings.CLASS
+                bootstrapping: DefaultBootstrappings.CLASS()
             });
 
             const appControllerInstance: AppController = chevron.getInjectableInstance(
@@ -157,7 +156,7 @@ describe("Chevron", () => {
             class SeedData {}
 
             chevron.registerInjectable(SeedData, {
-                bootstrapping: DefaultBootstrappings.CLASS,
+                bootstrapping: DefaultBootstrappings.CLASS(),
                 dependencies: ["SeedController"]
             });
 
@@ -167,14 +166,14 @@ describe("Chevron", () => {
 
             chevron.registerInjectable(SeedController, {
                 dependencies: [SeedData],
-                bootstrapping: DefaultBootstrappings.CLASS
+                bootstrapping: DefaultBootstrappings.CLASS()
             });
 
             class AppController {}
 
             chevron.registerInjectable(AppController, {
                 dependencies: [SeedController],
-                bootstrapping: DefaultBootstrappings.CLASS
+                bootstrapping: DefaultBootstrappings.CLASS()
             });
 
             expect(() =>
