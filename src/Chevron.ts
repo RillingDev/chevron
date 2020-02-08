@@ -67,6 +67,7 @@ interface ResolvedInstance<TInstance, UInitializer, VDependency, WContext> {
  * @class
  */
 class Chevron<TContext> {
+    // TODO: find a way to avoid using anys here.
     private readonly injectables: Map<
         string,
         InjectableEntry<any, any, any, TContext | null>
@@ -273,9 +274,7 @@ class Chevron<TContext> {
             return <TInstance>injectableEntry.instances.get(instanceName)!;
         }
 
-        /*
-         * Start bootstrapping value.
-         */
+        // Start bootstrapping value.
         if (resolveStack.has(injectableEntryName)) {
             throw createCircularDependencyError(
                 resolveStack,
@@ -284,6 +283,7 @@ class Chevron<TContext> {
         }
         resolveStack.add(injectableEntryName);
 
+        // Collect all dependencies, bootstrapping those which are not already in the process.
         const bootstrappedDependencies = injectableEntry.dependencyNames.map(
             dependencyName =>
                 this.getBootstrappedInjectableInstance(
@@ -298,6 +298,7 @@ class Chevron<TContext> {
             context,
             injectableEntryName
         );
+        // A name of "null" means that the instance should not be cached, skip saving it.
         if (instanceName != null) {
             injectableEntry.instances.set(instanceName, instance);
         }
