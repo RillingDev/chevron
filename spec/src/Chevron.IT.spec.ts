@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-import { Chevron, DefaultBootstrappings } from "../../src/main";
+import {
+    Chevron,
+    DefaultBootstrappings,
+    InjectableClassInitializer
+} from "../../src/main";
 
 describe("Chevron", () => {
     describe("constructor", () => {
         it("creates instance", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
             expect(chevron).toBeInstanceOf(Chevron);
         });
@@ -13,68 +17,84 @@ describe("Chevron", () => {
 
     describe("registerInjectable", () => {
         it("registers injectables", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
+            type LoggingNoop = () => void;
 
             const myFunction = () => {
                 console.log("Hello world!");
             };
-            chevron.registerInjectable(myFunction);
+            chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction);
 
             expect(chevron.hasInjectable(myFunction)).toBeTrue();
         });
 
         it("throws for no guessable name", () => {
-            const chevron = new Chevron();
-            expect(() => chevron.registerInjectable(1)).toThrowError(
+            const chevron = new Chevron<null>();
+            expect(() =>
+                chevron.registerInjectable<number, number>(1)
+            ).toThrowError(
                 "Could not guess name of '1', please explicitly define one."
             );
         });
 
         it("throws for duplicate name", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
-            chevron.registerInjectable(() => 1, { name: "foo" });
+            type NumberProvider = () => number;
+
+            chevron.registerInjectable<number, NumberProvider>(() => 1, {
+                name: "foo"
+            });
 
             expect(() =>
-                chevron.registerInjectable(() => 1, { name: "foo" })
+                chevron.registerInjectable<NumberProvider, NumberProvider>(
+                    () => 1,
+                    { name: "foo" }
+                )
             ).toThrowError("Name already exists: 'foo'.");
         });
     });
 
     describe("getInjectableInstance", () => {
         it("retrieves injectables", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
+            type LoggingNoop = () => void;
 
             const myFunction = () => {
                 console.log("Hello world!");
             };
-            chevron.registerInjectable(myFunction);
+            chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction);
 
-            const myFunctionInstance = chevron.getInjectableInstance(
-                myFunction
-            );
+            const myFunctionInstance = chevron.getInjectableInstance<
+                LoggingNoop
+            >(myFunction);
 
             expect(myFunctionInstance).toBe(myFunction);
         });
 
         it("throws for no injectable with name", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
-            expect(() => chevron.getInjectableInstance("foo")).toThrowError(
-                "Injectable 'foo' does not exist."
-            );
+            expect(() =>
+                chevron.getInjectableInstance<string>("foo")
+            ).toThrowError("Injectable 'foo' does not exist.");
         });
 
         it("bootstraps", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
             class MyClass {}
 
-            chevron.registerInjectable(MyClass, {
+            chevron.registerInjectable<
+                MyClass,
+                InjectableClassInitializer<MyClass, void>
+            >(MyClass, {
                 bootstrapping: DefaultBootstrappings.CLASS()
             });
 
-            const injectableInstance = chevron.getInjectableInstance(MyClass);
+            const injectableInstance = chevron.getInjectableInstance<MyClass>(
+                MyClass
+            );
 
             expect(injectableInstance).toBeInstanceOf(MyClass);
         });
@@ -87,7 +107,10 @@ describe("Chevron", () => {
                 public constructor(public readonly context: Context) {}
             }
 
-            chevron.registerInjectable(MyClass, {
+            chevron.registerInjectable<
+                MyClass,
+                InjectableClassInitializer<MyClass, Context>
+            >(MyClass, {
                 bootstrapping: (initializer, dependencies, context) =>
                     Reflect.construct(initializer, [context])
             });
@@ -101,7 +124,7 @@ describe("Chevron", () => {
         });
 
         it("recursively resolves dependencies", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
             class SeedData {
                 public getSeedValue() {
@@ -109,7 +132,10 @@ describe("Chevron", () => {
                 }
             }
 
-            chevron.registerInjectable(SeedData, {
+            chevron.registerInjectable<
+                SeedData,
+                InjectableClassInitializer<SeedData, void>
+            >(SeedData, {
                 bootstrapping: DefaultBootstrappings.CLASS()
             });
 
@@ -121,7 +147,10 @@ describe("Chevron", () => {
                 }
             }
 
-            chevron.registerInjectable(SeedController, {
+            chevron.registerInjectable<
+                SeedController,
+                InjectableClassInitializer<SeedController, SeedData>
+            >(SeedController, {
                 dependencies: [SeedData],
                 bootstrapping: DefaultBootstrappings.CLASS()
             });
@@ -136,14 +165,17 @@ describe("Chevron", () => {
                 }
             }
 
-            chevron.registerInjectable(AppController, {
+            chevron.registerInjectable<
+                AppController,
+                InjectableClassInitializer<AppController, SeedController>
+            >(AppController, {
                 dependencies: [SeedController],
                 bootstrapping: DefaultBootstrappings.CLASS()
             });
 
-            const appControllerInstance: AppController = chevron.getInjectableInstance(
+            const appControllerInstance = chevron.getInjectableInstance<
                 AppController
-            );
+            >(AppController);
 
             expect(appControllerInstance.getFormattedSeed()).toBe(
                 "Seed: '123'."
@@ -151,11 +183,14 @@ describe("Chevron", () => {
         });
 
         it("throws for circular dependencies", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
             class SeedData {}
 
-            chevron.registerInjectable(SeedData, {
+            chevron.registerInjectable<
+                SeedData,
+                InjectableClassInitializer<SeedData, void>
+            >(SeedData, {
                 bootstrapping: DefaultBootstrappings.CLASS(),
                 dependencies: ["SeedController"]
             });
@@ -164,20 +199,26 @@ describe("Chevron", () => {
                 public constructor(private readonly seed: SeedData) {}
             }
 
-            chevron.registerInjectable(SeedController, {
+            chevron.registerInjectable<
+                SeedController,
+                InjectableClassInitializer<SeedController, SeedData>
+            >(SeedController, {
                 dependencies: [SeedData],
                 bootstrapping: DefaultBootstrappings.CLASS()
             });
 
             class AppController {}
 
-            chevron.registerInjectable(AppController, {
+            chevron.registerInjectable<
+                AppController,
+                InjectableClassInitializer<AppController, SeedController>
+            >(AppController, {
                 dependencies: [SeedController],
                 bootstrapping: DefaultBootstrappings.CLASS()
             });
 
             expect(() =>
-                chevron.getInjectableInstance(AppController)
+                chevron.getInjectableInstance<AppController>(AppController)
             ).toThrowError(
                 "Circular dependencies found: 'AppController' -> 'SeedController' -> 'SeedData' -> 'SeedController'."
             );
@@ -186,73 +227,74 @@ describe("Chevron", () => {
 
     describe("hasInjectable", () => {
         it("returns true if an injectable with that name is registered", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
+            type LoggingNoop = () => void;
 
             const myFunction = () => {
                 console.log("Hello world!");
             };
-            chevron.registerInjectable(myFunction);
+            chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction);
 
             expect(chevron.hasInjectable(myFunction)).toBeTrue();
         });
 
         it("returns false if no injectable with that name is registered", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
-            const myFunction = () => {
-                console.log("Hello world!");
-            };
-
-            expect(chevron.hasInjectable(myFunction)).toBeFalse();
+            expect(chevron.hasInjectable("myFunction")).toBeFalse();
         });
     });
 
     describe("hasInjectableInstance", () => {
         it("returns false if no injectable with that name is registered", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
-            const myFunction = () => {
-                console.log("Hello world!");
-            };
-
-            expect(chevron.hasInjectableInstance(myFunction)).toBeFalse();
+            expect(chevron.hasInjectableInstance("myFunction")).toBeFalse();
         });
 
         it("returns false if no instance for this injectable exists", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
+            type LoggingNoop = () => void;
 
             const myFunction = () => {
                 console.log("Hello world!");
             };
-            chevron.registerInjectable(myFunction);
+            chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction);
 
             expect(chevron.hasInjectableInstance(myFunction)).toBeFalse();
         });
 
         it("returns true if an instance for this injectable exists", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
+            type LoggingNoop = () => void;
 
             const myFunction = () => {
                 console.log("Hello world!");
             };
-            chevron.registerInjectable(myFunction);
-            chevron.getInjectableInstance(myFunction);
+            chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction);
+            chevron.getInjectableInstance<LoggingNoop>(myFunction);
 
             expect(chevron.hasInjectableInstance(myFunction)).toBeTrue();
         });
 
         it("returns false if no instance in this scope for this injectable exists", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<string>();
+            type LoggingNoop = () => void;
 
             const myFunction = () => {
                 console.log("Hello world!");
             };
-            chevron.registerInjectable(myFunction, {
-                scope: () => Math.random().toString()
+            chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction, {
+                scope: id => id
             });
-            chevron.getInjectableInstance(myFunction);
+            chevron.getInjectableInstance<LoggingNoop>(
+                myFunction,
+                "SOME_SCOPE"
+            );
 
-            expect(chevron.hasInjectableInstance(myFunction)).toBeFalse();
+            expect(
+                chevron.hasInjectableInstance(myFunction, "OTHER_SCOPE")
+            ).toBeFalse();
         });
     });
 });

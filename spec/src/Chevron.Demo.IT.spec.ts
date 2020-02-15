@@ -5,12 +5,13 @@ import {
     DefaultScopes,
     Injectable
 } from "../../src/main";
+import { InjectableClassInitializer } from "../../src/bootstrap/InjectableClassInitializer";
 
 describe("Chevron Demo", () => {
     describe("basic", () => {
         it("registers/retrieves injectables", () => {
             // Create a new chevron instance.
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
             type LoggingNoop = () => void;
 
@@ -30,14 +31,14 @@ describe("Chevron Demo", () => {
         });
 
         it("supports custom names", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
             type LoggingNoop = () => void;
 
             const myFunction: LoggingNoop = () => {
                 console.log("Hello world!");
             };
-            chevron.registerInjectable(myFunction, {
+            chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction, {
                 // A custom name can either be a string or another nameable value like a function.
                 name: "myCoolName"
             });
@@ -51,7 +52,7 @@ describe("Chevron Demo", () => {
     });
     describe("bootstrapping", () => {
         it("supports bootstrappings: class", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
             class MyClass {
                 private readonly modifier: number;
@@ -65,7 +66,10 @@ describe("Chevron Demo", () => {
                 }
             }
 
-            chevron.registerInjectable(MyClass, {
+            chevron.registerInjectable<
+                MyClass,
+                InjectableClassInitializer<MyClass, any>
+            >(MyClass, {
                 // Use the "CLASS" Bootstrapping to instantiate the value as class
                 bootstrapping: DefaultBootstrappings.CLASS()
             });
@@ -78,7 +82,7 @@ describe("Chevron Demo", () => {
         });
 
         it("supports bootstrappings: function", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
             type MathUnaryOperation = (val: number) => number;
             const multiply: MathUnaryOperation = (val: number) => val * 2;
@@ -97,10 +101,10 @@ describe("Chevron Demo", () => {
         });
 
         it("supports bootstrappings: custom", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
             const myInjectable = 16;
-            chevron.registerInjectable(myInjectable, {
+            chevron.registerInjectable<number, number>(myInjectable, {
                 bootstrapping: (val: number) => val * 2,
                 name: "val"
             });
@@ -114,12 +118,12 @@ describe("Chevron Demo", () => {
     });
     describe("dependencies", () => {
         it("supports dependencies", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
             type MathFn = (a: number) => number;
             const doublingFn: MathFn = (a: number) => a * 2;
 
-            chevron.registerInjectable(doublingFn);
+            chevron.registerInjectable<MathFn, MathFn>(doublingFn);
 
             class MyClass {
                 public constructor(private readonly doublingFnAsDep: MathFn) {}
@@ -134,7 +138,10 @@ describe("Chevron Demo", () => {
              * We want MyClass to be instantiated by constructing it through the CLASS bootstrapping,
              * where we will have the dependencies as constructor parameters.
              */
-            chevron.registerInjectable(MyClass, {
+            chevron.registerInjectable<
+                MyClass,
+                InjectableClassInitializer<MyClass, any>
+            >(MyClass, {
                 dependencies: [doublingFn],
                 bootstrapping: DefaultBootstrappings.CLASS()
             });
@@ -150,11 +157,14 @@ describe("Chevron Demo", () => {
     });
     describe("scopes", () => {
         it("supports scopes: prototype", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
             class MyClass {}
 
-            chevron.registerInjectable(MyClass, {
+            chevron.registerInjectable<
+                MyClass,
+                InjectableClassInitializer<MyClass, any>
+            >(MyClass, {
                 bootstrapping: DefaultBootstrappings.CLASS(),
                 scope: DefaultScopes.PROTOTYPE()
             });
@@ -178,7 +188,10 @@ describe("Chevron Demo", () => {
 
             class MySession {}
 
-            chevron.registerInjectable(MySession, {
+            chevron.registerInjectable<
+                MySession,
+                InjectableClassInitializer<MySession, any>
+            >(MySession, {
                 bootstrapping: DefaultBootstrappings.CLASS(),
                 // Define a custom scope to create scopes based on the property `sessionId` of the context.
                 scope: (context: SessionContext | null) => {
@@ -213,7 +226,7 @@ describe("Chevron Demo", () => {
 
     describe("decorators", () => {
         it("supports decorators", () => {
-            const chevron = new Chevron();
+            const chevron = new Chevron<null>();
 
             // Same as chevron.registerInjectable(Foo, { bootstrapping: DefaultBootstrappings.CLASS() });
             @Injectable(chevron)
