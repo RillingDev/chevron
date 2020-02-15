@@ -112,12 +112,12 @@ class Chevron<TContext> {
      * @throws Error when an injectable with the requested name is already registered.
      * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
      */
-    public registerInjectable<TInstance, UInitializer>(
+    public registerInjectable<TInstance, UInitializer, VDependency = any>(
         initializer: UInitializer,
         options: InjectableOptions<
             TInstance,
             UInitializer,
-            any,
+            VDependency,
             TContext | null
         > = {}
     ): void {
@@ -126,7 +126,7 @@ class Chevron<TContext> {
             DefaultBootstrappings.IDENTITY<
                 UInitializer,
                 UInitializer,
-                any,
+                VDependency,
                 TContext | null
             >();
         const scope =
@@ -227,7 +227,7 @@ class Chevron<TContext> {
     private resolveInjectableInstance<TInstance, UInitializer>(
         injectableEntryName: string,
         context: TContext | null
-    ): ResolvedInstance<TInstance, UInitializer, any, TContext | null> {
+    ): ResolvedInstance<TInstance, UInitializer, unknown, TContext | null> {
         if (!this.injectables.has(injectableEntryName)) {
             throw new Error(
                 `Injectable '${injectableEntryName}' does not exist.`
