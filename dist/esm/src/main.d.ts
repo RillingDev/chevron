@@ -5,5 +5,7 @@ import { DefaultBootstrappings } from "./bootstrap/DefaultBootstrappings";
 import { DefaultScopes } from "./scope/DefaultScopes";
 import { Scope } from "./scope/Scope";
 import { InjectableOptions } from "./injectable/InjectableOptions";
-export { Chevron, InjectableOptions, Bootstrapping, DefaultBootstrappings, Scope, DefaultScopes, Injectable };
+import { InjectableClassInitializer } from "./bootstrap/InjectableClassInitializer";
+import { InjectableFunctionInitializer } from "./bootstrap/InjectableFunctionInitializer";
+export { Chevron, InjectableOptions, Bootstrapping, InjectableClassInitializer, InjectableFunctionInitializer, DefaultBootstrappings, Scope, DefaultScopes, Injectable };
 //# sourceMappingURL=main.d.ts.map
