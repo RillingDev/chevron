@@ -116,13 +116,13 @@ describe("Chevron Demo", () => {
         it("supports dependencies", () => {
             const chevron = new Chevron();
 
-            type MatchFn = (a: number) => number;
-            const doublingFn: MatchFn = (a: number) => a * 2;
+            type MathFn = (a: number) => number;
+            const doublingFn: MathFn = (a: number) => a * 2;
 
             chevron.registerInjectable(doublingFn);
 
             class MyClass {
-                public constructor(private readonly doublingFnAsDep: MatchFn) {}
+                public constructor(private readonly doublingFnAsDep: MathFn) {}
 
                 public getDouble(n: number) {
                     return this.doublingFnAsDep(n);
