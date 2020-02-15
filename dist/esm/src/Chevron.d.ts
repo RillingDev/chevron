@@ -44,7 +44,7 @@ declare class Chevron<TContext> {
      * @throws Error when an injectable with the requested name is already registered.
      * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
      */
-    registerInjectable<TInstance, UInitializer>(initializer: UInitializer, options?: InjectableOptions<TInstance, UInitializer, any, TContext | null>): void;
+    registerInjectable<TInstance, UInitializer, VDependency = any>(initializer: UInitializer, options?: InjectableOptions<TInstance, UInitializer, VDependency, TContext | null>): void;
     /**
      * Checks if an injectable with the name provided is registered for this container, regardless if its instantiated or not.
      * To check if an injectable is registered and instantiated, see {@link #hasInjectableInstance}.

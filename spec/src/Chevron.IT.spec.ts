@@ -147,7 +147,8 @@ describe("Chevron", () => {
 
             chevron.registerInjectable<
                 SeedController,
-                InjectableClassInitializer<SeedController, SeedData>
+                InjectableClassInitializer<SeedController, SeedData>,
+                SeedData
             >(SeedController, {
                 dependencies: [SeedData],
                 bootstrapping: DefaultBootstrappings.CLASS()

@@ -5,7 +5,7 @@ describe("Injectable", () => {
     it("registers injectables", () => {
         const chevron = new Chevron<null>();
 
-        @Injectable(chevron)
+        @Injectable<Foo>(chevron)
         class Foo {}
 
         expect(chevron.hasInjectable(Foo)).toBeTrue();

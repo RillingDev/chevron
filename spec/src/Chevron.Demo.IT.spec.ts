@@ -228,14 +228,14 @@ describe("Chevron Demo", () => {
             const chevron = new Chevron<null>();
 
             // Same as chevron.registerInjectable(Foo, { bootstrapping: DefaultBootstrappings.CLASS() });
-            @Injectable(chevron)
+            @Injectable<Foo>(chevron)
             class Foo {
                 public getFoo(): string {
                     return "foo";
                 }
             }
 
-            @Injectable(chevron, {
+            @Injectable<FooBar, any>(chevron, {
                 dependencies: [Foo]
             })
             class FooBar {
