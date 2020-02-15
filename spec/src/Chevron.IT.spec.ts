@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-
 import {
     Chevron,
     DefaultBootstrappings,
@@ -20,7 +18,7 @@ describe("Chevron", () => {
             const chevron = new Chevron<null>();
             type LoggingNoop = () => void;
 
-            const myFunction = () => {
+            const myFunction: LoggingNoop = () => {
                 console.log("Hello world!");
             };
             chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction);
@@ -60,7 +58,7 @@ describe("Chevron", () => {
             const chevron = new Chevron<null>();
             type LoggingNoop = () => void;
 
-            const myFunction = () => {
+            const myFunction: LoggingNoop = () => {
                 console.log("Hello world!");
             };
             chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction);
@@ -127,7 +125,7 @@ describe("Chevron", () => {
             const chevron = new Chevron<null>();
 
             class SeedData {
-                public getSeedValue() {
+                public getSeedValue(): number {
                     return 123;
                 }
             }
@@ -142,7 +140,7 @@ describe("Chevron", () => {
             class SeedController {
                 public constructor(private readonly seed: SeedData) {}
 
-                public getPrintableSeed() {
+                public getPrintableSeed(): string {
                     return String(this.seed.getSeedValue());
                 }
             }
@@ -160,7 +158,7 @@ describe("Chevron", () => {
                     private readonly seedController: SeedController
                 ) {}
 
-                public getFormattedSeed() {
+                public getFormattedSeed(): string {
                     return `Seed: '${this.seedController.getPrintableSeed()}'.`;
                 }
             }
@@ -230,7 +228,7 @@ describe("Chevron", () => {
             const chevron = new Chevron<null>();
             type LoggingNoop = () => void;
 
-            const myFunction = () => {
+            const myFunction: LoggingNoop = () => {
                 console.log("Hello world!");
             };
             chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction);
@@ -256,7 +254,7 @@ describe("Chevron", () => {
             const chevron = new Chevron<null>();
             type LoggingNoop = () => void;
 
-            const myFunction = () => {
+            const myFunction: LoggingNoop = () => {
                 console.log("Hello world!");
             };
             chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction);
@@ -268,7 +266,7 @@ describe("Chevron", () => {
             const chevron = new Chevron<null>();
             type LoggingNoop = () => void;
 
-            const myFunction = () => {
+            const myFunction: LoggingNoop = () => {
                 console.log("Hello world!");
             };
             chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction);
@@ -281,7 +279,7 @@ describe("Chevron", () => {
             const chevron = new Chevron<string>();
             type LoggingNoop = () => void;
 
-            const myFunction = () => {
+            const myFunction: LoggingNoop = () => {
                 console.log("Hello world!");
             };
             chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction, {

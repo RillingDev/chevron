@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import {
     Chevron,
     DefaultBootstrappings,
@@ -61,7 +60,7 @@ describe("Chevron Demo", () => {
                     this.modifier = 2;
                 }
 
-                public getDouble(n: number) {
+                public getDouble(n: number): number {
                     return n * this.modifier;
                 }
             }
@@ -87,7 +86,7 @@ describe("Chevron Demo", () => {
             type MathUnaryOperation = (val: number) => number;
             const multiply: MathUnaryOperation = (val: number) => val * 2;
 
-            const myFunction = () => multiply;
+            const myFunction: () => MathUnaryOperation = () => multiply;
             chevron.registerInjectable(myFunction, {
                 // Use the "FUNCTION" Bootstrapping to instantiate the value as a function
                 bootstrapping: DefaultBootstrappings.FUNCTION()
@@ -128,7 +127,7 @@ describe("Chevron Demo", () => {
             class MyClass {
                 public constructor(private readonly doublingFnAsDep: MathFn) {}
 
-                public getDouble(n: number) {
+                public getDouble(n: number): number {
                     return this.doublingFnAsDep(n);
                 }
             }
@@ -231,7 +230,7 @@ describe("Chevron Demo", () => {
             // Same as chevron.registerInjectable(Foo, { bootstrapping: DefaultBootstrappings.CLASS() });
             @Injectable(chevron)
             class Foo {
-                public getFoo() {
+                public getFoo(): string {
                     return "foo";
                 }
             }
@@ -242,7 +241,7 @@ describe("Chevron Demo", () => {
             class FooBar {
                 public constructor(private readonly foo: Foo) {}
 
-                public getFooBar() {
+                public getFooBar(): string {
                     return this.foo.getFoo() + "bar";
                 }
             }

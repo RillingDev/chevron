@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-
 import { Chevron } from "../../../src/Chevron";
 import { Injectable } from "../../../src/decorators/Injectable";
 
