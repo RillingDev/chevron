@@ -1,6 +1,6 @@
 import {
     Chevron,
-    DefaultBootstrapping,
+    DefaultFactory,
     InjectableClassInitializer
 } from "../../src/main";
 
@@ -78,7 +78,7 @@ describe("Chevron", () => {
             ).toThrowError("Injectable 'foo' does not exist.");
         });
 
-        it("bootstraps", () => {
+        it("instantiates", () => {
             const chevron = new Chevron<null>();
 
             class MyClass {}
@@ -87,7 +87,7 @@ describe("Chevron", () => {
                 MyClass,
                 InjectableClassInitializer<MyClass, void>
             >(MyClass, {
-                bootstrapping: DefaultBootstrapping.CLASS()
+                factory: DefaultFactory.CLASS()
             });
 
             const injectableInstance = chevron.getInjectableInstance<MyClass>(
@@ -97,7 +97,7 @@ describe("Chevron", () => {
             expect(injectableInstance).toBeInstanceOf(MyClass);
         });
 
-        it("bootstraps with context", () => {
+        it("factory instantiates with context", () => {
             type Context = number;
             const chevron = new Chevron<Context>();
 
@@ -109,7 +109,7 @@ describe("Chevron", () => {
                 MyClass,
                 InjectableClassInitializer<MyClass, Context>
             >(MyClass, {
-                bootstrapping: (initializer, dependencies, context) =>
+                factory: (initializer, dependencies, context) =>
                     Reflect.construct(initializer, [context])
             });
 
@@ -134,7 +134,7 @@ describe("Chevron", () => {
                 SeedData,
                 InjectableClassInitializer<SeedData, void>
             >(SeedData, {
-                bootstrapping: DefaultBootstrapping.CLASS()
+                factory: DefaultFactory.CLASS()
             });
 
             class SeedController {
@@ -151,7 +151,7 @@ describe("Chevron", () => {
                 SeedData
             >(SeedController, {
                 dependencies: [SeedData],
-                bootstrapping: DefaultBootstrapping.CLASS()
+                factory: DefaultFactory.CLASS()
             });
 
             class AppController {
@@ -169,7 +169,7 @@ describe("Chevron", () => {
                 InjectableClassInitializer<AppController, SeedController>
             >(AppController, {
                 dependencies: [SeedController],
-                bootstrapping: DefaultBootstrapping.CLASS()
+                factory: DefaultFactory.CLASS()
             });
 
             const appControllerInstance = chevron.getInjectableInstance<
@@ -190,7 +190,7 @@ describe("Chevron", () => {
                 SeedData,
                 InjectableClassInitializer<SeedData, void>
             >(SeedData, {
-                bootstrapping: DefaultBootstrapping.CLASS(),
+                factory: DefaultFactory.CLASS(),
                 dependencies: ["SeedController"]
             });
 
@@ -203,7 +203,7 @@ describe("Chevron", () => {
                 InjectableClassInitializer<SeedController, SeedData>
             >(SeedController, {
                 dependencies: [SeedData],
-                bootstrapping: DefaultBootstrapping.CLASS()
+                factory: DefaultFactory.CLASS()
             });
 
             class AppController {}
@@ -213,7 +213,7 @@ describe("Chevron", () => {
                 InjectableClassInitializer<AppController, SeedController>
             >(AppController, {
                 dependencies: [SeedController],
-                bootstrapping: DefaultBootstrapping.CLASS()
+                factory: DefaultFactory.CLASS()
             });
 
             expect(() =>

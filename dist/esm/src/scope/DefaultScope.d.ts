@@ -9,9 +9,9 @@ import { Scope } from "./Scope";
  *
  * @public
  */
-declare const DefaultScopes: {
+declare const DefaultScope: {
     SINGLETON: <TScope>() => Scope<TScope>;
     PROTOTYPE: <TScope_1>() => Scope<TScope_1>;
 };
-export { DefaultScopes };
-//# sourceMappingURL=DefaultScopes.d.ts.map
+export { DefaultScope };
+//# sourceMappingURL=DefaultScope.d.ts.map

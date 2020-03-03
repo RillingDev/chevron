@@ -1,4 +1,4 @@
-import { Bootstrapping } from "../bootstrap/Bootstrapping";
+import { Factory } from "../factory/Factory";
 import { Scope } from "../scope/Scope";
 import { Nameable } from "./Nameable";
 
@@ -10,12 +10,7 @@ import { Nameable } from "./Nameable";
 interface InjectableOptions<TInstance, UInitializer, VDependency, WContext> {
     name?: Nameable;
     dependencies?: Nameable[];
-    bootstrapping?: Bootstrapping<
-        TInstance,
-        UInitializer,
-        VDependency,
-        WContext
-    >;
+    factory?: Factory<TInstance, UInitializer, VDependency, WContext>;
     scope?: Scope<WContext>;
 }
 

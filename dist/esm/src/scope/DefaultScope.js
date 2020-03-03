@@ -10,9 +10,9 @@ const prototypeScopeFactory = () => () => null;
  *
  * @public
  */
-const DefaultScopes = {
+const DefaultScope = {
     SINGLETON: singletonScopeFactory,
     PROTOTYPE: prototypeScopeFactory
 };
-export { DefaultScopes };
-//# sourceMappingURL=DefaultScopes.js.map
+export { DefaultScope };
+//# sourceMappingURL=DefaultScope.js.map

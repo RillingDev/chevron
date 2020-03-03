@@ -1,13 +1,13 @@
 import { Chevron } from "../Chevron";
 import { InjectableOptions } from "../injectable/InjectableOptions";
-import { InjectableClassInitializer } from "../bootstrap/InjectableClassInitializer";
+import { InjectableClassInitializer } from "../factory/InjectableClassInitializer";
 /**
  * Registers a new injectable on a container. See {@link Chevron#registerInjectable} for details.
  *
  * Decorator function for use with TypeScript. Use this decorator on a variable or function/class expression.
  *
  * Note that, as decorators only work for classes and class related constructs,
- * the bootstrapping defaults to {@link DefaultBootstrappings.CLASS}.
+ * the factory defaults to {@link DefaultFactory.CLASS}.
  *
  * @public
  * @param instance {@link Chevron} instance to register the injectable on.

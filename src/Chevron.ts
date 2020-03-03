@@ -1,7 +1,7 @@
 import { name as getName } from "lightdash";
 import { InjectableEntry } from "./injectable/InjectableEntry";
 import { InjectableOptions } from "./injectable/InjectableOptions";
-import { DefaultBootstrapping } from "./bootstrap/DefaultBootstrapping";
+import { DefaultFactory } from "./factory/DefaultFactory";
 import { DefaultScope } from "./scope/DefaultScope";
 import { Nameable } from "./injectable/Nameable";
 
@@ -88,7 +88,7 @@ class Chevron<TContext> {
      *
      * @public
      * @param initializer Initial value of this injectable. This can be any value, but usually  a class or a different kind of function.
-     *      During retrieval, the initial value might be transformed by the bootstrapper (see {@link Bootstrapping} for details).
+     *      During retrieval, the initial value might be transformed by the factory (see {@link Factory} for details).
      *      If no name is provided in the options (see description of the options parameter, section "name"),
      *      a name will be determined from the initializer through {@link getName}.
      *      or a value which is nameable. For details on nameable values see {@link getName}.
@@ -98,10 +98,10 @@ class Chevron<TContext> {
      *                  Name for this injectable. If this is not provided, the name will be determined based on the initializer.
      *                  (see description of the initializer parameter)
      *          </li>
-     *          <li>bootstrapping:
-     *                  Bootstrapping strategy to use when instantiating this injectable (see {@link Bootstrapping} for details).
-     *                  By default, {@link DefaultBootstrapping.IDENTITY} is used. If your injectable is a class or factory function,
-     *                  consider using {@link DefaultBootstrapping.CLASS} or {@link DefaultBootstrapping.FUNCTION} instead respectively,
+     *          <li>factory:
+     *                  Instantiation strategy to use when instantiating this injectable (see {@link Factory} for details).
+     *                  By default, {@link DefaultFactory.IDENTITY} is used. If your injectable is a class or factory function,
+     *                  consider using {@link DefaultFactory.CLASS} or {@link DefaultFactory.FUNCTION} instead respectively,
      *                  or provide your own.
      *          </li>
      *          <li>scope:
@@ -125,9 +125,9 @@ class Chevron<TContext> {
             TContext | null
         > = {}
     ): void {
-        const bootstrapping =
-            options.bootstrapping ??
-            DefaultBootstrapping.IDENTITY<
+        const factory =
+            options.factory ??
+            DefaultFactory.IDENTITY<
                 UInitializer,
                 UInitializer,
                 VDependency,
@@ -147,7 +147,7 @@ class Chevron<TContext> {
 
         this.injectables.set(injectableEntryName, {
             initializer,
-            bootstrapping,
+            factory,
             scope,
             dependencyNames: dependencies.map(dependencyName =>
                 guessName(dependencyName)
@@ -213,7 +213,7 @@ class Chevron<TContext> {
         name: Nameable,
         context: TContext | null = null
     ): TInstance {
-        return this.getBootstrappedInjectableInstance(
+        return this.accessInjectableInstance(
             guessName(name),
             context,
             new Set()
@@ -262,7 +262,7 @@ class Chevron<TContext> {
      * @throws Error when a dependency cannot be found.
      * @throws Error when recursive dependencies are detected.
      */
-    private getBootstrappedInjectableInstance<TInstance>(
+    private accessInjectableInstance<TInstance>(
         injectableEntryName: string,
         context: TContext | null,
         resolveStack: Set<string>
@@ -279,7 +279,7 @@ class Chevron<TContext> {
             return <TInstance>injectableEntry.instances.get(instanceName)!;
         }
 
-        // Start bootstrapping value.
+        // Start instantiating value.
         if (resolveStack.has(injectableEntryName)) {
             throw createCircularDependencyError(
                 resolveStack,
@@ -288,18 +288,18 @@ class Chevron<TContext> {
         }
         resolveStack.add(injectableEntryName);
 
-        // Collect all dependencies, bootstrapping those which are not already in the process.
-        const bootstrappedDependencies = injectableEntry.dependencyNames.map(
+        // Collect all dependencies, instantiating those which are not already in the process.
+        const instantiatedDependencies = injectableEntry.dependencyNames.map(
             dependencyName =>
-                this.getBootstrappedInjectableInstance(
+                this.accessInjectableInstance(
                     dependencyName,
                     null, // Do not delegate context
                     resolveStack
                 )
         );
-        const instance = injectableEntry.bootstrapping(
+        const instance = injectableEntry.factory(
             injectableEntry.initializer,
-            bootstrappedDependencies,
+            instantiatedDependencies,
             context,
             injectableEntryName
         );

@@ -1,20 +1,19 @@
 import { InjectableFunctionInitializer } from "./InjectableFunctionInitializer";
 import { InjectableClassInitializer } from "./InjectableClassInitializer";
-import { Bootstrapping } from "./Bootstrapping";
+import { Factory } from "./Factory";
 
 /**
- * Creates a {@link Bootstrapping} which constructs the initializer with the dependencies as parameters.
- * Note that this bootstrapping only makes sense for class initializers.
+ * Creates a {@link Factory} which constructs the initializer with the dependencies as parameters.
  *
  * @public
  * @throws TypeError when used with a non-function initializer.
  */
-const classBootstrappingFactory = <
+const classFactoryFactory = <
     TInstance,
     UInitializer,
     VDependency,
     WContext
->(): Bootstrapping<
+>(): Factory<
     TInstance,
     InjectableClassInitializer<TInstance, VDependency>,
     VDependency,
@@ -25,18 +24,17 @@ const classBootstrappingFactory = <
 ): TInstance => Reflect.construct(initializer, dependencies);
 
 /**
- * Creates a {@link Bootstrapping} which returns a function executing the initializer with the dependencies as parameters.
- * Note that this bootstrapping only makes sense for function initializers.
+ * Creates a {@link Factory} which returns a function executing the initializer with the dependencies as parameters.
  *
  * @public
  * @throws TypeError when used with a non-function initializer.
  */
-const functionBootstrappingFactory = <
+const functionFactoryFactory = <
     TInstance,
     UInitializer,
     VDependency,
     WContext
->(): Bootstrapping<
+>(): Factory<
     TInstance,
     InjectableFunctionInitializer<TInstance, VDependency>,
     VDependency,
@@ -47,30 +45,30 @@ const functionBootstrappingFactory = <
 ): TInstance => initializer(...dependencies);
 
 /**
- * Creates a {@link Bootstrapping} which immediately returns the initializer.
+ * Creates a {@link Factory} which immediately returns the initializer.
  * This is useful for injectables which do not require any other initialization.
- * Note that by using this bootstrapping, no usage of dependencies for this value is possible.
+ * Note that by using this factory, no usage of dependencies for this value is possible.
  *
  * @public
  */
-const identityBootstrappingFactory = <
+const identityFactoryFactory = <
     TInstance,
     UInitializer,
     VDependency,
     WContext
->(): Bootstrapping<TInstance, TInstance, VDependency, WContext> => (
+>(): Factory<TInstance, TInstance, VDependency, WContext> => (
     initializer: TInstance
 ): TInstance => initializer;
 
 /**
- * Pseudo-enum of built-in {@link Bootstrapping}s.
+ * Pseudo-enum of built-in {@link Factory}s.
  *
  * @public
  */
-const DefaultBootstrapping = {
-    CLASS: classBootstrappingFactory,
-    FUNCTION: functionBootstrappingFactory,
-    IDENTITY: identityBootstrappingFactory
+const DefaultFactory = {
+    CLASS: classFactoryFactory,
+    FUNCTION: functionFactoryFactory,
+    IDENTITY: identityFactoryFactory
 };
 
-export { DefaultBootstrapping };
+export { DefaultFactory };

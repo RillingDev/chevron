@@ -1,10 +1,10 @@
 import {
     Chevron,
-    DefaultBootstrapping,
+    DefaultFactory,
     DefaultScope,
     Injectable
 } from "../../src/main";
-import { InjectableClassInitializer } from "../../src/bootstrap/InjectableClassInitializer";
+import { InjectableClassInitializer } from "../../src/factory/InjectableClassInitializer";
 
 describe("Chevron Demo", () => {
     describe("basic", () => {
@@ -19,7 +19,7 @@ describe("Chevron Demo", () => {
             };
 
             // Register the myFunction variable as a plain injectable.
-            chevron.registerInjectable(myFunction);
+            chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction);
 
             // Retrieve injectable (could also be done using `chevron.getInjectableInstance("myFunction")`.
             const myFunctionInstance = chevron.getInjectableInstance<
@@ -49,8 +49,8 @@ describe("Chevron Demo", () => {
             expect(myFunctionInstance).toBe(myFunction);
         });
     });
-    describe("bootstrapping", () => {
-        it("supports bootstrappings: class", () => {
+    describe("factories", () => {
+        it("supports factory: class", () => {
             const chevron = new Chevron<null>();
 
             class MyClass {
@@ -69,8 +69,8 @@ describe("Chevron Demo", () => {
                 MyClass,
                 InjectableClassInitializer<MyClass, void>
             >(MyClass, {
-                // Use the "CLASS" Bootstrapping to instantiate the value as class
-                bootstrapping: DefaultBootstrapping.CLASS()
+                // Use the "CLASS" factory to instantiate the value as class
+                factory: DefaultFactory.CLASS()
             });
 
             const myClassInstance = chevron.getInjectableInstance<MyClass>(
@@ -80,16 +80,19 @@ describe("Chevron Demo", () => {
             expect(myClassInstance).toBeInstanceOf(MyClass);
         });
 
-        it("supports bootstrappings: function", () => {
+        it("supports factory: function", () => {
             const chevron = new Chevron<null>();
 
             type MathUnaryOperation = (val: number) => number;
             const multiply: MathUnaryOperation = (val: number) => val * 2;
 
             const myFunction: () => MathUnaryOperation = () => multiply;
-            chevron.registerInjectable(myFunction, {
-                // Use the "FUNCTION" Bootstrapping to instantiate the value as a function
-                bootstrapping: DefaultBootstrapping.FUNCTION()
+            chevron.registerInjectable<
+                MathUnaryOperation,
+                () => MathUnaryOperation
+            >(myFunction, {
+                // Use the "FUNCTION" factory to instantiate the value as a function
+                factory: DefaultFactory.FUNCTION()
             });
 
             const myFunctionInstance = chevron.getInjectableInstance<
@@ -99,12 +102,12 @@ describe("Chevron Demo", () => {
             expect(myFunctionInstance).toEqual(multiply);
         });
 
-        it("supports bootstrappings: custom", () => {
+        it("supports factory: custom", () => {
             const chevron = new Chevron<null>();
 
             const myInjectable = 16;
             chevron.registerInjectable<number, number>(myInjectable, {
-                bootstrapping: (val: number) => val * 2,
+                factory: (val: number) => val * 2,
                 name: "val"
             });
 
@@ -134,7 +137,7 @@ describe("Chevron Demo", () => {
 
             /*
              * Register injectable with dependency - we could also use `["doublingFn"]`.
-             * We want MyClass to be instantiated by constructing it through the CLASS bootstrapping,
+             * We want MyClass to be instantiated by constructing it through the CLASS factory,
              * where we will have the dependencies as constructor parameters.
              */
             chevron.registerInjectable<
@@ -142,7 +145,7 @@ describe("Chevron Demo", () => {
                 InjectableClassInitializer<MyClass>
             >(MyClass, {
                 dependencies: [doublingFn],
-                bootstrapping: DefaultBootstrapping.CLASS()
+                factory: DefaultFactory.CLASS()
             });
 
             // When retrieving, all dependencies will be resolved first.
@@ -164,7 +167,7 @@ describe("Chevron Demo", () => {
                 MyClass,
                 InjectableClassInitializer<MyClass, void>
             >(MyClass, {
-                bootstrapping: DefaultBootstrapping.CLASS(),
+                factory: DefaultFactory.CLASS(),
                 scope: DefaultScope.PROTOTYPE()
             });
 
@@ -191,7 +194,7 @@ describe("Chevron Demo", () => {
                 MySession,
                 InjectableClassInitializer<MySession, void>
             >(MySession, {
-                bootstrapping: DefaultBootstrapping.CLASS(),
+                factory: DefaultFactory.CLASS(),
                 // Define a custom scope to create scopes based on the property `sessionId` of the context.
                 scope: (context: SessionContext | null) => {
                     if (context == null) {
@@ -227,7 +230,7 @@ describe("Chevron Demo", () => {
         it("supports decorators", () => {
             const chevron = new Chevron<null>();
 
-            // Same as chevron.registerInjectable(Foo, { bootstrapping: DefaultBootstrappings.CLASS() });
+            // Same as chevron.registerInjectable(Foo, { factory: DefaultFactory.CLASS() });
             @Injectable<Foo>(chevron)
             class Foo {
                 public getFoo(): string {
