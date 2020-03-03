@@ -14,6 +14,9 @@ import { InjectableClassInitializer } from "../bootstrap/InjectableClassInitiali
  * @public
  * @param instance {@link Chevron} instance to register the injectable on.
  * @param options Options for this injectable. See {@link Chevron#registerInjectable} for details.
+ * @typeparam TInstance type a constructed instance will have.
+ * @typeparam UDependency should not be set explicitly usually. Type of the dependencies used by this injectable.
+ * @typeparam VContext should not be set explicitly usually. Type of the context used for scoping.
  * @throws Error when an injectable with the requested name is already registered.
  * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
  */

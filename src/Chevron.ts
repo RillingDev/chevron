@@ -65,6 +65,7 @@ interface ResolvedInstance<TInstance, UInitializer, VDependency, WContext> {
  *
  * @public
  * @class
+ * @typeparam TContext type of the context which cane be used for scoping.
  */
 class Chevron<TContext> {
     // TODO: find a way to avoid using anys here.
@@ -109,6 +110,9 @@ class Chevron<TContext> {
      *                  see {@link DefaultScopes.PROTOTYPE} or provide your own.
      *          </li>
      *      </ul>
+     * @typeparam TInstance type a constructed instance will have.
+     * @typeparam UInitializer type of the provided initializer.
+     * @typeparam VDependency should not be set explicitly usually. Type of the dependencies used by this injectable.
      * @throws Error when an injectable with the requested name is already registered.
      * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
      */
@@ -203,6 +207,7 @@ class Chevron<TContext> {
      * @throws TypeError when no name can be determined for the provided nameable.
      * @throws Error when the injectable or a dependency cannot be found.
      * @throws Error when recursive dependencies are detected.
+     * @typeparam TInstance type a constructed instance will have.
      */
     public getInjectableInstance<TInstance>(
         name: Nameable,
