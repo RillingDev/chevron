@@ -67,10 +67,10 @@ const identityBootstrappingFactory = <
  *
  * @public
  */
-const DefaultBootstrappings = {
+const DefaultBootstrapping = {
     CLASS: classBootstrappingFactory,
     FUNCTION: functionBootstrappingFactory,
     IDENTITY: identityBootstrappingFactory
 };
 
-export { DefaultBootstrappings };
+export { DefaultBootstrapping };

@@ -1,6 +1,6 @@
 import {
     Chevron,
-    DefaultBootstrappings,
+    DefaultBootstrapping,
     InjectableClassInitializer
 } from "../../src/main";
 
@@ -87,7 +87,7 @@ describe("Chevron", () => {
                 MyClass,
                 InjectableClassInitializer<MyClass, void>
             >(MyClass, {
-                bootstrapping: DefaultBootstrappings.CLASS()
+                bootstrapping: DefaultBootstrapping.CLASS()
             });
 
             const injectableInstance = chevron.getInjectableInstance<MyClass>(
@@ -134,7 +134,7 @@ describe("Chevron", () => {
                 SeedData,
                 InjectableClassInitializer<SeedData, void>
             >(SeedData, {
-                bootstrapping: DefaultBootstrappings.CLASS()
+                bootstrapping: DefaultBootstrapping.CLASS()
             });
 
             class SeedController {
@@ -151,7 +151,7 @@ describe("Chevron", () => {
                 SeedData
             >(SeedController, {
                 dependencies: [SeedData],
-                bootstrapping: DefaultBootstrappings.CLASS()
+                bootstrapping: DefaultBootstrapping.CLASS()
             });
 
             class AppController {
@@ -169,7 +169,7 @@ describe("Chevron", () => {
                 InjectableClassInitializer<AppController, SeedController>
             >(AppController, {
                 dependencies: [SeedController],
-                bootstrapping: DefaultBootstrappings.CLASS()
+                bootstrapping: DefaultBootstrapping.CLASS()
             });
 
             const appControllerInstance = chevron.getInjectableInstance<
@@ -190,7 +190,7 @@ describe("Chevron", () => {
                 SeedData,
                 InjectableClassInitializer<SeedData, void>
             >(SeedData, {
-                bootstrapping: DefaultBootstrappings.CLASS(),
+                bootstrapping: DefaultBootstrapping.CLASS(),
                 dependencies: ["SeedController"]
             });
 
@@ -203,7 +203,7 @@ describe("Chevron", () => {
                 InjectableClassInitializer<SeedController, SeedData>
             >(SeedController, {
                 dependencies: [SeedData],
-                bootstrapping: DefaultBootstrappings.CLASS()
+                bootstrapping: DefaultBootstrapping.CLASS()
             });
 
             class AppController {}
@@ -213,7 +213,7 @@ describe("Chevron", () => {
                 InjectableClassInitializer<AppController, SeedController>
             >(AppController, {
                 dependencies: [SeedController],
-                bootstrapping: DefaultBootstrappings.CLASS()
+                bootstrapping: DefaultBootstrapping.CLASS()
             });
 
             expect(() =>

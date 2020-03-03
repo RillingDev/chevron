@@ -1,7 +1,7 @@
 import {
     Chevron,
-    DefaultBootstrappings,
-    DefaultScopes,
+    DefaultBootstrapping,
+    DefaultScope,
     Injectable
 } from "../../src/main";
 import { InjectableClassInitializer } from "../../src/bootstrap/InjectableClassInitializer";
@@ -70,7 +70,7 @@ describe("Chevron Demo", () => {
                 InjectableClassInitializer<MyClass, void>
             >(MyClass, {
                 // Use the "CLASS" Bootstrapping to instantiate the value as class
-                bootstrapping: DefaultBootstrappings.CLASS()
+                bootstrapping: DefaultBootstrapping.CLASS()
             });
 
             const myClassInstance = chevron.getInjectableInstance<MyClass>(
@@ -89,7 +89,7 @@ describe("Chevron Demo", () => {
             const myFunction: () => MathUnaryOperation = () => multiply;
             chevron.registerInjectable(myFunction, {
                 // Use the "FUNCTION" Bootstrapping to instantiate the value as a function
-                bootstrapping: DefaultBootstrappings.FUNCTION()
+                bootstrapping: DefaultBootstrapping.FUNCTION()
             });
 
             const myFunctionInstance = chevron.getInjectableInstance<
@@ -142,7 +142,7 @@ describe("Chevron Demo", () => {
                 InjectableClassInitializer<MyClass>
             >(MyClass, {
                 dependencies: [doublingFn],
-                bootstrapping: DefaultBootstrappings.CLASS()
+                bootstrapping: DefaultBootstrapping.CLASS()
             });
 
             // When retrieving, all dependencies will be resolved first.
@@ -164,8 +164,8 @@ describe("Chevron Demo", () => {
                 MyClass,
                 InjectableClassInitializer<MyClass, void>
             >(MyClass, {
-                bootstrapping: DefaultBootstrappings.CLASS(),
-                scope: DefaultScopes.PROTOTYPE()
+                bootstrapping: DefaultBootstrapping.CLASS(),
+                scope: DefaultScope.PROTOTYPE()
             });
 
             const myClassInstance1 = chevron.getInjectableInstance<MyClass>(
@@ -191,7 +191,7 @@ describe("Chevron Demo", () => {
                 MySession,
                 InjectableClassInitializer<MySession, void>
             >(MySession, {
-                bootstrapping: DefaultBootstrappings.CLASS(),
+                bootstrapping: DefaultBootstrapping.CLASS(),
                 // Define a custom scope to create scopes based on the property `sessionId` of the context.
                 scope: (context: SessionContext | null) => {
                     if (context == null) {

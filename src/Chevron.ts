@@ -1,8 +1,8 @@
 import { name as getName } from "lightdash";
 import { InjectableEntry } from "./injectable/InjectableEntry";
 import { InjectableOptions } from "./injectable/InjectableOptions";
-import { DefaultBootstrappings } from "./bootstrap/DefaultBootstrappings";
-import { DefaultScopes } from "./scope/DefaultScopes";
+import { DefaultBootstrapping } from "./bootstrap/DefaultBootstrapping";
+import { DefaultScope } from "./scope/DefaultScope";
 import { Nameable } from "./injectable/Nameable";
 
 /**
@@ -100,14 +100,14 @@ class Chevron<TContext> {
      *          </li>
      *          <li>bootstrapping:
      *                  Bootstrapping strategy to use when instantiating this injectable (see {@link Bootstrapping} for details).
-     *                  By default, {@link DefaultBootstrappings.IDENTITY} is used. If your injectable is a class or factory function,
-     *                  consider using {@link DefaultBootstrappings.CLASS} or {@link DefaultBootstrappings.FUNCTION} instead respectively,
+     *                  By default, {@link DefaultBootstrapping.IDENTITY} is used. If your injectable is a class or factory function,
+     *                  consider using {@link DefaultBootstrapping.CLASS} or {@link DefaultBootstrapping.FUNCTION} instead respectively,
      *                  or provide your own.
      *          </li>
      *          <li>scope:
      *                  Scoping strategy to use when retrieving instances (see {@link Scope} for details).
-     *                  By default, {@link DefaultScopes.SINGLETON} is used. For different use cases,
-     *                  see {@link DefaultScopes.PROTOTYPE} or provide your own.
+     *                  By default, {@link DefaultScope.SINGLETON} is used. For different use cases,
+     *                  see {@link DefaultScope.PROTOTYPE} or provide your own.
      *          </li>
      *      </ul>
      * @typeparam TInstance type a constructed instance will have.
@@ -127,14 +127,14 @@ class Chevron<TContext> {
     ): void {
         const bootstrapping =
             options.bootstrapping ??
-            DefaultBootstrappings.IDENTITY<
+            DefaultBootstrapping.IDENTITY<
                 UInitializer,
                 UInitializer,
                 VDependency,
                 TContext | null
             >();
         const scope =
-            options.scope ?? DefaultScopes.SINGLETON<TContext | null>();
+            options.scope ?? DefaultScope.SINGLETON<TContext | null>();
         const name = options.name ?? null;
         const dependencies = options.dependencies ?? [];
 

@@ -20,9 +20,9 @@ const prototypeScopeFactory = <TScope>(): Scope<TScope> => (): null => null;
  *
  * @public
  */
-const DefaultScopes = {
+const DefaultScope = {
     SINGLETON: singletonScopeFactory,
     PROTOTYPE: prototypeScopeFactory
 };
 
-export { DefaultScopes };
+export { DefaultScope };

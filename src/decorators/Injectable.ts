@@ -1,6 +1,6 @@
 import { Chevron } from "../Chevron";
 import { InjectableOptions } from "../injectable/InjectableOptions";
-import { DefaultBootstrappings } from "../bootstrap/DefaultBootstrappings";
+import { DefaultBootstrapping } from "../bootstrap/DefaultBootstrapping";
 import { InjectableClassInitializer } from "../bootstrap/InjectableClassInitializer";
 
 /**
@@ -9,7 +9,7 @@ import { InjectableClassInitializer } from "../bootstrap/InjectableClassInitiali
  * Decorator function for use with TypeScript. Use this decorator on a variable or function/class expression.
  *
  * Note that, as decorators only work for classes and class related constructs,
- * the bootstrapping defaults to {@link DefaultBootstrappings.CLASS}.
+ * the bootstrapping defaults to {@link DefaultBootstrapping.CLASS}.
  *
  * @public
  * @param instance {@link Chevron} instance to register the injectable on.
@@ -32,7 +32,7 @@ const Injectable = <TInstance, UDependency = any, VContext = any>(
     target: InjectableClassInitializer<TInstance, UDependency>
 ): InjectableClassInitializer<TInstance, UDependency> => {
     if (options?.bootstrapping == null) {
-        options.bootstrapping = DefaultBootstrappings.CLASS<
+        options.bootstrapping = DefaultBootstrapping.CLASS<
             TInstance,
             InjectableClassInitializer<TInstance, UDependency>,
             UDependency,

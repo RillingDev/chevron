@@ -1,8 +1,8 @@
 import { Chevron } from "./Chevron";
 import { Bootstrapping } from "./bootstrap/Bootstrapping";
 import { Injectable } from "./decorators/Injectable";
-import { DefaultBootstrappings } from "./bootstrap/DefaultBootstrappings";
-import { DefaultScopes } from "./scope/DefaultScopes";
+import { DefaultBootstrapping } from "./bootstrap/DefaultBootstrapping";
+import { DefaultScope } from "./scope/DefaultScope";
 import { Scope } from "./scope/Scope";
 import { InjectableOptions } from "./injectable/InjectableOptions";
 import { InjectableClassInitializer } from "./bootstrap/InjectableClassInitializer";
@@ -14,8 +14,8 @@ export {
     Bootstrapping,
     InjectableClassInitializer,
     InjectableFunctionInitializer,
-    DefaultBootstrappings,
+    DefaultBootstrapping,
     Scope,
-    DefaultScopes,
+    DefaultScope,
     Injectable
 };
