@@ -5,6 +5,7 @@ import { Nameable } from "./injectable/Nameable";
  *
  * @public
  * @class
+ * @typeparam TContext type of the context which cane be used for scoping.
  */
 declare class Chevron<TContext> {
     private readonly injectables;
@@ -41,6 +42,9 @@ declare class Chevron<TContext> {
      *                  see {@link DefaultScopes.PROTOTYPE} or provide your own.
      *          </li>
      *      </ul>
+     * @typeparam TInstance type a constructed instance will have.
+     * @typeparam UInitializer type of the provided initializer.
+     * @typeparam VDependency should not be set explicitly usually. Type of the dependencies used by this injectable.
      * @throws Error when an injectable with the requested name is already registered.
      * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
      */
@@ -76,6 +80,7 @@ declare class Chevron<TContext> {
      * @throws TypeError when no name can be determined for the provided nameable.
      * @throws Error when the injectable or a dependency cannot be found.
      * @throws Error when recursive dependencies are detected.
+     * @typeparam TInstance type a constructed instance will have.
      */
     getInjectableInstance<TInstance>(name: Nameable, context?: TContext | null): TInstance;
     /**

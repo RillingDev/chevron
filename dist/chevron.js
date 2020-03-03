@@ -129,6 +129,7 @@ var chevron = (function (exports, lodash) {
      *
      * @public
      * @class
+     * @typeparam TContext type of the context which cane be used for scoping.
      */
     class Chevron {
         /**
@@ -166,15 +167,18 @@ var chevron = (function (exports, lodash) {
          *                  see {@link DefaultScopes.PROTOTYPE} or provide your own.
          *          </li>
          *      </ul>
+         * @typeparam TInstance type a constructed instance will have.
+         * @typeparam UInitializer type of the provided initializer.
+         * @typeparam VDependency should not be set explicitly usually. Type of the dependencies used by this injectable.
          * @throws Error when an injectable with the requested name is already registered.
          * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
          */
         registerInjectable(initializer, options = {}) {
             var _a, _b, _c, _d;
-            const bootstrapping = (_a = options.bootstrapping, (_a !== null && _a !== void 0 ? _a : DefaultBootstrappings.IDENTITY()));
-            const scope = (_b = options.scope, (_b !== null && _b !== void 0 ? _b : DefaultScopes.SINGLETON()));
-            const name = (_c = options.name, (_c !== null && _c !== void 0 ? _c : null));
-            const dependencies = (_d = options.dependencies, (_d !== null && _d !== void 0 ? _d : []));
+            const bootstrapping = (_a = options.bootstrapping) !== null && _a !== void 0 ? _a : DefaultBootstrappings.IDENTITY();
+            const scope = (_b = options.scope) !== null && _b !== void 0 ? _b : DefaultScopes.SINGLETON();
+            const name = (_c = options.name) !== null && _c !== void 0 ? _c : null;
+            const dependencies = (_d = options.dependencies) !== null && _d !== void 0 ? _d : [];
             const injectableEntryName = name != null ? guessName(name) : guessName(initializer);
             if (this.injectables.has(injectableEntryName)) {
                 throw new Error(`Name already exists: '${injectableEntryName}'.`);
@@ -226,6 +230,7 @@ var chevron = (function (exports, lodash) {
          * @throws TypeError when no name can be determined for the provided nameable.
          * @throws Error when the injectable or a dependency cannot be found.
          * @throws Error when recursive dependencies are detected.
+         * @typeparam TInstance type a constructed instance will have.
          */
         getInjectableInstance(name, context = null) {
             return this.getBootstrappedInjectableInstance(guessName(name), context, new Set());
@@ -297,12 +302,14 @@ var chevron = (function (exports, lodash) {
      * @public
      * @param instance {@link Chevron} instance to register the injectable on.
      * @param options Options for this injectable. See {@link Chevron#registerInjectable} for details.
+     * @typeparam TInstance type a constructed instance will have.
+     * @typeparam UDependency should not be set explicitly usually. Type of the dependencies used by this injectable.
+     * @typeparam VContext should not be set explicitly usually. Type of the context used for scoping.
      * @throws Error when an injectable with the requested name is already registered.
      * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
      */
     const Injectable = (instance, options = {}) => (target) => {
-        var _a;
-        if (((_a = options) === null || _a === void 0 ? void 0 : _a.bootstrapping) == null) {
+        if ((options === null || options === void 0 ? void 0 : options.bootstrapping) == null) {
             options.bootstrapping = DefaultBootstrappings.CLASS();
         }
         instance.registerInjectable(target, options);
