@@ -68,7 +68,7 @@ interface ResolvedInstance<TInstance, UInitializer, VDependency, WContext> {
  * @typeparam TContext type of the context which cane be used for scoping.
  */
 class Chevron<TContext> {
-    // TODO: find a way to avoid using anys here.
+    // TODO: find a way to avoid using any here.
     private readonly injectables: Map<
         string,
         InjectableEntry<any, any, any, TContext | null>
