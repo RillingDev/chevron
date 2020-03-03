@@ -1,4 +1,4 @@
-type InjectableFunctionInitializer<TInstance, VDependency> = (
+type InjectableFunctionInitializer<TInstance, VDependency = any> = (
     ...args: VDependency[]
 ) => TInstance;
 

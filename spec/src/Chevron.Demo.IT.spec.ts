@@ -67,7 +67,7 @@ describe("Chevron Demo", () => {
 
             chevron.registerInjectable<
                 MyClass,
-                InjectableClassInitializer<MyClass, any>
+                InjectableClassInitializer<MyClass, void>
             >(MyClass, {
                 // Use the "CLASS" Bootstrapping to instantiate the value as class
                 bootstrapping: DefaultBootstrappings.CLASS()
@@ -139,7 +139,7 @@ describe("Chevron Demo", () => {
              */
             chevron.registerInjectable<
                 MyClass,
-                InjectableClassInitializer<MyClass, any>
+                InjectableClassInitializer<MyClass>
             >(MyClass, {
                 dependencies: [doublingFn],
                 bootstrapping: DefaultBootstrappings.CLASS()
@@ -162,7 +162,7 @@ describe("Chevron Demo", () => {
 
             chevron.registerInjectable<
                 MyClass,
-                InjectableClassInitializer<MyClass, any>
+                InjectableClassInitializer<MyClass, void>
             >(MyClass, {
                 bootstrapping: DefaultBootstrappings.CLASS(),
                 scope: DefaultScopes.PROTOTYPE()
@@ -189,7 +189,7 @@ describe("Chevron Demo", () => {
 
             chevron.registerInjectable<
                 MySession,
-                InjectableClassInitializer<MySession, any>
+                InjectableClassInitializer<MySession, void>
             >(MySession, {
                 bootstrapping: DefaultBootstrappings.CLASS(),
                 // Define a custom scope to create scopes based on the property `sessionId` of the context.
@@ -235,7 +235,7 @@ describe("Chevron Demo", () => {
                 }
             }
 
-            @Injectable<FooBar, any>(chevron, {
+            @Injectable<FooBar>(chevron, {
                 dependencies: [Foo]
             })
             class FooBar {

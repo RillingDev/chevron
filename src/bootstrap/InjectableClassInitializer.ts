@@ -1,5 +1,5 @@
-interface InjectableClassInitializer<TInstance, VDependency> {
-    new (...args: VDependency[]): TInstance;
+interface InjectableClassInitializer<TInstance, VDependency = any> {
+    new(...args: VDependency[]): TInstance;
 }
 
 export { InjectableClassInitializer };
