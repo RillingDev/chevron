@@ -1,1 +1,0 @@
-{"version":3,"file":"DefaultScopes.js","sourceRoot":"","sources":["../../../../src/scope/DefaultScopes.ts"],"names":[],"mappings":"AAAA;;;;GAIG;AACH,MAAM,cAAc,GAAG,GAAW,EAAE,CAAC,eAAe,CAAC;AAErD;;;;GAIG;AACH,MAAM,cAAc,GAAG,GAAS,EAAE,CAAC,IAAI,CAAC;AAExC;;;;GAIG;AACH,MAAM,aAAa,GAAG;IAClB,SAAS,EAAE,cAAc;IACzB,SAAS,EAAE,cAAc;CAC5B,CAAC;AAEF,OAAO,EAAE,aAAa,EAAE,CAAC"}

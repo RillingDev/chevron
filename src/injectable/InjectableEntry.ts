@@ -1,4 +1,4 @@
-import { Bootstrapping } from "../bootstrap/Bootstrapping";
+import { Factory } from "../factory/Factory";
 import { Scope } from "../scope/Scope";
 
 /**
@@ -6,12 +6,12 @@ import { Scope } from "../scope/Scope";
  *
  * @private
  */
-interface InjectableEntry<TValue, UInitializer, VDependency, WContext> {
+interface InjectableEntry<TInstance, UInitializer, VDependency, WContext> {
     initializer: UInitializer;
     dependencyNames: string[];
-    instances: Map<string, TValue>;
-    bootstrapping: Bootstrapping<TValue, UInitializer, VDependency, WContext>;
-    scope: Scope<TValue, UInitializer, VDependency, WContext>;
+    factory: Factory<TInstance, UInitializer, VDependency, WContext>;
+    scope: Scope<WContext>;
+    instances: Map<string, TInstance>;
 }
 
 export { InjectableEntry };

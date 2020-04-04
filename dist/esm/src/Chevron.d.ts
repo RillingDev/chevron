@@ -1,17 +1,18 @@
 import { InjectableOptions } from "./injectable/InjectableOptions";
+import { Nameable } from "./injectable/Nameable";
 /**
  * Injectable container class.
  *
  * @public
  * @class
+ * @typeparam TContext type of the context which cane be used for scoping.
  */
-declare class Chevron<TValue = any, UInitializer = any, VContext = any> {
+declare class Chevron<TContext> {
     private readonly injectables;
     /**
      * Creates a new, empty container.
      *
      * @public
-     * @constructor
      */
     constructor();
     /**
@@ -19,7 +20,7 @@ declare class Chevron<TValue = any, UInitializer = any, VContext = any> {
      *
      * @public
      * @param initializer Initial value of this injectable. This can be any value, but usually  a class or a different kind of function.
-     *      During retrieval, the initial value might be transformed by the bootstrapper (see {@link Bootstrapping} for details).
+     *      During retrieval, the initial value might be transformed by the factory (see {@link Factory} for details).
      *      If no name is provided in the options (see description of the options parameter, section "name"),
      *      a name will be determined from the initializer through {@link getName}.
      *      or a value which is nameable. For details on nameable values see {@link getName}.
@@ -29,22 +30,25 @@ declare class Chevron<TValue = any, UInitializer = any, VContext = any> {
      *                  Name for this injectable. If this is not provided, the name will be determined based on the initializer.
      *                  (see description of the initializer parameter)
      *          </li>
-     *          <li>bootstrapping:
-     *                  Bootstrapping strategy to use when instantiating this injectable (see {@link Bootstrapping} for details).
-     *                  By default, {@link DefaultBootstrappings.IDENTITY} is used. If your injectable is a class or factory function,
-     *                  consider using {@link DefaultBootstrappings.CLASS} or {@link DefaultBootstrappings.FUNCTION} instead respectively,
+     *          <li>factory:
+     *                  Instantiation strategy to use when instantiating this injectable (see {@link Factory} for details).
+     *                  By default, {@link DefaultFactory.IDENTITY} is used. If your injectable is a class or factory function,
+     *                  consider using {@link DefaultFactory.CLASS} or {@link DefaultFactory.FUNCTION} instead respectively,
      *                  or provide your own.
      *          </li>
      *          <li>scope:
      *                  Scoping strategy to use when retrieving instances (see {@link Scope} for details).
-     *                  By default, {@link DefaultScopes.SINGLETON} is used. For different use cases,
-     *                  see {@link DefaultScopes.PROTOTYPE} or provide your own.
+     *                  By default, {@link DefaultScope.SINGLETON} is used. For different use cases,
+     *                  see {@link DefaultScope.PROTOTYPE} or provide your own.
      *          </li>
      *      </ul>
+     * @typeparam TInstance type a constructed instance will have.
+     * @typeparam UInitializer type of the provided initializer.
+     * @typeparam VDependency should not be set explicitly usually. Type of the dependencies used by this injectable.
      * @throws Error when an injectable with the requested name is already registered.
      * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
      */
-    registerInjectable(initializer: UInitializer, options?: InjectableOptions<TValue, UInitializer, VContext>): void;
+    registerInjectable<TInstance, UInitializer, VDependency = any>(initializer: UInitializer, options?: InjectableOptions<TInstance, UInitializer, VDependency, TContext | null>): void;
     /**
      * Checks if an injectable with the name provided is registered for this container, regardless if its instantiated or not.
      * To check if an injectable is registered and instantiated, see {@link #hasInjectableInstance}.
@@ -54,7 +58,7 @@ declare class Chevron<TValue = any, UInitializer = any, VContext = any> {
      * @return if an injectable with the name provided is registered on this container.
      * @throws TypeError when no name can be determined for the provided nameable.
      */
-    hasInjectable(name: UInitializer | string): boolean;
+    hasInjectable(name: Nameable): boolean;
     /**
      * Checks if an injectable with the name provided is registered and instantiated for this container.
      * To check if an injectable is registered without checking for instantiation, see {@link #hasInjectable}.
@@ -65,7 +69,7 @@ declare class Chevron<TValue = any, UInitializer = any, VContext = any> {
      * @return if an injectable with the name provided is registered and instantiated on this container.
      * @throws TypeError when no name can be determined for the provided nameable.
      */
-    hasInjectableInstance(name: UInitializer | string, context?: VContext | null): boolean;
+    hasInjectableInstance(name: Nameable, context?: TContext | null): boolean;
     /**
      * Retrieves an instantiated injectable, recursively instantiating dependencies if they were not instantiated before.
      *
@@ -76,8 +80,9 @@ declare class Chevron<TValue = any, UInitializer = any, VContext = any> {
      * @throws TypeError when no name can be determined for the provided nameable.
      * @throws Error when the injectable or a dependency cannot be found.
      * @throws Error when recursive dependencies are detected.
+     * @typeparam TInstance type a constructed instance will have.
      */
-    getInjectableInstance(name: UInitializer | string, context?: VContext | null): TValue;
+    getInjectableInstance<TInstance>(name: Nameable, context?: TContext | null): TInstance;
     /**
      * Resolves an injectable by name, providing information about the injectable entry, its name and scope value.
      *
@@ -100,7 +105,7 @@ declare class Chevron<TValue = any, UInitializer = any, VContext = any> {
      * @throws Error when a dependency cannot be found.
      * @throws Error when recursive dependencies are detected.
      */
-    private getBootstrappedInjectableInstance;
+    private accessInjectableInstance;
 }
 export { Chevron };
 //# sourceMappingURL=Chevron.d.ts.map

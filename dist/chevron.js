@@ -32,9 +32,7 @@ var chevron = (function (exports, lodash) {
         if (lodash.isString(value)) {
             return value;
         }
-        // eslint-disable-next-line no-extra-parens
         if (lodash.isObject(value) && lodash.isString(value.name)) {
-            // eslint-disable-next-line no-extra-parens
             return value.name;
         }
         if (lodash.isSymbol(value) && lodash.isString(value.description)) {
@@ -44,77 +42,58 @@ var chevron = (function (exports, lodash) {
     };
 
     /**
-     * Helper method for creating type errors for non-function initializers.
-     *
-     * @private
-     * @return Type error.
-     */
-    const createNonFunctionInitializerError = () => new TypeError("Non-functions cannot be bootstrapped by this bootstrapping.");
-    /**
-     * {@link Bootstrapping} which constructs the initializer with the dependencies as parameters.
-     * Note that this bootstrapping only makes sense for class initializers.
+     * Creates a {@link Factory} which constructs the initializer with the dependencies as parameters.
      *
      * @public
      * @throws TypeError when used with a non-function initializer.
      */
-    const classBootstrapping = (initializer, dependencies, context) => {
-        if (!lodash.isFunction(initializer)) {
-            throw createNonFunctionInitializerError();
-        }
-        return Reflect.construct(initializer, [...dependencies, context]);
-    };
+    const classFactoryFactory = () => (initializer, dependencies) => Reflect.construct(initializer, dependencies);
     /**
-     * {@link Bootstrapping} which returns a function executing the initializer with the dependencies as parameters.
-     * Note that this bootstrapping only makes sense for function initializers.
+     * Creates a {@link Factory} which returns a function executing the initializer with the dependencies as parameters.
      *
      * @public
      * @throws TypeError when used with a non-function initializer.
      */
-    const functionBootstrapping = (initializer, dependencies, context) => {
-        if (!lodash.isFunction(initializer)) {
-            throw createNonFunctionInitializerError();
-        }
-        return initializer(...dependencies, context);
-    };
+    const functionFactoryFactory = () => (initializer, dependencies) => initializer(...dependencies);
     /**
-     * {@link Bootstrapping} which immediately returns the initializer.
+     * Creates a {@link Factory} which immediately returns the initializer.
      * This is useful for injectables which do not require any other initialization.
-     * Note that by using this bootstrapping, no usage of dependencies for this value is possible.
+     * Note that by using this factory, no usage of dependencies for this value is possible.
      *
      * @public
      */
-    const identityBootstrapping = (initializer) => initializer;
+    const identityFactoryFactory = () => (initializer) => initializer;
     /**
-     * Pseudo-enum of built-in {@link Bootstrapping}s.
+     * Pseudo-enum of built-in {@link Factory}s.
      *
      * @public
      */
-    const DefaultBootstrappings = {
-        CLASS: classBootstrapping,
-        FUNCTION: functionBootstrapping,
-        IDENTITY: identityBootstrapping
+    const DefaultFactory = {
+        CLASS: classFactoryFactory,
+        FUNCTION: functionFactoryFactory,
+        IDENTITY: identityFactoryFactory,
     };
 
     /**
-     * {@link Scope} which forces usage of a single instance for every request.
+     * Creates a {@link Scope} which forces usage of a single instance for every request.
      *
      * @public
      */
-    const singletonScope = () => "__SINGLETON__";
+    const singletonScopeFactory = () => () => "__SINGLETON__";
     /**
-     * {@link Scope} which forces instantiation of a new instance every time the injectable is requested.
+     * Creates a {@link Scope} which forces instantiation of a new instance every time the injectable is requested.
      *
      * @public
      */
-    const prototypeScope = () => null;
+    const prototypeScopeFactory = () => () => null;
     /**
      * Pseudo-enum of built-in {@link Scope}s.
      *
      * @public
      */
-    const DefaultScopes = {
-        SINGLETON: singletonScope,
-        PROTOTYPE: prototypeScope
+    const DefaultScope = {
+        SINGLETON: singletonScopeFactory,
+        PROTOTYPE: prototypeScopeFactory,
     };
 
     /**
@@ -128,7 +107,7 @@ var chevron = (function (exports, lodash) {
      */
     const guessName = (value) => {
         const guessedName = name(value);
-        if (lodash.isNil(guessedName)) {
+        if (guessedName == null) {
             throw new TypeError(`Could not guess name of '${String(value)}', please explicitly define one.`);
         }
         return guessedName;
@@ -144,7 +123,7 @@ var chevron = (function (exports, lodash) {
     const createCircularDependencyError = (resolveStack, injectableEntryName) => {
         const resolveStackFull = [...Array.from(resolveStack), injectableEntryName];
         const stackVisualization = resolveStackFull
-            .map(name => `'${name}'`)
+            .map((name) => `'${name}'`)
             .join(" -> ");
         return new Error(`Circular dependencies found: ${stackVisualization}.`);
     };
@@ -153,13 +132,13 @@ var chevron = (function (exports, lodash) {
      *
      * @public
      * @class
+     * @typeparam TContext type of the context which cane be used for scoping.
      */
     class Chevron {
         /**
          * Creates a new, empty container.
          *
          * @public
-         * @constructor
          */
         constructor() {
             this.injectables = new Map();
@@ -169,7 +148,7 @@ var chevron = (function (exports, lodash) {
          *
          * @public
          * @param initializer Initial value of this injectable. This can be any value, but usually  a class or a different kind of function.
-         *      During retrieval, the initial value might be transformed by the bootstrapper (see {@link Bootstrapping} for details).
+         *      During retrieval, the initial value might be transformed by the factory (see {@link Factory} for details).
          *      If no name is provided in the options (see description of the options parameter, section "name"),
          *      a name will be determined from the initializer through {@link getName}.
          *      or a value which is nameable. For details on nameable values see {@link getName}.
@@ -179,39 +158,40 @@ var chevron = (function (exports, lodash) {
          *                  Name for this injectable. If this is not provided, the name will be determined based on the initializer.
          *                  (see description of the initializer parameter)
          *          </li>
-         *          <li>bootstrapping:
-         *                  Bootstrapping strategy to use when instantiating this injectable (see {@link Bootstrapping} for details).
-         *                  By default, {@link DefaultBootstrappings.IDENTITY} is used. If your injectable is a class or factory function,
-         *                  consider using {@link DefaultBootstrappings.CLASS} or {@link DefaultBootstrappings.FUNCTION} instead respectively,
+         *          <li>factory:
+         *                  Instantiation strategy to use when instantiating this injectable (see {@link Factory} for details).
+         *                  By default, {@link DefaultFactory.IDENTITY} is used. If your injectable is a class or factory function,
+         *                  consider using {@link DefaultFactory.CLASS} or {@link DefaultFactory.FUNCTION} instead respectively,
          *                  or provide your own.
          *          </li>
          *          <li>scope:
          *                  Scoping strategy to use when retrieving instances (see {@link Scope} for details).
-         *                  By default, {@link DefaultScopes.SINGLETON} is used. For different use cases,
-         *                  see {@link DefaultScopes.PROTOTYPE} or provide your own.
+         *                  By default, {@link DefaultScope.SINGLETON} is used. For different use cases,
+         *                  see {@link DefaultScope.PROTOTYPE} or provide your own.
          *          </li>
          *      </ul>
+         * @typeparam TInstance type a constructed instance will have.
+         * @typeparam UInitializer type of the provided initializer.
+         * @typeparam VDependency should not be set explicitly usually. Type of the dependencies used by this injectable.
          * @throws Error when an injectable with the requested name is already registered.
          * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
          */
         registerInjectable(initializer, options = {}) {
             var _a, _b, _c, _d;
-            const bootstrapping = (_a = options.bootstrapping, (_a !== null && _a !== void 0 ? _a : DefaultBootstrappings.IDENTITY));
-            const scope = (_b = options.scope, (_b !== null && _b !== void 0 ? _b : DefaultScopes.SINGLETON));
-            const name = (_c = options.name, (_c !== null && _c !== void 0 ? _c : null));
-            const dependencies = (_d = options.dependencies, (_d !== null && _d !== void 0 ? _d : []));
-            const injectableEntryName = !lodash.isNil(name)
-                ? guessName(name)
-                : guessName(initializer);
+            const factory = (_a = options.factory) !== null && _a !== void 0 ? _a : DefaultFactory.IDENTITY();
+            const scope = (_b = options.scope) !== null && _b !== void 0 ? _b : DefaultScope.SINGLETON();
+            const name = (_c = options.name) !== null && _c !== void 0 ? _c : null;
+            const dependencies = (_d = options.dependencies) !== null && _d !== void 0 ? _d : [];
+            const injectableEntryName = name != null ? guessName(name) : guessName(initializer);
             if (this.injectables.has(injectableEntryName)) {
                 throw new Error(`Name already exists: '${injectableEntryName}'.`);
             }
             this.injectables.set(injectableEntryName, {
                 initializer,
-                bootstrapping,
+                factory,
                 scope,
-                dependencyNames: dependencies.map(dependencyName => guessName(dependencyName)),
-                instances: new Map()
+                dependencyNames: dependencies.map((dependencyName) => guessName(dependencyName)),
+                instances: new Map(),
             });
         }
         /**
@@ -240,7 +220,7 @@ var chevron = (function (exports, lodash) {
             if (!this.hasInjectable(name)) {
                 return false;
             }
-            const { injectableEntry, instanceName } = this.resolveInjectableInstance(guessName(name), context);
+            const { injectableEntry, instanceName, } = this.resolveInjectableInstance(guessName(name), context);
             return (instanceName != null && injectableEntry.instances.has(instanceName));
         }
         /**
@@ -253,9 +233,10 @@ var chevron = (function (exports, lodash) {
          * @throws TypeError when no name can be determined for the provided nameable.
          * @throws Error when the injectable or a dependency cannot be found.
          * @throws Error when recursive dependencies are detected.
+         * @typeparam TInstance type a constructed instance will have.
          */
         getInjectableInstance(name, context = null) {
-            return this.getBootstrappedInjectableInstance(guessName(name), context, new Set());
+            return this.accessInjectableInstance(guessName(name), context, new Set());
         }
         /**
          * Resolves an injectable by name, providing information about the injectable entry, its name and scope value.
@@ -271,10 +252,10 @@ var chevron = (function (exports, lodash) {
                 throw new Error(`Injectable '${injectableEntryName}' does not exist.`);
             }
             const injectableEntry = this.injectables.get(injectableEntryName);
-            const instanceName = injectableEntry.scope(context, injectableEntryName, injectableEntry);
+            const instanceName = injectableEntry.scope(context, injectableEntryName);
             return {
                 injectableEntry,
-                instanceName
+                instanceName,
             };
         }
         /**
@@ -289,22 +270,22 @@ var chevron = (function (exports, lodash) {
          * @throws Error when a dependency cannot be found.
          * @throws Error when recursive dependencies are detected.
          */
-        getBootstrappedInjectableInstance(injectableEntryName, context, resolveStack) {
-            const { injectableEntry, instanceName } = this.resolveInjectableInstance(injectableEntryName, context);
+        accessInjectableInstance(injectableEntryName, context, resolveStack) {
+            const { injectableEntry, instanceName, } = this.resolveInjectableInstance(injectableEntryName, context);
             if (instanceName != null &&
                 injectableEntry.instances.has(instanceName)) {
                 return injectableEntry.instances.get(instanceName);
             }
-            /*
-             * Start bootstrapping value.
-             */
+            // Start instantiating value.
             if (resolveStack.has(injectableEntryName)) {
                 throw createCircularDependencyError(resolveStack, injectableEntryName);
             }
             resolveStack.add(injectableEntryName);
-            const bootstrappedDependencies = injectableEntry.dependencyNames.map(dependencyName => this.getBootstrappedInjectableInstance(dependencyName, null, // Do not delegate context
+            // Collect all dependencies, instantiating those which are not already in the process.
+            const instantiatedDependencies = injectableEntry.dependencyNames.map((dependencyName) => this.accessInjectableInstance(dependencyName, null, // Do not delegate context
             resolveStack));
-            const instance = injectableEntry.bootstrapping(injectableEntry.initializer, bootstrappedDependencies, context, injectableEntryName, injectableEntry);
+            const instance = injectableEntry.factory(injectableEntry.initializer, instantiatedDependencies, context, injectableEntryName);
+            // A name of "null" means that the instance should not be cached, skip saving it.
             if (instanceName != null) {
                 injectableEntry.instances.set(instanceName, instance);
             }
@@ -319,26 +300,28 @@ var chevron = (function (exports, lodash) {
      * Decorator function for use with TypeScript. Use this decorator on a variable or function/class expression.
      *
      * Note that, as decorators only work for classes and class related constructs,
-     * the bootstrapping defaults to {@link DefaultBootstrappings.CLASS}
+     * the factory defaults to {@link DefaultFactory.CLASS}.
      *
      * @public
      * @param instance {@link Chevron} instance to register the injectable on.
      * @param options Options for this injectable. See {@link Chevron#registerInjectable} for details.
+     * @typeparam TInstance type a constructed instance will have.
+     * @typeparam UDependency should not be set explicitly usually. Type of the dependencies used by this injectable.
+     * @typeparam VContext should not be set explicitly usually. Type of the context used for scoping.
      * @throws Error when an injectable with the requested name is already registered.
      * @throws TypeError when no name can be determined for this injectable or any of its dependencies.
      */
     const Injectable = (instance, options = {}) => (target) => {
-        var _a;
-        if (lodash.isNil((_a = options) === null || _a === void 0 ? void 0 : _a.bootstrapping)) {
-            options.bootstrapping = DefaultBootstrappings.CLASS;
+        if ((options === null || options === void 0 ? void 0 : options.factory) == null) {
+            options.factory = DefaultFactory.CLASS();
         }
         instance.registerInjectable(target, options);
         return target;
     };
 
     exports.Chevron = Chevron;
-    exports.DefaultBootstrappings = DefaultBootstrappings;
-    exports.DefaultScopes = DefaultScopes;
+    exports.DefaultFactory = DefaultFactory;
+    exports.DefaultScope = DefaultScope;
     exports.Injectable = Injectable;
 
     return exports;

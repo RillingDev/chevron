@@ -1,17 +1,9 @@
-import { Chevron } from "./Chevron";
-import { Bootstrapping } from "./bootstrap/Bootstrapping";
-import { Injectable } from "./decorators/Injectable";
-import { DefaultBootstrappings } from "./bootstrap/DefaultBootstrappings";
-import { DefaultScopes } from "./scope/DefaultScopes";
-import { Scope } from "./scope/Scope";
-import { InjectableOptions } from "./injectable/InjectableOptions";
-
-export {
-    Chevron,
-    InjectableOptions,
-    Bootstrapping,
-    DefaultBootstrappings,
-    Scope,
-    DefaultScopes,
-    Injectable
-};
+export { Chevron } from "./Chevron";
+export { Factory } from "./factory/Factory";
+export { Injectable } from "./decorators/Injectable";
+export { DefaultFactory } from "./factory/DefaultFactory";
+export { DefaultScope } from "./scope/DefaultScope";
+export { Scope } from "./scope/Scope";
+export { InjectableOptions } from "./injectable/InjectableOptions";
+export { InjectableClassInitializer } from "./factory/InjectableClassInitializer";
+export { InjectableFunctionInitializer } from "./factory/InjectableFunctionInitializer";
