@@ -1,8 +1,3 @@
-/**
- * Creates a {@link Scope} which forces usage of a single instance for every request.
- *
- * @public
- */
 import { Scope } from "./Scope";
 /**
  * Pseudo-enum of built-in {@link Scope}s.

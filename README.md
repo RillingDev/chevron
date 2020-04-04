@@ -1,16 +1,19 @@
 # ChevronJS
 
-> A small TypeScript library for lazy dependency injection.
+> A TypeScript IoC library for lazy dependency injection.
 
 ## Introduction
 
-Chevron is a TypeScript library for lazy dependency injection inspired by the
+Chevron is a TypeScript IoC library for lazy dependency injection inspired by the
 [AngularJS Module API](https://docs.angularjs.org/api/ng/type/angular.Module)
 and [Spring's DI System](https://www.baeldung.com/inversion-control-and-dependency-injection-in-spring).
 Unlike similar libraries like [InversifyJS](https://github.com/inversify/InversifyJS),
-[Ana](https://github.com/manole-ts/ana) and others, Chevron does not depend on reflection
+[Ana](https://github.com/manole-ts/ana) and others, Chevron does not depend on reflection metadata
 or compile time tooling; The trade-off by not using those is that less type
 validation and Quality of Life features are possible.
+
+**Not suitable for production, use [InversifyJS](https://github.com/inversify/InversifyJS) instead of this**.
+
 [Docs](https://felixrilling.github.io/chevron/)
 
 ## Usage
@@ -56,7 +59,7 @@ const myFunction: LoggingNoop = () => {
 };
 chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction, {
     // A custom name can either be a string or another nameable value like a function.
-    name: "myCoolName"
+    name: "myCoolName",
 });
 
 const myFunctionInstance = chevron.getInjectableInstance<LoggingNoop>(
@@ -89,7 +92,7 @@ chevron.registerInjectable<MyClass, InjectableClassInitializer<MyClass, void>>(
     MyClass,
     {
         // Use the "CLASS" factory to instantiate the value as class
-        factory: DefaultFactory.CLASS()
+        factory: DefaultFactory.CLASS(),
     }
 );
 
@@ -109,7 +112,7 @@ chevron.registerInjectable<MathUnaryOperation, () => MathUnaryOperation>(
     myFunction,
     {
         // Use the "FUNCTION" factory to instantiate the value as a function
-        factory: DefaultFactory.FUNCTION()
+        factory: DefaultFactory.FUNCTION(),
     }
 );
 
@@ -128,7 +131,7 @@ const chevron = new Chevron<null>();
 const myInjectable = 16;
 chevron.registerInjectable<number, number>(myInjectable, {
     factory: (val: number) => val * 2,
-    name: "val"
+    name: "val",
 });
 
 const myFunctionInstance = chevron.getInjectableInstance<number>("val");
@@ -165,7 +168,7 @@ chevron.registerInjectable<MyClass, InjectableClassInitializer<MyClass>>(
     MyClass,
     {
         dependencies: [doublingFn],
-        factory: DefaultFactory.CLASS()
+        factory: DefaultFactory.CLASS(),
     }
 );
 
@@ -184,7 +187,7 @@ import {
     Chevron,
     InjectableClassInitializer,
     DefaultFactory,
-    DefaultScope
+    DefaultScope,
 } from "./src/main";
 
 const chevron = new Chevron<null>();
@@ -195,7 +198,7 @@ chevron.registerInjectable<MyClass, InjectableClassInitializer<MyClass, void>>(
     MyClass,
     {
         factory: DefaultFactory.CLASS(),
-        scope: DefaultScope.PROTOTYPE()
+        scope: DefaultScope.PROTOTYPE(),
     }
 );
 
@@ -209,7 +212,7 @@ Scopes can be also be used to provide for example session based instances:
 import {
     Chevron,
     DefaultFactory,
-    InjectableClassInitializer
+    InjectableClassInitializer,
 } from "./src/main";
 
 interface SessionContext {
@@ -231,20 +234,20 @@ chevron.registerInjectable<
             return "DEFAULT";
         }
         return context.sessionId;
-    }
+    },
 });
 
 // Injectable retrieval can pass optional context data to influence scoping.
 const mySessionInstanceFoo = chevron.getInjectableInstance<MySession>(
     MySession,
     {
-        sessionId: "123"
+        sessionId: "123",
     }
 );
 const mySessionInstanceBar = chevron.getInjectableInstance<MySession>(
     MySession,
     {
-        sessionId: "987"
+        sessionId: "987",
     }
 );
 const mySessionInstanceBarAgain = chevron.getInjectableInstance<MySession>(
@@ -274,7 +277,7 @@ class Foo {
 }
 
 @Injectable<FooBar>(chevron, {
-    dependencies: [Foo]
+    dependencies: [Foo],
 })
 class FooBar {
     public constructor(private readonly foo: Foo) {}

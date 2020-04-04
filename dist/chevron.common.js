@@ -77,6 +77,11 @@ const DefaultFactory = {
     IDENTITY: identityFactoryFactory,
 };
 
+/**
+ * Creates a {@link Scope} which forces usage of a single instance for every request.
+ *
+ * @public
+ */
 const singletonScopeFactory = () => () => "__SINGLETON__";
 /**
  * Creates a {@link Scope} which forces instantiation of a new instance every time the injectable is requested.

@@ -2770,19 +2770,20 @@ img {
 				<h1>ChevronJS</h1>
 			</a>
 			<blockquote>
-				<p>A small TypeScript library for lazy dependency injection.</p>
+				<p>A TypeScript IoC library for lazy dependency injection.</p>
 			</blockquote>
 			<a href="#introduction" id="introduction" style="color: inherit; text-decoration: none;">
 				<h2>Introduction</h2>
 			</a>
-			<p>Chevron is a TypeScript library for lazy dependency injection inspired by the
+			<p>Chevron is a TypeScript IoC library for lazy dependency injection inspired by the
 				<a href="https://docs.angularjs.org/api/ng/type/angular.Module">AngularJS Module API</a>
 				and <a href="https://www.baeldung.com/inversion-control-and-dependency-injection-in-spring">Spring&#39;s DI System</a>.
 				Unlike similar libraries like <a href="https://github.com/inversify/InversifyJS">InversifyJS</a>,
-				<a href="https://github.com/manole-ts/ana">Ana</a> and others, Chevron does not depend on reflection
+				<a href="https://github.com/manole-ts/ana">Ana</a> and others, Chevron does not depend on reflection metadata
 				or compile time tooling; The trade-off by not using those is that less type
-				validation and Quality of Life features are possible.
-			<a href="https://felixrilling.github.io/chevron/">Docs</a></p>
+			validation and Quality of Life features are possible.</p>
+			<p><strong>Not suitable for production, use <a href="https://github.com/inversify/InversifyJS">InversifyJS</a> instead of this</strong>.</p>
+			<p><a href="https://felixrilling.github.io/chevron/">Docs</a></p>
 			<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
 				<h2>Usage</h2>
 			</a>
@@ -2818,7 +2819,7 @@ chevron.registerInjectable&lt;LoggingNoop, LoggingNoop&gt;(myFunction);
 };
 chevron.registerInjectable&lt;LoggingNoop, LoggingNoop&gt;(myFunction, {
     <span class="hljs-comment">// A custom name can either be a string or another nameable value like a function.</span>
-    name: <span class="hljs-string">"myCoolName"</span>
+    name: <span class="hljs-string">"myCoolName"</span>,
 });
 
 <span class="hljs-keyword">const</span> myFunctionInstance = chevron.getInjectableInstance&lt;LoggingNoop&gt;(
@@ -2848,7 +2849,7 @@ chevron.registerInjectable&lt;MyClass, InjectableClassInitializer&lt;MyClass, <s
     MyClass,
     {
         <span class="hljs-comment">// Use the "CLASS" factory to instantiate the value as class</span>
-        factory: DefaultFactory.CLASS()
+        factory: DefaultFactory.CLASS(),
     }
 );
 
@@ -2865,7 +2866,7 @@ chevron.registerInjectable&lt;MathUnaryOperation, <span class="hljs-function"><s
     myFunction,
     {
         <span class="hljs-comment">// Use the "FUNCTION" factory to instantiate the value as a function</span>
-        factory: DefaultFactory.FUNCTION()
+        factory: DefaultFactory.FUNCTION(),
     }
 );
 
@@ -2880,7 +2881,7 @@ chevron.registerInjectable&lt;MathUnaryOperation, <span class="hljs-function"><s
 <span class="hljs-keyword">const</span> myInjectable = <span class="hljs-number">16</span>;
 chevron.registerInjectable&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>&gt;(myInjectable, {
     factory: <span class="hljs-function">(<span class="hljs-params">val: <span class="hljs-built_in">number</span></span>) =&gt;</span> val * <span class="hljs-number">2</span>,
-    name: <span class="hljs-string">"val"</span>
+    name: <span class="hljs-string">"val"</span>,
 });
 
 <span class="hljs-keyword">const</span> myFunctionInstance = chevron.getInjectableInstance&lt;<span class="hljs-built_in">number</span>&gt;(<span class="hljs-string">"val"</span>);</code></pre>
@@ -2914,7 +2915,7 @@ chevron.registerInjectable&lt;MyClass, InjectableClassInitializer&lt;MyClass&gt;
     MyClass,
     {
         dependencies: [doublingFn],
-        factory: DefaultFactory.CLASS()
+        factory: DefaultFactory.CLASS(),
     }
 );
 
@@ -2929,7 +2930,7 @@ chevron.registerInjectable&lt;MyClass, InjectableClassInitializer&lt;MyClass&gt;
     Chevron,
     InjectableClassInitializer,
     DefaultFactory,
-    DefaultScope
+    DefaultScope,
 } <span class="hljs-keyword">from</span> <span class="hljs-string">"./src/main"</span>;
 
 <span class="hljs-keyword">const</span> chevron = <span class="hljs-keyword">new</span> Chevron&lt;<span class="hljs-literal">null</span>&gt;();
@@ -2940,7 +2941,7 @@ chevron.registerInjectable&lt;MyClass, InjectableClassInitializer&lt;MyClass, <s
     MyClass,
     {
         factory: DefaultFactory.CLASS(),
-        scope: DefaultScope.PROTOTYPE()
+        scope: DefaultScope.PROTOTYPE(),
     }
 );
 
@@ -2950,7 +2951,7 @@ chevron.registerInjectable&lt;MyClass, InjectableClassInitializer&lt;MyClass, <s
 			<pre><code class="language-typescript"><span class="hljs-keyword">import</span> {
     Chevron,
     DefaultFactory,
-    InjectableClassInitializer
+    InjectableClassInitializer,
 } <span class="hljs-keyword">from</span> <span class="hljs-string">"./src/main"</span>;
 
 <span class="hljs-keyword">interface</span> SessionContext {
@@ -2972,20 +2973,20 @@ chevron.registerInjectable&lt;
             <span class="hljs-keyword">return</span> <span class="hljs-string">"DEFAULT"</span>;
         }
         <span class="hljs-keyword">return</span> context.sessionId;
-    }
+    },
 });
 
 <span class="hljs-comment">// Injectable retrieval can pass optional context data to influence scoping.</span>
 <span class="hljs-keyword">const</span> mySessionInstanceFoo = chevron.getInjectableInstance&lt;MySession&gt;(
     MySession,
     {
-        sessionId: <span class="hljs-string">"123"</span>
+        sessionId: <span class="hljs-string">"123"</span>,
     }
 );
 <span class="hljs-keyword">const</span> mySessionInstanceBar = chevron.getInjectableInstance&lt;MySession&gt;(
     MySession,
     {
-        sessionId: <span class="hljs-string">"987"</span>
+        sessionId: <span class="hljs-string">"987"</span>,
     }
 );
 <span class="hljs-keyword">const</span> mySessionInstanceBarAgain = chevron.getInjectableInstance&lt;MySession&gt;(
@@ -3011,7 +3012,7 @@ chevron.registerInjectable&lt;
 }
 
 <span class="hljs-meta">@Injectable</span>&lt;FooBar&gt;(chevron, {
-    dependencies: [Foo]
+    dependencies: [Foo],
 })
 <span class="hljs-keyword">class</span> FooBar {
     <span class="hljs-keyword">public</span> <span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">private</span> readonly foo: Foo</span>) {}
@@ -3472,6 +3473,11 @@ chevron.registerInjectable&lt;
 								<li>Defined in scope/DefaultScope.ts:8</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Creates a <a href="globals.html#scope">Scope</a> which forces usage of a single instance for every request.</p>
+							</div>
+						</div>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
 						<ul class="tsd-type-parameters">
 							<li>

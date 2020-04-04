@@ -1,10 +1,10 @@
+import { Scope } from "./Scope";
+
 /**
  * Creates a {@link Scope} which forces usage of a single instance for every request.
  *
  * @public
  */
-import { Scope } from "./Scope";
-
 const singletonScopeFactory = <TScope>(): Scope<TScope> => (): string =>
     "__SINGLETON__";
 
