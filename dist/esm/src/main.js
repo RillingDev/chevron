@@ -1,6 +1,5 @@
-import { Chevron } from "./Chevron";
-import { Injectable } from "./decorators/Injectable";
-import { DefaultFactory } from "./factory/DefaultFactory";
-import { DefaultScope } from "./scope/DefaultScope";
-export { Chevron, DefaultFactory, DefaultScope, Injectable, };
+export { Chevron } from "./Chevron";
+export { Injectable } from "./decorators/Injectable";
+export { DefaultFactory } from "./factory/DefaultFactory";
+export { DefaultScope } from "./scope/DefaultScope";
 //# sourceMappingURL=main.js.map
