@@ -22,7 +22,7 @@ const prototypeScopeFactory = <TScope>(): Scope<TScope> => (): null => null;
  */
 const DefaultScope = {
     SINGLETON: singletonScopeFactory,
-    PROTOTYPE: prototypeScopeFactory
+    PROTOTYPE: prototypeScopeFactory,
 };
 
 export { DefaultScope };

@@ -28,7 +28,7 @@ const identityFactoryFactory = () => (initializer) => initializer;
 const DefaultFactory = {
     CLASS: classFactoryFactory,
     FUNCTION: functionFactoryFactory,
-    IDENTITY: identityFactoryFactory
+    IDENTITY: identityFactoryFactory,
 };
 export { DefaultFactory };
 //# sourceMappingURL=DefaultFactory.js.map

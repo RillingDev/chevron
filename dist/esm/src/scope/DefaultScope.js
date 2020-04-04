@@ -12,7 +12,7 @@ const prototypeScopeFactory = () => () => null;
  */
 const DefaultScope = {
     SINGLETON: singletonScopeFactory,
-    PROTOTYPE: prototypeScopeFactory
+    PROTOTYPE: prototypeScopeFactory,
 };
 export { DefaultScope };
 //# sourceMappingURL=DefaultScope.js.map

@@ -7,5 +7,5 @@ import { Scope } from "./scope/Scope";
 import { InjectableOptions } from "./injectable/InjectableOptions";
 import { InjectableClassInitializer } from "./factory/InjectableClassInitializer";
 import { InjectableFunctionInitializer } from "./factory/InjectableFunctionInitializer";
-export { Chevron, InjectableOptions, Factory, InjectableClassInitializer, InjectableFunctionInitializer, DefaultFactory, Scope, DefaultScope, Injectable };
+export { Chevron, InjectableOptions, Factory, InjectableClassInitializer, InjectableFunctionInitializer, DefaultFactory, Scope, DefaultScope, Injectable, };
 //# sourceMappingURL=main.d.ts.map

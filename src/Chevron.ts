@@ -40,7 +40,7 @@ const createCircularDependencyError = (
 ): Error => {
     const resolveStackFull = [...Array.from(resolveStack), injectableEntryName];
     const stackVisualization = resolveStackFull
-        .map(name => `'${name}'`)
+        .map((name) => `'${name}'`)
         .join(" -> ");
     return new Error(`Circular dependencies found: ${stackVisualization}.`);
 };
@@ -149,10 +149,10 @@ class Chevron<TContext> {
             initializer,
             factory,
             scope,
-            dependencyNames: dependencies.map(dependencyName =>
+            dependencyNames: dependencies.map((dependencyName) =>
                 guessName(dependencyName)
             ),
-            instances: new Map()
+            instances: new Map(),
         });
     }
 
@@ -189,7 +189,7 @@ class Chevron<TContext> {
 
         const {
             injectableEntry,
-            instanceName
+            instanceName,
         } = this.resolveInjectableInstance(guessName(name), context);
 
         return (
@@ -246,7 +246,7 @@ class Chevron<TContext> {
         );
         return {
             injectableEntry,
-            instanceName
+            instanceName,
         };
     }
 
@@ -269,7 +269,7 @@ class Chevron<TContext> {
     ): TInstance {
         const {
             injectableEntry,
-            instanceName
+            instanceName,
         } = this.resolveInjectableInstance(injectableEntryName, context);
 
         if (
@@ -290,7 +290,7 @@ class Chevron<TContext> {
 
         // Collect all dependencies, instantiating those which are not already in the process.
         const instantiatedDependencies = injectableEntry.dependencyNames.map(
-            dependencyName =>
+            (dependencyName) =>
                 this.accessInjectableInstance(
                     dependencyName,
                     null, // Do not delegate context

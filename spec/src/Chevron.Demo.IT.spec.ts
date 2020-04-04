@@ -2,7 +2,7 @@ import {
     Chevron,
     DefaultFactory,
     DefaultScope,
-    Injectable
+    Injectable,
 } from "../../src/main";
 import { InjectableClassInitializer } from "../../src/factory/InjectableClassInitializer";
 
@@ -39,7 +39,7 @@ describe("Chevron Demo", () => {
             };
             chevron.registerInjectable<LoggingNoop, LoggingNoop>(myFunction, {
                 // A custom name can either be a string or another nameable value like a function.
-                name: "myCoolName"
+                name: "myCoolName",
             });
 
             const myFunctionInstance = chevron.getInjectableInstance<
@@ -70,7 +70,7 @@ describe("Chevron Demo", () => {
                 InjectableClassInitializer<MyClass, void>
             >(MyClass, {
                 // Use the "CLASS" factory to instantiate the value as class
-                factory: DefaultFactory.CLASS()
+                factory: DefaultFactory.CLASS(),
             });
 
             const myClassInstance = chevron.getInjectableInstance<MyClass>(
@@ -92,7 +92,7 @@ describe("Chevron Demo", () => {
                 () => MathUnaryOperation
             >(myFunction, {
                 // Use the "FUNCTION" factory to instantiate the value as a function
-                factory: DefaultFactory.FUNCTION()
+                factory: DefaultFactory.FUNCTION(),
             });
 
             const myFunctionInstance = chevron.getInjectableInstance<
@@ -108,7 +108,7 @@ describe("Chevron Demo", () => {
             const myInjectable = 16;
             chevron.registerInjectable<number, number>(myInjectable, {
                 factory: (val: number) => val * 2,
-                name: "val"
+                name: "val",
             });
 
             const myFunctionInstance = chevron.getInjectableInstance<number>(
@@ -145,7 +145,7 @@ describe("Chevron Demo", () => {
                 InjectableClassInitializer<MyClass>
             >(MyClass, {
                 dependencies: [doublingFn],
-                factory: DefaultFactory.CLASS()
+                factory: DefaultFactory.CLASS(),
             });
 
             // When retrieving, all dependencies will be resolved first.
@@ -168,7 +168,7 @@ describe("Chevron Demo", () => {
                 InjectableClassInitializer<MyClass, void>
             >(MyClass, {
                 factory: DefaultFactory.CLASS(),
-                scope: DefaultScope.PROTOTYPE()
+                scope: DefaultScope.PROTOTYPE(),
             });
 
             const myClassInstance1 = chevron.getInjectableInstance<MyClass>(
@@ -201,19 +201,19 @@ describe("Chevron Demo", () => {
                         return "DEFAULT";
                     }
                     return context.sessionId;
-                }
+                },
             });
 
             // Injectable retrieval can pass optional context data to influence scoping.
             const mySessionInstanceFoo = chevron.getInjectableInstance<
                 MySession
             >(MySession, {
-                sessionId: "123"
+                sessionId: "123",
             });
             const mySessionInstanceBar = chevron.getInjectableInstance<
                 MySession
             >(MySession, {
-                sessionId: "987"
+                sessionId: "987",
             });
             const mySessionInstanceBarAgain = chevron.getInjectableInstance<
                 MySession
@@ -239,7 +239,7 @@ describe("Chevron Demo", () => {
             }
 
             @Injectable<FooBar>(chevron, {
-                dependencies: [Foo]
+                dependencies: [Foo],
             })
             class FooBar {
                 public constructor(private readonly foo: Foo) {}

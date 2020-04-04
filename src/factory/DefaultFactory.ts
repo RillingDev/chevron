@@ -68,7 +68,7 @@ const identityFactoryFactory = <
 const DefaultFactory = {
     CLASS: classFactoryFactory,
     FUNCTION: functionFactoryFactory,
-    IDENTITY: identityFactoryFactory
+    IDENTITY: identityFactoryFactory,
 };
 
 export { DefaultFactory };

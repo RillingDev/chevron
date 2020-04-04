@@ -17,5 +17,5 @@ export {
     DefaultFactory,
     Scope,
     DefaultScope,
-    Injectable
+    Injectable,
 };

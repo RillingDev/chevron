@@ -28,7 +28,7 @@ const guessName = (value) => {
 const createCircularDependencyError = (resolveStack, injectableEntryName) => {
     const resolveStackFull = [...Array.from(resolveStack), injectableEntryName];
     const stackVisualization = resolveStackFull
-        .map(name => `'${name}'`)
+        .map((name) => `'${name}'`)
         .join(" -> ");
     return new Error(`Circular dependencies found: ${stackVisualization}.`);
 };
@@ -95,8 +95,8 @@ class Chevron {
             initializer,
             factory,
             scope,
-            dependencyNames: dependencies.map(dependencyName => guessName(dependencyName)),
-            instances: new Map()
+            dependencyNames: dependencies.map((dependencyName) => guessName(dependencyName)),
+            instances: new Map(),
         });
     }
     /**
@@ -125,7 +125,7 @@ class Chevron {
         if (!this.hasInjectable(name)) {
             return false;
         }
-        const { injectableEntry, instanceName } = this.resolveInjectableInstance(guessName(name), context);
+        const { injectableEntry, instanceName, } = this.resolveInjectableInstance(guessName(name), context);
         return (instanceName != null && injectableEntry.instances.has(instanceName));
     }
     /**
@@ -160,7 +160,7 @@ class Chevron {
         const instanceName = injectableEntry.scope(context, injectableEntryName);
         return {
             injectableEntry,
-            instanceName
+            instanceName,
         };
     }
     /**
@@ -176,7 +176,7 @@ class Chevron {
      * @throws Error when recursive dependencies are detected.
      */
     accessInjectableInstance(injectableEntryName, context, resolveStack) {
-        const { injectableEntry, instanceName } = this.resolveInjectableInstance(injectableEntryName, context);
+        const { injectableEntry, instanceName, } = this.resolveInjectableInstance(injectableEntryName, context);
         if (instanceName != null &&
             injectableEntry.instances.has(instanceName)) {
             return injectableEntry.instances.get(instanceName);
@@ -187,7 +187,7 @@ class Chevron {
         }
         resolveStack.add(injectableEntryName);
         // Collect all dependencies, instantiating those which are not already in the process.
-        const instantiatedDependencies = injectableEntry.dependencyNames.map(dependencyName => this.accessInjectableInstance(dependencyName, null, // Do not delegate context
+        const instantiatedDependencies = injectableEntry.dependencyNames.map((dependencyName) => this.accessInjectableInstance(dependencyName, null, // Do not delegate context
         resolveStack));
         const instance = injectableEntry.factory(injectableEntry.initializer, instantiatedDependencies, context, injectableEntryName);
         // A name of "null" means that the instance should not be cached, skip saving it.

@@ -3,24 +3,26 @@ module.exports = {
     parser: "@typescript-eslint/parser",
     parserOptions: {
         tsconfigRootDir: __dirname,
-        project: ["./src/tsconfig.json", "./spec/src/tsconfig.json"]
+        project: ["./src/tsconfig.json", "./spec/src/tsconfig.json"],
     },
-    plugins: [
-        "@typescript-eslint",
-        "prettier"
-    ],
+    env: {
+        "es6": true,
+        "es2017": true,
+        "es2020": true,
+        "shared-node-browser": true,
+    },
+    plugins: ["import", "@typescript-eslint", "prettier"],
     extends: [
         "eslint:recommended",
+        "plugin:import/errors",
+        "plugin:import/warnings",
+        "plugin:import/typescript",
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
         "prettier",
-        "prettier/@typescript-eslint"
+        "prettier/@typescript-eslint",
     ],
-    env: {
-        "browser": true,
-        "node": true
-    },
     rules: {
         "no-shadow": "error",
         "no-undef-init": "error",
@@ -31,30 +33,45 @@ module.exports = {
         "no-else-return": "warn",
         "no-implicit-coercion": "warn",
         "no-dupe-else-if": "warn",
+        "radix": "warn",
+
         "prettier/prettier": "warn",
+
+        "import/no-unresolved": "off", // Covered by TS
+        "import/named": "off", // Covered by TS
+        "import/namespace": "off", // Covered by TS
+        "import/no-absolute-path": "error",
+        "import/no-self-import": "error",
+        "import/no-default-export": "warn",
+        "import/no-webpack-loader-syntax": "warn",
+        "import/no-cycle": "warn",
+        "import/no-useless-path-segments": "warn",
+        "import/no-mutable-exports": "warn",
+
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/no-floating-promises": "error",
         "@typescript-eslint/no-throw-literal": "error",
+        "@typescript-eslint/no-base-to-string": "error",
+        "@typescript-eslint/no-dynamic-delete": "error",
+        "@typescript-eslint/no-implied-eval": "error",
         "@typescript-eslint/interface-name-prefix": [
             "warn",
             {
-                "prefixWithI": "never"
-            }
+                prefixWithI: "never",
+            },
         ],
         "@typescript-eslint/consistent-type-assertions": [
             "warn",
             {
-                "assertionStyle": "angle-bracket"
-            }
+                assertionStyle: "angle-bracket",
+            },
         ],
-        "@typescript-eslint/no-dynamic-delete": "warn",
         "@typescript-eslint/no-extra-non-null-assertion": "warn",
-        "@typescript-eslint/no-implied-eval": "warn",
         "@typescript-eslint/no-non-null-asserted-optional-chain": "warn",
         "@typescript-eslint/no-unnecessary-condition": "warn",
         "@typescript-eslint/prefer-nullish-coalescing": "warn",
         "@typescript-eslint/prefer-optional-chain": "warn",
-        "@typescript-eslint/prefer-readonly": "warn",
-        "@typescript-eslint/no-explicit-any": "off",
-        "@typescript-eslint/no-non-null-assertion": "off"
-    }
+        "@typescript-eslint/prefer-readonly": "warn"
+    },
 };
