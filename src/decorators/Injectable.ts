@@ -24,25 +24,22 @@ const Injectable = <TInstance, UDependency = any, VContext = any>(
     instance: Chevron<VContext | null>,
     options: InjectableOptions<
         TInstance,
-        InjectableClassInitializer<TInstance, UDependency>,
+        any, // Actual initializer type is not known at this time
         UDependency,
         VContext | null
     > = {}
-) => (
-    target: InjectableClassInitializer<TInstance, UDependency>
-): InjectableClassInitializer<TInstance, UDependency> => {
+): ClassDecorator => <TFunction extends Function>(
+    target: TFunction
+): TFunction => {
     if (options?.factory == null) {
         options.factory = DefaultFactory.CLASS<
             TInstance,
-            InjectableClassInitializer<TInstance, UDependency>,
+            TFunction,
             UDependency,
             VContext | null
         >();
     }
-    instance.registerInjectable<
-        TInstance,
-        InjectableClassInitializer<TInstance, UDependency>
-    >(target, options);
+    instance.registerInjectable<TInstance, TFunction>(target, options);
     return target;
 };
 
